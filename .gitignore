@@ -63,6 +63,9 @@ yarn-error.log*
 /*debug-output*.txt
 /*debug_output*.txt
 
+# Local tool dumps
+**/tool/output/
+
 # Environment files — never commit secrets; only .env.example is tracked
 .env*
 !.env.example

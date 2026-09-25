@@ -10,7 +10,6 @@ import 'package:archiveme_mobile/features/beta_repair_lab/beta_repair_lab_copy.d
 import 'package:archiveme_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:archiveme_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:archiveme_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
@@ -96,7 +95,7 @@ class _BetaRepairLabCardState extends State<BetaRepairLabCard> {
       decoration: BoxDecoration(
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -177,7 +176,7 @@ class _ModeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     const labelStyle = TextStyle(fontSize: 12, height: 1.35);
     return Material(
-      color: selected ? AppColors.surfaceAlt : AppTheme.surface,
+      color: selected ? Theme.of(context).colorScheme.surfaceContainerHighest : AppTheme.surface,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         key: Key('beta_repair_lab_mode_${info.mode.analyticsValue}'),
@@ -291,13 +290,13 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
 
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
-    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.45);
 
     return Container(
       key: Key('beta_repair_lab_proof_card_${widget.result.variant.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      decoration: VoiceMemoryCards.standard(background: Theme.of(context).colorScheme.surfaceContainerHighest),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -310,7 +309,7 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
           Text(
             widget.result.body,
             key: const Key('beta_repair_lab_proof_body'),
-            style: bodyStyle.copyWith(color: AppColors.textPrimary),
+            style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           if (widget.result.whyAppearedLine.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
@@ -326,7 +325,7 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
               widget.result.feedbackPrompt,
               key: const Key('beta_repair_lab_proof_feedback_prompt'),
               style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -404,13 +403,13 @@ class _BetaRepairLabProPlacementCardState
 
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
-    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.45);
 
     return Container(
       key: const Key('beta_repair_lab_pro_placement_card'),
       width: double.infinity,
       padding: EdgeInsets.all(widget.compact ? AppSpacing.sm : AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      decoration: VoiceMemoryCards.standard(background: Theme.of(context).colorScheme.surfaceContainerHighest),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -423,7 +422,7 @@ class _BetaRepairLabProPlacementCardState
           Text(
             widget.result.body,
             key: const Key('beta_repair_lab_pro_placement_body'),
-            style: bodyStyle.copyWith(color: AppColors.textPrimary),
+            style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           SizedBox(height: widget.compact ? AppSpacing.sm : AppSpacing.md),
           FilledButton(

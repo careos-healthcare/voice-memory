@@ -40,7 +40,7 @@ class XRayPanel extends StatelessWidget {
         Text(
           theoryStatement,
           style: ArchiveMobileTypography.explanationBody(context).copyWith(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -141,7 +141,7 @@ class XRayPanel extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: AppColors.surfaceAlt,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: AppColors.warmBorder),
         ),
@@ -164,7 +164,7 @@ class XRayPanel extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt.withValues(alpha: 0.35),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.warmBorder),
       ),
@@ -182,7 +182,7 @@ class XRayPanel extends StatelessWidget {
           Text(
             '“${chunk.excerpt}”',
             style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 6),
@@ -224,7 +224,7 @@ class XRayPanel extends StatelessWidget {
     final color = switch (role) {
       TheoryRetrievalRole.supporting => AppColors.accentSecondary,
       TheoryRetrievalRole.counter => AppColors.warning,
-      TheoryRetrievalRole.hybrid => AppColors.accentPrimary,
+      TheoryRetrievalRole.hybrid => Theme.of(context).colorScheme.primary,
     };
 
     return Container(

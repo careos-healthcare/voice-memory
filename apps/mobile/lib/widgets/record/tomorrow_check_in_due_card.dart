@@ -325,7 +325,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
             Text(
               ConsumerUiCopy.tomorrowCheckInDueTitle,
               style: VoiceMemoryTypography.metadataStyle(
-                color: AppColors.accentPrimary,
+                color: Theme.of(context).colorScheme.primary,
               ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -348,7 +348,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
                   Text(
                     'Planned for: ${widget.plannedAnchor!.displayLabel}',
                     style: VoiceMemoryTypography.bodyStyle(
-                      color: AppColors.accentPrimary,
+                      color: Theme.of(context).colorScheme.primary,
                     ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ],
@@ -493,7 +493,7 @@ class _OneTapAnswerButton extends StatelessWidget {
       height: 52,
       child: Material(
         color: selected
-            ? AppColors.accentPrimary.withValues(alpha: 0.15)
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
             : Colors.white.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
@@ -505,7 +505,7 @@ class _OneTapAnswerButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: selected
-                    ? AppColors.accentPrimary
+                    ? Theme.of(context).colorScheme.primary
                     : AppColors.warmBorder,
                 width: selected ? 1.5 : 1,
               ),
@@ -515,7 +515,7 @@ class _OneTapAnswerButton extends StatelessWidget {
               style:
                   VoiceMemoryTypography.bodyStyle(
                     color: selected
-                        ? AppColors.accentPrimary
+                        ? Theme.of(context).colorScheme.primary
                         : context.palette.textPrimary,
                   ).copyWith(
                     fontSize: 16,
@@ -543,12 +543,12 @@ class _OptionChip extends StatelessWidget {
       selected: selected,
       onSelected: onTap == null ? null : (_) => onTap!(),
       showCheckmark: false,
-      selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
+      selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
       side: BorderSide(
-        color: selected ? AppColors.accentPrimary : AppColors.warmBorder,
+        color: selected ? Theme.of(context).colorScheme.primary : AppColors.warmBorder,
       ),
       labelStyle: VoiceMemoryTypography.bodyStyle(
-        color: selected ? AppColors.accentPrimary : context.palette.textSecondary,
+        color: selected ? Theme.of(context).colorScheme.primary : context.palette.textSecondary,
       ).copyWith(fontSize: 13, fontWeight: selected ? FontWeight.w600 : null),
     );
   }

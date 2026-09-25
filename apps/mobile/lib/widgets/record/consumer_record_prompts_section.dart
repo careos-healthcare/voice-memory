@@ -43,8 +43,8 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
           style:
               VoiceMemoryTypography.metadataStyle(
                 color: deemphasized
-                    ? AppColors.textSecondary
-                    : AppColors.accentPrimary,
+                    ? Theme.of(context).colorScheme.onSurfaceVariant
+                    : Theme.of(context).colorScheme.primary,
               ).copyWith(
                 fontWeight: deemphasized ? FontWeight.w500 : FontWeight.w600,
               ),
@@ -55,7 +55,7 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
             PersonalReturnPromptSet.personalizedLabel,
             key: const Key('personal_prompts_label'),
             style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -73,7 +73,7 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
         Text(
           'Or pick a topic',
           style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -87,7 +87,7 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
                 selected: selectedPrompt == topic,
                 onSelected: (_) => onSelectPrompt(topic),
                 selectedColor: AppColors.accentLight,
-                checkmarkColor: AppColors.accentPrimary,
+                checkmarkColor: Theme.of(context).colorScheme.primary,
                 side: const BorderSide(color: AppColors.borderSubtle),
               ),
           ],
@@ -97,7 +97,7 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.textSecondary,
+              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -141,7 +141,7 @@ class _StarterCard extends StatelessWidget {
       selected: selected,
       label: prompt,
       child: Material(
-        color: AppColors.backgroundSecondary,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: onTap,
@@ -153,13 +153,13 @@ class _StarterCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: selected
-                    ? AppColors.accentPrimary
-                    : AppColors.borderSubtle,
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.outline,
                 width: selected ? 1.5 : 1,
               ),
               color: selected
                   ? AppColors.accentLight
-                  : AppColors.backgroundSecondary,
+                  : Theme.of(context).colorScheme.surface,
             ),
             child: Text(prompt, style: VoiceMemoryTypography.bodyStyle()),
           ),

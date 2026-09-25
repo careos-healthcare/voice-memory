@@ -20,10 +20,10 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurface, height: 1.45);
     final labelStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600);
     final maxCount = map.rows.isEmpty
         ? 0
         : map.rows.map((row) => row.count).reduce((a, b) => a > b ? a : b);
@@ -33,7 +33,7 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(
-        background: AppColors.backgroundSecondary,
+        background: Theme.of(context).colorScheme.surface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -47,7 +47,7 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
           Text(
             map.subtitle,
             key: const Key('archive_evidence_map_subtitle'),
-            style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           if (map.rows.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
@@ -83,7 +83,7 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
                                 key: Key(
                                   'archive_evidence_map_row_chevron_${row.rowId}',
                                 ),
-                                color: AppColors.textSecondary,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 size: 20,
                               ),
                           ],
@@ -96,8 +96,8 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
                               key: Key('archive_evidence_map_bar_${row.rowId}'),
                               value: row.count / maxCount,
                               minHeight: 6,
-                              backgroundColor: AppColors.backgroundPrimary,
-                              color: AppColors.accentPrimary,
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ],
@@ -169,7 +169,7 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
             Text(
               excluded,
               key: const Key('archive_evidence_map_excluded_note'),
-              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+              style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ],

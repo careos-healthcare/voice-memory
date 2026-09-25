@@ -49,7 +49,7 @@ class ActivePatternThreadCard extends StatelessWidget {
           Text(
             ConsumerUiCopy.activePatternCurrentTitle,
             style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.accentPrimary,
+              color: Theme.of(context).colorScheme.primary,
             ).copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -82,10 +82,10 @@ class ActivePatternThreadCard extends StatelessWidget {
                     .map(
                       (c) => Chip(
                         label: Text(c),
-                        backgroundColor: AppColors.backgroundSecondary,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         side: const BorderSide(color: _warmBorder),
                         labelStyle: VoiceMemoryTypography.bodyStyle(
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ).copyWith(fontSize: 13),
                       ),
                     )
@@ -115,7 +115,7 @@ class ActivePatternThreadCard extends StatelessWidget {
             Text(
               ConsumerUiCopy.activePatternPostSaveLine,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ).copyWith(height: 1.45),
             ),
           ],
@@ -135,14 +135,14 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.backgroundSecondary,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ActivePatternThreadCard._warmBorder),
       ),
       child: Text(
         label,
         style: VoiceMemoryTypography.metadataStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ).copyWith(fontWeight: FontWeight.w600),
       ),
     );
@@ -163,7 +163,7 @@ class _Section extends StatelessWidget {
         Text(
           label,
           style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 4),

@@ -49,7 +49,7 @@ class PressurePatternRevealCard extends StatelessWidget {
             reveal.headline,
             style: ArchiveMobileTypography.body(
               context,
-            ).copyWith(color: AppColors.textPrimary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           if (reveal.hasPattern) ...[
             const SizedBox(height: AppSpacing.md),
@@ -93,15 +93,15 @@ class PressurePatternRevealCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textSecondary),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -111,7 +111,7 @@ class PressurePatternRevealCard extends StatelessWidget {
       key: const Key('pressure_pattern_pro_detail'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: VoiceMemoryCards.flat(background: AppColors.surfaceAlt),
+      decoration: VoiceMemoryCards.flat(background: Theme.of(context).colorScheme.surfaceContainerHighest),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,7 +148,7 @@ class PressurePatternRevealCard extends StatelessWidget {
           value,
           style: ArchiveMobileTypography.body(
             context,
-          ).copyWith(color: AppColors.textPrimary),
+          ).copyWith(color: Theme.of(context).colorScheme.onSurface),
         ),
       ],
     );
@@ -162,7 +162,7 @@ class PressurePatternRevealCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration: VoiceMemoryCards.flat(background: AppColors.surfaceAlt),
+        decoration: VoiceMemoryCards.flat(background: Theme.of(context).colorScheme.surfaceContainerHighest),
         child: Row(
           children: [
             const Icon(
@@ -175,7 +175,7 @@ class PressurePatternRevealCard extends StatelessWidget {
               child: Text(
                 lockedRowLabel,
                 style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),

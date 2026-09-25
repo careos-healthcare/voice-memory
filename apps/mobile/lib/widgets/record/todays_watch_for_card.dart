@@ -150,7 +150,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
           Text(
             ConsumerUiCopy.todaysWatchForTitle,
             style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.accentPrimary,
+              color: Theme.of(context).colorScheme.primary,
             ).copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -167,7 +167,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
             Text(
               widget.pending.situationHint!,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ).copyWith(fontSize: 14, height: 1.4),
             ),
           ],
@@ -177,7 +177,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
             Text(
               ConsumerUiCopy.todaysWatchForCheckInLabel,
               style: VoiceMemoryTypography.metadataStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ).copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
@@ -206,7 +206,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
               selected.followUpPrompt,
               style:
                   VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ).copyWith(
                     fontSize: 15,
                     height: 1.4,
@@ -256,7 +256,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selected ? AppColors.accentPrimary : _warmBorder,
+              color: selected ? Theme.of(context).colorScheme.primary : _warmBorder,
             ),
           ),
           child: Text(
@@ -264,8 +264,8 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
             style:
                 VoiceMemoryTypography.bodyStyle(
                   color: selected
-                      ? AppColors.accentPrimary
-                      : AppColors.textSecondary,
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ).copyWith(
                   fontSize: 13,
                   fontWeight: selected ? FontWeight.w600 : null,

@@ -9,7 +9,6 @@ import 'package:archiveme_mobile/features/archive_history/archive_history_item.d
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_copy.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive_controls/archive_moment_actions_sheet.dart';
 import 'package:archiveme_mobile/widgets/record/correct_transcript_sheet.dart';
@@ -94,7 +93,7 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                 key: const Key('archive_history_sheet_subtitle'),
                 style: ArchiveMobileTypography.responsiveHelper(
                   context,
-                ).copyWith(color: AppColors.textSecondary, height: 1.4),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.4),
               ),
               if (!_content.isEmpty) ...[
                 const SizedBox(height: AppSpacing.md),
@@ -118,7 +117,7 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                   key: const Key('archive_history_empty_body'),
                   style: ArchiveMobileTypography.explanationBody(
                     context,
-                  ).copyWith(color: AppColors.textSecondary),
+                  ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ] else if (filteredItems.isEmpty) ...[
                 Text(
@@ -132,7 +131,7 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                   key: const Key('archive_history_filtered_empty_body'),
                   style: ArchiveMobileTypography.explanationBody(
                     context,
-                  ).copyWith(color: AppColors.textSecondary),
+                  ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ] else ...[
                 for (final item in filteredItems) ...[
@@ -283,7 +282,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
                 key: Key('archive_history_date_${item.entryId}'),
                 style: ArchiveMobileTypography.cardLabel(
                   context,
-                ).copyWith(color: AppColors.textPrimary),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
             _StatusChip(label: _chipLabel, statusKey: _statusKey),
@@ -297,7 +296,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
           overflow: TextOverflow.ellipsis,
           style: ArchiveMobileTypography.explanationBody(
             context,
-          ).copyWith(color: AppColors.textSecondary),
+          ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         if (item.evidenceNote != null) ...[
           const SizedBox(height: AppSpacing.xs),
@@ -306,7 +305,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
             key: Key('archive_history_note_${item.entryId}'),
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
           ),
         ],
         if (item.helpedNote != null) ...[
@@ -316,7 +315,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
             key: Key('archive_history_helped_${item.entryId}'),
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
           ),
         ],
         if (item.showAddWordsCta) ...[
@@ -378,13 +377,13 @@ class _StatusChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),

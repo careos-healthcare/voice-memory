@@ -96,7 +96,7 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
                 key: const Key('thread_return_named_line'),
                 style: ArchiveMobileTypography.responsiveHelper(
                   context,
-                ).copyWith(color: AppColors.textSecondary),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
             const SizedBox(height: AppSpacing.xs),
@@ -104,7 +104,7 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
               evidence.summaryLine,
               style: ArchiveMobileTypography.body(
                 context,
-              ).copyWith(color: AppColors.textPrimary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -123,7 +123,7 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
                 ThreadReturnEvidence.evidenceHeading,
                 style: ArchiveMobileTypography.responsiveHelper(context)
                     .copyWith(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -134,7 +134,7 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
                     '\u201C$snippet\u201D',
                     style: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.textPrimary),
+                    ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
             ],
@@ -143,7 +143,7 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
               ThreadReturnEvidence.basedOnLine,
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             if (evidence.followUpCtaLabel.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -198,13 +198,13 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         evidence.statusLabel,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -215,13 +215,13 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -230,15 +230,15 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500),
       ),
     );
   }

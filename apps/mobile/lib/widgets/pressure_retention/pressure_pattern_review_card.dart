@@ -66,7 +66,7 @@ class PressurePatternReviewCard extends StatelessWidget {
             'Built from ${review.entryCount} pressure moments on this device.',
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.md),
           if (review.repeatingSummary != null)
@@ -116,7 +116,7 @@ class PressurePatternReviewCard extends StatelessWidget {
             'Confidence: ${review.confidence.label}',
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -130,7 +130,7 @@ class PressurePatternReviewCard extends StatelessWidget {
         lockedHint,
         style: ArchiveMobileTypography.body(
           context,
-        ).copyWith(color: AppColors.textSecondary),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       const SizedBox(height: AppSpacing.sm),
       InkWell(
@@ -140,7 +140,7 @@ class PressurePatternReviewCard extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: VoiceMemoryCards.flat(background: AppColors.surfaceAlt),
+          decoration: VoiceMemoryCards.flat(background: Theme.of(context).colorScheme.surfaceContainerHighest),
           child: Row(
             children: [
               const Icon(
@@ -153,7 +153,7 @@ class PressurePatternReviewCard extends StatelessWidget {
                 child: Text(
                   lockedRowLabel,
                   style: ArchiveMobileTypography.body(context).copyWith(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -182,7 +182,7 @@ class PressurePatternReviewCard extends StatelessWidget {
             body,
             style: ArchiveMobileTypography.body(
               context,
-            ).copyWith(color: AppColors.textPrimary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
         ],
       ),

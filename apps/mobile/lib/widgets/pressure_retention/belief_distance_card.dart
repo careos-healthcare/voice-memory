@@ -94,14 +94,14 @@ class BeliefDistanceCard extends StatelessWidget {
               belief.beliefLine,
               style: ArchiveMobileTypography.body(
                 context,
-              ).copyWith(color: AppColors.textPrimary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               belief.frequencyLine,
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -118,7 +118,7 @@ class BeliefDistanceCard extends StatelessWidget {
                 BeliefDistance.evidenceHeading,
                 style: ArchiveMobileTypography.responsiveHelper(context)
                     .copyWith(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -129,7 +129,7 @@ class BeliefDistanceCard extends StatelessWidget {
                     '\u201C$snippet\u201D',
                     style: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.textPrimary),
+                    ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
             ],
@@ -139,7 +139,7 @@ class BeliefDistanceCard extends StatelessWidget {
               key: const Key('belief_distance_line'),
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             MemoryCardVisibilityControls(
               cardType: MemoryCardType.beliefDistance,
@@ -161,13 +161,13 @@ class BeliefDistanceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -176,15 +176,15 @@ class BeliefDistanceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500),
       ),
     );
   }

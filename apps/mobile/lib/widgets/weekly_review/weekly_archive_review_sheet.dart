@@ -21,7 +21,6 @@ import 'package:archiveme_mobile/features/weekly_review/weekly_archive_review_co
 import 'package:archiveme_mobile/features/weekly_review/weekly_archive_review_model.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/beta_feedback_sheet.dart';
 import 'package:archiveme_mobile/widgets/archive_paywall/pro_memory_upgrade_bridge.dart';
@@ -97,7 +96,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
-    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurface, height: 1.45);
     final monthlyPrivateReportPreview = MonthlyPrivateReportEngine.build(
       entries: entries,
       returnChecks: RepeatReturnCheckStore.cached,
@@ -132,12 +131,12 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           ),
         );
     final fallbackStyle = bodyStyle.copyWith(
-      color: AppColors.textSecondary,
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
       fontStyle: FontStyle.italic,
     );
     final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textSecondary, height: 1.35, fontSize: 12);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.35, fontSize: 12);
 
     return SafeArea(
       child: Padding(
@@ -165,7 +164,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   key: const Key('weekly_archive_review_sheet_subtitle'),
                   style: ArchiveMobileTypography.explanationBody(
                     context,
-                  ).copyWith(color: AppColors.textSecondary),
+                  ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ],
               if (patternLifecycle != null) ...[
@@ -202,7 +201,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   child: Text(
                     quietSignal!.weeklyReviewBody ?? '',
                     key: const Key('weekly_archive_review_quiet_signal_body'),
-                    style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                    style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
               ],
@@ -212,7 +211,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                 Text(
                   review.formingBody!,
                   key: const Key('weekly_archive_review_sheet_forming_body'),
-                  style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                  style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.full) ...[
@@ -288,7 +287,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     child: Text(
                       section.body,
                       key: const Key('weekly_archive_review_watch_body'),
-                      style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                      style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 ],
@@ -311,7 +310,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   Text(
                     ProMemoryBoundaryCopy.weeklyReviewPreviewBody,
                     key: const Key('weekly_archive_review_preview_body'),
-                    style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                    style: bodyStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
                 if (!isPro &&
@@ -386,7 +385,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     PrivateReportCopy.openReportCta,
                     style: ArchiveMobileTypography.responsiveHelper(context)
                         .copyWith(
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           decoration: TextDecoration.underline,
                         ),
                   ),
