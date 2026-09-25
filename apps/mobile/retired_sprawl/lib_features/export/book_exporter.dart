@@ -121,6 +121,14 @@ abstract final class BookExporter {
     return file;
   }
 
+  static Future<File> generatePdfBook({
+    required List<JournalBookEntry> entries,
+    required String path,
+    String title = 'Thoughtprint',
+  }) {
+    return save(JournalBook(title: title, entries: entries), path: path);
+  }
+
   static Future<Uint8List> render({
     required List<HistoryMoment> entries,
     required DateTime start,
