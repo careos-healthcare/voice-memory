@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
 import 'package:archiveme_mobile/features/capture/native_quick_capture.dart';
 import 'package:archiveme_mobile/features/capture/providers/capture_module_providers.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
@@ -34,6 +35,8 @@ class CaptureScreenHost extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final params = routeState?.uri.queryParameters ?? const {};
     final nativeAutostart = NativeQuickCapture.autostartRequested(params);
+    final reminderRecord =
+        JournalNotificationPayload.takeAutoRecord() || params['autoRecord'] == '1';
     final allowBackgroundRecording =
         params['background'] == '1' || nativeAutostart;
     final adoptBackgroundCapture = nativeAutostart ||
@@ -55,6 +58,7 @@ class CaptureScreenHost extends ConsumerWidget {
       navigationActivityController: navigationActivityController,
       allowBackgroundRecording: allowBackgroundRecording,
       adoptBackgroundCapture: adoptBackgroundCapture,
+      autoRecord: reminderRecord,
       stopBackgroundCapture: backgroundCapture?.stopBackgroundCapture,
     ),
     );

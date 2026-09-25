@@ -36,6 +36,7 @@ class CaptureScreen extends StatefulWidget {
     this.dependencies,
     this.allowBackgroundRecording = false,
     this.adoptBackgroundCapture = false,
+    this.autoRecord = false,
     this.stopBackgroundCapture,
   });
 
@@ -49,6 +50,7 @@ class CaptureScreen extends StatefulWidget {
   final CaptureFlowDependencies? dependencies;
   final bool allowBackgroundRecording;
   final bool adoptBackgroundCapture;
+  final bool autoRecord;
   final Future<void> Function()? stopBackgroundCapture;
 
   @override
@@ -80,8 +82,12 @@ class _CaptureScreenState extends State<CaptureScreen>
     _controller.addListener(_syncNavigationActivity);
     _controller.setInputMode(widget.initialInputMode);
     unawaited(_controller.initialize().then((_) {
-      if (!mounted || !widget.adoptBackgroundCapture) return;
-      _controller.showBackgroundRecordingUi();
+      if (!mounted) return;
+      if (widget.adoptBackgroundCapture) {
+        _controller.showBackgroundRecordingUi();
+      } else if (widget.autoRecord) {
+        unawaited(_controller.startVoiceCapture());
+      }
     }));
   }
 

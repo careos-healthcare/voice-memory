@@ -53,6 +53,7 @@ const _declarationFlags = <String, bool>{
       V1CapabilityRegistry.gentleReminders ||
       V1CapabilityRegistry.notifications,
   'android.permission.POST_NOTIFICATIONS': V1CapabilityRegistry.notifications,
+  'android.permission.SCHEDULE_EXACT_ALARM': V1CapabilityRegistry.notifications,
   'com.android.vending.BILLING': V1CapabilityRegistry.storeBilling,
 };
 

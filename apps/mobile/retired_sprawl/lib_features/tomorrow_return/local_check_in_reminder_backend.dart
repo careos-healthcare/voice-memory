@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -154,7 +155,7 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
           iOS: DarwinNotificationDetails(),
           macOS: DarwinNotificationDetails(),
         ),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        androidScheduleMode: journalAndroidScheduleMode,
         payload: payload,
       );
     } catch (_) {

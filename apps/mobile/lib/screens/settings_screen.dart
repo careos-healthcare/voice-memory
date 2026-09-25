@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/core/notifications/journal_reminder_settings_section.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
@@ -323,6 +324,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const EncryptedArchiveBackupSettingsTile(),
             const GentleRemindersSettingsSection(),
+            JournalReminderPreferences(
+              readEnabled: (key) async {
+                if (!AppServices.isInitialized) return false;
+                return await AppServices.instance.prefs.readBool(key) ?? false;
+              },
+              writeEnabled: (key, value) async {
+                if (!AppServices.isInitialized) return;
+                await AppServices.instance.prefs.writeBool(key, value);
+              },
+            ),
             const PrivacyDataControlsSection(),
             if (V1CapabilityRegistry.localAiPrivacyControls)
               KeyedSubtree(

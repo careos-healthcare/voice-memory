@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/core/notifications/journal_reminder_slots.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
@@ -73,10 +74,13 @@ class GentleRemindersLifecycleHost extends StatefulWidget {
 class _GentleRemindersLifecycleHostState
     extends State<GentleRemindersLifecycleHost>
     with WidgetsBindingObserver {
+  String? _zone;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(_syncZone());
     unawaited(GentleRemindersService().rescheduleReminders());
   }
 
@@ -89,7 +93,20 @@ class _GentleRemindersLifecycleHostState
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      unawaited(GentleRemindersService().rescheduleReminders());
+      unawaited(_syncZone());
+    }
+  }
+
+  Future<void> _syncZone() async {
+    final next = (await FlutterTimezone.getLocalTimezone()).identifier;
+    final changed = journalRemindersNeedReschedule(
+      previousZone: _zone,
+      nextZone: next,
+    );
+    _zone = next;
+    tz.setLocalLocation(tz.getLocation(next));
+    if (changed) {
+      await GentleRemindersService().rescheduleReminders();
     }
   }
 
