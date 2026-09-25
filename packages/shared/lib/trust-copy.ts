@@ -8,6 +8,12 @@ export { CONTACT_EMAIL };
 export const PRIVATE_BY_DEFAULT_LINE =
   "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
+export const CLOUD_AI_CONSENT_LINE =
+  "Cloud AI is off until you turn it on, and you can delete your cloud copy anytime.";
+
+export const CLOUD_AI_CONSENT_SUPPORT =
+  "You decide before journal text is sent for pattern analysis, and you can remove the server copy from Settings.";
+
 export const NOT_THERAPY_LINE =
   "Thoughtprint resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 

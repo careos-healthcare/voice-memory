@@ -7,7 +7,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { MARKETING_SITE_URL } from "@/lib/site/marketing-site";
-import { NOT_THERAPY_LINE } from "@/lib/trust-copy";
+import {
+  CLOUD_AI_CONSENT_LINE,
+  CLOUD_AI_CONSENT_SUPPORT,
+  NOT_THERAPY_LINE,
+} from "@/lib/trust-copy";
 
 const title = "Thoughtprint — A private voice journal";
 const description =
@@ -60,6 +64,17 @@ export default function HomePage() {
               <li key={point}>{point}</li>
             ))}
           </ul>
+          <section className="mt-12" aria-labelledby="privacy-security-heading">
+            <h2 id="privacy-security-heading" className="font-serif text-lg font-medium text-[#172033]">
+              Privacy and security
+            </h2>
+            <p className="mt-3 text-base font-semibold leading-relaxed text-[#172033]">
+              {CLOUD_AI_CONSENT_LINE}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[#4B5568]">
+              {CLOUD_AI_CONSENT_SUPPORT}
+            </p>
+          </section>
           <ul className="mt-8 space-y-3 text-base leading-relaxed text-[#3F4757]">
             {features.map((point) => (
               <li key={point}>{point}</li>
