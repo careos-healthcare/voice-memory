@@ -24,6 +24,7 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.da
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 /// Coordinates focused-beta capture without legacy post-save engines.
 class CaptureFlowController extends ChangeNotifier {
@@ -558,7 +559,13 @@ class CaptureFlowController extends ChangeNotifier {
       );
     });
     if (_liveSttRoute == LiveSttRoute.onDevice) {
-      await LiveDraftTranscript.start();
+      final locale = await _deps.transcriptionCapability.readSpeechLocale();
+      if (locale == null) return;
+      try {
+        await LiveDraftTranscript.start(locale: locale);
+      } on PlatformException {
+        // A refused language leaves the recording itself intact.
+      }
     }
   }
 

@@ -237,6 +237,10 @@ class _FakeTranscriptionCapability implements TranscriptionCapabilityPort {
     if (recordLocaleShouldThrow) throw StateError('locale store failed');
     recordedLocales.add(locale);
   }
+
+  @override
+  Future<ConfirmedSpeechLocale?> readSpeechLocale() async =>
+      recordedLocales.isEmpty ? null : recordedLocales.last;
 }
 
 class _FakeTelemetry implements CaptureTelemetry {

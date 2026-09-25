@@ -68,6 +68,22 @@
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Thoughtprint turns a recording into text on this device when you ask it to.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Thoughtprint reads the State of Mind you logged in Apple Health so it can show that mood beside the moment from the same day.</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Voice Memo</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.mpeg-4-audio</string>
+				<string>com.apple.m4a-audio</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

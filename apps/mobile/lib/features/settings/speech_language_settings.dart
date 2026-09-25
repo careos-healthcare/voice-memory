@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:flutter/material.dart';
 
 /// Language codes handed to on-device speech and to Whisper.
@@ -26,7 +27,7 @@ class SpeechLanguagePreferences extends StatefulWidget {
   final Future<String?> Function() readLanguage;
   final Future<void> Function(String identifier) writeLanguage;
 
-  static const preferenceKey = 'speech_language';
+  static const preferenceKey = SpeechLocaleStore.settingsPreferenceKey;
 
   @override
   State<SpeechLanguagePreferences> createState() =>

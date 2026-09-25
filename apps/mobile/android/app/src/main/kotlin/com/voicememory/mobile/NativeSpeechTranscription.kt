@@ -41,7 +41,14 @@ object NativeSpeechTranscriptionHandler {
         result: io.flutter.plugin.common.MethodChannel.Result,
     ) {
         when (call.method) {
-            "transcribeFile" -> result.error(DISABLED_CODE, DISABLED_MESSAGE, null)
+            "transcribeFile", "startLiveDraft" -> {
+                val locale = call.argument<String>("localeIdentifier")
+                result.error(
+                    DISABLED_CODE,
+                    DISABLED_MESSAGE,
+                    mapOf("localeIdentifier" to locale),
+                )
+            }
             else -> result.notImplemented()
         }
     }

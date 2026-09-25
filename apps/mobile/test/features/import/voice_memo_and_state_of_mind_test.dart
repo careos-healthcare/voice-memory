@@ -1,0 +1,91 @@
+import 'dart:io';
+
+import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
+import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('a shared m4a is transcribed in the chosen language and backdated', () async {
+    final dir = await Directory.systemTemp.createTemp('voice_memo_');
+    final audio = File('${dir.path}/morning.m4a')..writeAsBytesSync([1, 2, 3]);
+    final recorded = DateTime.utc(2024, 5, 2, 8);
+    ConfirmedSpeechLocale? seen;
+    final entry = await VoiceMemoImporter.importFile(
+      audio: audio,
+      locale: ConfirmedSpeechLocale.confirmed('es-ES')!,
+      createdAt: recorded,
+      transcribe: (file, locale) async {
+        seen = locale;
+        expect(file.path, audio.path);
+        return 'el rio estaba alto';
+      },
+    );
+    expect(seen?.identifier, 'es-ES');
+    expect(entry?.transcript, 'el rio estaba alto');
+    expect(entry?.createdAt, recorded);
+    expect(entry?.captureSource, VoiceMemoImporter.captureSource);
+    expect(VoiceMemoImporter.accepts('note.wav'), isFalse);
+    await dir.delete(recursive: true);
+  });
+
+  test('an opened voice memo is saved on the recording date without guessing a language',
+      () async {
+    final dir = await Directory.systemTemp.createTemp('voice_memo_inbox_');
+    final audio = File('${dir.path}/shared.m4a')..writeAsBytesSync([4]);
+    var transcribed = false;
+    final saved = <JournalEntry>[];
+    final entry = await VoiceMemoImportInbox.consume(
+      pending: {
+        'path': audio.path,
+        'createdAt': '2023-11-04T15:00:00.000Z',
+      },
+      readLocale: () async => null,
+      save: (row) async => saved.add(row),
+      transcribe: (file, locale) async {
+        transcribed = true;
+        return 'should not run';
+      },
+    );
+    expect(transcribed, isFalse);
+    expect(entry?.transcript, isEmpty);
+    expect(entry?.createdAt, DateTime.utc(2023, 11, 4, 15));
+    expect(saved, hasLength(1));
+    await dir.delete(recursive: true);
+  });
+
+  test('state of mind for that day is stored on the entry', () async {
+    StateOfMindReader.debugLookup = (day) async => 'calm';
+    addTearDown(() => StateOfMindReader.debugLookup = null);
+    final entry = JournalEntry(
+      id: 'day',
+      createdAt: DateTime.utc(2026, 9, 25),
+      transcript: 'a walk',
+      durationSeconds: 2,
+      reflection: const Reflection(
+        mood: '',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+    );
+    final attached = await StateOfMindReader.attach(entry);
+    expect(attached.reflection.healthStateOfMind, 'calm');
+    expect(attached.toJson()['reflection']['healthStateOfMind'], 'calm');
+  });
+
+  test('speech language settings are the locale native recognition reads', () async {
+    final dir = await Directory.systemTemp.createTemp('speech_lang_');
+    final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+    await prefs.writeString(SpeechLocaleStore.settingsPreferenceKey, 'ja-JP');
+    final locale = await SpeechLocaleStore(prefs).read();
+    expect(locale?.identifier, 'ja-JP');
+    await dir.delete(recursive: true);
+  });
+}

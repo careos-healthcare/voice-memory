@@ -7,7 +7,10 @@ import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/core/notifications/journal_reminder_slots.dart';
+import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
@@ -94,6 +97,7 @@ class _GentleRemindersLifecycleHostState
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       unawaited(_syncZone());
+      unawaited(_importPendingVoiceMemo());
     }
   }
 
@@ -108,6 +112,17 @@ class _GentleRemindersLifecycleHostState
     if (changed) {
       await GentleRemindersService().rescheduleReminders();
     }
+  }
+
+  Future<void> _importPendingVoiceMemo() async {
+    if (!AppServices.isInitialized) return;
+    await VoiceMemoImportInbox.consume(
+      readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),
+      save: (entry) => AppServices.instance.journalStore.save(
+        entry,
+        captureKind: 'voice',
+      ),
+    );
   }
 
   @override

@@ -118,6 +118,9 @@ abstract interface class TranscriptionCapabilityPort {
   /// this path can hand over a value it read off the device instead of off a
   /// person.
   Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale);
+
+  /// The language chosen in Speech language settings, when one has been saved.
+  Future<ConfirmedSpeechLocale?> readSpeechLocale();
 }
 
 /// Tracks interrupted captures so recovery can resume safely.

@@ -27,7 +27,7 @@ abstract final class V1CapabilityRegistry {
 
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
-  static const bool health = false;
+  static const bool health = true;
   static const bool bluetooth = false;
   static const bool localNetwork = false;
   static const bool nearbyWifi = false;

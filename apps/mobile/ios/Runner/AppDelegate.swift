@@ -1,4 +1,5 @@
 import Flutter
+import HealthKit
 import UIKit
 import WatchConnectivity
 import workmanager_apple
@@ -43,6 +44,7 @@ import workmanager_apple
       setupHardwareMonitorChannel(controller: controller)
       quickCaptureWidgetChannelHandler.attach(to: controller)
       setupNativeQuickCaptureChannel(controller: controller)
+      setupHealthAndVoiceMemoChannels(controller: controller)
       liveAudioLifecycleBridge.attach(to: controller)
     }
     WatchSessionBridge.shared.activate()
@@ -151,6 +153,151 @@ import workmanager_apple
       default:
         result(FlutterMethodNotImplemented)
       }
+    }
+  }
+
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    if url.isFileURL, url.pathExtension.lowercased() == "m4a" {
+      VoiceMemoInbox.shared.remember(url)
+    }
+    return super.application(app, open: url, options: options)
+  }
+
+  private func setupHealthAndVoiceMemoChannels(controller: FlutterViewController) {
+    let health = FlutterMethodChannel(
+      name: "archive_me/health_state_of_mind",
+      binaryMessenger: controller.binaryMessenger
+    )
+    let healthHandler = HealthStateOfMindHandler()
+    health.setMethodCallHandler { call, result in
+      healthHandler.handle(call, result: result)
+    }
+    let imports = FlutterMethodChannel(
+      name: "archive_me/voice_memo_import",
+      binaryMessenger: controller.binaryMessenger
+    )
+    imports.setMethodCallHandler { call, result in
+      guard call.method == "takePending" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      result(VoiceMemoInbox.shared.take())
+    }
+  }
+}
+
+final class VoiceMemoInbox {
+  static let shared = VoiceMemoInbox()
+  private var pending: [String: String]?
+
+  func remember(_ url: URL) {
+    let accessed = url.startAccessingSecurityScopedResource()
+    defer {
+      if accessed { url.stopAccessingSecurityScopedResource() }
+    }
+    let created = (try? url.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date()
+    let stored = Self.copyIntoAppSupport(url) ?? url
+    pending = [
+      "path": stored.path,
+      "createdAt": ISO8601DateFormatter().string(from: created),
+    ]
+  }
+
+  private static func copyIntoAppSupport(_ url: URL) -> URL? {
+    guard let base = FileManager.default.urls(
+      for: .applicationSupportDirectory,
+      in: .userDomainMask
+    ).first else { return nil }
+    let folder = base.appendingPathComponent("voice-memos", isDirectory: true)
+    do {
+      try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+      let dest = folder.appendingPathComponent("\(UUID().uuidString).m4a")
+      if FileManager.default.fileExists(atPath: dest.path) {
+        try FileManager.default.removeItem(at: dest)
+      }
+      try FileManager.default.copyItem(at: url, to: dest)
+      return dest
+    } catch {
+      return nil
+    }
+  }
+
+  func take() -> [String: String]? {
+    let value = pending
+    pending = nil
+    return value
+  }
+}
+
+final class HealthStateOfMindHandler {
+  func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard call.method == "stateOfMind" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    guard #available(iOS 18.0, *) else {
+      result(nil)
+      return
+    }
+    Task {
+      do {
+        result(try await Self.label(arguments: call.arguments))
+      } catch {
+        result(FlutterError(
+          code: "health_unavailable",
+          message: "state_of_mind_unavailable",
+          details: nil
+        ))
+      }
+    }
+  }
+
+  @available(iOS 18.0, *)
+  private static func label(arguments: Any?) async throws -> String? {
+    let store = HKHealthStore()
+    guard HKHealthStore.isHealthDataAvailable() else { return nil }
+    let type = HKObjectType.stateOfMindType()
+    try await store.requestAuthorization(toShare: [], read: [type])
+    let raw = (arguments as? [String: Any])?["date"] as? String
+    let day = ISO8601DateFormatter().date(from: raw ?? "") ?? Date()
+    let start = Calendar.current.startOfDay(for: day)
+    let end = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? day
+    let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+    let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+    return try await withCheckedThrowingContinuation { continuation in
+      let query = HKSampleQuery(
+        sampleType: type,
+        predicate: predicate,
+        limit: 1,
+        sortDescriptors: [sort]
+      ) { _, samples, error in
+        if let error {
+          continuation.resume(throwing: error)
+          return
+        }
+        guard let mood = samples?.first as? HKStateOfMind else {
+          continuation.resume(returning: nil)
+          return
+        }
+        let described = mood.labels.first.map { String(describing: $0) } ?? ""
+        let name = described.split(separator: ".").last.map(String.init) ?? ""
+        if !name.isEmpty {
+          continuation.resume(returning: name)
+          return
+        }
+        if mood.valence > 0.2 {
+          continuation.resume(returning: "pleasant")
+        } else if mood.valence < -0.2 {
+          continuation.resume(returning: "unpleasant")
+        } else {
+          continuation.resume(returning: "neutral")
+        }
+      }
+      store.execute(query)
     }
   }
 }

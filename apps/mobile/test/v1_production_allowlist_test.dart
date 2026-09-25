@@ -69,7 +69,7 @@ void main() {
     );
     expect(V1CapabilityRegistry.liveVoice, isFalse);
     expect(V1CapabilityRegistry.backgroundProcessing, isFalse);
-    expect(V1CapabilityRegistry.health, isFalse);
+    expect(V1CapabilityRegistry.health, isTrue);
     expect(V1CapabilityRegistry.location, isTrue);
     expect(V1CapabilityRegistry.bluetooth, isFalse);
     expect(V1CapabilityRegistry.externalDataConnectors, isFalse);

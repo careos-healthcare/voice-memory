@@ -614,7 +614,11 @@ final class IosNativeSpeechTranscriptionHandler {
       // is not a statement about the person holding the device.
       result(SFSpeechRecognizer.supportedLocales().map(\.identifier))
     case "startLiveDraft":
-      IosLiveDraftSpeech.shared.start(result: result)
+      let args = call.arguments as? [String: Any]
+      IosLiveDraftSpeech.shared.start(
+        localeIdentifier: args?["localeIdentifier"] as? String,
+        result: result
+      )
     case "stopLiveDraft":
       IosLiveDraftSpeech.shared.stop()
       result(nil)
@@ -667,8 +671,17 @@ final class IosLiveDraftSpeech: NSObject, FlutterStreamHandler {
     return nil
   }
 
-  func start(result: @escaping FlutterResult) {
-    let locale = Locale.current
+  func start(localeIdentifier: String?, result: @escaping FlutterResult) {
+    let requested = localeIdentifier?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    guard !requested.isEmpty else {
+      result(FlutterError(
+        code: "locale_not_specified",
+        message: "Speech language has not been chosen",
+        details: nil
+      ))
+      return
+    }
+    let locale = Locale(identifier: requested)
     guard let recognizer = SFSpeechRecognizer(locale: locale),
           recognizer.supportsOnDeviceRecognition else {
       result(FlutterError(code: "on_device_unavailable", message: "No on-device recogniser", details: nil))

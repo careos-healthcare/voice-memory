@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -34,9 +35,11 @@ abstract final class LiveDraftTranscript {
     });
   }
 
-  static Future<void> start() async {
+  static Future<void> start({ConfirmedSpeechLocale? locale}) async {
     if (!supportsOnDeviceStreaming) return;
-    await _channel.invokeMethod<void>('startLiveDraft');
+    await _channel.invokeMethod<void>('startLiveDraft', {
+      if (locale != null) 'localeIdentifier': locale.identifier,
+    });
   }
 
   static Future<void> stop() async {

@@ -114,6 +114,16 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             ),
           ],
         ),
+        if ((entry.captureSource ?? '') == 'apple_voice_memo')
+          Text(
+            'Voice memo',
+            key: Key('archive_voice_memo_${entry.id}'),
+          ),
+        if ((entry.reflection.healthStateOfMind ?? '').isNotEmpty)
+          Text(
+            'State of Mind · ${entry.reflection.healthStateOfMind}',
+            key: Key('archive_state_of_mind_${entry.id}'),
+          ),
       ],
     );
   }

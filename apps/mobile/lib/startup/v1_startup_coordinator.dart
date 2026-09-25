@@ -12,6 +12,8 @@ import 'package:archiveme_mobile/features/live_audio/presentation/offline_vault_
 import 'package:archiveme_mobile/features/objective/current_objective_widget_refresh_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
+import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/archive_correction_bootstrap.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
@@ -91,6 +93,7 @@ abstract final class V1StartupCoordinator {
       await CuriosityNotificationLaunchController.ensureInitialized();
     }
     unawaited(BetaActivationLoopTracker.trackAppOpened());
+    unawaited(_importPendingVoiceMemo());
     PrivateStorageAudit.logAuditReport();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -103,5 +106,16 @@ abstract final class V1StartupCoordinator {
       DeveloperSettingsGate.prefsUnlockKey,
     );
     DeveloperSettingsGate.loadFromPrefs(unlocked);
+  }
+
+  static Future<void> _importPendingVoiceMemo() async {
+    if (!AppServices.isInitialized) return;
+    await VoiceMemoImportInbox.consume(
+      readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),
+      save: (entry) => AppServices.instance.journalStore.save(
+        entry,
+        captureKind: 'voice',
+      ),
+    );
   }
 }

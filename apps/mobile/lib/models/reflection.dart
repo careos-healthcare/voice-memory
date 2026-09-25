@@ -12,6 +12,7 @@ class Reflection {
     this.avoidedOrVagueArea,
     this.nextSmallAction,
     this.patternObservations = const [],
+    this.healthStateOfMind,
   });
 
   factory Reflection.fromJson(Map<String, dynamic> json) {
@@ -30,6 +31,7 @@ class Reflection {
       nextSmallAction: _optionalString(json['nextSmallAction']),
       patternObservations:
           JsonConverters.stringList(json['patternObservations']),
+      healthStateOfMind: _optionalString(json['healthStateOfMind']),
     );
   }
 
@@ -43,6 +45,9 @@ class Reflection {
   final String? avoidedOrVagueArea;
   final String? nextSmallAction;
   final List<String> patternObservations;
+
+  /// Apple Health State of Mind label for the day this moment was saved.
+  final String? healthStateOfMind;
 
   Map<String, dynamic> toJson() => {
         'mood': mood,
@@ -60,6 +65,7 @@ class Reflection {
         if (nextSmallAction != null) 'nextSmallAction': nextSmallAction,
         if (patternObservations.isNotEmpty)
           'patternObservations': patternObservations,
+        if (healthStateOfMind != null) 'healthStateOfMind': healthStateOfMind,
       };
 
   static String? _optionalString(Object? value) {
@@ -89,6 +95,7 @@ class Reflection {
           other.tensionOrContradiction == tensionOrContradiction &&
           other.avoidedOrVagueArea == avoidedOrVagueArea &&
           other.nextSmallAction == nextSmallAction &&
+          other.healthStateOfMind == healthStateOfMind &&
           _stringListsEqual(other.patternObservations, patternObservations);
 
   @override
@@ -102,6 +109,7 @@ class Reflection {
         tensionOrContradiction,
         avoidedOrVagueArea,
         nextSmallAction,
+        healthStateOfMind,
         Object.hashAll(patternObservations),
       );
 }

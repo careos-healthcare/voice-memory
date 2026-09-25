@@ -177,6 +177,9 @@ class _FakeTranscriptionCapability implements TranscriptionCapabilityPort {
 
   @override
   Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale) async {}
+
+  @override
+  Future<ConfirmedSpeechLocale?> readSpeechLocale() async => null;
 }
 
 class _FakeTelemetry implements CaptureTelemetry {

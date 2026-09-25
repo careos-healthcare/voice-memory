@@ -23,16 +23,22 @@ class SpeechLocaleStore {
 
   static const String prefsKey = 'speech_transcription_locale_v1';
 
+  /// The settings radio writes this string. It is the same choice as [prefsKey].
+  static const String settingsPreferenceKey = 'speech_language';
+
   final MobilePrefsStore _prefs;
 
   Future<ConfirmedSpeechLocale?> read() async {
     try {
       final raw = await _prefs.readJsonMap(prefsKey);
       final stored = raw?['localeIdentifier'];
-      if (stored is! String) return null;
-      final entry = SpeechLocaleCatalog.entryFor(stored);
-      if (entry == null) return null;
-      return entry.locale;
+      if (stored is String) {
+        final entry = SpeechLocaleCatalog.entryFor(stored);
+        if (entry != null) return entry.locale;
+      }
+      final settings = await _prefs.readString(settingsPreferenceKey);
+      final fromSettings = SpeechLocaleCatalog.entryFor(settings);
+      return fromSettings?.locale;
     } on Object {
       // ignore: silent_catch_audit — an unreadable preference is not a
       // confirmed language, and guessing one fabricates quotations.
