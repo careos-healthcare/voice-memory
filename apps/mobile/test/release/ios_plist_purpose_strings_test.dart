@@ -12,10 +12,6 @@ void main() {
     final purposes = _purposeStrings(plist);
 
     final required = <String, List<String>>{
-      'image_picker': [
-        'NSPhotoLibraryUsageDescription',
-        'NSCameraUsageDescription',
-      ],
       'local_auth': ['NSFaceIDUsageDescription'],
       'record': ['NSMicrophoneUsageDescription'],
       'flutter_gemma_speech': ['NSSpeechRecognitionUsageDescription'],
@@ -33,6 +29,11 @@ void main() {
         expect(value, isNotEmpty, reason: '$key is empty');
         expect(value, contains('Thoughtprint'), reason: '$key names the app');
       }
+    }
+
+    if (_dependsOn(pubspec, 'image_picker')) {
+      expect(purposes.containsKey('NSPhotoLibraryUsageDescription'), isFalse);
+      expect(purposes.containsKey('NSCameraUsageDescription'), isFalse);
     }
   });
 }

@@ -9,7 +9,6 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/local_tran
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
-import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
@@ -41,7 +40,7 @@ class PipelineLocalMomentRepository implements LocalMomentRepository {
       audioFile: audioFile,
       durationSeconds: durationSeconds,
     );
-    return _withStateOfMind(await _stampImages(outcome, images));
+    return _stampImages(outcome, images);
   }
 
   @override
@@ -50,35 +49,7 @@ class PipelineLocalMomentRepository implements LocalMomentRepository {
     List<String> images = const [],
   }) async {
     final outcome = await _pipeline.saveTextThought(transcript: transcript);
-    return _withStateOfMind(await _stampImages(outcome, images));
-  }
-
-  Future<CapturePipelineOutcome> _withStateOfMind(
-    CapturePipelineOutcome outcome,
-  ) {
-    return outcome.match(
-      (failure) => Future.value(Left(failure)),
-      (success) async {
-        final updated = await StateOfMindReader.attach(success.entry);
-        if (updated.reflection.healthStateOfMind ==
-            success.entry.reflection.healthStateOfMind) {
-          return Right(success);
-        }
-        await _journalStore.save(updated);
-        return Right(
-          CapturePipelineResult(
-            entry: updated,
-            localSaved: success.localSaved,
-            syncSucceeded: success.syncSucceeded,
-            analysisSucceeded: success.analysisSucceeded,
-            syncNote: success.syncNote,
-            attachedTypedTextToVoiceEntry:
-                success.attachedTypedTextToVoiceEntry,
-            lowQualityTranscript: success.lowQualityTranscript,
-          ),
-        );
-      },
-    );
+    return _stampImages(outcome, images);
   }
 
   Future<CapturePipelineOutcome> _stampImages(

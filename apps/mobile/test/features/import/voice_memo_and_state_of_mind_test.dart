@@ -38,6 +38,8 @@ void main() {
     final dir = await Directory.systemTemp.createTemp('voice_memo_inbox_');
     final audio = File('${dir.path}/shared.m4a')..writeAsBytesSync([4]);
     var transcribed = false;
+    StateOfMindReader.debugLookup = (day) async => 'calm';
+    addTearDown(() => StateOfMindReader.debugLookup = null);
     final saved = <JournalEntry>[];
     final entry = await VoiceMemoImportInbox.consume(
       pending: {
@@ -54,6 +56,7 @@ void main() {
     expect(transcribed, isFalse);
     expect(entry?.transcript, isEmpty);
     expect(entry?.createdAt, DateTime.utc(2023, 11, 4, 15));
+    expect(entry?.reflection.healthStateOfMind, isNull);
     expect(saved, hasLength(1));
     await dir.delete(recursive: true);
   });
@@ -87,5 +90,16 @@ void main() {
     final locale = await SpeechLocaleStore(prefs).read();
     expect(locale?.identifier, 'ja-JP');
     await dir.delete(recursive: true);
+  });
+
+  test('saving a moment does not read Apple Health', () {
+    final capture = File(
+      'lib/features/capture_flow/adapters/pipeline_capture_adapters.dart',
+    ).readAsStringSync();
+    final importer = File(
+      'lib/features/import/voice_memo_importer.dart',
+    ).readAsStringSync();
+    expect(capture, isNot(contains('StateOfMindReader')));
+    expect(importer, isNot(contains('StateOfMindReader')));
   });
 }

@@ -108,7 +108,7 @@ void main() {
     expect(archive, contains('ArchiveIntelligenceHome'));
     for (final excluded in [
       'notifications = true',
-      'health = true',
+      "'VOICEMEMORY_ENABLE_HEALTH_SYNC'",
       'bluetooth = false',
       "'VOICEMEMORY_ENABLE_LOCATION'",
       'calendar = false',

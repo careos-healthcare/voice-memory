@@ -27,7 +27,13 @@ abstract final class V1CapabilityRegistry {
 
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
-  static const bool health = true;
+  /// Apple Health State of Mind. On when the launch profile sets
+  /// `VOICEMEMORY_ENABLE_HEALTH_SYNC`. Reading still waits for the Settings
+  /// toggle; saving a moment does not request Health access.
+  static const bool health = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_HEALTH_SYNC',
+    defaultValue: true,
+  );
   static const bool bluetooth = false;
   static const bool localNetwork = false;
   static const bool nearbyWifi = false;

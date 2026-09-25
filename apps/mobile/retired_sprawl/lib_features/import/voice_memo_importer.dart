@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -54,7 +53,7 @@ abstract final class VoiceMemoImporter {
         repeatedSignal: '',
       ),
     );
-    return StateOfMindReader.attach(entry);
+    return entry;
   }
 }
 

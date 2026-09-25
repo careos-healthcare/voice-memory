@@ -11,7 +11,7 @@ const _declarationFlags = <String, bool>{
   'NSFaceIDUsageDescription': V1CapabilityRegistry.biometricLock,
   'NSSpeechRecognitionUsageDescription': V1CapabilityRegistry.speechRecognition,
   'NSHealthShareUsageDescription': V1CapabilityRegistry.health,
-  'NSHealthUpdateUsageDescription': V1CapabilityRegistry.health,
+  'NSHealthUpdateUsageDescription': false,
   'NSCalendarsFullAccessUsageDescription': V1CapabilityRegistry.calendar,
   'NSCalendarsUsageDescription': V1CapabilityRegistry.calendar,
   'NSLocationWhenInUseUsageDescription': V1CapabilityRegistry.location,

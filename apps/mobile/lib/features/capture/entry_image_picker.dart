@@ -1,14 +1,17 @@
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
-/// Opens the system image picker and returns local file paths.
+/// Opens the system photo picker and returns local file paths.
+///
+/// On iOS this uses PHPicker, which hands back the chosen photos without
+/// requesting access to the whole photo library.
 Future<List<String>> pickEntryImages() async {
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.image,
-    allowMultiple: true,
+  final files = await ImagePicker().pickMultiImage(
+    maxWidth: 2048,
+    maxHeight: 2048,
+    imageQuality: 85,
   );
-  if (result == null) return const [];
   return [
-    for (final file in result.files)
-      if ((file.path ?? '').trim().isNotEmpty) file.path!.trim(),
+    for (final file in files)
+      if (file.path.trim().isNotEmpty) file.path.trim(),
   ];
 }

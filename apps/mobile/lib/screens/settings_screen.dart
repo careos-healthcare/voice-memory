@@ -27,6 +27,7 @@ import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_copy.dart';
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
@@ -76,6 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _onDeviceProcessing = OnDeviceProcessingStore.defaultEnabled;
   bool _onDeviceBusy = false;
   bool _cloudSyncEnabled = false;
+  bool _healthMoodSyncEnabled = false;
   List<JournalEntry> _journalEntries = const [];
   final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
@@ -175,7 +177,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!AppServices.isInitialized) return;
     final preferences = await UserPreferences.load(AppServices.instance.prefs);
     if (!mounted) return;
-    setState(() => _cloudSyncEnabled = preferences.isCloudSyncEnabled);
+    setState(() {
+      _cloudSyncEnabled = preferences.isCloudSyncEnabled;
+      _healthMoodSyncEnabled = preferences.isHealthMoodSyncEnabled;
+    });
   }
 
   Future<void> _loadJournalEntries() async {
@@ -247,6 +252,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (mounted) setState(() => _cloudSyncEnabled = value);
               },
             ),
+            if (V1CapabilityRegistry.health)
+              SwitchListTile(
+                key: const Key('settings_health_mood_sync'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  'Sync Apple Health Mood',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Reads the State of Mind you logged in Apple Health. '
+                  'Thoughtprint does not change Apple Health.',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                value: _healthMoodSyncEnabled,
+                onChanged: (value) async {
+                  if (!AppServices.isInitialized) return;
+                  await UserPreferences.setHealthMoodSyncEnabled(
+                    AppServices.instance.prefs,
+                    value,
+                  );
+                  if (value) {
+                    await StateOfMindReader.forDay(DateTime.now());
+                  }
+                  if (mounted) {
+                    setState(() => _healthMoodSyncEnabled = value);
+                  }
+                },
+              ),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(

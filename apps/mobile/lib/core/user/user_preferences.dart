@@ -5,22 +5,30 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 /// Off is the default. Import and pattern exploration stay on this device
 /// until the person turns cloud sync on.
 class UserPreferences {
-  const UserPreferences({this.isCloudSyncEnabled = false});
+  const UserPreferences({
+    this.isCloudSyncEnabled = false,
+    this.isHealthMoodSyncEnabled = false,
+  });
 
   static const cloudSyncPreferenceKey = 'cloud_sync_enabled';
+  static const healthMoodSyncPreferenceKey = 'health_mood_sync_enabled';
 
   /// Test stand-in for the saved preference. Production reads [load].
   static bool? debugCloudSyncOverride;
 
   final bool isCloudSyncEnabled;
+  final bool isHealthMoodSyncEnabled;
 
   static Future<UserPreferences> load(MobilePrefsStore prefs) async {
     final override = debugCloudSyncOverride;
-    if (override != null) {
-      return UserPreferences(isCloudSyncEnabled: override);
-    }
-    final enabled = await prefs.readBool(cloudSyncPreferenceKey) ?? false;
-    return UserPreferences(isCloudSyncEnabled: enabled);
+    final storedCloud = await prefs.readBool(cloudSyncPreferenceKey);
+    final cloud = override ?? storedCloud ?? false;
+    final health =
+        await prefs.readBool(healthMoodSyncPreferenceKey) ?? false;
+    return UserPreferences(
+      isCloudSyncEnabled: cloud,
+      isHealthMoodSyncEnabled: health,
+    );
   }
 
   static Future<void> setCloudSyncEnabled(
@@ -28,5 +36,12 @@ class UserPreferences {
     bool enabled,
   ) async {
     await prefs.writeBool(cloudSyncPreferenceKey, enabled);
+  }
+
+  static Future<void> setHealthMoodSyncEnabled(
+    MobilePrefsStore prefs,
+    bool enabled,
+  ) async {
+    await prefs.writeBool(healthMoodSyncPreferenceKey, enabled);
   }
 }
