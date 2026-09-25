@@ -25,7 +25,7 @@ abstract final class V1CapabilityRegistry {
   static const bool internet = true;
   static const bool storeBilling = false;
 
-  static const bool notifications = false;
+  static const bool notifications = true;
   static const bool backgroundProcessing = false;
   static const bool health = false;
   static const bool bluetooth = false;
@@ -109,10 +109,24 @@ abstract final class V1CapabilityRegistry {
     defaultValue: false,
   );
 
+  /// Cited questions after a save. Off until the saved answers are reviewed.
+  static const bool postSaveFollowUp = bool.fromEnvironment(
+    'POST_SAVE_FOLLOW_UP',
+    defaultValue: false,
+  );
+
+  /// Sunday/Monday archive recap. Off until the copy is reviewed.
+  static const bool weeklyRecapBanner = bool.fromEnvironment(
+    'WEEKLY_RECAP_BANNER',
+    defaultValue: false,
+  );
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',
     'android.permission.USE_BIOMETRIC',
+    'android.permission.POST_NOTIFICATIONS',
+    'android.permission.RECEIVE_BOOT_COMPLETED',
   };
 
   static const Set<String> iosUsageDescriptionAllowlist = {

@@ -16,18 +16,19 @@ void main() {
     expect(gradle, contains('minSdk = maxOf(26, flutter.minSdkVersion)'));
     expect(gradle, contains('verifyProductionReleaseSigning'));
     expect(gradle, isNot(contains('signingConfigs.getByName("debug")')));
-    expect(manifest, contains('android:allowBackup="false"'));
+    expect(manifest, contains('android:allowBackup="true"'));
     expect(manifest, contains('android:dataExtractionRules='));
     expect(manifest, contains('android.permission.RECORD_AUDIO'));
     expect(manifest, contains('android.permission.INTERNET'));
     expect(manifest, contains('android.permission.USE_BIOMETRIC'));
+    expect(manifest, contains('android.permission.POST_NOTIFICATIONS'));
+    expect(manifest, contains('android.permission.RECEIVE_BOOT_COMPLETED" />'));
     expect(manifest, contains('com.android.vending.BILLING'));
     for (final permission in [
       'BLUETOOTH_SCAN',
       'BLUETOOTH_CONNECT',
       'BLUETOOTH_ADVERTISE',
       'NEARBY_WIFI_DEVICES',
-      'RECEIVE_BOOT_COMPLETED',
       'FOREGROUND_SERVICE_DATA_SYNC',
       'ACCESS_BACKGROUND_LOCATION',
       'WRITE_CALENDAR',
@@ -106,7 +107,7 @@ void main() {
     expect(archive, contains('ArchiveIntelligencePresentation.build'));
     expect(archive, contains('ArchiveIntelligenceHome'));
     for (final excluded in [
-      'notifications = false',
+      'notifications = true',
       'health = false',
       'bluetooth = false',
       'location = false',

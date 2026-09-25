@@ -183,7 +183,9 @@ class MomentSaveReceiptCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               status,
             ],
-            if (!_isDegraded && heardText.isNotEmpty) ...[
+            if (V1CapabilityRegistry.postSaveFollowUp &&
+                !_isDegraded &&
+                heardText.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               PostSaveFollowUp(entry: entry),
             ],

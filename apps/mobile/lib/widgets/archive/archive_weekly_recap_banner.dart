@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ArchiveWeeklyRecapBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!V1CapabilityRegistry.weeklyRecapBanner) return const SizedBox.shrink();
     final now = DateTime.now();
     if (!weekJustEnded(now)) return const SizedBox.shrink();
     final week = entriesThisWeek(entries, now);

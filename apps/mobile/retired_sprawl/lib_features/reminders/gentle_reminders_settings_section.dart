@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_copy.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_schedule.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 
@@ -233,6 +234,14 @@ class _GentleReminderOptInState extends State<GentleReminderOptIn> {
     if (V1CapabilityRegistry.gentleReminders && !_answered) {
       unawaited(_load());
     }
+    if (V1CapabilityRegistry.notifications && widget.entryCount >= 3) {
+      unawaited(_requestNotificationPermission());
+    }
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    await CheckInReminderService.ensureInitialized();
+    await CheckInReminderService.backend.requestPermission();
   }
 
   Future<void> _load() async {

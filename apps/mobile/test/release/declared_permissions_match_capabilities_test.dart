@@ -49,7 +49,8 @@ const _declarationFlags = <String, bool>{
       V1CapabilityRegistry.backgroundProcessing,
   'android.permission.RECEIVE_BOOT_COMPLETED':
       V1CapabilityRegistry.backgroundProcessing ||
-      V1CapabilityRegistry.gentleReminders,
+      V1CapabilityRegistry.gentleReminders ||
+      V1CapabilityRegistry.notifications,
   'android.permission.POST_NOTIFICATIONS': V1CapabilityRegistry.notifications,
   'com.android.vending.BILLING': V1CapabilityRegistry.storeBilling,
 };
