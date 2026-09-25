@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_photos.dart';
 import 'package:flutter/material.dart';
 
 class ArchiveEntryCard extends StatelessWidget {
@@ -56,6 +55,14 @@ class ArchiveEntryCard extends StatelessWidget {
                       audioPath: entry.localAudioPath,
                       durationSeconds: entry.durationSeconds,
                       compact: true,
+                    ),
+                  ),
+                if (entry.images.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
+                    child: EntryPhotoThumbnail(
+                      path: entry.images.first,
+                      entryId: entry.id,
                     ),
                   ),
               ],
@@ -168,27 +175,6 @@ class ArchiveEntryCardPreview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (entry.images.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: SizedBox(
-              key: Key('archive_entry_images_${entry.id}'),
-              height: 72,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (final path in entry.images)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: _EntryPhoto(path: path),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
         Text(
       pending ? 'Transcript processing…' : text,
       maxLines: 4,
@@ -202,33 +188,4 @@ class ArchiveEntryCardPreview extends StatelessWidget {
   }
 }
 
-class _EntryPhoto extends StatelessWidget {
-  const _EntryPhoto({required this.path});
-
-  final String path;
-
-  @override
-  Widget build(BuildContext context) {
-    final broken = const SizedBox(
-      width: 72,
-      child: Icon(Icons.broken_image_outlined),
-    );
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      return Image.network(
-        path,
-        width: 72,
-        height: 72,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => broken,
-      );
-    }
-    return Image.file(
-      File(path),
-      width: 72,
-      height: 72,
-      fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => broken,
-    );
-  }
-}
 

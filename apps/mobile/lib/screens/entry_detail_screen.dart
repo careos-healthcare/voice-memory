@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_photos.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_context_placeholders.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
@@ -360,6 +361,10 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
             height: 1.55,
           ),
         ),
+        if (entry.images.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          EntryPhotoStrip(entryId: entry.id, paths: entry.images),
+        ],
         if (speakableText != null && widget.accountDependencies != null)
           Offstage(
             child: EntryReadAloudButton(
