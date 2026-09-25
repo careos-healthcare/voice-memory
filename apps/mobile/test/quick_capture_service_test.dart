@@ -19,6 +19,16 @@ void main() {
     expect(matrix['watchCompanion'], isFalse);
   });
 
+  test('iOS 17 includes the Action Button and omits Control Center', () {
+    final matrix = QuickCaptureService.supportMatrix(
+      isIos: true,
+      major: 17,
+      watch: false,
+    );
+    expect(matrix['actionButton'], isTrue);
+    expect(matrix['controlCenter'], isFalse);
+  });
+
   test('older iOS builds omit Control Center and the Action Button', () {
     final matrix = QuickCaptureService.supportMatrix(
       isIos: true,

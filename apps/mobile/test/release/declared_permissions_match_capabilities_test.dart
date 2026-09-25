@@ -15,8 +15,9 @@ const _declarationFlags = <String, bool>{
   'NSCalendarsFullAccessUsageDescription': V1CapabilityRegistry.calendar,
   'NSCalendarsUsageDescription': V1CapabilityRegistry.calendar,
   'NSLocationWhenInUseUsageDescription': V1CapabilityRegistry.location,
-  'NSLocationAlwaysAndWhenInUseUsageDescription': V1CapabilityRegistry.location,
-  'NSLocationAlwaysUsageDescription': V1CapabilityRegistry.location,
+  // Always location is forbidden. Only When In Use may be declared.
+  'NSLocationAlwaysAndWhenInUseUsageDescription': false,
+  'NSLocationAlwaysUsageDescription': false,
   'NSBluetoothAlwaysUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSBluetoothPeripheralUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSLocalNetworkUsageDescription': V1CapabilityRegistry.localNetwork,

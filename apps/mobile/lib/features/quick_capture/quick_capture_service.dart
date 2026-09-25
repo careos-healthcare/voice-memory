@@ -22,6 +22,9 @@ abstract final class QuickCaptureService {
   }
 
   /// Runtime support for each quick-capture surface on this device.
+  ///
+  /// Action Button shortcuts and App Intents need iOS 17 (iPhone 15 Pro and
+  /// later). Control Center controls need iOS 18.
   static Map<String, bool> supportMatrix({
     bool? isIos,
     int? major,
@@ -34,7 +37,7 @@ abstract final class QuickCaptureService {
     return {
       'siri': ios,
       'shortcuts': ios,
-      'actionButton': ios && version >= 18,
+      'actionButton': ios && version >= 17,
       'controlCenter': ios && version >= 18,
       'homeWidget': widgets,
       'lockWidget': widgets,
