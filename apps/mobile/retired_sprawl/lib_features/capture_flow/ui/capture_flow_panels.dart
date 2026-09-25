@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
+import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/record/example_prompt_catalog.dart';
@@ -315,6 +316,8 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.paused = false,
     this.levels = const [],
     this.draftText,
+    this.turns = const [],
+    this.sttRoute = LiveSttRoute.offline,
     super.key,
   });
 
@@ -326,6 +329,8 @@ class CaptureRecordingPanel extends StatelessWidget {
   final bool paused;
   final List<double> levels;
   final String? draftText;
+  final List<LiveConversationTurn> turns;
+  final LiveSttRoute sttRoute;
 
   bool get _showDraft =>
       V1CapabilityRegistry.liveDraftTranscript &&
@@ -377,9 +382,16 @@ class CaptureRecordingPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (_showDraft)
+                if (turns.isNotEmpty)
+                  _LiveTurnBubbles(turns: turns, route: sttRoute)
+                else if (_showDraft)
                   _BoundedDraft(
                     text: draftText?.trim() ?? '',
+                  )
+                else if (sttRoute == LiveSttRoute.offline &&
+                    V1CapabilityRegistry.liveDraftTranscript)
+                  const _BoundedDraft(
+                    text: 'Live transcript stays on this phone, or uses Whisper when you are online.',
                   ),
                 Row(
                   children: [
@@ -439,6 +451,50 @@ class CaptureRecordingPanel extends StatelessWidget {
       ),
     );
     if (discard == true) onCancel();
+  }
+}
+
+class _LiveTurnBubbles extends StatelessWidget {
+  const _LiveTurnBubbles({required this.turns, required this.route});
+
+  final List<LiveConversationTurn> turns;
+  final LiveSttRoute route;
+
+  @override
+  Widget build(BuildContext context) {
+    final routeLabel = switch (route) {
+      LiveSttRoute.onDevice => 'On this phone',
+      LiveSttRoute.whisper => 'Whisper',
+      LiveSttRoute.offline => 'Offline',
+    };
+    return SizedBox(
+      key: const Key('capture_live_turns'),
+      height: 110,
+      width: double.infinity,
+      child: ListView(
+        children: [
+          Text(routeLabel, style: Theme.of(context).textTheme.labelSmall),
+          for (var i = 0; i < turns.length; i++)
+            Align(
+              alignment: turns[i].role == LiveTurnRole.user
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              child: Container(
+                key: Key('capture_${turns[i].role.name}_turn_$i'),
+                margin: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: turns[i].role == LiveTurnRole.user
+                      ? context.palette.accentLight
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(turns[i].text),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 

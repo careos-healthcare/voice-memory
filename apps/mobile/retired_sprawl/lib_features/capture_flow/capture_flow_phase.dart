@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
@@ -53,6 +54,8 @@ class CaptureFlowSnapshot {
     this.recordingPaused = false,
     this.draftTranscript,
     this.deviceSaveVisible = false,
+    this.conversationTurns = const [],
+    this.liveSttRoute = LiveSttRoute.offline,
   });
 
   final CaptureFlowPhase phase;
@@ -97,6 +100,12 @@ class CaptureFlowSnapshot {
 
   /// On-screen partials only. Never written to [JournalEntry.transcript].
   final String? draftTranscript;
+
+  /// User and assistant bubbles for the live recording. Not saved.
+  final List<LiveConversationTurn> conversationTurns;
+
+  /// Which listener is producing [draftTranscript].
+  final LiveSttRoute liveSttRoute;
 
   /// True once the recording file is accepted for a local save.
   final bool deviceSaveVisible;
@@ -148,6 +157,8 @@ class CaptureFlowSnapshot {
     bool? recordingPaused,
     String? draftTranscript,
     bool? deviceSaveVisible,
+    List<LiveConversationTurn>? conversationTurns,
+    LiveSttRoute? liveSttRoute,
     bool clearDraft = false,
     bool clearRoutinePrompt = false,
     bool clearError = false,
@@ -188,6 +199,10 @@ class CaptureFlowSnapshot {
       draftTranscript:
           clearDraft ? null : (draftTranscript ?? this.draftTranscript),
       deviceSaveVisible: deviceSaveVisible ?? this.deviceSaveVisible,
+      conversationTurns: clearDraft
+          ? const []
+          : (conversationTurns ?? this.conversationTurns),
+      liveSttRoute: liveSttRoute ?? this.liveSttRoute,
     );
   }
 }

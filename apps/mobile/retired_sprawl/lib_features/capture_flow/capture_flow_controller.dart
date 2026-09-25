@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
+import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/features/capture_flow/recording_feedback.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_log.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
@@ -52,6 +53,8 @@ class CaptureFlowController extends ChangeNotifier {
   RecordingElapsedClock? _elapsed;
   RecordingAmplitudeSeries _amplitudes = RecordingAmplitudeSeries();
   StreamSubscription<String>? _draftSubscription;
+  LiveVoiceSession? _liveSession;
+  LiveSttRoute _liveSttRoute = LiveSttRoute.offline;
   StreamSubscription<PipelineState>? _pipelineStageSubscription;
   StreamSubscription<VadSegmentEvent>? _thoughtSegmentSubscription;
   final Set<String> _enqueuedThoughtSegmentPaths = {};
@@ -505,25 +508,76 @@ class CaptureFlowController extends ChangeNotifier {
       if (_elapsed?.isPaused ?? false) return;
       _emit(_snapshot.copyWith(recordingDuration: _elapsed!.elapsed));
     });
+    _liveSttRoute = resolveLiveStt(
+      onDeviceStreaming: LiveDraftTranscript.supportsOnDeviceStreaming,
+      online: _liveOnline,
+    );
+    _liveSession = LiveVoiceSession(
+      respond: _respondToLiveTurn,
+      onChanged: _publishLiveTurns,
+    );
     unawaited(_amplitudeSubscription?.cancel());
     _amplitudeSubscription = _deps.audio.watchAmplitude().listen((db) {
       if (_disposed || (_elapsed?.isPaused ?? false)) return;
       _amplitudes.addDb(db);
+      _liveSession?.noteLevel(db);
       _emit(_snapshot.copyWith(amplitudeBars: _amplitudes.displayBars));
     });
     if (V1CapabilityRegistry.liveDraftTranscript &&
-        LiveDraftTranscript.supportsOnDeviceStreaming) {
+        _liveSttRoute != LiveSttRoute.offline) {
       unawaited(_startLiveDraft());
     }
+  }
+
+  bool get _liveOnline {
+    if (kIsWeb) return false;
+    return liveOnlineOverride ?? true;
+  }
+
+  /// Tests set this so a desktop run can exercise the Whisper path.
+  static bool? liveOnlineOverride;
+
+  Future<String> _respondToLiveTurn(
+    String utterance,
+    List<LiveConversationTurn> history,
+  ) async {
+    final reply = liveTurnResponder;
+    if (reply == null) return '';
+    return reply(utterance, history);
+  }
+
+  /// Optional conversational reply after a silence boundary.
+  static LiveTurnResponder? liveTurnResponder;
+
+  void _publishLiveTurns() {
+    if (_disposed) return;
+    final session = _liveSession;
+    if (session == null) return;
+    final latest = session.turns.isEmpty ? null : session.turns.last.text;
+    _emit(
+      _snapshot.copyWith(
+        conversationTurns: List<LiveConversationTurn>.of(session.turns),
+        draftTranscript: latest,
+        liveSttRoute: _liveSttRoute,
+      ),
+    );
   }
 
   Future<void> _startLiveDraft() async {
     await _draftSubscription?.cancel();
     _draftSubscription = LiveDraftTranscript.partials().listen((text) {
       if (_disposed || text.trim().isEmpty) return;
-      _emit(_snapshot.copyWith(draftTranscript: text));
+      _liveSession?.notePartial(text);
+      _emit(
+        _snapshot.copyWith(
+          draftTranscript: text,
+          liveSttRoute: _liveSttRoute,
+        ),
+      );
     });
-    await LiveDraftTranscript.start();
+    if (_liveSttRoute == LiveSttRoute.onDevice) {
+      await LiveDraftTranscript.start();
+    }
   }
 
   Future<void> _stopRecordingFeedback() async {
@@ -536,6 +590,8 @@ class CaptureFlowController extends ChangeNotifier {
     _durationSubscription = null;
     await _draftSubscription?.cancel();
     _draftSubscription = null;
+    await _liveSession?.close();
+    _liveSession = null;
     if (V1CapabilityRegistry.liveDraftTranscript) {
       await LiveDraftTranscript.stop();
     }
