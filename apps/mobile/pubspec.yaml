@@ -77,6 +77,7 @@ dependencies:
   icloud_storage: ^2.2.0
   workmanager: ^0.10.9
   app_links: ^7.2.1
+  flutter_timezone: ^5.1.0
 
 dev_dependencies:
   flutter_test:

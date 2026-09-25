@@ -13,9 +13,16 @@ import 'package:archiveme_mobile/storage/app_storage_paths.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+  final String timeZoneName =
+      (await FlutterTimezone.getLocalTimezone()).identifier;
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
   if (V1CapabilityRegistry.backgroundProcessing &&
       WeeklySynthesisWorkScheduler.isSupported) {
     await WeeklySynthesisWorkScheduler.initialize();

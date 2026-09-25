@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 /// Local notifications for check-in reminders.
@@ -50,8 +49,6 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
     if (_initialized) return;
     _initialized = true;
     try {
-      tz_data.initializeTimeZones();
-
       const android = AndroidInitializationSettings('@mipmap/ic_launcher');
       const darwin = DarwinInitializationSettings(
         requestAlertPermission: false,
