@@ -133,25 +133,20 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
         Text(_question, style: theme.textTheme.bodyLarge),
         if (!done) ...[
           const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: TextField(
-                  key: const Key('post_save_follow_up_answer'),
-                  controller: _answer,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _submit(),
-                  decoration: const InputDecoration(hintText: 'A short answer'),
-                ),
-              ),
-              IconButton(
+          TextField(
+            key: const Key('post_save_follow_up_answer'),
+            controller: _answer,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _submit(),
+            decoration: InputDecoration(
+              hintText: 'A short answer',
+              suffixIcon: IconButton(
                 key: const Key('post_save_follow_up_mic'),
                 tooltip: _listening ? 'Stop' : 'Speak your answer',
                 onPressed: _toggleMic,
                 icon: Icon(_listening ? Icons.mic : Icons.mic_none_rounded),
               ),
-            ],
+            ),
           ),
           Align(
             alignment: Alignment.centerLeft,

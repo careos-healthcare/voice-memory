@@ -353,7 +353,9 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         Text(
           view.primary,
           key: const Key('entry_detail_recorded_body'),
-          style: ArchiveMobileTypography.userWords(context),
+          style: ArchiveMobileTypography.userWords(context).copyWith(
+            height: 1.55,
+          ),
         ),
         if (speakableText != null && widget.accountDependencies != null)
           Offstage(
