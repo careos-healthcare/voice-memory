@@ -25,6 +25,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Store your sync passphrase'), findsOneWidget);
+    expect(
+      find.text(
+        'If you lose this passphrase, your synced data cannot be recovered. We cannot reset it for you.',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('store-me-safely'), findsOneWidget);
 
     await tester.tap(find.text("I've stored it"));

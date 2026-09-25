@@ -4,7 +4,8 @@ abstract final class BacklogImportCopy {
 
   static const title = 'Bring your old notes';
   static const subtitle =
-      'Import Apple Notes exports or voice memos (.txt, .csv, .m4a, .mp3). '
+      'Import Day One JSON, Markdown, Apple Notes, or voice memos '
+      '(.json, .md, .txt, .csv, .m4a, .mp3). '
       'We split them into entries and add them to your archive.';
   static const pickCta = 'Choose files';
   static const skipCta = 'Skip for now';

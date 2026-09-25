@@ -87,5 +87,19 @@ void main() {
     );
     expect(restored.single.transcript, rows.single.transcript);
     expect(restored.single.updatedAt, rows.single.updatedAt);
+
+    final older = entry(
+      id: 'entry-river-2026',
+      updatedAt: DateTime.utc(2026, 3, 7, 9),
+      transcript: 'the river was low',
+    );
+    final merged = await E2eeJournalSync.applyRemoteSnapshot(
+      encryption: E2EEncryptionService(),
+      envelope: blob.encrypted,
+      passphrase: passphrase,
+      local: [older],
+    );
+    expect(merged.single.transcript, rows.single.transcript);
+    expect(merged.single.updatedAt, rows.single.updatedAt);
   });
 }

@@ -27,12 +27,35 @@ abstract final class V1CapabilityRegistry {
 
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
-  /// Apple Health State of Mind. On when the launch profile sets
-  /// `VOICEMEMORY_ENABLE_HEALTH_SYNC`. Reading still waits for the Settings
-  /// toggle; saving a moment does not request Health access.
+  /// Apple Health State of Mind permission. The mood sync control stays behind
+  /// [appleHealth], which is off until the launch profile turns it on.
   static const bool health = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_HEALTH_SYNC',
     defaultValue: true,
+  );
+
+  /// Settings control that reads Apple Health State of Mind. Off until reviewed.
+  static const bool appleHealth = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_APPLE_HEALTH',
+    defaultValue: false,
+  );
+
+  /// Passphrase-sealed journal sync in Settings. Off until reviewed.
+  static const bool e2eeSync = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_E2EE_SYNC',
+    defaultValue: false,
+  );
+
+  /// Share-sheet and Open In import of Apple Voice Memos. Off until reviewed.
+  static const bool voiceMemosImport = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_VOICE_MEMOS_IMPORT',
+    defaultValue: false,
+  );
+
+  /// Photo attachments and image evidence. Off until reviewed.
+  static const bool photoAttachments = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_PHOTO_ATTACHMENTS',
+    defaultValue: false,
   );
   static const bool bluetooth = false;
   static const bool localNetwork = false;

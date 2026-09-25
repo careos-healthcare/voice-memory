@@ -89,7 +89,7 @@ export default function HomePage() {
             <div id="import-apple-notes" className="mt-4 scroll-mt-6">
               <h3 className="font-serif text-base font-medium text-[#172033]">Apple Notes</h3>
               <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
-                Export the notes as PDF or share them directly, or use a third-party exporter app.
+                Export as plain text or use a third-party exporter app.
               </p>
             </div>
           </section>

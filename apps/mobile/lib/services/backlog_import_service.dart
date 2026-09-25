@@ -7,11 +7,12 @@ import 'package:archiveme_mobile/core/network/api_failure_mapper.dart';
 import 'package:archiveme_mobile/core/network/voice_memory_api_routes.dart';
 import 'package:archiveme_mobile/core/network/http_transport.dart';
 import 'package:archiveme_mobile/core/network/multipart_file_part.dart';
+import 'package:archiveme_mobile/features/import/day_one_json_parser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
-const _supportedExtensions = {'txt', 'csv', 'm4a', 'mp3'};
+const _supportedExtensions = {'txt', 'csv', 'json', 'md', 'm4a', 'mp3'};
 const _textBatchSize = 20;
 const _uuid = Uuid();
 
@@ -180,6 +181,10 @@ class BacklogImportService {
 
       if (extension == 'csv') {
         chunks.addAll(parseAppleNotesCsv(content, sourceFile: file.name));
+      } else if (extension == 'json') {
+        chunks.addAll(parseDayOneJsonExport(content, sourceFile: file.name));
+      } else if (extension == 'md') {
+        chunks.addAll(parseMarkdownExport(content, sourceFile: file.name));
       } else {
         chunks.addAll(parseRawTextDump(content, sourceFile: file.name));
       }
@@ -556,6 +561,62 @@ class BacklogImportService {
     final extension = filename.substring(dot + 1).toLowerCase();
     return _supportedExtensions.contains(extension) ? extension : null;
   }
+}
+
+/// Parses a Day One JSON export, including the journal file inside a Day One zip.
+List<BacklogImportChunk> parseDayOneJsonExport(
+  String content, {
+  required String sourceFile,
+}) {
+  final records = DayOneJsonParser.parse(content, sourceFile: sourceFile);
+  return [
+    for (final record in records)
+      BacklogImportChunk(
+        entryId: _uuid.v4(),
+        sourceFile: sourceFile,
+        kind: BacklogImportChunkKind.text,
+        rawText: record.text,
+        createdAt: record.createdAt,
+      ),
+  ];
+}
+
+/// Splits a Markdown export on headings, then falls back to paragraph breaks.
+List<BacklogImportChunk> parseMarkdownExport(
+  String content, {
+  required String sourceFile,
+}) {
+  final normalized = content.replaceAll('\r\n', '\n').trim();
+  if (normalized.isEmpty) return const [];
+
+  final sections = normalized.split(RegExp(r'\n(?=#{1,6} )'));
+  final headed = sections.length > 1 || normalized.startsWith('#');
+  if (!headed) {
+    return parseRawTextDump(normalized, sourceFile: sourceFile);
+  }
+
+  final chunks = <BacklogImportChunk>[];
+  for (final section in sections) {
+    final lines = section.trim().split('\n');
+    if (lines.isEmpty) continue;
+    final heading = lines.first.replaceFirst(RegExp(r'^#{1,6}\s*'), '').trim();
+    final body = lines.skip(1).join('\n').trim();
+    final text = [
+      if (heading.isNotEmpty) heading,
+      if (body.isNotEmpty) body,
+    ].join('\n\n');
+    if (text.isEmpty) continue;
+    chunks.add(
+      BacklogImportChunk(
+        entryId: _uuid.v4(),
+        sourceFile: sourceFile,
+        kind: BacklogImportChunkKind.text,
+        rawText: text,
+        createdAt: _parseLeadingTimestamp(body.isEmpty ? heading : body),
+      ),
+    );
+  }
+  return chunks;
 }
 
 /// Parses Apple Notes CSV exports into discrete ledger chunks.

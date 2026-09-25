@@ -115,6 +115,7 @@ class _GentleRemindersLifecycleHostState
   }
 
   Future<void> _importPendingVoiceMemo() async {
+    if (!V1CapabilityRegistry.voiceMemosImport) return;
     if (!AppServices.isInitialized) return;
     await VoiceMemoImportInbox.consume(
       readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),

@@ -60,7 +60,7 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Write this passphrase down and keep it somewhere only you can open. Thoughtprint cannot recover it, and a new device needs it to read your journal.',
+              'If you lose this passphrase, your synced data cannot be recovered. We cannot reset it for you.',
             ),
             const SizedBox(height: 12),
             SelectableText(passphrase),

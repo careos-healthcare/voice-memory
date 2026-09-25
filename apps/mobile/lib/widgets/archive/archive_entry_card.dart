@@ -239,7 +239,7 @@ class _StateOfMindChipState extends State<_StateOfMindChip> {
   }
 
   Future<void> _sync() async {
-    if (_busy || !V1CapabilityRegistry.health) return;
+    if (_busy || !V1CapabilityRegistry.appleHealth) return;
     setState(() => _busy = true);
     try {
       final updated = await StateOfMindReader.attach(widget.entry);
@@ -266,7 +266,7 @@ class _StateOfMindChipState extends State<_StateOfMindChip> {
       label: Text('State of Mind · $_label'),
       visualDensity: VisualDensity.compact,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      onPressed: V1CapabilityRegistry.health && !_busy ? _sync : null,
+      onPressed: V1CapabilityRegistry.appleHealth && !_busy ? _sync : null,
     );
   }
 }

@@ -109,6 +109,7 @@ abstract final class V1StartupCoordinator {
   }
 
   static Future<void> _importPendingVoiceMemo() async {
+    if (!V1CapabilityRegistry.voiceMemosImport) return;
     if (!AppServices.isInitialized) return;
     await VoiceMemoImportInbox.consume(
       readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),

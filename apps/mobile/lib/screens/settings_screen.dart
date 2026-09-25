@@ -252,7 +252,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (mounted) setState(() => _cloudSyncEnabled = value);
               },
             ),
-            if (V1CapabilityRegistry.health)
+            if (V1CapabilityRegistry.appleHealth)
               SwitchListTile(
                 key: const Key('settings_health_mood_sync'),
                 contentPadding: EdgeInsets.zero,
@@ -420,7 +420,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }
               },
             ),
-            E2eeSyncSettings(
+            if (V1CapabilityRegistry.e2eeSync)
+              E2eeSyncSettings(
               readEnabled: () async {
                 if (!AppServices.isInitialized) return false;
                 return await AppServices.instance.prefs.readBool(

@@ -43,6 +43,21 @@ abstract final class E2eeJournalSync {
     return byId.values.toList();
   }
 
+  /// Decrypts a remote snapshot and keeps the row with the later `updatedAt`.
+  static Future<List<JournalEntry>> applyRemoteSnapshot({
+    required e2ee.E2EEncryptionService encryption,
+    required EncryptedPayloadDto envelope,
+    required String passphrase,
+    required List<JournalEntry> local,
+  }) async {
+    final remote = await decryptSnapshot(
+      encryption: encryption,
+      envelope: envelope,
+      passphrase: passphrase,
+    );
+    return mergeByUpdatedAt(local: local, remote: remote);
+  }
+
   static Future<SyncBlobPushDto> encryptSnapshot({
     required e2ee.E2EEncryptionService encryption,
     required Future<PassphraseVault> Function(String passphrase) openVault,
