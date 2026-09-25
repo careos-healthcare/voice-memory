@@ -4,8 +4,6 @@ const _recordingStatusFallback = 'Recording';
 const _recordingReadyStatusFallback = 'Ready to record';
 const _recordingProcessingStatusFallback = 'Processing';
 const _recordingSavedStatusFallback = 'Saved';
-const _recordingStopAndSaveHintFallback =
-    'Tap Stop and save when you are finished.';
 
 String _recordingInProgressSecondsFallback(int seconds) {
   if (seconds == 1) return 'Recording in progress, 1 second';
@@ -44,9 +42,8 @@ class _RecordingStatusCard extends ConsumerWidget {
     final statusText = stageLabel.isEmpty
         ? (l10n?.recordingStatus ?? _recordingStatusFallback)
         : stageLabel;
-    final stopHint =
-        l10n?.recordingStopAndSaveHint ?? _recordingStopAndSaveHintFallback;
     final height = MediaQuery.sizeOf(context).height;
+    final thumbInset = MediaQuery.paddingOf(context).bottom + 24;
 
     return Semantics(
       label: semanticsLabel,
@@ -57,36 +54,34 @@ class _RecordingStatusCard extends ConsumerWidget {
         child: ColoredBox(
           color: const Color(0xFF0F1419),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+            padding: EdgeInsets.fromLTRB(20, 28, 20, thumbInset),
             child: Column(
               children: [
-                SizedBox(
-                  height: height * 0.28,
-                  width: double.infinity,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: showResurfacing
-                        ? const IdleResurfacingPrompt(onDark: true)
-                        : Text(
-                            statusText,
-                            style: const TextStyle(
-                              color: Color(0xFFB7C0CC),
-                              fontSize: 14,
-                            ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: showResurfacing
+                      ? const IdleResurfacingPrompt(onDark: true)
+                      : Text(
+                          statusText,
+                          style: const TextStyle(
+                            color: Color(0xFFB7C0CC),
+                            fontSize: 14,
                           ),
-                  ),
+                        ),
                 ),
+                const SizedBox(height: 20),
                 Text(
                   timer,
+                  key: const Key('recording_duration_timer'),
                   style: const TextStyle(
                     color: Color(0xFFF8F6F1),
-                    fontSize: 64,
+                    fontSize: 56,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 1.4,
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: RecordingWaveform(
@@ -96,16 +91,10 @@ class _RecordingStatusCard extends ConsumerWidget {
                     ambientWhenIdle: true,
                   ),
                 ),
-                const SizedBox(height: 20),
-                const _LiveDraftTranscriptSlot(),
-                const Spacer(),
-                Text(
-                  stopHint,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 13, color: Color(0xFF8E99A8)),
-                ),
                 const SizedBox(height: 16),
+                const Expanded(child: _LiveDraftTranscriptSlot()),
                 Row(
+                  key: const Key('recording_thumb_zone'),
                   children: [
                     Expanded(
                       child: SizedBox(
@@ -203,7 +192,6 @@ class _LiveDraftTranscriptSlotState extends State<_LiveDraftTranscriptSlot> {
     return SizedBox(
       key: const Key('recording_live_draft'),
       width: double.infinity,
-      height: 96,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -216,16 +204,20 @@ class _LiveDraftTranscriptSlotState extends State<_LiveDraftTranscriptSlot> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            waiting ? 'Words appear here as you speak.' : _text,
-            key: const Key('recording_live_draft_text'),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: waiting ? const Color(0xFF8E99A8) : const Color(0xFFF8F6F1),
-              fontSize: 16,
-              height: 1.4,
-              fontFamily: 'Newsreader',
+          Expanded(
+            child: SingleChildScrollView(
+              child: Text(
+                waiting ? 'Words appear here as you speak.' : _text,
+                key: const Key('recording_live_draft_text'),
+                style: TextStyle(
+                  color: waiting
+                      ? const Color(0xFF8E99A8)
+                      : const Color(0xFFF8F6F1),
+                  fontSize: 16,
+                  height: 1.4,
+                  fontFamily: 'Newsreader',
+                ),
+              ),
             ),
           ),
         ],
