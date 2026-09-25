@@ -80,8 +80,10 @@ abstract final class V1CapabilityRegistry {
     defaultValue: false,
   );
 
-  /// Widget, Siri, Control Center, Live Activity, and Watch capture.
-  /// Left off until reviewed.
+  /// Home Screen widget, Lock Screen widget, Siri shortcut, Control Center,
+  /// Action Button, and Live Activity. The Watch companion is
+  /// [watchCompanion], which stays off. The older Today extension is
+  /// [nativeExtensions], which stays off.
   static const bool nativeQuickCapture = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_NATIVE_QUICK_CAPTURE',
     defaultValue: false,
