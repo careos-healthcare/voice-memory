@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   },
 };
 
+const promises = [
+  "Data Not Linked to You",
+  "Private by Design",
+  "No usage meters",
+  "Free tier stays free",
+];
+
 const proofPoints = [
   "Transcribed on your phone.",
   "Every insight cites your own words.",
@@ -42,6 +49,11 @@ export default function HomePage() {
           <p className="mt-5 text-lg leading-relaxed text-zinc-200">
             Free core, forever. Transcribed on your phone. Never metered.
           </p>
+          <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-white">
+            {promises.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
           <ul className="mt-8 space-y-3 text-sm leading-relaxed text-zinc-300">
             {proofPoints.map((point) => (
               <li key={point}>{point}</li>

@@ -95,21 +95,23 @@ class SupportFeedbackScreen extends StatelessWidget {
                 child: const Text(ThenNowCopy.viewThenVsNowCta),
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_archive_calendar'),
-              title: ArchiveCalendarCopy.supportSectionTitle,
-              body: ArchiveCalendarCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_archive_calendar'),
-                onPressed: () => context.push(ArchiveCalendarCopy.route),
-                child: const Text(ArchiveCalendarCopy.openCalendarCta),
+            if (V1CapabilityRegistry.calendar) ...[
+              const SizedBox(height: AppSpacing.sm),
+              _section(
+                context,
+                key: const Key('support_feedback_archive_calendar'),
+                title: ArchiveCalendarCopy.supportSectionTitle,
+                body: ArchiveCalendarCopy.supportSectionBody,
               ),
-            ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  key: const Key('support_feedback_open_archive_calendar'),
+                  onPressed: () => context.push(ArchiveCalendarCopy.route),
+                  child: const Text(ArchiveCalendarCopy.openCalendarCta),
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             _section(
               context,

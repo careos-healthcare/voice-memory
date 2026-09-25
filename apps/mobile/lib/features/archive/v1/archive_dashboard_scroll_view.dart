@@ -656,7 +656,9 @@ class _NoticedCarousel extends StatelessWidget {
         ),
       );
     }
-    if (AppConfig.resurfacingImplemented && feed.anniversaryCards.isNotEmpty) {
+    if (V1CapabilityRegistry.gentleReminders &&
+        AppConfig.resurfacingImplemented &&
+        feed.anniversaryCards.isNotEmpty) {
       cards.add(
         SizedBox(
           width: 280,
