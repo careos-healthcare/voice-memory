@@ -13,6 +13,8 @@ import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_pro
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
+import 'package:archiveme_mobile/features/weekly_reflection/weekly_recap.dart';
+import 'package:archiveme_mobile/features/weekly_reflection/weekly_recap_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
@@ -97,6 +99,10 @@ class _ArchiveDashboardScrollViewState
           context: context,
           viewportWidth: viewportConstraints.maxWidth,
         );
+        final weekEntries = ArchiveWeeklyRecapBanner.entriesThisWeek(
+          visibleEntries,
+          DateTime.now(),
+        );
 
         return RefreshIndicator(
           onRefresh: widget.onRefresh,
@@ -165,6 +171,13 @@ class _ArchiveDashboardScrollViewState
                 SliverToBoxAdapter(
                   child: ArchiveWeeklyRecapBanner(entries: visibleEntries),
                 ),
+                if (weekEntries.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
+                      child: _WeeklyRecapNotice(entries: weekEntries),
+                    ),
+                  ),
                 if (V1CapabilityRegistry.trendPatternSummary)
                   SliverToBoxAdapter(
                     child: Padding(
@@ -801,4 +814,52 @@ class _DayHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(_DayHeaderDelegate oldDelegate) =>
       oldDelegate.label != label;
+}
+
+class _WeeklyRecapNotice extends StatelessWidget {
+  const _WeeklyRecapNotice({required this.entries});
+
+  final List<JournalEntry> entries;
+
+  WeeklyRecap get _recap {
+    final latest = entries.first;
+    return WeeklyRecap(
+      weekKey: 'current',
+      summary: '${entries.length} moments are ready for this week.',
+      keyThemes: const [],
+      emotionalArc: '',
+      verbatimCitations: [
+        VerbatimCitation(
+          text: latest.transcript,
+          entryId: latest.id,
+          timestamp: latest.createdAt.toIso8601String(),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final recap = _recap;
+    return WeeklyRecapCard(
+      recap: recap,
+      onOpen: () {
+        unawaited(Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (routeContext) => Scaffold(
+              appBar: AppBar(title: const Text('Weekly recap')),
+              body: WeeklyRecapDetail(
+                recap: recap,
+                onCitation: (citation) {
+                  final offset = audioOffsetSeconds(citation.timestamp);
+                  final query = offset == null ? '' : '?t=$offset';
+                  unawaited(routeContext.push('/entry/${citation.entryId}$query'));
+                },
+              ),
+            ),
+          ),
+        ));
+      },
+    );
+  }
 }

@@ -373,8 +373,13 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/entry/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) =>
-          EntryDetailScreen(entryId: state.pathParameters['id'] ?? ''),
+      builder: (context, state) {
+        final seconds = int.tryParse(state.uri.queryParameters['t'] ?? '');
+        return EntryDetailScreen(
+          entryId: state.pathParameters['id'] ?? '',
+          startAt: Duration(seconds: seconds ?? 0),
+        );
+      },
     ),
     GoRoute(
       path: '/theories',

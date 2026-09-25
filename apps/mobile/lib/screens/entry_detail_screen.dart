@@ -34,9 +34,11 @@ class EntryDetailScreen extends StatefulWidget {
     super.key,
     this.accountDependencies,
     this.previewEntry,
+    this.startAt = Duration.zero,
   });
 
   final String entryId;
+  final Duration startAt;
 
   final V1AccountDependencies? accountDependencies;
 
@@ -348,6 +350,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         EntryAudioPlayer(
           audioPath: entry.localAudioPath,
           durationSeconds: entry.durationSeconds,
+          startAt: widget.startAt,
         ),
         const SizedBox(height: 8),
         Text(

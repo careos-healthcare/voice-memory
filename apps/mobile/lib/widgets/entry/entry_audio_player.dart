@@ -14,12 +14,14 @@ class EntryAudioPlayer extends StatefulWidget {
     required this.durationSeconds,
     this.playback,
     this.compact = false,
+    this.startAt = Duration.zero,
     super.key,
   });
 
   final String? audioPath;
   final int durationSeconds;
   final PlaybackService? playback;
+  final Duration startAt;
 
   /// Play control only, for a voice card. Hides the missing-file message.
   final bool compact;
@@ -47,6 +49,7 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
   void initState() {
     super.initState();
     _total = Duration(seconds: widget.durationSeconds);
+    if (widget.startAt > Duration.zero) _position = widget.startAt;
     unawaited(_loadLevels());
     final playback = widget.playback;
     _playback = playback;
@@ -81,6 +84,10 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
       await playback.resume();
     } else {
       await playback.playFile(path);
+      if (widget.startAt > Duration.zero) {
+        await playback.seek(widget.startAt);
+        if (mounted) setState(() => _position = widget.startAt);
+      }
       await playback.setPlaybackSpeed(EntryAudioPlayer.speeds[_speedIndex]);
     }
   }

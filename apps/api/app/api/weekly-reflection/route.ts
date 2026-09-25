@@ -9,6 +9,11 @@ import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
 import type { WeeklyReflectionPayload } from "@/types/weekly";
+import {
+  synthesizeWeeklyRecap,
+  weeklyInputError,
+  type WeeklyReflectionEntry,
+} from "../../../src/routes/weekly-reflection";
 
 export const runtime = "nodejs";
 
@@ -34,7 +39,25 @@ function parseSummary(raw: string): string {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as WeeklyReflectionPayload;
+    const body = (await request.json()) as WeeklyReflectionPayload & {
+      entries?: unknown;
+      transcripts?: unknown;
+    };
+
+    const inputError = weeklyInputError(body);
+    if (inputError) {
+      return apiErrorResponse({
+        code: "WEEKLY_REFLECTION_NO_ENTRIES",
+        message: inputError,
+        status: 400,
+        route: "weekly-reflection",
+      });
+    }
+
+    if (Array.isArray(body.entries)) {
+      const recap = await synthesizeWeeklyRecap(body.entries as WeeklyReflectionEntry[]);
+      return NextResponse.json(recap);
+    }
 
     const listFields = [
       body.dominantEmotions,
