@@ -31,7 +31,7 @@ abstract final class V1CapabilityRegistry {
   static const bool bluetooth = false;
   static const bool localNetwork = false;
   static const bool nearbyWifi = false;
-  static const bool location = false;
+  static const bool location = true;
   static const bool calendar = false;
   static const bool cameraAndPhotos = false;
   static const bool activityRecognition = false;

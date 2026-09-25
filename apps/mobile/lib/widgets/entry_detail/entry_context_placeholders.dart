@@ -1,75 +1,148 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/current_place_lookup.dart';
 import 'package:flutter/material.dart';
 
-/// Placeholders for photo, place, and state of mind on a saved moment.
+/// Place and state of mind on a saved moment.
+///
+/// Photo stays off this screen until photo support ships.
 class EntryContextPlaceholders extends StatelessWidget {
   const EntryContextPlaceholders({
     required this.entry,
     super.key,
     this.onPlace,
     this.onMood,
+    this.lookupCurrentPlace = lookupCurrentPlaceName,
   });
+
+  static const moodChoices = [
+    'Calm',
+    'Grounded',
+    'Anxious',
+    'Energetic',
+    'Reflective',
+    'Low',
+  ];
 
   final JournalEntry entry;
   final ValueChanged<String>? onPlace;
   final ValueChanged<String>? onMood;
+  final Future<String?> Function() lookupCurrentPlace;
+
+  static bool moodIsAssigned(String? mood) {
+    final value = mood?.trim() ?? '';
+    return value.isNotEmpty && value.toLowerCase() != 'neutral';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final photo = entry.imageEvidence?.caption.trim();
     final place = entry.display.locationLabel?.trim();
-    final mood = entry.reflection.mood.trim();
+    final mood = entry.reflection.mood;
     return Wrap(
       key: const Key('entry_context_placeholders'),
       spacing: 8,
       runSpacing: 8,
       children: [
         _Chip(
-          icon: Icons.photo_outlined,
-          label: (photo == null || photo.isEmpty) ? 'Photo' : photo,
-          onTap: null,
-        ),
-        _Chip(
           icon: Icons.place_outlined,
           label: (place == null || place.isEmpty) ? 'Place' : place,
-          onTap: onPlace == null
-              ? null
-              : () => _ask(context, 'Place', onPlace!),
+          onTap: onPlace == null ? null : () => _pickPlace(context),
         ),
         _Chip(
           icon: Icons.mood_outlined,
-          label: mood.isEmpty ? 'State of mind' : mood,
-          onTap: onMood == null ? null : () => _ask(context, 'State of mind', onMood!),
+          label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
+          onTap: onMood == null ? null : () => _pickMood(context),
         ),
       ],
     );
   }
 
-  Future<void> _ask(
-    BuildContext context,
-    String title,
-    ValueChanged<String> onSubmit,
-  ) async {
-    final controller = TextEditingController();
-    final value = await showDialog<String>(
+  Future<void> _pickMood(BuildContext context) async {
+    final chosen = await showModalBottomSheet<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(controller: controller, autofocus: true),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final choice in moodChoices)
+                ActionChip(
+                  key: Key('mood_chip_$choice'),
+                  label: Text(choice),
+                  onPressed: () => Navigator.pop(context, choice),
+                ),
+            ],
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Save'),
-          ),
-        ],
+        ),
       ),
     );
-    controller.dispose();
-    if (value != null && value.isNotEmpty) onSubmit(value);
+    if (chosen != null) onMood?.call(chosen);
+  }
+
+  Future<void> _pickPlace(BuildContext context) async {
+    final place = await showModalBottomSheet<String>(
+      context: context,
+      builder: (sheetContext) => _PlaceSheet(lookupCurrentPlace: lookupCurrentPlace),
+    );
+    if (place != null && place.isNotEmpty) onPlace?.call(place);
+  }
+}
+
+class _PlaceSheet extends StatefulWidget {
+  const _PlaceSheet({required this.lookupCurrentPlace});
+
+  final Future<String?> Function() lookupCurrentPlace;
+
+  @override
+  State<_PlaceSheet> createState() => _PlaceSheetState();
+}
+
+class _PlaceSheetState extends State<_PlaceSheet> {
+  bool _busy = false;
+
+  Future<void> _useCurrentLocation() async {
+    setState(() => _busy = true);
+    try {
+      final place = await widget.lookupCurrentPlace();
+      if (!mounted) return;
+      if (place == null || place.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Couldn't find this place.")),
+        );
+        setState(() => _busy = false);
+        return;
+      }
+      Navigator.pop(context, place);
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Couldn't find this place.")),
+      );
+      setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        child: FilledButton(
+          key: const Key('use_current_location'),
+          onPressed: _busy ? null : _useCurrentLocation,
+          child: _busy
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Use current location'),
+        ),
+      ),
+    );
   }
 }
 

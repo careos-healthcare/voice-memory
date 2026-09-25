@@ -47,6 +47,8 @@
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Thoughtprint uses Face ID to unlock the app on this device.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Thoughtprint uses your location to name the place on a moment you save.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Thoughtprint uses the microphone so you can record a voice note on this device.</string>
 	<key>UIBackgroundModes</key>
