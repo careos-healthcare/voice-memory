@@ -6,7 +6,7 @@ export const LANDING_3_DAY_CHALLENGE = {
   subhero:
     "Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now.",
   chatGptDifferentiation:
-    "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.",
+    "ChatGPT can answer a conversation. Thoughtprint shows the timeline behind the pattern.",
   primaryCta: "Save your first moment",
   secondaryCta: "How it works",
   secondaryHref: "/how-it-works",

@@ -36,7 +36,6 @@ const features = [
   "Live cross-device sync",
   "Apple Voice Memos import",
   "Add a mood or a place to any moment",
-  "Pattern exploration with direct verbatim voice citations",
 ];
 
 export default function HomePage() {

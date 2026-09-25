@@ -1,6 +1,4 @@
 const milestones = [
-  "Live cross-device sync",
-  "Apple Voice Memos import",
   "Pattern exploration with direct verbatim voice citations",
 ];
 
