@@ -3,8 +3,8 @@
 /// This is a faithful, conservative summary built from what is already stored —
 /// pattern memory, the pattern map, key moments, progress, and weekly recaps.
 /// Lines are omitted when their source is unknown; nothing is invented.
-class ThoughtprintmorySummary {
-  const ThoughtprintmorySummary({
+class ArchiveMemorySummary {
+  const ArchiveMemorySummary({
     required this.id,
     required this.patternTitle,
     required this.primaryMemoryLine,
@@ -43,7 +43,7 @@ class ThoughtprintmorySummary {
     return 'Based on $basedOnMomentCount $moments across $basedOnWeekCount $weeks.';
   }
 
-  ThoughtprintmorySummary copyWith({
+  ArchiveMemorySummary copyWith({
     String? id,
     String? patternTitle,
     String? primaryMemoryLine,
@@ -58,7 +58,7 @@ class ThoughtprintmorySummary {
     String? clarityLabel,
     String? nextCheck,
   }) {
-    return ThoughtprintmorySummary(
+    return ArchiveMemorySummary(
       id: id ?? this.id,
       patternTitle: patternTitle ?? this.patternTitle,
       primaryMemoryLine: primaryMemoryLine ?? this.primaryMemoryLine,
@@ -93,12 +93,12 @@ class ThoughtprintmorySummary {
     if (nextCheck != null) 'nextCheck': nextCheck,
   };
 
-  static ThoughtprintmorySummary? fromJson(Map<String, dynamic>? map) {
+  static ArchiveMemorySummary? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
     final id = map['id'] as String?;
     final primary = map['primaryMemoryLine'] as String?;
     if (id == null || primary == null) return null;
-    return ThoughtprintmorySummary(
+    return ArchiveMemorySummary(
       id: id,
       patternTitle: map['patternTitle'] as String? ?? '',
       primaryMemoryLine: primary,

@@ -13,8 +13,8 @@ import 'package:flutter/material.dart';
 
 /// "What Thoughtprint remembers" — one clear, plain-language summary of a pattern
 /// the archive has been building over time.
-class ThoughtprintmorySummaryCard extends StatefulWidget {
-  const ThoughtprintmorySummaryCard({
+class ArchiveMemorySummaryCard extends StatefulWidget {
+  const ArchiveMemorySummaryCard({
     required this.summary, super.key,
     this.onOpenPatternMap,
     this.onFindMoments,
@@ -24,7 +24,7 @@ class ThoughtprintmorySummaryCard extends StatefulWidget {
     this.quality,
   });
 
-  final ThoughtprintmorySummary summary;
+  final ArchiveMemorySummary summary;
 
   /// Opens the full Pattern map.
   final VoidCallback? onOpenPatternMap;
@@ -48,15 +48,15 @@ class ThoughtprintmorySummaryCard extends StatefulWidget {
   static const Color _warmBorder = AppColors.warmBorder;
 
   @override
-  State<ThoughtprintmorySummaryCard> createState() =>
-      _ThoughtprintmorySummaryCardState();
+  State<ArchiveMemorySummaryCard> createState() =>
+      _ArchiveMemorySummaryCardState();
 }
 
-class _ThoughtprintmorySummaryCardState extends State<ThoughtprintmorySummaryCard> {
+class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
   @override
   void initState() {
     super.initState();
-    ActivationTracker.trackThoughtprintmorySummaryShown();
+    ActivationTracker.trackArchiveMemorySummaryShown();
   }
 
   @override
@@ -69,9 +69,9 @@ class _ThoughtprintmorySummaryCardState extends State<ThoughtprintmorySummaryCar
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ThoughtprintmorySummaryCard._warmSurface,
+        color: ArchiveMemorySummaryCard._warmSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ThoughtprintmorySummaryCard._warmBorder),
+        border: Border.all(color: ArchiveMemorySummaryCard._warmBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,19 +193,19 @@ class _ThoughtprintmorySummaryCardState extends State<ThoughtprintmorySummaryCar
   }
 
   void _onOpenPatternMap() {
-    ActivationTracker.trackThoughtprintmoryOpenPatternMapTapped();
+    ActivationTracker.trackArchiveMemoryOpenPatternMapTapped();
     widget.onOpenPatternMap?.call();
   }
 
   void _onFindMoments() {
-    ActivationTracker.trackThoughtprintmoryFindMomentsTapped();
+    ActivationTracker.trackArchiveMemoryFindMomentsTapped();
     widget.onFindMoments?.call();
   }
 
   void _onUseCheck() {
     final next = widget.summary.nextCheck?.trim() ?? '';
     if (next.isEmpty) return;
-    ActivationTracker.trackThoughtprintmoryUseCheckTapped();
+    ActivationTracker.trackArchiveMemoryUseCheckTapped();
     widget.onUseCheck?.call(next);
   }
 }

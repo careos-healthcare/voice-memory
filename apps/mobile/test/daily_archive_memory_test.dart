@@ -119,7 +119,7 @@ void main() {
   late TestStorageSandbox sandbox;
   setUp(() async {
     sandbox = TestStorageSandbox.create();
-    DailyThoughtprintmoryAnalytics.resetForTest();
+    DailyArchiveMemoryAnalytics.resetForTest();
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
@@ -132,49 +132,49 @@ void main() {
     VisualAuditOverrides.setRecordPresentation(null);
   });
 
-  group('DailyThoughtprintmoryCopy', () {
+  group('DailyArchiveMemoryCopy', () {
     test('spec copy is stable', () {
-      expect(DailyThoughtprintmoryCopy.watchTitle, 'Did this come back?');
+      expect(DailyArchiveMemoryCopy.watchTitle, 'Did this come back?');
       expect(
-        DailyThoughtprintmoryCopy.watchBody,
+        DailyArchiveMemoryCopy.watchBody,
         'Last time, this was the thread to watch:',
       );
       expect(
-        DailyThoughtprintmoryCopy.footer,
+        DailyArchiveMemoryCopy.footer,
         'Record if it came back, changed, faded, or disappeared.',
       );
-      expect(DailyThoughtprintmoryCopy.recordCta, 'Record what happened');
-      expect(DailyThoughtprintmoryCopy.typeInsteadCta, 'Type instead');
-      expect(DailyThoughtprintmoryCopy.notTodayCta, 'Not today');
+      expect(DailyArchiveMemoryCopy.recordCta, 'Record what happened');
+      expect(DailyArchiveMemoryCopy.typeInsteadCta, 'Type instead');
+      expect(DailyArchiveMemoryCopy.notTodayCta, 'Not today');
       expect(
-        DailyThoughtprintmoryCopy.viewPatternDetailsCta,
+        DailyArchiveMemoryCopy.viewPatternDetailsCta,
         'View pattern details',
       );
-      expect(DailyThoughtprintmoryCopy.fallbackTitle, 'Your archive is ready');
+      expect(DailyArchiveMemoryCopy.fallbackTitle, 'Your archive is ready');
       expect(
-        DailyThoughtprintmoryCopy.fallbackBody,
+        DailyArchiveMemoryCopy.fallbackBody,
         'Record one real moment from today. Thoughtprint will compare it with what came before.',
       );
     });
 
     test('watch prompt uses single-quoted watch target in one paragraph', () {
       expect(
-        DailyThoughtprintmoryCopy.watchPrompt('checking again'),
+        DailyArchiveMemoryCopy.watchPrompt('checking again'),
         'Did this come back? Last time, this was the thread to watch: '
         "'checking again'. Record if it came back, changed, faded, or disappeared.",
       );
       expect(
-        DailyThoughtprintmoryCopy.quotedWatchPhrase('checking again'),
+        DailyArchiveMemoryCopy.quotedWatchPhrase('checking again'),
         "'checking again'",
       );
     });
 
     test('no advice or coaching language', () {
       final joined = [
-        DailyThoughtprintmoryCopy.watchTitle,
-        DailyThoughtprintmoryCopy.watchBody,
-        DailyThoughtprintmoryCopy.footer,
-        DailyThoughtprintmoryCopy.fallbackBody,
+        DailyArchiveMemoryCopy.watchTitle,
+        DailyArchiveMemoryCopy.watchBody,
+        DailyArchiveMemoryCopy.footer,
+        DailyArchiveMemoryCopy.fallbackBody,
       ].join(' ').toLowerCase();
 
       expect(ProofSurfaceAdviceGuard.passes(joined), isTrue);
@@ -183,18 +183,18 @@ void main() {
     });
   });
 
-  group('DailyThoughtprintmoryGates', () {
+  group('DailyArchiveMemoryGates', () {
     test('hidden at entry count zero', () {
       expect(
-        DailyThoughtprintmoryGates.shouldShow(
+        DailyArchiveMemoryGates.shouldShow(
           loaded: true,
           entryCount: 0,
           isReady: true,
           isRecording: false,
           isPostSave: false,
-          memory: const DailyThoughtprintmoryResult(
-            title: DailyThoughtprintmoryCopy.fallbackTitle,
-            body: DailyThoughtprintmoryCopy.fallbackBody,
+          memory: const DailyArchiveMemoryResult(
+            title: DailyArchiveMemoryCopy.fallbackTitle,
+            body: DailyArchiveMemoryCopy.fallbackBody,
             hasWatchTarget: false,
             canShowPatternDetail: false,
           ),
@@ -209,13 +209,13 @@ void main() {
     });
 
     test('hidden during post-save recording and first proof loop', () {
-      final memory = DailyThoughtprintmoryEngine.build(
+      final memory = DailyArchiveMemoryEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       );
       for (final isPostSave in [true, false]) {
         expect(
-          DailyThoughtprintmoryGates.shouldShow(
+          DailyArchiveMemoryGates.shouldShow(
             loaded: true,
             entryCount: 3,
             isReady: true,
@@ -233,7 +233,7 @@ void main() {
       }
 
       expect(
-        DailyThoughtprintmoryGates.shouldShow(
+        DailyArchiveMemoryGates.shouldShow(
           loaded: true,
           entryCount: 3,
           isReady: true,
@@ -250,7 +250,7 @@ void main() {
       );
 
       expect(
-        DailyThoughtprintmoryGates.shouldShow(
+        DailyArchiveMemoryGates.shouldShow(
           loaded: true,
           entryCount: 3,
           isReady: true,
@@ -268,7 +268,7 @@ void main() {
     });
 
     test('does not stack with higher-priority guidance', () {
-      final memory = DailyThoughtprintmoryEngine.build(
+      final memory = DailyArchiveMemoryEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       );
@@ -291,7 +291,7 @@ void main() {
         ),
       ]) {
         expect(
-          DailyThoughtprintmoryGates.shouldShow(
+          DailyArchiveMemoryGates.shouldShow(
             loaded: true,
             entryCount: 3,
             isReady: true,
@@ -310,10 +310,10 @@ void main() {
     });
   });
 
-  group('DailyThoughtprintmoryEngine', () {
+  group('DailyArchiveMemoryEngine', () {
     test('returns null for entry count zero archive', () {
       expect(
-        DailyThoughtprintmoryEngine.build(
+        DailyArchiveMemoryEngine.build(
           entries: const [],
           viewingConfirmedRepeatOrTimeline: true,
         ),
@@ -322,17 +322,17 @@ void main() {
     });
 
     test('shown for returning user with grounded watch target', () {
-      final result = DailyThoughtprintmoryEngine.build(
+      final result = DailyArchiveMemoryEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
 
       expect(result.hasWatchTarget, isTrue);
-      expect(result.title, DailyThoughtprintmoryCopy.watchTitle);
-      expect(result.body, DailyThoughtprintmoryCopy.watchBody);
+      expect(result.title, DailyArchiveMemoryCopy.watchTitle);
+      expect(result.body, DailyArchiveMemoryCopy.watchBody);
       expect(result.watchPhrase, isNotNull);
       expect(result.watchPhrase, isNotEmpty);
-      expect(result.footer, DailyThoughtprintmoryCopy.footer);
+      expect(result.footer, DailyArchiveMemoryCopy.footer);
       expect(
         FirstProofMomentEngine.build(entries: _threeRelatedRepeatEntries()),
         isNotNull,
@@ -340,7 +340,7 @@ void main() {
     });
 
     test('fallback for usable entry without grounded target', () {
-      final result = DailyThoughtprintmoryEngine.build(
+      final result = DailyArchiveMemoryEngine.build(
         entries: [
           _entry(
             id: 'u1',
@@ -351,14 +351,14 @@ void main() {
       )!;
 
       expect(result.hasWatchTarget, isFalse);
-      expect(result.title, DailyThoughtprintmoryCopy.fallbackTitle);
-      expect(result.body, DailyThoughtprintmoryCopy.fallbackBody);
+      expect(result.title, DailyArchiveMemoryCopy.fallbackTitle);
+      expect(result.body, DailyArchiveMemoryCopy.fallbackBody);
       expect(result.watchPhrase, isNull);
     });
 
     test('generic test pending and degraded entries do not produce target', () {
       expect(
-        DailyThoughtprintmoryEngine.build(
+        DailyArchiveMemoryEngine.build(
           entries: [
             _genericTestEntry(),
             _genericTestEntry(id: 'g2'),
@@ -368,7 +368,7 @@ void main() {
         isNull,
       );
       expect(
-        DailyThoughtprintmoryEngine.build(
+        DailyArchiveMemoryEngine.build(
           entries: [
             _degradedVoiceEntry(),
             _degradedVoiceEntry(id: 'v2'),
@@ -380,7 +380,7 @@ void main() {
     });
 
     test('pattern detail availability follows existing engine', () {
-      final result = DailyThoughtprintmoryEngine.build(
+      final result = DailyArchiveMemoryEngine.build(
         entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
@@ -395,13 +395,13 @@ void main() {
     });
   });
 
-  group('DailyThoughtprintmoryCard', () {
+  group('DailyArchiveMemoryCard', () {
     testWidgets('renders watch and fallback states', (tester) async {
-      const watch = DailyThoughtprintmoryResult(
-        title: DailyThoughtprintmoryCopy.watchTitle,
-        body: DailyThoughtprintmoryCopy.watchBody,
+      const watch = DailyArchiveMemoryResult(
+        title: DailyArchiveMemoryCopy.watchTitle,
+        body: DailyArchiveMemoryCopy.watchBody,
         watchPhrase: 'saying yes before checking your capacity',
-        footer: DailyThoughtprintmoryCopy.footer,
+        footer: DailyArchiveMemoryCopy.footer,
         hasWatchTarget: true,
         canShowPatternDetail: true,
       );
@@ -409,7 +409,7 @@ void main() {
       await tester.pumpWidget(withAppProviderScope(MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: DailyThoughtprintmoryCard(
+            body: DailyArchiveMemoryCard(
               memory: watch,
               entryCount: 3,
               source: 'record',
@@ -423,52 +423,52 @@ void main() {
         find.byKey(const Key('daily_archive_memory_card')),
         findsOneWidget,
       );
-      expect(find.text(DailyThoughtprintmoryCopy.watchTitle), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.watchTitle), findsOneWidget);
       expect(
         find.text(
-          DailyThoughtprintmoryCopy.quotedWatchPhrase(
+          DailyArchiveMemoryCopy.quotedWatchPhrase(
             'saying yes before checking your capacity',
           ),
         ),
         findsOneWidget,
       );
-      expect(find.text(DailyThoughtprintmoryCopy.recordCta), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.recordCta), findsOneWidget);
       expect(
-        find.text(DailyThoughtprintmoryCopy.viewPatternDetailsCta),
+        find.text(DailyArchiveMemoryCopy.viewPatternDetailsCta),
         findsOneWidget,
       );
     });
   });
 
-  group('DailyThoughtprintmoryAnalytics', () {
+  group('DailyArchiveMemoryAnalytics', () {
     test('metadata only without transcript text', () {
       final events = <String, Map<String, Object>>{};
-      DailyThoughtprintmoryAnalytics.captureForTest = (event, props) {
+      DailyArchiveMemoryAnalytics.captureForTest = (event, props) {
         events[event] = props;
       };
 
-      DailyThoughtprintmoryAnalytics.seen(
+      DailyArchiveMemoryAnalytics.seen(
         source: 'record',
         entryCount: 3,
         hasWatchTarget: true,
       );
-      DailyThoughtprintmoryAnalytics.ctaTapped(
+      DailyArchiveMemoryAnalytics.ctaTapped(
         source: 'record',
         entryCount: 3,
         actionType: 'record_what_happened',
       );
-      DailyThoughtprintmoryAnalytics.ctaTapped(
+      DailyArchiveMemoryAnalytics.ctaTapped(
         source: 'record',
         entryCount: 3,
         actionType: 'view_pattern_details',
       );
 
       expect(
-        events[DailyThoughtprintmoryAnalytics.seenEvent]!['has_watch_target'],
+        events[DailyArchiveMemoryAnalytics.seenEvent]!['has_watch_target'],
         1,
       );
       expect(
-        events[DailyThoughtprintmoryAnalytics.seenEvent]!['source'],
+        events[DailyArchiveMemoryAnalytics.seenEvent]!['source'],
         'record',
       );
       expect(events.containsKey('transcript'), isFalse);

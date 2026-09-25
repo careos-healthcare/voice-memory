@@ -1,6 +1,6 @@
 /// Archive memory after V1 copy — future enhancement after V1 proof.
-abstract final class ThoughtprintmoryAfterV1Copy {
-  ThoughtprintmoryAfterV1Copy._();
+abstract final class ArchiveMemoryAfterV1Copy {
+  ArchiveMemoryAfterV1Copy._();
 
   static const headline = 'Archive memory after V1 gate';
 
@@ -22,43 +22,43 @@ abstract final class ThoughtprintmoryAfterV1Copy {
   static const archiveMemoryFrozenLine =
       'Keep archive memory expansion frozen until paid-intent beta proof is complete.';
 
-  static const futureThoughtprintmoryDocumentedLine =
+  static const futureArchiveMemoryDocumentedLine =
       'Beta proof complete. Document archive memory as future enhancement only — proof trail, not storage, no new live V1 UI.';
 
   static const detailPass = 'Pass';
   static const detailFail = 'Fail';
 
-  static const detailThoughtprintmoryFrozen =
+  static const detailArchiveMemoryFrozen =
       'Archive memory frozen before beta proof';
-  static const detailFutureThoughtprintmoryDocumented =
+  static const detailFutureArchiveMemoryDocumented =
       'Future archive memory documented only';
 
-  static String ruleLabelFor(ThoughtprintmoryAfterV1RuleId id) => switch (id) {
-    ThoughtprintmoryAfterV1RuleId.futureEnhancementOnly =>
+  static String ruleLabelFor(ArchiveMemoryAfterV1RuleId id) => switch (id) {
+    ArchiveMemoryAfterV1RuleId.futureEnhancementOnly =>
       'Future enhancement only',
-    ThoughtprintmoryAfterV1RuleId.notPartOfFirstFiveMinutes =>
+    ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes =>
       'Not part of first five minutes',
-    ThoughtprintmoryAfterV1RuleId.notPrimaryProPromise =>
+    ArchiveMemoryAfterV1RuleId.notPrimaryProPromise =>
       'Not primary Pro promise',
-    ThoughtprintmoryAfterV1RuleId.supportsProofTrailNotStorage =>
+    ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage =>
       'Supports proof trail, not storage',
-    ThoughtprintmoryAfterV1RuleId.noNewLiveV1Ui => 'No new live V1 UI',
+    ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui => 'No new live V1 UI',
   };
 
-  static String messageFor(ThoughtprintmoryAfterV1GateDecision decision) =>
+  static String messageFor(ArchiveMemoryAfterV1GateDecision decision) =>
       switch (decision) {
-        ThoughtprintmoryAfterV1GateDecision.archiveMemoryFrozen =>
+        ArchiveMemoryAfterV1GateDecision.archiveMemoryFrozen =>
           archiveMemoryFrozenLine,
-        ThoughtprintmoryAfterV1GateDecision.futureThoughtprintmoryDocumented =>
-          futureThoughtprintmoryDocumentedLine,
+        ArchiveMemoryAfterV1GateDecision.futureArchiveMemoryDocumented =>
+          futureArchiveMemoryDocumentedLine,
       };
 
   static String recommendationFor(
-    ThoughtprintmoryAfterV1GateDecision decision,
+    ArchiveMemoryAfterV1GateDecision decision,
   ) => switch (decision) {
-    ThoughtprintmoryAfterV1GateDecision.archiveMemoryFrozen =>
+    ArchiveMemoryAfterV1GateDecision.archiveMemoryFrozen =>
       'Keep archive memory out of first five minutes and off the primary Pro promise until beta proof completes.',
-    ThoughtprintmoryAfterV1GateDecision.futureThoughtprintmoryDocumented =>
+    ArchiveMemoryAfterV1GateDecision.futureArchiveMemoryDocumented =>
       'Document archive memory as future enhancement only. Keep proof trail as the frame, not storage.',
   };
 
@@ -69,22 +69,22 @@ abstract final class ThoughtprintmoryAfterV1Copy {
     yield orderLine;
     yield guardrail;
     yield archiveMemoryFrozenLine;
-    yield futureThoughtprintmoryDocumentedLine;
+    yield futureArchiveMemoryDocumentedLine;
     yield detailPass;
     yield detailFail;
-    yield detailThoughtprintmoryFrozen;
-    yield detailFutureThoughtprintmoryDocumented;
-    for (final id in ThoughtprintmoryAfterV1RuleId.values) {
+    yield detailArchiveMemoryFrozen;
+    yield detailFutureArchiveMemoryDocumented;
+    for (final id in ArchiveMemoryAfterV1RuleId.values) {
       yield ruleLabelFor(id);
     }
-    for (final decision in ThoughtprintmoryAfterV1GateDecision.values) {
+    for (final decision in ArchiveMemoryAfterV1GateDecision.values) {
       yield messageFor(decision);
       yield recommendationFor(decision);
     }
   }
 }
 
-enum ThoughtprintmoryAfterV1RuleId {
+enum ArchiveMemoryAfterV1RuleId {
   futureEnhancementOnly,
   notPartOfFirstFiveMinutes,
   notPrimaryProPromise,
@@ -92,9 +92,9 @@ enum ThoughtprintmoryAfterV1RuleId {
   noNewLiveV1Ui,
 }
 
-enum ThoughtprintmoryAfterV1RuleStatus { pass, fail }
+enum ArchiveMemoryAfterV1RuleStatus { pass, fail }
 
-enum ThoughtprintmoryAfterV1GateDecision {
+enum ArchiveMemoryAfterV1GateDecision {
   archiveMemoryFrozen,
-  futureThoughtprintmoryDocumented,
+  futureArchiveMemoryDocumented,
 }

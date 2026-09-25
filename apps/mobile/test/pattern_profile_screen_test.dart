@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 PatternProfile _profile() => PatternProfile(
   patternTitle: 'Pressure before yes',
   clarityLabel: 'Clear pattern',
-  archiveMemorySummary: const ThoughtprintmorySummary(
+  archiveMemorySummary: const ArchiveMemorySummary(
     id: 's1',
     patternTitle: 'Pressure before yes',
     primaryMemoryLine: 'You often say yes before checking in.',

@@ -6,8 +6,8 @@ import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 
 /// Day-zero preview of what Thoughtprint will remember once enough moments exist.
-class ThoughtprintmoryEmptyPreviewCard extends StatefulWidget {
-  const ThoughtprintmoryEmptyPreviewCard({required this.onRecord, super.key});
+class ArchiveMemoryEmptyPreviewCard extends StatefulWidget {
+  const ArchiveMemoryEmptyPreviewCard({required this.onRecord, super.key});
 
   final VoidCallback onRecord;
 
@@ -15,20 +15,20 @@ class ThoughtprintmoryEmptyPreviewCard extends StatefulWidget {
   static const Color _warmBorder = AppColors.warmBorder;
 
   @override
-  State<ThoughtprintmoryEmptyPreviewCard> createState() =>
-      _ThoughtprintmoryEmptyPreviewCardState();
+  State<ArchiveMemoryEmptyPreviewCard> createState() =>
+      _ArchiveMemoryEmptyPreviewCardState();
 }
 
-class _ThoughtprintmoryEmptyPreviewCardState
-    extends State<ThoughtprintmoryEmptyPreviewCard> {
+class _ArchiveMemoryEmptyPreviewCardState
+    extends State<ArchiveMemoryEmptyPreviewCard> {
   @override
   void initState() {
     super.initState();
-    ActivationTracker.trackThoughtprintmoryPreviewShown();
+    ActivationTracker.trackArchiveMemoryPreviewShown();
   }
 
   void _onRecord() {
-    ActivationTracker.trackThoughtprintmoryPreviewCtaTapped();
+    ActivationTracker.trackArchiveMemoryPreviewCtaTapped();
     widget.onRecord();
   }
 
@@ -38,9 +38,9 @@ class _ThoughtprintmoryEmptyPreviewCardState
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ThoughtprintmoryEmptyPreviewCard._warmSurface,
+        color: ArchiveMemoryEmptyPreviewCard._warmSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ThoughtprintmoryEmptyPreviewCard._warmBorder),
+        border: Border.all(color: ArchiveMemoryEmptyPreviewCard._warmBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

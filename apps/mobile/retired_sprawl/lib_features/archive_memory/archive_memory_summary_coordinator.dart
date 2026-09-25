@@ -10,16 +10,16 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_coordina
 /// Builds and persists the latest "What Thoughtprint remembers" summary from
 /// everything the archive already stores. Always fails softly so it can never
 /// block the Patterns tab from loading.
-abstract class ThoughtprintmorySummaryCoordinator {
-  ThoughtprintmorySummaryCoordinator._();
+abstract class ArchiveMemorySummaryCoordinator {
+  ArchiveMemorySummaryCoordinator._();
 
-  static ThoughtprintmorySummaryStore _store() =>
-      ThoughtprintmorySummaryStore.instance();
+  static ArchiveMemorySummaryStore _store() =>
+      ArchiveMemorySummaryStore.instance();
 
   /// Rebuilds the summary from current memory/progress/recap/key moments,
   /// saves it as the latest, and returns it. Returns null when there is not
   /// yet enough, or in the rare case something goes wrong.
-  static Future<ThoughtprintmorySummary?> refresh() async {
+  static Future<ArchiveMemorySummary?> refresh() async {
     if (ScreenshotMode.enabled) {
       return ScreenshotSampleData.archiveMemorySummarySample;
     }
@@ -33,7 +33,7 @@ abstract class ThoughtprintmorySummaryCoordinator {
           ? null
           : buildPatternMap(memory: memory, moments: moments);
 
-      final summary = buildThoughtprintmorySummary(
+      final summary = buildArchiveMemorySummary(
         memory: memory,
         patternMap: patternMap,
         keyMoments: moments,
@@ -55,7 +55,7 @@ abstract class ThoughtprintmorySummaryCoordinator {
 
   /// The most recently saved summary, if any. In screenshot mode this returns
   /// the polished sample.
-  static Future<ThoughtprintmorySummary?> loadLatest() async {
+  static Future<ArchiveMemorySummary?> loadLatest() async {
     if (ScreenshotMode.enabled) {
       return ScreenshotSampleData.archiveMemorySummarySample;
     }

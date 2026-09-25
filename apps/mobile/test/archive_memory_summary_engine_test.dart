@@ -31,12 +31,12 @@ PatternMemory _memory({
 
 void main() {
   test('returns null below 3 usable moments/check-ins', () {
-    final summary = buildThoughtprintmorySummary(memory: _memory(checkInCount: 2));
+    final summary = buildArchiveMemorySummary(memory: _memory(checkInCount: 2));
     expect(summary, isNull);
   });
 
   test('builds the primary memory line from the pattern title', () {
-    final summary = buildThoughtprintmorySummary(memory: _memory());
+    final summary = buildArchiveMemorySummary(memory: _memory());
     expect(summary, isNotNull);
     // Gerund title normalized to a natural base verb: "Taking" -> "take".
     expect(
@@ -46,7 +46,7 @@ void main() {
   });
 
   test('normalizes common gerund pattern titles to natural copy', () {
-    String line(String title) => buildThoughtprintmorySummary(
+    String line(String title) => buildArchiveMemorySummary(
       memory: _memory(title: title),
     )!.primaryMemoryLine;
 
@@ -78,28 +78,28 @@ void main() {
   });
 
   test('falls back to lower-casing the first letter when no verb matches', () {
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       memory: _memory(title: 'Pressure at work'),
     );
     expect(summary!.primaryMemoryLine, 'You often pressure at work.');
   });
 
   test('falls back to a generic primary line without a title', () {
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       memory: _memory(title: '', checkInCount: 5),
     );
     expect(summary!.primaryMemoryLine, 'One pattern keeps showing up.');
   });
 
   test('includes starts-before when available and strips leading "before"', () {
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       memory: _memory(before: const ['before saying yes']),
     );
     expect(summary!.startsBeforeLine, 'It often starts before: saying yes.');
   });
 
   test('prefers the pattern map starts-before over memory', () {
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       memory: _memory(before: const ['from memory']),
       patternMap: const PatternMap(
         patternTitle: 'Taking responsibility before asking for help',
@@ -115,7 +115,7 @@ void main() {
   });
 
   test('includes helped and heavier only when known', () {
-    final withHelp = buildThoughtprintmorySummary(
+    final withHelp = buildArchiveMemorySummary(
       memory: _memory(helped: const ['pausing before answering']),
     );
     expect(
@@ -124,7 +124,7 @@ void main() {
     );
     expect(withHelp.heavierLine, isNull);
 
-    final withHeavier = buildThoughtprintmorySummary(
+    final withHeavier = buildArchiveMemorySummary(
       memory: _memory(harder: const ['taking it on alone']),
     );
     expect(
@@ -135,7 +135,7 @@ void main() {
   });
 
   test('adds the changed line only when progress or weekly says changed', () {
-    final steady = buildThoughtprintmorySummary(
+    final steady = buildArchiveMemorySummary(
       memory: _memory(),
       progress: PatternProgressMoment(
         id: 'p1',
@@ -151,7 +151,7 @@ void main() {
     );
     expect(steady!.changedLine, isNull);
 
-    final changed = buildThoughtprintmorySummary(
+    final changed = buildArchiveMemorySummary(
       memory: _memory(),
       progress: PatternProgressMoment(
         id: 'p1',
@@ -170,15 +170,15 @@ void main() {
 
   test('clarity labels at 3, 5, and 10 moments', () {
     expect(
-      buildThoughtprintmorySummary(memory: _memory(checkInCount: 3))!.clarityLabel,
+      buildArchiveMemorySummary(memory: _memory(checkInCount: 3))!.clarityLabel,
       'Getting clearer',
     );
     expect(
-      buildThoughtprintmorySummary(memory: _memory(checkInCount: 5))!.clarityLabel,
+      buildArchiveMemorySummary(memory: _memory(checkInCount: 5))!.clarityLabel,
       'Clear pattern',
     );
     expect(
-      buildThoughtprintmorySummary(
+      buildArchiveMemorySummary(
         memory: _memory(checkInCount: 10),
       )!.clarityLabel,
       'Strong pattern',
@@ -186,12 +186,12 @@ void main() {
   });
 
   test('next check resolves from result, then map, then memory', () {
-    final fromMemory = buildThoughtprintmorySummary(
+    final fromMemory = buildArchiveMemorySummary(
       memory: _memory(nextBestQuestion: 'From memory?'),
     );
     expect(fromMemory!.nextCheck, 'From memory?');
 
-    final fromMap = buildThoughtprintmorySummary(
+    final fromMap = buildArchiveMemorySummary(
       memory: _memory(nextBestQuestion: 'From memory?'),
       patternMap: const PatternMap(
         patternTitle: 'Taking responsibility before asking for help',
@@ -204,7 +204,7 @@ void main() {
   });
 
   test('counts conservatively and derives weeks from first/last seen', () {
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       memory: _memory(
         createdAt: DateTime(2026, 5, 4),
         updatedAt: DateTime(2026, 5, 25),
@@ -250,7 +250,7 @@ void main() {
         source: KeyMomentSource.checkIn,
       ),
     ];
-    final summary = buildThoughtprintmorySummary(
+    final summary = buildArchiveMemorySummary(
       keyMoments: moments,
       weeklyRecap: WeeklyPatternRecap(
         id: 'w1',

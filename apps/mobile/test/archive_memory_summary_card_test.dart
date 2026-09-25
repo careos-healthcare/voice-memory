@@ -4,8 +4,8 @@ import 'package:archiveme_mobile/widgets/patterns/memory_quality_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ThoughtprintmorySummary _summary({String? nextCheck = 'Did you ask for help?'}) =>
-    ThoughtprintmorySummary(
+ArchiveMemorySummary _summary({String? nextCheck = 'Did you ask for help?'}) =>
+    ArchiveMemorySummary(
       id: 'm1',
       patternTitle: 'Taking responsibility before asking for help',
       primaryMemoryLine:
@@ -20,7 +20,7 @@ ThoughtprintmorySummary _summary({String? nextCheck = 'Did you ask for help?'}) 
 
 Future<void> _pump(
   WidgetTester tester,
-  ThoughtprintmorySummary summary, {
+  ArchiveMemorySummary summary, {
   VoidCallback? onOpenPatternMap,
   VoidCallback? onFindMoments,
   void Function(String)? onUseCheck,
@@ -30,7 +30,7 @@ Future<void> _pump(
     MaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
-          child: ThoughtprintmorySummaryCard(
+          child: ArchiveMemorySummaryCard(
             summary: summary,
             showFeedback: showFeedback,
             onOpenPatternMap: onOpenPatternMap,

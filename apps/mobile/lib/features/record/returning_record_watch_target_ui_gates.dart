@@ -10,11 +10,11 @@ abstract final class ReturningRecordWatchTargetUiGates {
 
   /// One focused "Did this come back?" card instead of competing guidance.
   static bool showFocusedSurface({
-    required bool showDailyThoughtprintmory,
-    required DailyThoughtprintmoryResult? dailyThoughtprintmory,
+    required bool showDailyArchiveMemory,
+    required DailyArchiveMemoryResult? dailyArchiveMemory,
   }) {
-    if (!showDailyThoughtprintmory) return false;
-    final memory = dailyThoughtprintmory;
+    if (!showDailyArchiveMemory) return false;
+    final memory = dailyArchiveMemory;
     if (memory == null || !memory.hasWatchTarget) return false;
     if (watchPromptSkippedToday()) return false;
     return true;

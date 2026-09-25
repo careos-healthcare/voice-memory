@@ -70,16 +70,16 @@ void main() {
       hasRoutineAnchorOffer: false,
       hasArchiveProof: false,
     );
-    expect(stack.showThoughtprintmoryDemo, isFalse);
+    expect(stack.showArchiveMemoryDemo, isFalse);
     expect(stack.showStarterPrompts, isFalse);
     expect(stack.primaryState, RecordPrimaryState.firstRun);
   });
 
-  testWidgets('ThoughtprintmoryDemoCard shows Day 1/3/7 and positioning line', (
+  testWidgets('ArchiveMemoryDemoCard shows Day 1/3/7 and positioning line', (
     tester,
   ) async {
     var tapped = false;
-    await _pump(tester, ThoughtprintmoryDemoCard(onRecord: () => tapped = true));
+    await _pump(tester, ArchiveMemoryDemoCard(onRecord: () => tapped = true));
 
     expect(find.text(ConsumerUiCopy.archiveMemoryDemoTitle), findsOneWidget);
     expect(find.textContaining('Day 1:'), findsOneWidget);
@@ -197,7 +197,7 @@ void main() {
       hasRetentionStateCard: true,
       suppressRetentionForFirstRunDemo: true,
     );
-    expect(d.showThoughtprintmoryDemo, isFalse);
+    expect(d.showArchiveMemoryDemo, isFalse);
     expect(d.showRetentionStateCard, isFalse);
   });
 }

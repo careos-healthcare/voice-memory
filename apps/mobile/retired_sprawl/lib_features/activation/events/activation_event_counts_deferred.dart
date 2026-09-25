@@ -122,7 +122,7 @@ extension ActivationEventCountsDeferred on ActivationEventCounts {
   int get positioningComprehensionAsked => count('positioningComprehensionAsked');
   int get positioningJournal => count('positioningJournal');
   int get positioningNotSure => count('positioningNotSure');
-  int get positioningUnderstoodThoughtprintmory => count('positioningUnderstoodThoughtprintmory');
+  int get positioningUnderstoodArchiveMemory => count('positioningUnderstoodArchiveMemory');
   int get quickHelpCheckUsed => count('quickHelpCheckUsed');
   int get quickHelpIntentSelected => count('quickHelpIntentSelected');
   int get quickHelpOpened => count('quickHelpOpened');

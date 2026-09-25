@@ -14,7 +14,7 @@ import 'package:archiveme_mobile/features/tomorrow_return/result_next_check_mode
 /// Everything is conservative: lines are omitted when their source is unknown,
 /// counts never overstate, and the summary is withheld until there are at least
 /// three usable moments/check-ins. Returns null when there is not yet enough.
-ThoughtprintmorySummary? buildThoughtprintmorySummary({
+ArchiveMemorySummary? buildArchiveMemorySummary({
   PatternMemory? memory,
   PatternMap? patternMap,
   List<KeyMoment> keyMoments = const [],
@@ -69,7 +69,7 @@ ThoughtprintmorySummary? buildThoughtprintmorySummary({
     memory?.nextBestQuestion,
   ]);
 
-  return ThoughtprintmorySummary(
+  return ArchiveMemorySummary(
     id: memory?.id ?? 'memory-summary',
     patternTitle: patternTitle ?? '',
     primaryMemoryLine: primaryMemoryLine,

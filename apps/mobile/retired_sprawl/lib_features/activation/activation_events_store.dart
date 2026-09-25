@@ -303,7 +303,7 @@ class ActivationEventCounts {
     this.archiveMemoryPreviewCtaTapped = 0,
     this.positioningComprehensionAsked = 0,
     this.positioningComprehensionAnswered = 0,
-    this.positioningUnderstoodThoughtprintmory = 0,
+    this.positioningUnderstoodArchiveMemory = 0,
     this.positioningJournal = 0,
     this.positioningChat = 0,
     this.positioningNotSure = 0,
@@ -542,8 +542,8 @@ class ActivationEventCounts {
       archiveMemoryPreviewCtaTapped: n('archiveMemoryPreviewCtaTapped'),
       positioningComprehensionAsked: n('positioningComprehensionAsked'),
       positioningComprehensionAnswered: n('positioningComprehensionAnswered'),
-      positioningUnderstoodThoughtprintmory: n(
-        'positioningUnderstoodThoughtprintmory',
+      positioningUnderstoodArchiveMemory: n(
+        'positioningUnderstoodArchiveMemory',
       ),
       positioningJournal: n('positioningJournal'),
       positioningChat: n('positioningChat'),
@@ -779,7 +779,7 @@ class ActivationEventCounts {
   final int archiveMemoryPreviewCtaTapped;
   final int positioningComprehensionAsked;
   final int positioningComprehensionAnswered;
-  final int positioningUnderstoodThoughtprintmory;
+  final int positioningUnderstoodArchiveMemory;
   final int positioningJournal;
   final int positioningChat;
   final int positioningNotSure;
@@ -1007,7 +1007,7 @@ class ActivationEventCounts {
     'archiveMemoryPreviewCtaTapped',
     'positioningComprehensionAsked',
     'positioningComprehensionAnswered',
-    'positioningUnderstoodThoughtprintmory',
+    'positioningUnderstoodArchiveMemory',
     'positioningJournal',
     'positioningChat',
     'positioningNotSure',
@@ -1591,10 +1591,10 @@ class ActivationEventCounts {
           positioningComprehensionAnswered:
               positioningComprehensionAnswered + 1,
         );
-      case 'positioningUnderstoodThoughtprintmory':
+      case 'positioningUnderstoodArchiveMemory':
         return copyWith(
-          positioningUnderstoodThoughtprintmory:
-              positioningUnderstoodThoughtprintmory + 1,
+          positioningUnderstoodArchiveMemory:
+              positioningUnderstoodArchiveMemory + 1,
         );
       case 'positioningJournal':
         return copyWith(positioningJournal: positioningJournal + 1);
@@ -1891,7 +1891,7 @@ class ActivationEventCounts {
     int? archiveMemoryPreviewCtaTapped,
     int? positioningComprehensionAsked,
     int? positioningComprehensionAnswered,
-    int? positioningUnderstoodThoughtprintmory,
+    int? positioningUnderstoodArchiveMemory,
     int? positioningJournal,
     int? positioningChat,
     int? positioningNotSure,
@@ -2280,9 +2280,9 @@ class ActivationEventCounts {
       positioningComprehensionAnswered:
           positioningComprehensionAnswered ??
           this.positioningComprehensionAnswered,
-      positioningUnderstoodThoughtprintmory:
-          positioningUnderstoodThoughtprintmory ??
-          this.positioningUnderstoodThoughtprintmory,
+      positioningUnderstoodArchiveMemory:
+          positioningUnderstoodArchiveMemory ??
+          this.positioningUnderstoodArchiveMemory,
       positioningJournal: positioningJournal ?? this.positioningJournal,
       positioningChat: positioningChat ?? this.positioningChat,
       positioningNotSure: positioningNotSure ?? this.positioningNotSure,
@@ -2540,7 +2540,7 @@ class ActivationEventCounts {
     'archiveMemoryPreviewCtaTapped': archiveMemoryPreviewCtaTapped,
     'positioningComprehensionAsked': positioningComprehensionAsked,
     'positioningComprehensionAnswered': positioningComprehensionAnswered,
-    'positioningUnderstoodThoughtprintmory': positioningUnderstoodThoughtprintmory,
+    'positioningUnderstoodArchiveMemory': positioningUnderstoodArchiveMemory,
     'positioningJournal': positioningJournal,
     'positioningChat': positioningChat,
     'positioningNotSure': positioningNotSure,

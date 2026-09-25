@@ -308,11 +308,11 @@ ${_retentionDiagnosisSection(summary)}
 
 - Asked: ${summary.positioningComprehensionAskedCount}
 - Answered: ${summary.positioningComprehensionAnsweredCount}
-- Understood archive memory: ${summary.positioningUnderstoodThoughtprintmoryCount}
+- Understood archive memory: ${summary.positioningUnderstoodArchiveMemoryCount}
 - Journal: ${summary.positioningJournalCount}
 - Chat: ${summary.positioningChatCount}
 - Not sure: ${summary.positioningNotSureCount}
-- Rate: ${summary.positioningThoughtprintmoryRate == null ? 'n/a' : '${(summary.positioningThoughtprintmoryRate! * 100).toStringAsFixed(0)}%'}
+- Rate: ${summary.positioningArchiveMemoryRate == null ? 'n/a' : '${(summary.positioningArchiveMemoryRate! * 100).toStringAsFixed(0)}%'}
 - Pass (≥3/5 archive memory): ${summary.positioningComprehensionPass ? 'yes' : 'no'}
 
 ## Pattern memory

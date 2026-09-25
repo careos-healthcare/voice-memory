@@ -18,7 +18,7 @@ const _conservativeResultHints = {
 /// Builds a [PatternProfile] from saved local data only — nothing invented.
 PatternProfile? buildPatternProfile({
   required List<KeyMoment> keyMoments, PatternMemory? memory,
-  ThoughtprintmorySummary? summary,
+  ArchiveMemorySummary? summary,
   PatternMap? map,
   ArchiveEvolutionTimeline? timeline,
 }) {
@@ -46,7 +46,7 @@ PatternProfile? buildPatternProfile({
 }
 
 String? _patternTitle(
-  ThoughtprintmorySummary? summary,
+  ArchiveMemorySummary? summary,
   PatternMemory? memory,
   PatternMap? map,
   ArchiveEvolutionTimeline? timeline,
@@ -78,7 +78,7 @@ List<KeyMoment> _relatedMoments(List<KeyMoment> all, String patternTitle) {
 }
 
 String? _nextCheck(
-  ThoughtprintmorySummary? summary,
+  ArchiveMemorySummary? summary,
   PatternMap? map,
   ArchiveEvolutionTimeline? timeline,
   PatternMemory? memory,
@@ -99,7 +99,7 @@ String? _nextCheck(
 }
 
 String? _clarityLabel(
-  ThoughtprintmorySummary? summary,
+  ArchiveMemorySummary? summary,
   PatternMap? map,
   PatternMemory? memory,
   int relatedMomentCount,

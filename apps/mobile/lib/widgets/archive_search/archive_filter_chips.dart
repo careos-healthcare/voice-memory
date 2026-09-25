@@ -107,7 +107,7 @@ class ArchiveFilterChips extends StatelessWidget {
                   ArchiveSearchFilterType.date,
                 ),
               ),
-            for (final status in ThoughtprintmoryStatus.values)
+            for (final status in ArchiveMemoryStatus.values)
               _chip(
                 context,
                 key: Key('archive_filter_status_${status.id}'),

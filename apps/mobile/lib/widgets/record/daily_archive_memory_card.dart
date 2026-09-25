@@ -8,8 +8,8 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
 /// Quiet returning-user memory card on Record ready.
-class DailyThoughtprintmoryCard extends StatefulWidget {
-  const DailyThoughtprintmoryCard({
+class DailyArchiveMemoryCard extends StatefulWidget {
+  const DailyArchiveMemoryCard({
     required this.memory, required this.entryCount, required this.source, super.key,
     this.onRecord,
     this.onTypeInstead,
@@ -18,7 +18,7 @@ class DailyThoughtprintmoryCard extends StatefulWidget {
     this.showFocusedCaptureActions = false,
   });
 
-  final DailyThoughtprintmoryResult memory;
+  final DailyArchiveMemoryResult memory;
   final int entryCount;
   final String source;
   final VoidCallback? onRecord;
@@ -30,10 +30,10 @@ class DailyThoughtprintmoryCard extends StatefulWidget {
   final bool showFocusedCaptureActions;
 
   @override
-  State<DailyThoughtprintmoryCard> createState() => _DailyThoughtprintmoryCardState();
+  State<DailyArchiveMemoryCard> createState() => _DailyArchiveMemoryCardState();
 }
 
-class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
+class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   bool _seenTracked = false;
   var _dismissedToday = false;
 
@@ -46,7 +46,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   void _trackSeen() {
     if (_seenTracked) return;
     _seenTracked = true;
-    DailyThoughtprintmoryAnalytics.seen(
+    DailyArchiveMemoryAnalytics.seen(
       source: widget.source,
       entryCount: widget.entryCount,
       hasWatchTarget: widget.memory.hasWatchTarget,
@@ -54,7 +54,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   }
 
   void _onRecord() {
-    DailyThoughtprintmoryAnalytics.ctaTapped(
+    DailyArchiveMemoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'record_what_happened',
@@ -63,7 +63,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   }
 
   void _onTypeInstead() {
-    DailyThoughtprintmoryAnalytics.ctaTapped(
+    DailyArchiveMemoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'type_instead',
@@ -72,7 +72,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   }
 
   void _onNotToday() {
-    DailyThoughtprintmoryAnalytics.ctaTapped(
+    DailyArchiveMemoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'not_today',
@@ -83,7 +83,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   }
 
   void _onViewPatternDetails() {
-    DailyThoughtprintmoryAnalytics.ctaTapped(
+    DailyArchiveMemoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'view_pattern_details',
@@ -126,7 +126,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
         children: [
           if (focused && watchPhrase != null) ...[
             Text(
-              DailyThoughtprintmoryCopy.watchPrompt(watchPhrase),
+              DailyArchiveMemoryCopy.watchPrompt(watchPhrase),
               key: const Key('daily_archive_memory_watch_prompt'),
               style: bodyStyle,
             ),
@@ -147,7 +147,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
             if (watchPhrase != null) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
-                DailyThoughtprintmoryCopy.quotedWatchPhrase(watchPhrase),
+                DailyArchiveMemoryCopy.quotedWatchPhrase(watchPhrase),
                 key: const Key('daily_archive_memory_watch_phrase'),
                 style: phraseStyle,
               ),
@@ -169,7 +169,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
               child: FilledButton(
                 key: const Key('daily_archive_memory_record_cta'),
                 onPressed: _onRecord,
-                child: const Text(DailyThoughtprintmoryCopy.recordCta),
+                child: const Text(DailyArchiveMemoryCopy.recordCta),
               ),
             ),
           ],
@@ -181,7 +181,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
               child: OutlinedButton(
                 key: const Key('daily_archive_memory_type_instead_cta'),
                 onPressed: _onTypeInstead,
-                child: const Text(DailyThoughtprintmoryCopy.typeInsteadCta),
+                child: const Text(DailyArchiveMemoryCopy.typeInsteadCta),
               ),
             ),
           ],
@@ -195,7 +195,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
                   foregroundColor: AppColors.textSecondary,
                   minimumSize: const Size(48, 44),
                 ),
-                child: const Text(DailyThoughtprintmoryCopy.notTodayCta),
+                child: const Text(DailyArchiveMemoryCopy.notTodayCta),
               ),
             ),
           ],
@@ -214,7 +214,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  DailyThoughtprintmoryCopy.recordCta,
+                  DailyArchiveMemoryCopy.recordCta,
                   style: actionStyle,
                 ),
               ),
@@ -236,7 +236,7 @@ class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  DailyThoughtprintmoryCopy.viewPatternDetailsCta,
+                  DailyArchiveMemoryCopy.viewPatternDetailsCta,
                   style: actionStyle.copyWith(color: AppColors.textSecondary),
                 ),
               ),

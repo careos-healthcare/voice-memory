@@ -265,7 +265,7 @@ void main() {
     test('timeline appears before pattern profile radar', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasThoughtprintmory: true,
+        hasArchiveMemory: true,
         hasNextCheck: false,
         hasArchiveCleanView: false,
         hasPatternProfile: true,
@@ -289,7 +289,7 @@ void main() {
     test('manual navigation appears after radar and experiment', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasThoughtprintmory: true,
+        hasArchiveMemory: true,
         hasNextCheck: false,
         hasArchiveCleanView: true,
         hasPatternProfile: true,

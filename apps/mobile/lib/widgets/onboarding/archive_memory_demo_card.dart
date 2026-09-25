@@ -6,8 +6,8 @@ import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 
 /// First-run demo: shows how moments become pattern memory over days.
-class ThoughtprintmoryDemoCard extends StatefulWidget {
-  const ThoughtprintmoryDemoCard({required this.onRecord, super.key});
+class ArchiveMemoryDemoCard extends StatefulWidget {
+  const ArchiveMemoryDemoCard({required this.onRecord, super.key});
 
   final VoidCallback onRecord;
 
@@ -15,18 +15,18 @@ class ThoughtprintmoryDemoCard extends StatefulWidget {
   static const Color _warmBorder = AppColors.warmBorder;
 
   @override
-  State<ThoughtprintmoryDemoCard> createState() => _ThoughtprintmoryDemoCardState();
+  State<ArchiveMemoryDemoCard> createState() => _ArchiveMemoryDemoCardState();
 }
 
-class _ThoughtprintmoryDemoCardState extends State<ThoughtprintmoryDemoCard> {
+class _ArchiveMemoryDemoCardState extends State<ArchiveMemoryDemoCard> {
   @override
   void initState() {
     super.initState();
-    ActivationTracker.trackThoughtprintmoryDemoShown();
+    ActivationTracker.trackArchiveMemoryDemoShown();
   }
 
   void _onRecord() {
-    ActivationTracker.trackThoughtprintmoryDemoCtaTapped();
+    ActivationTracker.trackArchiveMemoryDemoCtaTapped();
     widget.onRecord();
   }
 
@@ -36,9 +36,9 @@ class _ThoughtprintmoryDemoCardState extends State<ThoughtprintmoryDemoCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ThoughtprintmoryDemoCard._warmSurface,
+        color: ArchiveMemoryDemoCard._warmSurface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: ThoughtprintmoryDemoCard._warmBorder),
+        border: Border.all(color: ArchiveMemoryDemoCard._warmBorder),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowColor.withValues(alpha: 0.3),

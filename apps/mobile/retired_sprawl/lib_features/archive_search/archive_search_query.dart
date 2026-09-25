@@ -29,7 +29,7 @@ class ArchiveEntrySearchQuery {
   final String? contextTagId;
 
   final ArchiveDateFilter? dateFilter;
-  final ThoughtprintmoryStatus? memoryStatus;
+  final ArchiveMemoryStatus? memoryStatus;
   final bool exactEvidenceOnly;
   final bool pinnedOnly;
 
@@ -85,7 +85,7 @@ class ArchiveEntrySearchQuery {
     String? keyword,
     String? Function()? contextTagId,
     ArchiveDateFilter? Function()? dateFilter,
-    ThoughtprintmoryStatus? Function()? memoryStatus,
+    ArchiveMemoryStatus? Function()? memoryStatus,
     bool? exactEvidenceOnly,
     bool? pinnedOnly,
     String? Function()? collectionId,

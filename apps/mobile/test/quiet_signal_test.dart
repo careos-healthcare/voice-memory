@@ -324,7 +324,7 @@ void main() {
         entries: entries,
         now: DateTime(2026, 6, 15, 12),
       );
-      final memory = DailyThoughtprintmoryEngine.build(entries: entries);
+      final memory = DailyArchiveMemoryEngine.build(entries: entries);
       final showQuiet = QuietSignalGates.shouldShowOnRecordReady(
         isReady: true,
         isRecording: false,
@@ -335,7 +335,7 @@ void main() {
       expect(showQuiet, isTrue);
       expect(memory, isNotNull);
       expect(
-        DailyThoughtprintmoryGates.shouldShow(
+        DailyArchiveMemoryGates.shouldShow(
           loaded: true,
           entryCount: entries.length,
           isReady: true,

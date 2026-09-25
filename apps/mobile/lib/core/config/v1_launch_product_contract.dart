@@ -71,7 +71,7 @@ abstract final class V1LaunchProductContract {
     'PinEntryButton',
     'BetaFeedbackCaptureCard',
     'WeeklyArchiveReviewCard',
-    'DailyThoughtprintmoryCard',
+    'DailyArchiveMemoryCard',
   ];
 
   /// Copy patterns forbidden on launch-facing surfaces.

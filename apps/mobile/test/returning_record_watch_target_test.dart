@@ -13,28 +13,28 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('ReturningRecordWatchTargetUiGates', () {
     test('focused surface only when daily memory has watch target', () {
-      const watch = DailyThoughtprintmoryResult(
-        title: DailyThoughtprintmoryCopy.watchTitle,
-        body: DailyThoughtprintmoryCopy.watchBody,
+      const watch = DailyArchiveMemoryResult(
+        title: DailyArchiveMemoryCopy.watchTitle,
+        body: DailyArchiveMemoryCopy.watchBody,
         watchPhrase: 'checking again',
-        footer: DailyThoughtprintmoryCopy.footer,
+        footer: DailyArchiveMemoryCopy.footer,
         hasWatchTarget: true,
         canShowPatternDetail: false,
       );
 
       expect(
         ReturningRecordWatchTargetUiGates.showFocusedSurface(
-          showDailyThoughtprintmory: true,
-          dailyThoughtprintmory: watch,
+          showDailyArchiveMemory: true,
+          dailyArchiveMemory: watch,
         ),
         isTrue,
       );
       expect(
         ReturningRecordWatchTargetUiGates.showFocusedSurface(
-          showDailyThoughtprintmory: true,
-          dailyThoughtprintmory: const DailyThoughtprintmoryResult(
-            title: DailyThoughtprintmoryCopy.fallbackTitle,
-            body: DailyThoughtprintmoryCopy.fallbackBody,
+          showDailyArchiveMemory: true,
+          dailyArchiveMemory: const DailyArchiveMemoryResult(
+            title: DailyArchiveMemoryCopy.fallbackTitle,
+            body: DailyArchiveMemoryCopy.fallbackBody,
             hasWatchTarget: false,
             canShowPatternDetail: false,
           ),
@@ -136,7 +136,7 @@ void main() {
     );
   });
 
-  group('DailyThoughtprintmoryCard focused returning UI', () {
+  group('DailyArchiveMemoryCard focused returning UI', () {
     testWidgets('watch target shows focused copy and capture actions', (
       tester,
     ) async {
@@ -148,12 +148,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: DailyThoughtprintmoryCard(
-              memory: const DailyThoughtprintmoryResult(
-                title: DailyThoughtprintmoryCopy.watchTitle,
-                body: DailyThoughtprintmoryCopy.watchBody,
+            body: DailyArchiveMemoryCard(
+              memory: const DailyArchiveMemoryResult(
+                title: DailyArchiveMemoryCopy.watchTitle,
+                body: DailyArchiveMemoryCopy.watchBody,
                 watchPhrase: 'checking again',
-                footer: DailyThoughtprintmoryCopy.footer,
+                footer: DailyArchiveMemoryCopy.footer,
                 hasWatchTarget: true,
                 canShowPatternDetail: false,
               ),
@@ -170,12 +170,12 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(DailyThoughtprintmoryCopy.watchPrompt('checking again')),
+        find.text(DailyArchiveMemoryCopy.watchPrompt('checking again')),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);
-      expect(find.text(DailyThoughtprintmoryCopy.typeInsteadCta), findsOneWidget);
-      expect(find.text(DailyThoughtprintmoryCopy.notTodayCta), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.typeInsteadCta), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.notTodayCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_title')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
       expect(
@@ -188,11 +188,11 @@ void main() {
       await tester.pump();
       expect(recordTapped, isTrue);
 
-      await tester.tap(find.text(DailyThoughtprintmoryCopy.typeInsteadCta));
+      await tester.tap(find.text(DailyArchiveMemoryCopy.typeInsteadCta));
       await tester.pump();
       expect(typeTapped, isTrue);
 
-      await tester.tap(find.text(DailyThoughtprintmoryCopy.notTodayCta));
+      await tester.tap(find.text(DailyArchiveMemoryCopy.notTodayCta));
       await tester.pump();
       expect(notTodayTapped, isTrue);
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);

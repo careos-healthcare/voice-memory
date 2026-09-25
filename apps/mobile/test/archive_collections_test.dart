@@ -684,7 +684,7 @@ void main() {
       );
       expect(
         results.single.memoryStatus,
-        ThoughtprintmoryStatus.mayBeStale,
+        ArchiveMemoryStatus.mayBeStale,
         reason: 'membership is organization only — status is unchanged',
       );
     });

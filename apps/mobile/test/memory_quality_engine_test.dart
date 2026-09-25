@@ -7,8 +7,8 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.da
 import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ThoughtprintmorySummary _summary({int momentCount = 0, String? changedLine}) =>
-    ThoughtprintmorySummary(
+ArchiveMemorySummary _summary({int momentCount = 0, String? changedLine}) =>
+    ArchiveMemorySummary(
       id: 's1',
       patternTitle: 'Test pattern',
       primaryMemoryLine: 'Line',

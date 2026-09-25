@@ -1,6 +1,6 @@
 /// Built daily archive memory card content — local evidence only.
-class DailyThoughtprintmoryResult {
-  const DailyThoughtprintmoryResult({
+class DailyArchiveMemoryResult {
+  const DailyArchiveMemoryResult({
     required this.title,
     required this.body,
     required this.hasWatchTarget,

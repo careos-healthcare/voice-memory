@@ -229,7 +229,7 @@ void main() {
       hasArchiveProof: false,
     );
     expect(d.showDueCheckCard, isTrue);
-    expect(d.showThoughtprintmoryDemo, isFalse);
+    expect(d.showArchiveMemoryDemo, isFalse);
   });
 
   test('due check suppresses duplicate retention card', () {

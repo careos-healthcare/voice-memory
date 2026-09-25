@@ -322,7 +322,7 @@ class TrialSummaryModel {
     this.archiveTimelineUseCheckTappedCount = 0,
     this.positioningComprehensionAskedCount = 0,
     this.positioningComprehensionAnsweredCount = 0,
-    this.positioningUnderstoodThoughtprintmoryCount = 0,
+    this.positioningUnderstoodArchiveMemoryCount = 0,
     this.positioningJournalCount = 0,
     this.positioningChatCount = 0,
     this.positioningNotSureCount = 0,
@@ -589,7 +589,7 @@ class TrialSummaryModel {
   final int archiveTimelineUseCheckTappedCount;
   final int positioningComprehensionAskedCount;
   final int positioningComprehensionAnsweredCount;
-  final int positioningUnderstoodThoughtprintmoryCount;
+  final int positioningUnderstoodArchiveMemoryCount;
   final int positioningJournalCount;
   final int positioningChatCount;
   final int positioningNotSureCount;
@@ -615,12 +615,12 @@ class TrialSummaryModel {
   /// Pass when ≥3 of 5 trial users chose archive-memory framing.
   bool get positioningComprehensionPass =>
       positioningComprehensionAnsweredCount >= 5 &&
-      positioningUnderstoodThoughtprintmoryCount >= 3;
+      positioningUnderstoodArchiveMemoryCount >= 3;
 
-  double? get positioningThoughtprintmoryRate =>
+  double? get positioningArchiveMemoryRate =>
       positioningComprehensionAnsweredCount == 0
       ? null
-      : positioningUnderstoodThoughtprintmoryCount /
+      : positioningUnderstoodArchiveMemoryCount /
             positioningComprehensionAnsweredCount;
 
   final int activationFullLoopCompletedCount;
@@ -935,14 +935,14 @@ class TrialSummaryModel {
     'positioningComprehensionAskedCount': positioningComprehensionAskedCount,
     'positioningComprehensionAnsweredCount':
         positioningComprehensionAnsweredCount,
-    'positioningUnderstoodThoughtprintmoryCount':
-        positioningUnderstoodThoughtprintmoryCount,
+    'positioningUnderstoodArchiveMemoryCount':
+        positioningUnderstoodArchiveMemoryCount,
     'positioningJournalCount': positioningJournalCount,
     'positioningChatCount': positioningChatCount,
     'positioningNotSureCount': positioningNotSureCount,
     'positioningComprehensionPass': positioningComprehensionPass,
-    if (positioningThoughtprintmoryRate != null)
-      'positioningThoughtprintmoryRate': positioningThoughtprintmoryRate,
+    if (positioningArchiveMemoryRate != null)
+      'positioningArchiveMemoryRate': positioningArchiveMemoryRate,
     'activationFullLoopCompletedCount': activationFullLoopCompletedCount,
     'activationWeakestBucket': activationWeakestBucket,
     'activationSavedFirstMoment': activationSavedFirstMoment,

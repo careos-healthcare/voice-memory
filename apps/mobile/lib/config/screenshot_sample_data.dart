@@ -229,8 +229,8 @@ abstract class ScreenshotSampleData {
     confidenceLabel: 'Based on 8 check-ins',
   );
 
-  static ThoughtprintmorySummary get archiveMemorySummarySample =>
-      ThoughtprintmorySummary(
+  static ArchiveMemorySummary get archiveMemorySummarySample =>
+      ArchiveMemorySummary(
         id: 'screenshot-archive-memory',
         patternTitle: 'Taking responsibility before asking for help',
         primaryMemoryLine:

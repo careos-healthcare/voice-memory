@@ -62,9 +62,9 @@ extension RecordPreCaptureCards on _RecordScreenState {
         const SizedBox(height: 12),
       ],
       if (ctx.showReturningWatchTargetFocusedUi &&
-          ctx.dailyThoughtprintmoryCandidate != null) ...[
-        DailyThoughtprintmoryCard(
-          memory: ctx.dailyThoughtprintmoryCandidate!,
+          ctx.dailyArchiveMemoryCandidate != null) ...[
+        DailyArchiveMemoryCard(
+          memory: ctx.dailyArchiveMemoryCandidate!,
           entryCount: _journalEntryCount,
           source: 'record',
           showFocusedCaptureActions: true,
@@ -612,11 +612,11 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ],
-        if (ctx.showDailyThoughtprintmory &&
+        if (ctx.showDailyArchiveMemory &&
             !ctx.showReturningWatchTargetFocusedUi &&
-            ctx.dailyThoughtprintmoryCandidate != null) ...[
-          DailyThoughtprintmoryCard(
-            memory: ctx.dailyThoughtprintmoryCandidate!,
+            ctx.dailyArchiveMemoryCandidate != null) ...[
+          DailyArchiveMemoryCard(
+            memory: ctx.dailyArchiveMemoryCandidate!,
             entryCount: _journalEntryCount,
             source: 'record',
             onRecord: () => unawaited(
@@ -625,7 +625,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
               ),
             ),
             onViewPatternDetails:
-                ctx.dailyThoughtprintmoryCandidate!
+                ctx.dailyArchiveMemoryCandidate!
                     .canShowPatternDetail
                 ? _openPatternDetailFromRecord
                 : null,
@@ -1700,8 +1700,8 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (!_shouldHideCompetingRecordCtas(ctx.ui) &&
-            ctx.stack.showThoughtprintmoryDemo) ...[
-          ThoughtprintmoryDemoCard(
+            ctx.stack.showArchiveMemoryDemo) ...[
+          ArchiveMemoryDemoCard(
             onRecord: () =>
                 unawaited(_onRecordPressed(source: 'main')),
           ),

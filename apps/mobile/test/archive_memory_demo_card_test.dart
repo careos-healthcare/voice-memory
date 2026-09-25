@@ -8,7 +8,7 @@ Future<void> _pump(WidgetTester tester) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
-      home: Scaffold(body: ThoughtprintmoryDemoCard(onRecord: () {})),
+      home: Scaffold(body: ArchiveMemoryDemoCard(onRecord: () {})),
     ),
   );
 }
@@ -32,7 +32,7 @@ void main() {
       MaterialApp(
         theme: AppTheme.light(),
         home: Scaffold(
-          body: ThoughtprintmoryDemoCard(onRecord: () => tapped = true),
+          body: ArchiveMemoryDemoCard(onRecord: () => tapped = true),
         ),
       ),
     );

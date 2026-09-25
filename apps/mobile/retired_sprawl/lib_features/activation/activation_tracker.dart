@@ -284,8 +284,8 @@ abstract class ActivationTracker {
       'positioningComprehensionAsked';
   static const String positioningComprehensionAnswered =
       'positioningComprehensionAnswered';
-  static const String positioningUnderstoodThoughtprintmory =
-      'positioningUnderstoodThoughtprintmory';
+  static const String positioningUnderstoodArchiveMemory =
+      'positioningUnderstoodArchiveMemory';
   static const String positioningJournal = 'positioningJournal';
   static const String positioningChat = 'positioningChat';
   static const String positioningNotSure = 'positioningNotSure';
@@ -1290,19 +1290,19 @@ abstract class ActivationTracker {
   }
 
   // --- Archive memory summary metrics ---
-  static void trackThoughtprintmorySummaryShown() {
+  static void trackArchiveMemorySummaryShown() {
     unawaited(_safe(() => _incrementEvent(archiveMemorySummaryShown)));
   }
 
-  static void trackThoughtprintmoryOpenPatternMapTapped() {
+  static void trackArchiveMemoryOpenPatternMapTapped() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryOpenPatternMapTapped)));
   }
 
-  static void trackThoughtprintmoryFindMomentsTapped() {
+  static void trackArchiveMemoryFindMomentsTapped() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryFindMomentsTapped)));
   }
 
-  static void trackThoughtprintmoryUseCheckTapped() {
+  static void trackArchiveMemoryUseCheckTapped() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryUseCheckTapped)));
   }
 
@@ -1320,19 +1320,19 @@ abstract class ActivationTracker {
   }
 
   // --- Positioning comprehension rescue metrics ---
-  static void trackThoughtprintmoryDemoShown() {
+  static void trackArchiveMemoryDemoShown() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryDemoShown)));
   }
 
-  static void trackThoughtprintmoryDemoCtaTapped() {
+  static void trackArchiveMemoryDemoCtaTapped() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryDemoCtaTapped)));
   }
 
-  static void trackThoughtprintmoryPreviewShown() {
+  static void trackArchiveMemoryPreviewShown() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryPreviewShown)));
   }
 
-  static void trackThoughtprintmoryPreviewCtaTapped() {
+  static void trackArchiveMemoryPreviewCtaTapped() {
     unawaited(_safe(() => _incrementEvent(archiveMemoryPreviewCtaTapped)));
   }
 
@@ -1348,7 +1348,7 @@ abstract class ActivationTracker {
         await _incrementEvent(positioningComprehensionAnswered);
         switch (answer) {
           case PositioningComprehensionAnswer.archiveMemory:
-            await _incrementEvent(positioningUnderstoodThoughtprintmory);
+            await _incrementEvent(positioningUnderstoodArchiveMemory);
           case PositioningComprehensionAnswer.journal:
             await _incrementEvent(positioningJournal);
           case PositioningComprehensionAnswer.chat:

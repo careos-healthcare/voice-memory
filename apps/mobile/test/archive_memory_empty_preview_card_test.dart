@@ -9,7 +9,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
-        home: Scaffold(body: ThoughtprintmoryEmptyPreviewCard(onRecord: () {})),
+        home: Scaffold(body: ArchiveMemoryEmptyPreviewCard(onRecord: () {})),
       ),
     );
     expect(find.text(ConsumerUiCopy.archiveMemoryPreviewTitle), findsOneWidget);
@@ -25,7 +25,7 @@ void main() {
       MaterialApp(
         theme: AppTheme.light(),
         home: Scaffold(
-          body: ThoughtprintmoryEmptyPreviewCard(onRecord: () => tapped = true),
+          body: ArchiveMemoryEmptyPreviewCard(onRecord: () => tapped = true),
         ),
       ),
     );

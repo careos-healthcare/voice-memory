@@ -5,15 +5,15 @@ import 'package:archiveme_mobile/features/archive_memory/archive_memory_summary_
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future<ThoughtprintmorySummaryStore> _store(String stamp) async {
+Future<ArchiveMemorySummaryStore> _store(String stamp) async {
   final path = '/tmp/vm_archive_memory_store_$stamp.json';
   final file = File(path);
   if (await file.exists()) await file.delete();
   final prefs = await MobilePrefsStore.open(path);
-  return ThoughtprintmorySummaryStore(prefs);
+  return ArchiveMemorySummaryStore(prefs);
 }
 
-ThoughtprintmorySummary _summary({String id = 'm1'}) => ThoughtprintmorySummary(
+ArchiveMemorySummary _summary({String id = 'm1'}) => ArchiveMemorySummary(
   id: id,
   patternTitle: 'Taking responsibility before asking for help',
   primaryMemoryLine: 'You often take responsibility before asking for help.',

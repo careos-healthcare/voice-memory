@@ -6,24 +6,24 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 ///
 /// Only the most recent summary is kept, in its own prefs key, so the rest of
 /// the schema is untouched.
-class ThoughtprintmorySummaryStore {
-  ThoughtprintmorySummaryStore(this._prefs);
+class ArchiveMemorySummaryStore {
+  ArchiveMemorySummaryStore(this._prefs);
 
   final MobilePrefsStore _prefs;
 
   static const _key = 'archiveMemorySummary';
 
-  static ThoughtprintmorySummaryStore instance() =>
-      ThoughtprintmorySummaryStore(AppServices.instance.prefs);
+  static ArchiveMemorySummaryStore instance() =>
+      ArchiveMemorySummaryStore(AppServices.instance.prefs);
 
-  Future<void> saveLatest(ThoughtprintmorySummary summary) async {
+  Future<void> saveLatest(ArchiveMemorySummary summary) async {
     await _prefs.writeMap(_key, summary.toJson());
   }
 
-  Future<ThoughtprintmorySummary?> loadLatest() async {
+  Future<ArchiveMemorySummary?> loadLatest() async {
     final raw = await _prefs.readMap(_key);
     if (raw == null || raw.isEmpty) return null;
-    return ThoughtprintmorySummary.fromJson(raw);
+    return ArchiveMemorySummary.fromJson(raw);
   }
 
   Future<void> clear() async {

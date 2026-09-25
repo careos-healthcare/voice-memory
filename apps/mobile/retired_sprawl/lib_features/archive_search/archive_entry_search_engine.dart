@@ -221,7 +221,7 @@ class ArchiveEntrySearchEngine {
   /// evidence framing language. Cautious by design: user choices first
   /// (fresh, confirmed), then mixed/changed/stale signals, then current.
   /// Also used by selected-entry export so labels read the same.
-  ThoughtprintmoryStatus memoryStatusFor(
+  ArchiveMemoryStatus memoryStatusFor(
     JournalEntry entry,
     PressureCheckInRecord? record,
     List<PressureCheckInRecord> allRecords,
@@ -231,21 +231,21 @@ class ArchiveEntrySearchEngine {
         entry.keepSeparate ||
         (record?.treatAsNew ?? false) ||
         (record?.keepSeparate ?? false)) {
-      return ThoughtprintmoryStatus.freshEntry;
+      return ArchiveMemoryStatus.freshEntry;
     }
     if (entry.connectionApproved || (record?.connectionApproved ?? false)) {
-      return ThoughtprintmoryStatus.userConfirmed;
+      return ArchiveMemoryStatus.userConfirmed;
     }
     if (ArchiveRetrievalPolicy.isRecordNotQuite(entry.id)) {
-      return ThoughtprintmoryStatus.mixedEvidence;
+      return ArchiveMemoryStatus.mixedEvidence;
     }
     if (record != null && _changedLater(record, allRecords)) {
-      return ThoughtprintmoryStatus.changedLater;
+      return ArchiveMemoryStatus.changedLater;
     }
     if (now.difference(entry.createdAt).inDays > staleAfterDays) {
-      return ThoughtprintmoryStatus.mayBeStale;
+      return ArchiveMemoryStatus.mayBeStale;
     }
-    return ThoughtprintmoryStatus.stillCurrent;
+    return ArchiveMemoryStatus.stillCurrent;
   }
 
   /// The archive moved on: a much newer record shares one of this

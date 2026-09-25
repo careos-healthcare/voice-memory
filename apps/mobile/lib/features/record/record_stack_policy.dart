@@ -16,7 +16,7 @@ class RecordStackDecision {
   const RecordStackDecision({
     required this.primaryState,
     this.showDueCheckCard = false,
-    this.showThoughtprintmoryDemo = false,
+    this.showArchiveMemoryDemo = false,
     this.showFirstRecordingHandoff = false,
     this.showFirstLoopStartCard = false,
     this.showTrialFirstMomentCard = false,
@@ -40,7 +40,7 @@ class RecordStackDecision {
 
   final RecordPrimaryState primaryState;
   final bool showDueCheckCard;
-  final bool showThoughtprintmoryDemo;
+  final bool showArchiveMemoryDemo;
   final bool showFirstRecordingHandoff;
   final bool showFirstLoopStartCard;
   final bool showTrialFirstMomentCard;
@@ -117,7 +117,7 @@ RecordStackDecision decideRecordStack({
 
   final inFirstRunReady = isFirstRun && readyNotPostSave && !showDueCheckCard;
 
-  const showThoughtprintmoryDemo = false;
+  const showArchiveMemoryDemo = false;
   const showFirstRecordingHandoff = false;
   const showFirstLoopStartCard = false;
   var showTrialFirstMomentCard = false;

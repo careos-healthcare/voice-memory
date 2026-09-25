@@ -184,12 +184,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: DailyThoughtprintmoryCard(
-              memory: const DailyThoughtprintmoryResult(
-                title: DailyThoughtprintmoryCopy.watchTitle,
-                body: DailyThoughtprintmoryCopy.watchBody,
+            body: DailyArchiveMemoryCard(
+              memory: const DailyArchiveMemoryResult(
+                title: DailyArchiveMemoryCopy.watchTitle,
+                body: DailyArchiveMemoryCopy.watchBody,
                 watchPhrase: 'checking again',
-                footer: DailyThoughtprintmoryCopy.footer,
+                footer: DailyArchiveMemoryCopy.footer,
                 hasWatchTarget: true,
                 canShowPatternDetail: false,
               ),
@@ -206,7 +206,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(DailyThoughtprintmoryCopy.watchPrompt('checking again')),
+        find.text(DailyArchiveMemoryCopy.watchPrompt('checking again')),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);
