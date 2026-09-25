@@ -18,6 +18,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
           onStop: _stopAndProcess,
           onPause: _toggleCapturePause,
           paused: _capturePaused,
+          showResurfacing: _journalEntryCount > 0,
         ),
         if (_selectedPromptLine != null) ...[
           const SizedBox(height: 12),

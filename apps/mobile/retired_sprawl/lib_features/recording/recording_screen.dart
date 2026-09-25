@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/widgets/record/idle_resurfacing_prompt.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

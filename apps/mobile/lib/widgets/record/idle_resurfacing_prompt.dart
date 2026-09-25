@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 
 /// One older moment, shown above the idle recorder when history exists.
 class IdleResurfacingPrompt extends StatefulWidget {
-  const IdleResurfacingPrompt({super.key});
+  const IdleResurfacingPrompt({super.key, this.onDark = false});
+
+  /// Cream type for the dark recording canvas.
+  final bool onDark;
 
   @override
   State<IdleResurfacingPrompt> createState() => _IdleResurfacingPromptState();
@@ -46,17 +49,33 @@ class _IdleResurfacingPromptState extends State<IdleResurfacingPrompt> {
     final lead = days >= 14
         ? '3 weeks ago you said…'
         : 'From an earlier moment…';
+    final theme = Theme.of(context);
+    final leadColor = widget.onDark
+        ? const Color(0xFFB7C0CC)
+        : theme.colorScheme.onSurface;
+    final quoteColor = widget.onDark
+        ? const Color(0xFFF8F6F1)
+        : theme.colorScheme.onSurface;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: widget.onDark ? 0 : 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             lead,
-            style: Theme.of(context).textTheme.titleMedium,
+            key: const Key('recording_resurfacing_lead'),
+            style: theme.textTheme.titleMedium?.copyWith(color: leadColor),
           ),
           const SizedBox(height: 6),
-          Text(snippet, style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            snippet,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: quoteColor,
+              fontFamily: 'Newsreader',
+            ),
+          ),
           ViewEvidenceInlineLink(
             entryIds: [entry.id],
             surface: 'idle_recording',

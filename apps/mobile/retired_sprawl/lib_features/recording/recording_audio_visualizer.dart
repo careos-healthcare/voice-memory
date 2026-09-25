@@ -21,12 +21,14 @@ class _RecordingStatusCard extends ConsumerWidget {
     required this.onStop,
     required this.onPause,
     required this.paused,
+    required this.showResurfacing,
   });
 
   final String stageLabel;
   final VoidCallback onStop;
   final VoidCallback onPause;
   final bool paused;
+  final bool showResurfacing;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,11 +60,22 @@ class _RecordingStatusCard extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
             child: Column(
               children: [
-                Text(
-                  statusText,
-                  style: const TextStyle(color: Color(0xFFB7C0CC), fontSize: 14),
+                SizedBox(
+                  height: height * 0.28,
+                  width: double.infinity,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: showResurfacing
+                        ? const IdleResurfacingPrompt(onDark: true)
+                        : Text(
+                            statusText,
+                            style: const TextStyle(
+                              color: Color(0xFFB7C0CC),
+                              fontSize: 14,
+                            ),
+                          ),
+                  ),
                 ),
-                const Spacer(),
                 Text(
                   timer,
                   style: const TextStyle(
@@ -74,12 +87,17 @@ class _RecordingStatusCard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 28),
-                RecordingWaveform(
-                  controller: ref.read(recordingWaveformControllerProvider),
-                  height: 96,
-                  color: const Color(0xFFE7E1D6),
-                  ambientWhenIdle: true,
+                SizedBox(
+                  width: double.infinity,
+                  child: RecordingWaveform(
+                    controller: ref.read(recordingWaveformControllerProvider),
+                    height: 96,
+                    color: const Color(0xFFE7E1D6),
+                    ambientWhenIdle: true,
+                  ),
                 ),
+                const SizedBox(height: 20),
+                const _LiveDraftTranscriptSlot(),
                 const Spacer(),
                 Text(
                   stopHint,
@@ -135,6 +153,82 @@ class _RecordingStatusCard extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Labeled draft area. Hidden unless the live-draft flag is on.
+class _LiveDraftTranscriptSlot extends StatefulWidget {
+  const _LiveDraftTranscriptSlot();
+
+  @override
+  State<_LiveDraftTranscriptSlot> createState() =>
+      _LiveDraftTranscriptSlotState();
+}
+
+class _LiveDraftTranscriptSlotState extends State<_LiveDraftTranscriptSlot> {
+  StreamSubscription<String>? _partials;
+  String _text = '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (!V1CapabilityRegistry.liveDraftTranscript ||
+        !LiveDraftTranscript.supportsOnDeviceStreaming) {
+      return;
+    }
+    _partials = LiveDraftTranscript.partials().listen((text) {
+      if (!mounted || text.trim().isEmpty) return;
+      setState(() => _text = text);
+    });
+    unawaited(LiveDraftTranscript.start());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_partials?.cancel());
+    if (V1CapabilityRegistry.liveDraftTranscript) {
+      unawaited(LiveDraftTranscript.stop());
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!V1CapabilityRegistry.liveDraftTranscript) {
+      return const SizedBox.shrink();
+    }
+    final waiting = _text.trim().isEmpty;
+    return SizedBox(
+      key: const Key('recording_live_draft'),
+      width: double.infinity,
+      height: 96,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Live draft transcript',
+            style: TextStyle(
+              color: Color(0xFF8E99A8),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            waiting ? 'Words appear here as you speak.' : _text,
+            key: const Key('recording_live_draft_text'),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: waiting ? const Color(0xFF8E99A8) : const Color(0xFFF8F6F1),
+              fontSize: 16,
+              height: 1.4,
+              fontFamily: 'Newsreader',
+            ),
+          ),
+        ],
       ),
     );
   }

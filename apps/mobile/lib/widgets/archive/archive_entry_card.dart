@@ -35,12 +35,6 @@ class ArchiveEntryCard extends StatelessWidget {
                       ArchiveEntryCardPreview(entry: entry),
                       const SizedBox(height: 10),
                       ArchiveEntryCardMeta(entry: entry),
-                      if (_hasPlayableAudio(entry))
-                        EntryAudioPlayer(
-                          audioPath: entry.localAudioPath,
-                          durationSeconds: entry.durationSeconds,
-                          compact: true,
-                        ),
                     ],
                   ),
                 ),
@@ -51,10 +45,6 @@ class ArchiveEntryCard extends StatelessWidget {
       ),
     );
   }
-
-  static bool _hasPlayableAudio(JournalEntry entry) =>
-      entry.durationSeconds > 0 &&
-      (entry.localAudioPath?.trim().isNotEmpty ?? false);
 
   String get _semanticsLabel {
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Typed';
@@ -84,6 +74,7 @@ class ArchiveEntryCardMeta extends StatelessWidget {
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w400,
+            fontSize: 12,
           ),
         ),
         const SizedBox(height: 4),
@@ -108,7 +99,13 @@ class ArchiveEntryCardMeta extends StatelessWidget {
                 key: Key('archive_entry_duration_${entry.id}'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 12,
                 ),
+              ),
+              EntryAudioPlayer(
+                audioPath: entry.localAudioPath,
+                durationSeconds: entry.durationSeconds,
+                compact: true,
               ),
             ],
           ],

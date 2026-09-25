@@ -325,7 +325,15 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
             fontSize: 32,
             height: 1.2,
           ),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
+            hintText: 'Add a title',
+            hintStyle: ArchiveMobileTypography.userWords(context).copyWith(
+              fontSize: 32,
+              height: 1.2,
+              color: Theme.of(context).colorScheme.onSurface.withValues(
+                alpha: 0.38,
+              ),
+            ),
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
