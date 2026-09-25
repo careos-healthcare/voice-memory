@@ -7,7 +7,11 @@ cd "$ROOT"
 
 OUT="${1:-$ROOT/thoughtprint-review.zip}"
 
-zip -r "$OUT" . \
+# -y stores symlinks as links, so lib/features/* stays a link into
+# retired_sprawl instead of copying that tree a second time.
+# apps/web and apps/api are named first so the review bundle always
+# contains both apps, not only whatever `.` happens to expand to.
+zip -ry "$OUT" apps/web apps/api . \
   -x '*/node_modules/*' 'node_modules/*' \
   -x '*/.git/*' '.git/*' \
   -x '*/build/*' 'build/*' \
@@ -19,5 +23,12 @@ zip -r "$OUT" . \
   -x '*/android/.kotlin/*' 'android/.kotlin/*' \
   -x '*/linux/flutter/ephemeral/*' 'linux/flutter/ephemeral/*' \
   -x "$(basename "$OUT")"
+
+for required in apps/web apps/api; do
+  if ! zipinfo -1 "$OUT" | grep -q "^${required}/"; then
+    echo "Review package is missing ${required}" >&2
+    exit 1
+  fi
+done
 
 echo "Wrote $OUT"
