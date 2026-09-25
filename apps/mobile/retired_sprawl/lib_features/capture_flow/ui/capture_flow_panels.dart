@@ -326,7 +326,7 @@ class CaptureRecordingPanel extends StatelessWidget {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return Container(
-      decoration: VoiceMemoryCards.standard(),
+      decoration: VoiceMemoryCards.standard(context: context),
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         children: [
@@ -573,7 +573,7 @@ class CaptureFailurePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: VoiceMemoryCards.standard(),
+      decoration: VoiceMemoryCards.standard(context: context),
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

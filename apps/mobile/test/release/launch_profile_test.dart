@@ -15,17 +15,21 @@ void main() {
     '${repoRoot.path}/config/launch_profiles/beta_1.json',
   );
 
-  test('apps/mobile launch profile keeps dark mode off', () {
-    final file = File('${packageRoot.path}/config/launch_profile.json');
-    expect(file.existsSync(), isTrue, reason: file.path);
-    final decoded = jsonDecode(file.readAsStringSync());
-    final profile = Map<String, dynamic>.from(decoded as Map);
-    expect(profile['THOUGHTPRINT_DARK_MODE_READY'], isFalse);
+  test('mobile and beta profiles are the same active set', () {
+    final mobile = File('${packageRoot.path}/config/launch_profile.json');
+    expect(mobile.existsSync(), isTrue, reason: mobile.path);
+    expect(profileFile.existsSync(), isTrue, reason: profileFile.path);
+    final mobileProfile = Map<String, dynamic>.from(
+      jsonDecode(mobile.readAsStringSync()) as Map,
+    );
+    final betaProfile = Map<String, dynamic>.from(
+      jsonDecode(profileFile.readAsStringSync()) as Map,
+    );
+    expect(mobileProfile, betaProfile);
+    expect(mobileProfile['THOUGHTPRINT_DARK_MODE_READY'], isFalse);
   });
 
-  test('beta_1.json matches the compile-time flags and leaves them off', () {
-    expect(profileFile.existsSync(), isTrue, reason: profileFile.path);
-
+  test('beta profile matches compile-time flags and enables the reviewed set', () {
     final decoded = jsonDecode(profileFile.readAsStringSync());
     expect(decoded, isA<Map<String, dynamic>>());
     final profile = Map<String, dynamic>.from(decoded as Map);
@@ -38,10 +42,24 @@ void main() {
     expect(unknown, isEmpty, reason: 'present in beta_1.json but not a known flag');
 
     for (final entry in profile.entries) {
-      expect(entry.value, isFalse, reason: '${entry.key} must stay false');
+      if (_enabledBetaFlags.contains(entry.key)) {
+        expect(entry.value, isTrue, reason: '${entry.key} is on for this beta');
+      } else {
+        expect(entry.value, isFalse, reason: '${entry.key} stays off');
+      }
     }
   });
 }
+
+const _enabledBetaFlags = {
+  'VOICEMEMORY_ENABLE_ENCRYPTED_BACKUP',
+  'VOICEMEMORY_ENABLE_FIRST_SAVE_QUOTE_BACK',
+  'VOICEMEMORY_ENABLE_ONBOARDING_IMPORT_FIRST',
+  'VOICEMEMORY_ENABLE_GENTLE_REMINDERS',
+  'VOICEMEMORY_ENABLE_NATIVE_QUICK_CAPTURE',
+  'VOICEMEMORY_ENABLE_LIVE_DRAFT_TRANSCRIPT',
+  'VOICEMEMORY_ENABLE_TREND_PATTERN_SUMMARY',
+};
 
 Set<String> _boolDefinesIn(Iterable<File> files) {
   final pattern = RegExp(

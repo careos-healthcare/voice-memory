@@ -1,6 +1,6 @@
 # Launch flag review — beta 1
 
-Profile: `config/launch_profiles/beta_1.json`. Every value is `false`. `scripts/build-beta.sh` passes that file to the iOS IPA and Android App Bundle via `--dart-define-from-file`. Do not set a flag to `true` in the profile until the line below it is signed.
+Profile: `config/launch_profiles/beta_1.json`, copied to `apps/mobile/config/launch_profile.json`. `scripts/build-beta.sh` passes the beta file via `--dart-define-from-file`. Dark mode stays off. The reviewed beta turns on encrypted backup, first-save quote-back, onboarding import, gentle reminders, native quick capture, live draft transcript, and trend summaries.
 
 `test/release/launch_profile_test.dart` fails if code references a flag this file does not list, or if the profile names a flag the code does not.
 

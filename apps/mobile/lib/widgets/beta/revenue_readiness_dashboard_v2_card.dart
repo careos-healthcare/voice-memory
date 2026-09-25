@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_decision_rules/beta_decision_rule_model.dart';
 import 'package:archiveme_mobile/features/beta_fix_playbooks/beta_fix_playbook_engine.dart';
@@ -12,9 +14,9 @@ import 'package:archiveme_mobile/features/revenue_readiness/revenue_readiness_da
 import 'package:archiveme_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import 'package:archiveme_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 /// Beta-only unified revenue readiness dashboard — metadata counts only.
 class RevenueReadinessDashboardV2Card extends StatefulWidget {
@@ -77,7 +79,7 @@ class _RevenueReadinessDashboardV2CardState
       decoration: BoxDecoration(
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,9 +152,9 @@ class _RepairFocusBlock extends StatelessWidget {
       key: const Key('revenue_readiness_dashboard_v2_repair_focus'),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,9 +204,9 @@ class _DecisionRuleBlock extends StatelessWidget {
       key: const Key('revenue_readiness_dashboard_v2_decision_rule'),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,9 +257,9 @@ class _ValidationDecisionBlock extends StatelessWidget {
       key: const Key('revenue_readiness_dashboard_v2_validation_decision'),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,9 +321,9 @@ class _LiftFocusBlock extends StatelessWidget {
       key: const Key('revenue_readiness_dashboard_v2_lift_focus'),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,9 +425,9 @@ class _MetricRowTile extends StatelessWidget {
       key: Key('revenue_readiness_dashboard_v2_metric_${row.id.name}'),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,9 +502,9 @@ class _DiagnosisTile extends StatelessWidget {
       key: Key('revenue_readiness_dashboard_v2_diagnosis_${diagnosis.id.name}'),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: context.palette.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

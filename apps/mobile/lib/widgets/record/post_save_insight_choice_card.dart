@@ -25,6 +25,7 @@ import 'package:archiveme_mobile/features/signal_journey/signal_journey_coordina
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/prove_enough/prove_enough_post_record_payoff.dart';
@@ -652,7 +653,7 @@ class _MomentsProgress extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: filled
                       ? AppColors.accentPrimary
-                      : AppColors.backgroundSecondary,
+                      : context.palette.backgroundSecondary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -810,7 +811,7 @@ class _StrengthSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.backgroundSecondary,
+              color: context.palette.backgroundSecondary,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(

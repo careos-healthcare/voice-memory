@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/early_archive/early_evidence_timeline_
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/proof/proof_surface_why_appeared_disclosure.dart';
@@ -121,7 +122,7 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                     labelStyle: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.textPrimary, height: 1.4),
+                    ).copyWith(color: context.palette.textPrimary, height: 1.4),
                   ),
               ],
             ),
@@ -204,11 +205,11 @@ class _HeaderSection extends StatelessWidget {
             fontWeight: FontWeight.w700,
             height: 1.2,
             letterSpacing: -0.25,
-            color: AppColors.textPrimary,
+            color: context.palette.textPrimary,
           );
     final subtitleStyle = ArchiveMobileTypography.explanationBody(context)
         .copyWith(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
           height: 1.45,
           fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context)
               ? 17
@@ -250,9 +251,9 @@ class _MilestoneChipTrail extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt.withValues(alpha: 0.65),
+        color: context.palette.surfaceAlt.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -268,7 +269,7 @@ class _MilestoneChipTrail extends StatelessWidget {
                 ),
                 style: ArchiveMobileTypography.responsiveHelper(context)
                     .copyWith(
-                      color: AppColors.textSecondary.withValues(alpha: 0.55),
+                      color: context.palette.textSecondary.withValues(alpha: 0.55),
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -295,15 +296,15 @@ class _MilestoneChip extends StatelessWidget {
       key: Key('early_evidence_timeline_chip_${kind.name}'),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.backgroundSecondary,
+        color: context.palette.backgroundSecondary,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
           fontWeight: FontWeight.w600,
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
           fontSize: 12,
           letterSpacing: 0.1,
         ),
@@ -335,21 +336,21 @@ class _EvidenceChain extends StatelessWidget {
   Widget build(BuildContext context) {
     final itemTitleStyle = ArchiveMobileTypography.responsiveHelper(context)
         .copyWith(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
           fontWeight: FontWeight.w600,
           fontSize: compact ? 14 : 15,
           height: 1.3,
         );
     final itemBodyStyle = ArchiveMobileTypography.explanationBody(context)
         .copyWith(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
           height: 1.4,
           fontSize: compact ? 13 : 14,
         );
     final chipLabelStyle = ArchiveMobileTypography.responsiveHelper(context)
         .copyWith(
           fontWeight: FontWeight.w600,
-          color: AppColors.textSecondary.withValues(alpha: 0.85),
+          color: context.palette.textSecondary.withValues(alpha: 0.85),
           fontSize: 11,
           letterSpacing: 0.15,
         );

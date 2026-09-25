@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_session.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
@@ -49,4 +52,20 @@ Future<void> _loadBundledFonts() async {
     ..addFont(rootBundle.load('assets/fonts/Newsreader-Regular.ttf'))
     ..addFont(rootBundle.load('assets/fonts/Newsreader-Italic.ttf'));
   await newsreader.load();
+  await _loadMaterialIcons();
+}
+
+/// Icon font used by mic, play, and trust-footer glyphs. Inter is the UI face
+/// for TrustStatusFooter and the voice/typed source label.
+Future<void> _loadMaterialIcons() async {
+  final root = Platform.environment['FLUTTER_ROOT'];
+  if (root == null || root.isEmpty) return;
+  final file = File(
+    '$root/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+  );
+  if (!file.existsSync()) return;
+  final bytes = file.readAsBytesSync();
+  final loader = FontLoader('MaterialIcons')
+    ..addFont(Future<ByteData>.value(ByteData.sublistView(bytes)));
+  await loader.load();
 }

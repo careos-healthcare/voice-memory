@@ -63,7 +63,9 @@ abstract class ArchiveMobileTypography {
       );
 
   static TextStyle responsiveSectionTitle(BuildContext context) =>
-      VoiceMemoryTypography.sectionTitleStyle().copyWith(
+      VoiceMemoryTypography.sectionTitleStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+      ).copyWith(
         fontSize: _wide(context) ? 19 : 17,
         height: 1.3,
       );

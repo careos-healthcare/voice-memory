@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build the public beta iOS IPA and Android App Bundle from the reviewed profile.
-# Every flag in config/launch_profiles/beta_1.json stays false until that file changes.
+# Flags come from config/launch_profiles/beta_1.json, which matches apps/mobile/config/launch_profile.json.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

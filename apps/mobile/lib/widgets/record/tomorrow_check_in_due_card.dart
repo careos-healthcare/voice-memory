@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coor
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_model.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
@@ -148,7 +149,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
       Text(
         _t('todayHappened', ConsumerUiCopy.tomorrowCheckInTodayHappenedLabel),
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -175,13 +176,13 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
               Icon(
                 _examplesExpanded ? Icons.expand_less : Icons.expand_more,
                 size: 18,
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 ConsumerUiCopy.tomorrowCheckInNeedExamples,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ).copyWith(fontSize: 12),
               ),
             ],
@@ -196,7 +197,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
             child: Text(
               CheckInResultCopy.optionExamples[option.id] ?? option.label,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ).copyWith(fontSize: 12, height: 1.4),
             ),
           ),
@@ -209,7 +210,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
       Text(
         _t('todayHappened', ConsumerUiCopy.tomorrowCheckInTodayHappenedLabel),
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -247,7 +248,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
       Text(
         ConsumerUiCopy.guidedCheckInPickClosest,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontSize: 13, height: 1.4),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -331,7 +332,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
             Text(
               ConsumerUiCopy.tomorrowCheckInDueSubtitle,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ).copyWith(fontSize: 14, height: 1.4),
             ),
             if (widget.plannedAnchor != null) ...[
@@ -360,7 +361,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
                 ConsumerUiCopy.tomorrowCheckInYesterdayChosenLabel,
               ),
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -368,7 +369,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
               widget.checkIn.question,
               style:
                   VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                   ).copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -387,7 +388,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
                 ConsumerUiCopy.tomorrowCheckInOneTapRecordPrompt,
                 style:
                     VoiceMemoryTypography.bodyStyle(
-                      color: AppColors.textPrimary,
+                      color: context.palette.textPrimary,
                     ).copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -398,7 +399,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
               Text(
                 ConsumerUiCopy.tomorrowCheckInOneTapRecordHelper,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ).copyWith(fontSize: 13, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -420,7 +421,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
               Text(
                 ConsumerUiCopy.tomorrowCheckInMomentCompareLine,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textPrimary,
+                  color: context.palette.textPrimary,
                 ).copyWith(fontSize: 14, height: 1.45),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -436,7 +437,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
                   _followUp(selected),
                   style:
                       VoiceMemoryTypography.bodyStyle(
-                        color: AppColors.textSecondary,
+                        color: context.palette.textSecondary,
                       ).copyWith(
                         fontSize: 14,
                         height: 1.45,
@@ -448,7 +449,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
               Text(
                 ConsumerUiCopy.tomorrowCheckInShortHelper,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ).copyWith(fontSize: 12, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -515,7 +516,7 @@ class _OneTapAnswerButton extends StatelessWidget {
                   VoiceMemoryTypography.bodyStyle(
                     color: selected
                         ? AppColors.accentPrimary
-                        : AppColors.textPrimary,
+                        : context.palette.textPrimary,
                   ).copyWith(
                     fontSize: 16,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
@@ -547,7 +548,7 @@ class _OptionChip extends StatelessWidget {
         color: selected ? AppColors.accentPrimary : AppColors.warmBorder,
       ),
       labelStyle: VoiceMemoryTypography.bodyStyle(
-        color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
+        color: selected ? AppColors.accentPrimary : context.palette.textSecondary,
       ).copyWith(fontSize: 13, fontWeight: selected ? FontWeight.w600 : null),
     );
   }

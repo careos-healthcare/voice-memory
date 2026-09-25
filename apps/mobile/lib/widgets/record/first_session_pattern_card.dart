@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/features/tomorrow_return/watch_for_prompt_model
 import 'package:archiveme_mobile/features/trial/hook_rescue_decision_model.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:archiveme_mobile/widgets/feedback/archive_feedback_chips.dart';
@@ -254,7 +255,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
         Text(
           ConsumerUiCopy.firstSessionSavedLine2,
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
           ).copyWith(height: 1.45),
         ),
         if (_checkInIdForRating != null && !_questionRated)
@@ -313,7 +314,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
             child: Text(
               _t('earlyRead', ConsumerUiCopy.inputQualityEarlyReadLabel),
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ).copyWith(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
@@ -324,7 +325,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
               ConsumerUiCopy.firstPatternEarlyReadHint,
             ),
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
             ).copyWith(fontSize: 13, height: 1.4),
           ),
         ],
@@ -333,7 +334,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
           Text(
             ConsumerUiCopy.firstSessionAmbiguousHint,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
             ).copyWith(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ],
@@ -349,7 +350,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
         Text(
           _selected.noticedBecauseLine,
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
           ).copyWith(fontSize: 13, height: 1.45),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -362,7 +363,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
         Text(
           ConsumerUiCopy.firstSessionWatchTomorrowSection,
           style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
           ).copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -391,12 +392,12 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                 .map(
                   (c) => Chip(
                     label: Text(c),
-                    backgroundColor: AppColors.backgroundSecondary,
+                    backgroundColor: context.palette.backgroundSecondary,
                     side: const BorderSide(
                       color: FirstSessionPatternCard._warmBorder,
                     ),
                     labelStyle: VoiceMemoryTypography.bodyStyle(
-                      color: AppColors.textSecondary,
+                      color: context.palette.textSecondary,
                     ).copyWith(fontSize: 13),
                   ),
                 )
@@ -534,14 +535,14 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                 Text(
                   _t('originalLabel', 'Original'),
                   style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                   ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   original,
                   style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                   ).copyWith(fontSize: 14, height: 1.45),
                 ),
               ],
@@ -574,7 +575,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
 
     final picked = await showModalBottomSheet<_PickerOption>(
       context: context,
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: context.palette.backgroundPrimary,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -606,7 +607,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                         ? Text(
                             opt.pattern.watchForText,
                             style: VoiceMemoryTypography.bodyStyle(
-                              color: AppColors.textSecondary,
+                              color: context.palette.textSecondary,
                             ).copyWith(fontSize: 13),
                           )
                         : null,

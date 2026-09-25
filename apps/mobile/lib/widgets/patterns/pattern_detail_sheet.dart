@@ -23,6 +23,7 @@ import 'package:archiveme_mobile/features/what_changed/what_changed_v2_engine.da
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive_controls/archive_moment_actions_sheet.dart';
 import 'package:archiveme_mobile/widgets/archive_controls/archive_pattern_exclusion_actions.dart';
@@ -182,7 +183,7 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
             ArchiveControlCopy.patternNeedsMoreEvidenceFallback,
             key: const Key('pattern_detail_needs_more_evidence'),
             style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -195,8 +196,8 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
-    ).copyWith(color: AppColors.textPrimary, height: 1.45);
-    final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
+    ).copyWith(color: context.palette.textPrimary, height: 1.45);
+    final secondaryStyle = bodyStyle.copyWith(color: context.palette.textSecondary);
     final fallbackStyle = secondaryStyle.copyWith(fontStyle: FontStyle.italic);
     final visibleMoments = ProMemoryBoundaryEngine.visibleRecentMoments(
       moments: detail.savedMoments,
@@ -327,7 +328,7 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                       PatternCorrectionCopy.controlLabel,
                       style: ArchiveMobileTypography.responsiveHelper(context)
                           .copyWith(
-                            color: AppColors.textSecondary,
+                            color: context.palette.textSecondary,
                             decoration: TextDecoration.underline,
                           ),
                     ),
@@ -520,7 +521,7 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                     PrivateReportCopy.openReportCta,
                     style: ArchiveMobileTypography.responsiveHelper(context)
                         .copyWith(
-                          color: AppColors.textSecondary,
+                          color: context.palette.textSecondary,
                           decoration: TextDecoration.underline,
                         ),
                   ),
@@ -602,10 +603,10 @@ class _MomentRowState extends State<_MomentRow> {
   Widget build(BuildContext context) {
     final labelStyle = ArchiveMobileTypography.cardLabel(
       context,
-    ).copyWith(color: AppColors.textPrimary);
+    ).copyWith(color: context.palette.textPrimary);
     final previewStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    ).copyWith(color: context.palette.textSecondary, height: 1.4);
     final chipStyle = ArchiveMobileTypography.responsiveHelper(context)
         .copyWith(
           color: AppColors.accentPrimary,
@@ -703,10 +704,10 @@ class _QuietSignalDetailSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final labelStyle = ArchiveMobileTypography.cardLabel(
       context,
-    ).copyWith(color: AppColors.textSecondary);
+    ).copyWith(color: context.palette.textSecondary);
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
-    ).copyWith(color: AppColors.textSecondary);
+    ).copyWith(color: context.palette.textSecondary);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

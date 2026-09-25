@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/perspective/perspective_shift_engine.d
 import 'package:archiveme_mobile/features/perspective/perspective_shift_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
@@ -143,14 +144,14 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
       Text(
         shift.title,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
         ).copyWith(fontSize: 16, fontWeight: FontWeight.w700, height: 1.35),
       ),
       const SizedBox(height: AppSpacing.xs),
       Text(
         shift.perspective,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
         ).copyWith(fontSize: 15, height: 1.45),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -186,14 +187,14 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
       Text(
         _t('anotherPerspective'),
         style: VoiceMemoryTypography.metadataStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontWeight: FontWeight.w700),
       ),
       const SizedBox(height: AppSpacing.xs),
       Text(
         shift.perspective,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
         ).copyWith(fontSize: 15, height: 1.4),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -249,13 +250,13 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
         Text(
           label,
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
           ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
           body,
-          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+          style: VoiceMemoryTypography.bodyStyle(color: context.palette.textPrimary)
               .copyWith(
                 fontSize: emphasizeBody ? 15 : 14,
                 fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,

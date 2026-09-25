@@ -42,6 +42,7 @@ flutter_*.log
 **/tool/screenshots/revenuecat_production/
 **/tool/screenshots/settings_audit/
 **/intentional_empty_*.png
+**/tool/screenshots/intentional_empty_*
 **/ios/Pods/
 **/linux/flutter/ephemeral/
 
