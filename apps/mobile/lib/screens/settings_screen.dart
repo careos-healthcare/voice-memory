@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/features/action_items/archive_action_item.dart'
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
+import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
 import 'package:archiveme_mobile/features/export/archive_transfer_screen.dart';
@@ -339,6 +340,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   identifier,
                 );
               },
+            ),
+            E2eeSyncSettings(
+              readEnabled: () async {
+                if (!AppServices.isInitialized) return false;
+                return await AppServices.instance.prefs.readBool(
+                      E2eeSyncSettings.preferenceKey,
+                    ) ??
+                    false;
+              },
+              writeEnabled: (enabled) async {
+                if (!AppServices.isInitialized) return;
+                await AppServices.instance.prefs.writeBool(
+                  E2eeSyncSettings.preferenceKey,
+                  enabled,
+                );
+              },
+              storePassphrase: E2eeSyncSettings.storeInVault,
             ),
             JournalReminderPreferences(
               readEnabled: (key) async {

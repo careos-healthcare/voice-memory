@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
+import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
 import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
 import 'package:archiveme_mobile/sync/sync_conflict_resolution.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
@@ -150,6 +151,54 @@ class SyncEngine {
     final opened = await _openVault(passphrase);
     vault = opened;
     return opened;
+  }
+
+  /// Seals SQLite journal rows before they can be pushed. The server envelope
+  /// holds ciphertext only.
+  Future<SyncBlobPushDto> encryptJournalSnapshot({
+    required List<JournalEntry> entries,
+    required String passphrase,
+  }) {
+    return E2eeJournalSync.encryptSnapshot(
+      encryption: encryption,
+      openVault: openPassphraseVault,
+      entries: entries,
+      passphrase: passphrase,
+    );
+  }
+
+  Future<List<JournalEntry>> decryptJournalSnapshot({
+    required EncryptedPayloadDto envelope,
+    required String passphrase,
+  }) {
+    return E2eeJournalSync.decryptSnapshot(
+      encryption: encryption,
+      envelope: envelope,
+      passphrase: passphrase,
+    );
+  }
+
+  List<JournalEntry> mergeJournalSnapshots({
+    required List<JournalEntry> local,
+    required List<JournalEntry> remote,
+  }) {
+    return E2eeJournalSync.mergeByUpdatedAt(local: local, remote: remote);
+  }
+
+  /// Encrypts [entries] from the local SQLite journal, then pushes the blob.
+  Future<ApiResult<int>> pushEncryptedJournal({
+    required List<JournalEntry> entries,
+    required String passphrase,
+  }) async {
+    final blob = await encryptJournalSnapshot(
+      entries: entries,
+      passphrase: passphrase,
+    );
+    return flushOfflineQueue(
+      blob: blob,
+      coreBlobId: E2eeJournalSync.blobId,
+      pushedEntryIds: entries.map((entry) => entry.id),
+    );
   }
 
   bool get hasOutbox => _outbox != null;
