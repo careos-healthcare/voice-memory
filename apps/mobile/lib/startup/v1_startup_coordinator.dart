@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_startup_provider.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
 import 'package:archiveme_mobile/features/objective/current_objective_widget_refresh_service.dart';
+import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/archive_correction_bootstrap.dart';
@@ -68,6 +69,7 @@ abstract final class V1StartupCoordinator {
       await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
     }
     if (V1CapabilityRegistry.nativeQuickCapture && AppServices.isInitialized) {
+      QuickCaptureService.auditQuickCaptureCapabilities();
       final service = AppServices.instance.quickCaptureWidgetService;
       final route = await service?.capturePendingLaunchRoute();
       if (route != null && route.startsWith('/record')) {
