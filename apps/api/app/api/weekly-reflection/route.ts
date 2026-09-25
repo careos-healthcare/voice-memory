@@ -10,9 +10,10 @@ import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
 import type { WeeklyReflectionPayload } from "@/types/weekly";
 import {
+  sanitizeWeeklyAggregate,
+  sanitizeWeeklyEntries,
   synthesizeWeeklyRecap,
   weeklyInputError,
-  type WeeklyReflectionEntry,
 } from "../../../src/routes/weekly-reflection";
 
 export const runtime = "nodejs";
@@ -55,27 +56,29 @@ export async function POST(request: Request) {
     }
 
     if (Array.isArray(body.entries)) {
-      const recap = await synthesizeWeeklyRecap(body.entries as WeeklyReflectionEntry[]);
+      const entries = sanitizeWeeklyEntries(body.entries);
+      if (!entries) {
+        return apiErrorResponse({
+          code: "WEEKLY_REFLECTION_NO_ENTRIES",
+          message: "Each entry needs an id, text, and timestamp.",
+          status: 400,
+          route: "weekly-reflection",
+        });
+      }
+      const recap = await synthesizeWeeklyRecap(entries);
       return NextResponse.json(recap);
     }
 
-    const listFields = [
-      body.dominantEmotions,
-      body.recurringThemes,
-      body.repeatedConcerns,
-      body.repeatedEntities,
-      body.observationHighlights,
-    ];
-    if (listFields.some((field) => !Array.isArray(field))) {
+    const aggregate = sanitizeWeeklyAggregate(body as Record<string, unknown>);
+    if (typeof aggregate === "string") {
       return apiErrorResponse({
         code: "WEEKLY_REFLECTION_NO_ENTRIES",
-        message: "Weekly reflection list fields must be arrays.",
+        message: aggregate,
         status: 400,
         route: "weekly-reflection",
       });
     }
-
-    if (!body.weekEndingKey || body.entryCount === 0) {
+    if (aggregate.entryCount === 0) {
       return apiErrorResponse({ code: "WEEKLY_REFLECTION_NO_ENTRIES", route: "weekly-reflection" });
     }
 
@@ -86,19 +89,19 @@ export async function POST(request: Request) {
 
     const userContent = `Weekly intelligence aggregates (last 7 days vs prior 7 days):
 
-This week (${body.weekEndingKey} window):
-- Entries: ${body.entryCount}
-- Dominant emotions: ${body.dominantEmotions.join(", ") || "none"}
-- Recurring themes: ${body.recurringThemes.join(", ") || "none"}
-- Repeated threads: ${body.repeatedConcerns.join("; ") || "none"}
-- People/entities mentioned: ${body.repeatedEntities.join(", ") || "none"}
-- Average emotional intensity: ${body.avgIntensityThisWeek ?? "n/a"}/10
-- Emotional shift vs last week: ${body.emotionalShiftLabel}
-- Pattern observations: ${body.observationHighlights.join(" | ") || "none"}
+This week (${aggregate.weekEndingKey} window):
+- Entries: ${aggregate.entryCount}
+- Dominant emotions: ${aggregate.dominantEmotions.join(", ") || "none"}
+- Recurring themes: ${aggregate.recurringThemes.join(", ") || "none"}
+- Repeated threads: ${aggregate.repeatedConcerns.join("; ") || "none"}
+- People/entities mentioned: ${aggregate.repeatedEntities.join(", ") || "none"}
+- Average emotional intensity: ${aggregate.avgIntensityThisWeek ?? "n/a"}/10
+- Emotional shift vs last week: ${aggregate.emotionalShiftLabel}
+- Pattern observations: ${aggregate.observationHighlights.join(" | ") || "none"}
 
 Last week:
-- Entries: ${body.lastWeekEntryCount}
-- Average intensity: ${body.avgIntensityLastWeek ?? "n/a"}/10
+- Entries: ${aggregate.lastWeekEntryCount}
+- Average intensity: ${aggregate.avgIntensityLastWeek ?? "n/a"}/10
 
 Write the weekly pattern observation summary.`;
 

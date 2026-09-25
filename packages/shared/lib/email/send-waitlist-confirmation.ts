@@ -1,6 +1,5 @@
 import { Resend } from "resend";
 
-import { MARKETING_SITE_URL } from "@/lib/site/marketing-site";
 import { waitlistFromAddress, waitlistUnsubscribeUrl } from "@/lib/waitlist/signup";
 
 export function waitlistConfirmationText(unsubscribeUrl: string): string {
@@ -17,7 +16,7 @@ export async function sendWaitlistConfirmation(
 ): Promise<void> {
   if (process.env.NODE_ENV !== "production") return;
 
-  const listUnsubscribe = `${MARKETING_SITE_URL}/api/waitlist/unsubscribe?email=${encodeURIComponent(email)}`;
+  const listUnsubscribe = unsubscribeUrl;
   try {
     const apiKey = process.env.RESEND_API_KEY?.trim() ?? "";
     if (!apiKey) {

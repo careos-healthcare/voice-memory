@@ -35,6 +35,92 @@ export function weeklyInputError(body: {
   return null;
 }
 
+function cleanString(value: unknown, max = 200): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.replace(/[\u0000-\u001f]/g, "").trim().slice(0, max);
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function cleanStringList(value: unknown): string[] | null {
+  if (!Array.isArray(value)) return null;
+  const items: string[] = [];
+  for (const item of value) {
+    const text = cleanString(item);
+    if (!text) continue;
+    items.push(text);
+  }
+  return items;
+}
+
+export function sanitizeWeeklyEntries(value: unknown): WeeklyReflectionEntry[] | null {
+  if (!Array.isArray(value)) return null;
+  const entries: WeeklyReflectionEntry[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== "object") return null;
+    const record = item as Record<string, unknown>;
+    const entryId = cleanString(record.entryId, 80);
+    const text = cleanString(record.text, 2000);
+    const timestamp = cleanString(record.timestamp, 40);
+    if (!entryId || !text || !timestamp) return null;
+    const embedding = Array.isArray(record.embedding)
+      ? record.embedding.filter((point): point is number => typeof point === "number" && Number.isFinite(point))
+      : undefined;
+    entries.push({ entryId, text, timestamp, embedding });
+  }
+  return entries;
+}
+
+export interface SanitizedWeeklyAggregate {
+  weekEndingKey: string;
+  entryCount: number;
+  lastWeekEntryCount: number;
+  dominantEmotions: string[];
+  repeatedConcerns: string[];
+  repeatedEntities: string[];
+  recurringThemes: string[];
+  avgIntensityThisWeek: number | null;
+  avgIntensityLastWeek: number | null;
+  emotionalShiftLabel: string;
+  observationHighlights: string[];
+}
+
+export function sanitizeWeeklyAggregate(body: Record<string, unknown>): SanitizedWeeklyAggregate | string {
+  const weekEndingKey = cleanString(body.weekEndingKey, 40);
+  const emotionalShiftLabel = cleanString(body.emotionalShiftLabel, 80) ?? "unchanged";
+  const dominantEmotions = cleanStringList(body.dominantEmotions);
+  const repeatedConcerns = cleanStringList(body.repeatedConcerns);
+  const repeatedEntities = cleanStringList(body.repeatedEntities);
+  const recurringThemes = cleanStringList(body.recurringThemes);
+  const observationHighlights = cleanStringList(body.observationHighlights);
+  if (
+    !weekEndingKey ||
+    !dominantEmotions ||
+    !repeatedConcerns ||
+    !repeatedEntities ||
+    !recurringThemes ||
+    !observationHighlights ||
+    typeof body.entryCount !== "number" ||
+    typeof body.lastWeekEntryCount !== "number"
+  ) {
+    return "Weekly reflection list fields must be arrays.";
+  }
+  const intensity = (value: unknown) =>
+    typeof value === "number" && Number.isFinite(value) ? value : null;
+  return {
+    weekEndingKey,
+    entryCount: body.entryCount,
+    lastWeekEntryCount: body.lastWeekEntryCount,
+    dominantEmotions,
+    repeatedConcerns,
+    repeatedEntities,
+    recurringThemes,
+    avgIntensityThisWeek: intensity(body.avgIntensityThisWeek),
+    avgIntensityLastWeek: intensity(body.avgIntensityLastWeek),
+    emotionalShiftLabel,
+    observationHighlights,
+  };
+}
+
 export function cosineSimilarity(left: number[], right: number[]): number {
   const length = Math.min(left.length, right.length);
   if (length === 0) return 0;

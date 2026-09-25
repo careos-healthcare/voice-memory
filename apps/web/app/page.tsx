@@ -11,7 +11,7 @@ import { NOT_THERAPY_LINE } from "@/lib/trust-copy";
 
 const title = "Thoughtprint — A private voice journal";
 const description =
-  "A private voice journal that remembers what you actually said. Free core, forever. Transcribed on your phone by default. Never metered.";
+  "A private voice journal that remembers what you actually said. Core is free forever. Transcribed on your phone by default. Never metered.";
 
 export const metadata: Metadata = {
   title,
@@ -26,17 +26,13 @@ export const metadata: Metadata = {
 };
 
 const promises = [
-  "We can't see your journal. Nothing is linked to your identity.",
-  "Private by Design",
+  "We can't see your journal unless you turn on cloud features. Nothing is linked to your identity.",
+  "Private by design",
   "No usage meters",
   "Free tier stays free",
 ];
 
-const features = [
-  "Live cross-device sync",
-  "Apple Voice Memos import",
-  "Add a mood or a place to any moment",
-];
+const features = ["Add a mood or a place to any moment"];
 
 export default function HomePage() {
   return (
@@ -52,8 +48,13 @@ export default function HomePage() {
             Core is free forever. Pro (optional) is about $7/month.
           </p>
           <p className="mt-5 text-lg leading-relaxed text-[#3F4757]">
-            Free core, forever. Transcribed on your phone by default. Never metered.
+            Transcribed on your phone by default. Never metered.
           </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <img src="/record-screen.png" alt="Recording screen" className="w-full rounded-2xl" />
+            <img src="/receipt-quote.png" alt="Saved moment with the words you said" className="w-full rounded-2xl" />
+            <img src="/archive-screen.png" alt="Archive of saved moments" className="w-full rounded-2xl" />
+          </div>
           <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-[#172033]">
             {promises.map((point) => (
               <li key={point}>{point}</li>
@@ -88,7 +89,7 @@ export default function HomePage() {
             <div id="import-apple-notes" className="mt-4 scroll-mt-6">
               <h3 className="font-serif text-base font-medium text-[#172033]">Apple Notes</h3>
               <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
-                Export the notes as JSON or CSV. Thoughtprint reads Apple Notes JSON and CSV exports.
+                Export the notes as PDF or share them directly, or use a third-party exporter app.
               </p>
             </div>
           </section>

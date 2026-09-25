@@ -189,6 +189,12 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   unsubscribed_at timestamptz
 )`,
   `CREATE INDEX IF NOT EXISTS waitlist_signups_created_at_idx ON waitlist_signups (created_at)`,
+  `CREATE TABLE IF NOT EXISTS rate_limits (
+  subject_key text NOT NULL,
+  window_start timestamptz NOT NULL,
+  request_count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (subject_key, window_start)
+)`,
   `CREATE TABLE IF NOT EXISTS product_event_counts (
   event_name text NOT NULL,
   day_key text NOT NULL,
