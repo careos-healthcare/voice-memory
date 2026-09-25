@@ -83,7 +83,10 @@ class AppTheme {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
       ),
-      cardTheme: VoiceMemoryCards.cardTheme(),
+      cardTheme: VoiceMemoryCards.cardTheme(
+        surface: scheme.surface,
+        border: scheme.outline,
+      ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.backgroundSecondary,
         indicatorColor: AppColors.accentPrimary.withValues(alpha: 0.12),

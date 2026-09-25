@@ -63,7 +63,8 @@ class ArchiveDashboardScrollView extends StatefulWidget {
       _ArchiveDashboardScrollViewState();
 }
 
-class _ArchiveDashboardScrollViewState extends State<ArchiveDashboardScrollView> {
+class _ArchiveDashboardScrollViewState
+    extends State<ArchiveDashboardScrollView> {
   DateTime? _selectedDay;
   _CaptureKindFilter _kind = _CaptureKindFilter.all;
   String? _tagId;
@@ -148,17 +149,7 @@ class _ArchiveDashboardScrollViewState extends State<ArchiveDashboardScrollView>
                     sliverPadding.bottom + 80,
                   ),
                   sliver: SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _IntroSection(
-                          theme: theme,
-                          loadState: widget.loadState,
-                          showChangesUnavailable: widget.showChangesUnavailable,
-                        ),
-                        ArchiveEmptyState(onCapture: widget.onCapture),
-                      ],
-                    ),
+                    child: ArchiveEmptyState(onCapture: widget.onCapture),
                   ),
                 )
               else ...[
@@ -238,7 +229,10 @@ class _ArchiveDashboardScrollViewState extends State<ArchiveDashboardScrollView>
     );
   }
 
-  List<Widget> _dayGroupSlivers(BuildContext context, EdgeInsets sliverPadding) {
+  List<Widget> _dayGroupSlivers(
+    BuildContext context,
+    EdgeInsets sliverPadding,
+  ) {
     final shown = _filtered;
     final groups = <DateTime, List<JournalEntry>>{};
     for (final entry in shown) {
@@ -299,33 +293,6 @@ class _ArchiveDashboardScrollViewState extends State<ArchiveDashboardScrollView>
   }
 }
 
-class _IntroSection extends StatelessWidget {
-  const _IntroSection({
-    required this.theme,
-    required this.loadState,
-    required this.showChangesUnavailable,
-  });
-
-  final ThemeData theme;
-  final ArchiveBeliefLoadState loadState;
-  final bool showChangesUnavailable;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Your recordings and typed moments, in your words.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 Widget _entryTile(
   BuildContext context,
   List<JournalEntry> entries,
@@ -356,8 +323,18 @@ bool _sameDay(DateTime a, DateTime b) =>
 
 String _dayLabel(DateTime day) {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   return '${day.day} ${months[day.month - 1]}';
 }
@@ -438,71 +415,82 @@ class _MonthStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day)
-        .subtract(const Duration(days: 34));
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(const Duration(days: 34));
     final days = List.generate(35, (index) => start.add(Duration(days: index)));
     final marked = {
       for (final entry in entries)
-        DateTime(entry.createdAt.year, entry.createdAt.month, entry.createdAt.day),
+        DateTime(
+          entry.createdAt.year,
+          entry.createdAt.month,
+          entry.createdAt.day,
+        ),
     };
     return ExcludeSemantics(
       child: SizedBox(
-      key: const Key('archive_calendar_strip'),
-      height: 96,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ActionChip(
-              key: const Key('archive_calendar_today'),
-              label: const Text('Today'),
-              onPressed: () => onSelect(null),
-            ),
-          ),
-          for (final day in days)
-            Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: InkWell(
-              key: Key('archive_day_${_dayKey(day)}'),
-              onTap: () => onSelect(day),
-              child: SizedBox(
-                width: 36,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${day.day}',
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontWeight: selectedDay != null && _sameDay(selectedDay!, day)
-                            ? FontWeight.w700
-                            : FontWeight.w400,
-                        color: selectedDay != null && _sameDay(selectedDay!, day)
-                            ? context.palette.accentPrimary
-                            : context.palette.textSecondary,
-                      ),
-                    ),
-                    if (marked.contains(day))
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: context.palette.accentPrimary,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                  ],
+        key: const Key('archive_calendar_strip'),
+        height: 96,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ActionChip(
+                  key: const Key('archive_calendar_today'),
+                  label: const Text('Today'),
+                  onPressed: () => onSelect(null),
                 ),
               ),
-            ),
-            ),
-        ],
+              for (final day in days)
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: InkWell(
+                    key: Key('archive_day_${_dayKey(day)}'),
+                    onTap: () => onSelect(day),
+                    child: SizedBox(
+                      width: 36,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${day.day}',
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontWeight:
+                                  selectedDay != null &&
+                                      _sameDay(selectedDay!, day)
+                                  ? FontWeight.w700
+                                  : FontWeight.w400,
+                              color:
+                                  selectedDay != null &&
+                                      _sameDay(selectedDay!, day)
+                                  ? context.palette.accentPrimary
+                                  : context.palette.textSecondary,
+                            ),
+                          ),
+                          if (marked.contains(day))
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: context.palette.accentPrimary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -618,7 +606,9 @@ class _NoticedCarousel extends StatelessWidget {
             cards: feed.resurfacingCards,
             onCardTap: (card) {
               unawaited(
-                AppServices.instance.memoryResurfacing.markOpened(card.entry.id),
+                AppServices.instance.memoryResurfacing.markOpened(
+                  card.entry.id,
+                ),
               );
               onEntryTap(card.entry.id);
             },
@@ -634,7 +624,9 @@ class _NoticedCarousel extends StatelessWidget {
             cards: feed.anniversaryCards,
             onCardTap: (card) {
               unawaited(
-                AppServices.instance.memoryResurfacing.markOpened(card.entry.id),
+                AppServices.instance.memoryResurfacing.markOpened(
+                  card.entry.id,
+                ),
               );
               onEntryTap(card.entry.id);
             },
@@ -643,7 +635,9 @@ class _NoticedCarousel extends StatelessWidget {
       );
     }
     if (V1CapabilityRegistry.patternExploration) {
-      cards.add(const SizedBox(width: 280, child: PatternExplorationEntryCard()));
+      cards.add(
+        const SizedBox(width: 280, child: PatternExplorationEntryCard()),
+      );
     }
     if (cards.isEmpty) {
       return const SizedBox.shrink(key: Key('archive_noticed_empty'));
@@ -664,7 +658,9 @@ class _NoticedCarousel extends StatelessWidget {
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     enabled: false,
-                    child: InsightShareExporter(entries: feed.proofContextEntries),
+                    child: InsightShareExporter(
+                      entries: feed.proofContextEntries,
+                    ),
                   ),
                 ],
               ),
@@ -699,20 +695,24 @@ class _DayHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 36;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return SizedBox(
       height: maxExtent,
       child: ColoredBox(
-      color: context.palette.backgroundPrimary,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(horizontal, 6, horizontal, 0),
-        child: Text(
-          label,
-          key: Key('archive_day_header_$label'),
-          style: Theme.of(context).textTheme.labelLarge,
+        color: context.palette.backgroundPrimary,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(horizontal, 6, horizontal, 0),
+          child: Text(
+            label,
+            key: Key('archive_day_header_$label'),
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
         ),
       ),
-    ),
     );
   }
 

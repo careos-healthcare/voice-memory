@@ -94,7 +94,9 @@ void main() {
       await _saveAndPump(tester, entry: _entry(id: 'e1'));
 
       expect(find.text(EntryDetailCopy.title), findsOneWidget);
-      expect(find.text(EntryDetailCopy.whatYouRecorded), findsOneWidget);
+      expect(find.byKey(const Key('entry_detail_meta')), findsOneWidget);
+      expect(find.text(EntryDetailCopy.whatYouRecorded), findsNothing);
+      expect(find.byKey(const Key('entry_detail_title')), findsOneWidget);
       expect(find.text('Archive note'), findsNothing);
       expect(find.text(EntryDetailCopy.audioMissing), findsOneWidget);
       expect(find.byKey(const Key('entry_detail_audio_player')), findsNothing);
@@ -250,18 +252,25 @@ void main() {
         entry: _entry(id: 'no-file', localAudioPath: '${tmp.path}/missing.m4a'),
       );
 
-      expect(find.byKey(const Key('entry_detail_audio_missing')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_detail_audio_missing')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('entry_detail_audio_player')), findsNothing);
     });
 
     testWidgets('speed toggle cycles 1x, 1.5x, and 2x', (tester) async {
-      final audio = File('${tmp.path}/take.m4a')..writeAsBytesSync([1, 2, 3, 4]);
+      final audio = File('${tmp.path}/take.m4a')
+        ..writeAsBytesSync([1, 2, 3, 4]);
       await _saveAndPump(
         tester,
         entry: _entry(id: 'with-audio', localAudioPath: audio.path),
       );
 
-      expect(find.byKey(const Key('entry_detail_audio_player')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_detail_audio_player')),
+        findsOneWidget,
+      );
       expect(find.text('1×'), findsOneWidget);
       await tester.tap(find.byKey(const Key('entry_detail_speed')));
       await tester.pump();
@@ -285,7 +294,9 @@ void main() {
       EntryDetailScreen.debugCreatedAtOverride = DateTime(2026, 1, 2);
       addTearDown(() => EntryDetailScreen.debugCreatedAtOverride = null);
       await _pumpEntryDetail(tester, newer.id);
-      final before = (await AppServices.instance.journalStore.getById('newer'))!;
+      final before = (await AppServices.instance.journalStore.getById(
+        'newer',
+      ))!;
 
       await tester.tap(find.byKey(const Key('entry_detail_overflow')));
       await tester.pumpAndSettle();

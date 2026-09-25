@@ -13,12 +13,16 @@ class EntryAudioPlayer extends StatefulWidget {
     required this.audioPath,
     required this.durationSeconds,
     this.playback,
+    this.compact = false,
     super.key,
   });
 
   final String? audioPath;
   final int durationSeconds;
   final PlaybackService? playback;
+
+  /// Play control only, for a voice card. Hides the missing-file message.
+  final bool compact;
 
   static const speeds = [1.0, 1.5, 2.0];
 
@@ -98,6 +102,7 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     if (!_fileReady) {
+      if (widget.compact) return const SizedBox.shrink();
       return Text(
         EntryDetailCopy.audioMissing,
         key: const Key('entry_detail_audio_missing'),
@@ -113,21 +118,29 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
         ? 0.0
         : (_position.inMilliseconds / _total.inMilliseconds).clamp(0.0, 1.0);
 
+    final playButton = Semantics(
+      button: true,
+      label: _playing ? 'Pause recording' : 'Play recording',
+      child: IconButton(
+        key: const Key('entry_detail_play'),
+        onPressed: _toggle,
+        icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
+      ),
+    );
+    if (widget.compact) {
+      return KeyedSubtree(
+        key: const Key('entry_detail_audio_player'),
+        child: playButton,
+      );
+    }
+
     return Column(
       key: const Key('entry_detail_audio_player'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
-            Semantics(
-              button: true,
-              label: _playing ? 'Pause recording' : 'Play recording',
-              child: IconButton(
-                key: const Key('entry_detail_play'),
-                onPressed: _toggle,
-                icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
-              ),
-            ),
+            playButton,
             Expanded(
               child: _levels.isEmpty
                   ? Semantics(
@@ -148,16 +161,18 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
                             onTapDown: (details) {
                               final width = constraints.maxWidth;
                               if (width <= 0) return;
-                              unawaited(_seek(details.localPosition.dx / width));
+                              unawaited(
+                                _seek(details.localPosition.dx / width),
+                              );
                             },
                             child: CustomPaint(
-                          size: Size(constraints.maxWidth, 36),
-                          painter: _WaveformPainter(
-                            levels: _levels,
-                            progress: fraction,
-                            color: context.palette.accentPrimary,
-                            dim: context.palette.borderSubtle,
-                          ),
+                              size: Size(constraints.maxWidth, 36),
+                              painter: _WaveformPainter(
+                                levels: _levels,
+                                progress: fraction,
+                                color: context.palette.accentPrimary,
+                                dim: context.palette.borderSubtle,
+                              ),
                             ),
                           );
                         },

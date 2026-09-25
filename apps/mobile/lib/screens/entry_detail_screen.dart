@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
@@ -13,10 +14,9 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
-import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
 import 'package:archiveme_mobile/widgets/memory/entry_aboutness_editor.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_surfacing_editor.dart';
@@ -25,11 +25,12 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
+import 'package:intl/intl.dart';
 
 class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({
-    required this.entryId, super.key,
+    required this.entryId,
+    super.key,
     this.accountDependencies,
     this.previewEntry,
   });
@@ -220,19 +221,20 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                ArchiveEntryCardMeta(entry: e),
+                Text(
+                  _quietMeta(context, e),
+                  key: const Key('entry_detail_meta'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 EntryProcessingTrustChip(entry: e),
                 const SizedBox(height: 16),
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),
                   child: Material(
-                    color: context.palette.backgroundSecondary,
-                    borderRadius: BorderRadius.circular(12),
-                    clipBehavior: Clip.antiAlias,
-                    child: _sectionCard(
-                      label: EntryDetailCopy.whatYouRecorded,
-                      child: _recordedBody(e),
-                    ),
+                    color: Colors.transparent,
+                    child: _recordedBody(e),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -286,10 +288,23 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         TextField(
           key: const Key('entry_detail_title'),
           controller: _titleController,
-          decoration: const InputDecoration(
+          style: ArchiveMobileTypography.userWords(context).copyWith(
+            fontSize: 32,
+            height: 1.2,
+          ),
+          decoration: InputDecoration(
             hintText: EntryDetailCopy.titleField,
+            hintStyle: ArchiveMobileTypography.userWords(context).copyWith(
+              fontSize: 32,
+              height: 1.2,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             border: InputBorder.none,
-            isDense: true,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            filled: false,
+            isCollapsed: true,
+            contentPadding: EdgeInsets.zero,
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => unawaited(_saveTitle(entry)),
@@ -346,31 +361,23 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     );
   }
 
-  Widget _sectionCard({required String label, required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.palette.backgroundSecondary,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.palette.borderSubtle),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: context.palette.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          child,
-        ],
-      ),
-    );
+  String _quietMeta(BuildContext context, JournalEntry entry) {
+    final date = DateFormat.yMMMd().add_jm().format(entry.createdAt.toLocal());
+    final minutes = entry.durationSeconds ~/ 60;
+    final seconds = entry.durationSeconds % 60;
+    final duration = '$minutes:${seconds.toString().padLeft(2, '0')}';
+    return '$date · $duration · ${_languageName(context)}';
+  }
+
+  String _languageName(BuildContext context) {
+    final code = Localizations.maybeLocaleOf(context)?.languageCode ?? 'en';
+    return switch (code) {
+      'es' => 'Spanish',
+      'hi' => 'Hindi',
+      'ms' => 'Malay',
+      'ta' => 'Tamil',
+      'zh' => 'Chinese',
+      _ => 'English',
+    };
   }
 }

@@ -145,11 +145,13 @@ class UserWordsQuote extends StatelessWidget {
     super.key,
     this.maxLines,
     this.color,
+    this.fontSize,
   });
 
   final String text;
   final int? maxLines;
   final Color? color;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -165,8 +167,13 @@ class UserWordsQuote extends StatelessWidget {
         child: Text(
           text,
           maxLines: maxLines,
-          overflow: maxLines == null ? TextOverflow.clip : TextOverflow.ellipsis,
-          style: ArchiveMobileTypography.userWordsQuote(context, color: ink),
+          overflow: maxLines == null
+              ? TextOverflow.clip
+              : TextOverflow.ellipsis,
+          style: ArchiveMobileTypography.userWordsQuote(
+            context,
+            color: ink,
+          ).copyWith(fontSize: fontSize),
         ),
       ),
     );

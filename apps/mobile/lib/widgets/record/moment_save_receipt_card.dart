@@ -83,7 +83,9 @@ class MomentSaveReceiptCard extends StatelessWidget {
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(
       context,
     ).copyWith(color: context.palette.textPrimary, height: 1.45);
-    final secondaryStyle = bodyStyle.copyWith(color: context.palette.textSecondary);
+    final secondaryStyle = bodyStyle.copyWith(
+      color: context.palette.textSecondary,
+    );
     final heardText = postSaveRecordedSummary(entry);
 
     return Semantics(
@@ -94,11 +96,20 @@ class MomentSaveReceiptCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: VoiceMemoryCards.standard(
-          background: context.palette.backgroundSecondary,
+          context: context,
+          background: Theme.of(context).colorScheme.surface,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (!_isDegraded && heardText.isNotEmpty) ...[
+              UserWordsQuote(
+                key: const Key('moment_save_receipt_transcript'),
+                text: heardText,
+                fontSize: 28,
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
             Semantics(
               header: true,
               child: Text(
@@ -124,14 +135,6 @@ class MomentSaveReceiptCard extends StatelessWidget {
               ],
             ] else if (heardText.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.xs),
-              Semantics(
-                label: 'Saved text',
-                readOnly: true,
-                child: UserWordsQuote(
-                  key: const Key('moment_save_receipt_transcript'),
-                  text: heardText,
-                ),
-              ),
               if (onCorrectText != null &&
                   TranscriptCorrectionGate.entryAllowsCorrection(entry)) ...[
                 const SizedBox(height: AppSpacing.xs),
@@ -161,7 +164,8 @@ class MomentSaveReceiptCard extends StatelessWidget {
                 ),
               ],
             ],
-            if (_buildRemoteStatus(context, secondaryStyle) case final status?) ...[
+            if (_buildRemoteStatus(context, secondaryStyle)
+                case final status?) ...[
               const SizedBox(height: AppSpacing.sm),
               status,
             ],
@@ -172,8 +176,11 @@ class MomentSaveReceiptCard extends StatelessWidget {
               child: const Text(MomentSaveReceiptCopy.recordAnother),
             ),
             const SizedBox(height: AppSpacing.xs),
-            OutlinedButton(
+            TextButton(
               key: const Key('moment_save_receipt_view_archive'),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: onViewArchive,
               child: const Text(MomentSaveReceiptCopy.viewArchive),
             ),
