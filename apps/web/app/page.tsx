@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Roadmap } from "@/components/Roadmap";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WaitlistForm } from "@/components/WaitlistForm";
@@ -33,7 +34,7 @@ const promises = [
 
 const features = [
   "Live cross-device sync",
-  "Apple Voice Memo import",
+  "Apple Voice Memos import",
   "Rich mood and location tracking",
   "Pattern exploration with direct verbatim voice citations",
 ];
@@ -59,13 +60,14 @@ export default function HomePage() {
             className="mt-6 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base font-medium text-white"
             role="status"
           >
-            Android follows the iOS beta, once purchase and restore are proven.
+            Coming to Android October 2026.
           </p>
           <ul className="mt-8 space-y-3 text-base leading-relaxed text-zinc-200">
             {features.map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
+          <Roadmap />
           <WaitlistForm />
           <section className="mt-12">
             <h2 className="text-lg font-medium text-white">Coming from another journal?</h2>
