@@ -54,10 +54,10 @@ void main() {
 
   tearDown(AppSqliteDatabase.resetForTest);
 
-  test('018 is registered as the newest migration', () {
+  test('019 is registered as the newest migration', () {
     final registry = SqliteMigrationRegistry();
     expect(registry.migrationForVersion(18), isA<Migration018TranscriptProvenance>());
-    expect(SqliteMigrationRegistry.latestVersion, 18);
+    expect(SqliteMigrationRegistry.latestVersion, 19);
   });
 
   test('the schema step touches no journal rows', () async {

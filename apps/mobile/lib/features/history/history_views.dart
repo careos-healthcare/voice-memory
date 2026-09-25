@@ -47,13 +47,26 @@ class CalendarMonthView extends StatelessWidget {
       crossAxisCount: 7,
       children: [
         for (final day in days)
-          InkWell(
+          if (day.day == 0)
+            const SizedBox.shrink()
+          else
+            InkWell(
             key: Key('calendar_day_${day.day}'),
             onTap: () => onDay(day),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('${day.day}'),
+                if (day.count > 0)
+                  Container(
+                    key: Key('calendar_mark_${day.day}'),
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 if (day.count > 0)
                   Text(
                     '${day.count}',

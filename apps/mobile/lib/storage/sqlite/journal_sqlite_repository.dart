@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
+import 'package:archiveme_mobile/core/json/json_converters.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_knowledge_graph_repository.dart';
@@ -397,6 +398,7 @@ class JournalSqliteRepository {
       'isArchived': (row['is_archived'] as int? ?? 0) == 1,
       if (row['deleted_at'] != null)
         'deletedAt': _isoFromMillis(row['deleted_at'] as int),
+      ..._imagesFromColumn(row),
     };
   }
 
@@ -419,6 +421,7 @@ class JournalSqliteRepository {
       'isArchived': (row['is_archived'] as int? ?? 0) == 1,
       if (row['deleted_at'] != null)
         'deletedAt': _isoFromMillis(row['deleted_at'] as int),
+      ..._imagesFromColumn(row),
       },
       onDataIssue: _reportEntryDataIssue,
     );
@@ -429,6 +432,18 @@ class JournalSqliteRepository {
     required String issue,
   }) {
     JournalSqliteLog.entryDataIssue(entryId: entryId, issue: issue);
+  }
+
+  Map<String, dynamic> _imagesFromColumn(Map<String, Object?> row) {
+    final raw = row['images_json'];
+    if (raw is! String || raw.isEmpty) return const {};
+    try {
+      final images = JsonConverters.stringList(jsonDecode(raw));
+      if (images.isEmpty) return const {};
+      return {'images': images};
+    } on Object {
+      return const {};
+    }
   }
 
   String _isoFromMillis(int? millis) {

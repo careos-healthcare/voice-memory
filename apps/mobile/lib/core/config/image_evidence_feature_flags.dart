@@ -3,13 +3,14 @@ import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
 
 /// Compile-time gate for image evidence capture (camera / gallery).
 ///
-/// Default off — matches [V1CapabilityRegistry.cameraAndPhotos].
-/// Enable locally with: `--dart-define=VOICEMEMORY_ENABLE_IMAGE_EVIDENCE=true`
+/// On for this beta. Turn off with:
+/// `--dart-define=VOICEMEMORY_ENABLE_IMAGE_EVIDENCE=false`
 abstract final class ImageEvidenceFeatureFlags {
   ImageEvidenceFeatureFlags._();
 
   static const bool _compileTimeDefault = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_IMAGE_EVIDENCE',
+    defaultValue: true,
   );
 
   static bool get enableImageEvidence => _compileTimeDefault;

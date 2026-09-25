@@ -32,6 +32,8 @@ class CaptureReadyPanel extends StatelessWidget {
     this.onDismissRoutinePrompt,
     this.onPromptContext,
     this.now,
+    this.onAddPhoto,
+    this.imageCount = 0,
     super.key,
   });
 
@@ -56,6 +58,8 @@ class CaptureReadyPanel extends StatelessWidget {
 
   /// Clock for the date line. Defaults to [DateTime.now].
   final DateTime? now;
+  final VoidCallback? onAddPhoto;
+  final int imageCount;
 
   bool get _showsPermissionCopy =>
       MicrophonePermissionCopy.showsPermissionExplanation(
@@ -219,6 +223,13 @@ class CaptureReadyPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
+        if (onAddPhoto != null)
+          TextButton.icon(
+            key: const Key('capture_add_photo'),
+            onPressed: saving ? null : onAddPhoto,
+            icon: const Icon(Icons.photo_outlined),
+            label: Text(imageCount == 0 ? 'Add a photo' : '$imageCount photos'),
+          ),
         FilledButton(
           key: const Key('capture_save_typed'),
           onPressed: saving
@@ -317,6 +328,8 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.levels = const [],
     this.draftText,
     this.turns = const [],
+    this.onAddPhoto,
+    this.imageCount = 0,
     super.key,
   });
 
@@ -329,6 +342,8 @@ class CaptureRecordingPanel extends StatelessWidget {
   final List<double> levels;
   final String? draftText;
   final List<LiveConversationTurn> turns;
+  final VoidCallback? onAddPhoto;
+  final int imageCount;
 
   bool get _showDraft =>
       V1CapabilityRegistry.liveDraftTranscript &&
@@ -387,6 +402,13 @@ class CaptureRecordingPanel extends StatelessWidget {
                 ),
                 if (_dictation.isNotEmpty || _showDraft)
                   _BoundedDraft(text: _dictation.isNotEmpty ? _dictation : (draftText?.trim() ?? '')),
+                if (onAddPhoto != null)
+                  TextButton.icon(
+                    key: const Key('capture_add_photo'),
+                    onPressed: onAddPhoto,
+                    icon: const Icon(Icons.photo_outlined),
+                    label: Text(imageCount == 0 ? 'Add a photo' : '$imageCount photos'),
+                  ),
                 Row(
                   children: [
                     Expanded(

@@ -5,8 +5,10 @@ import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
+import 'package:archiveme_mobile/features/insights/recurring_themes_view.dart';
 import 'package:archiveme_mobile/features/insights/widgets/evidence_connection_graph_viewer.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
@@ -41,10 +43,18 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
 class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   final _composer = TextEditingController();
   final _scrollController = ScrollController();
+  List<JournalEntry> _journalEntries = const [];
 
   @override
   void initState() {
     super.initState();
+    if (AppServices.isInitialized) {
+      unawaited(
+        AppServices.instance.journal.loadAll().then((rows) {
+          if (mounted) setState(() => _journalEntries = rows);
+        }),
+      );
+    }
     // Same once-on-mount guard as CaregiverInvitationLinkListenerHost.bind():
     // initState, not build(), so a seeded send cannot re-fire on rebuild.
     final seed = widget.seed;
@@ -112,6 +122,7 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
       ),
       body: Column(
         children: [
+          RecurringThemesView(entries: _journalEntries),
           Expanded(
             child: ListView.builder(
               key: ExplorePatternsScreen.messageListKey,

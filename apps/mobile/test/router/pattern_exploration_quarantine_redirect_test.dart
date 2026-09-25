@@ -6,9 +6,9 @@ import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('pattern exploration stays frozen', () {
-    expect(V1CapabilityRegistry.patternExploration, isFalse);
-    expect(PatternExplorationFeatureFlags.isEnabled, isFalse);
+  test('pattern exploration is available', () {
+    expect(V1CapabilityRegistry.patternExploration, isTrue);
+    expect(PatternExplorationFeatureFlags.isEnabled, isTrue);
   });
 
   test('explore is on the V1 supporting allowlist, not quarantined', () {

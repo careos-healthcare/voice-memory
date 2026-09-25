@@ -56,6 +56,7 @@ class CaptureFlowSnapshot {
     this.deviceSaveVisible = false,
     this.conversationTurns = const [],
     this.liveSttRoute = LiveSttRoute.offline,
+    this.attachedImages = const [],
   });
 
   final CaptureFlowPhase phase;
@@ -106,6 +107,9 @@ class CaptureFlowSnapshot {
 
   /// Which listener is producing [draftTranscript].
   final LiveSttRoute liveSttRoute;
+
+  /// Local image paths chosen before this moment is saved.
+  final List<String> attachedImages;
 
   /// True once the recording file is accepted for a local save.
   final bool deviceSaveVisible;
@@ -159,6 +163,8 @@ class CaptureFlowSnapshot {
     bool? deviceSaveVisible,
     List<LiveConversationTurn>? conversationTurns,
     LiveSttRoute? liveSttRoute,
+    List<String>? attachedImages,
+    bool clearImages = false,
     bool clearDraft = false,
     bool clearRoutinePrompt = false,
     bool clearError = false,
@@ -203,6 +209,9 @@ class CaptureFlowSnapshot {
           ? const []
           : (conversationTurns ?? this.conversationTurns),
       liveSttRoute: liveSttRoute ?? this.liveSttRoute,
+      attachedImages: clearImages
+          ? const []
+          : (attachedImages ?? this.attachedImages),
     );
   }
 }

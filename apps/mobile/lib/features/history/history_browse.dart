@@ -7,6 +7,7 @@ class HistoryMoment {
     this.place,
     this.latitude,
     this.longitude,
+    this.imagePaths = const [],
   });
 
   final String id;
@@ -16,6 +17,7 @@ class HistoryMoment {
   final String? place;
   final double? latitude;
   final double? longitude;
+  final List<String> imagePaths;
 }
 
 /// Same month and day in earlier years. Matches
@@ -57,7 +59,10 @@ abstract final class CalendarMonth {
     required List<HistoryMoment> entries,
   }) {
     final length = DateTime(month.year, month.month + 1, 0).day;
+    final leading = DateTime(month.year, month.month, 1).weekday % 7;
     return [
+      for (var blank = 0; blank < leading; blank++)
+        const CalendarDaySummary(day: 0, count: 0, moods: []),
       for (var day = 1; day <= length; day++)
         CalendarDaySummary(
           day: day,

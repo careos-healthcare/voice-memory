@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -173,6 +174,8 @@ class _CaptureScreenState extends State<CaptureScreen>
           routinePromptLoading: snapshot.routinePromptLoading,
           onSelectRoutinePrompt: _handleRoutinePromptSelected,
           onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
+          onAddPhoto: _addPhoto,
+          imageCount: snapshot.attachedImages.length,
         ),
         CaptureFlowPhase.requestingPermission ||
         CaptureFlowPhase.stopping ||
@@ -192,6 +195,8 @@ class _CaptureScreenState extends State<CaptureScreen>
           onPause: _controller.pauseVoiceCapture,
           onResume: _controller.resumeVoiceCapture,
           onCancel: _controller.cancelVoiceCapture,
+          onAddPhoto: _addPhoto,
+          imageCount: snapshot.attachedImages.length,
         ),
         CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
           message: snapshot.errorMessage ?? 'Something went wrong.',
@@ -257,6 +262,11 @@ class _CaptureScreenState extends State<CaptureScreen>
   }
 
   String? _promptContext;
+
+  Future<void> _addPhoto() async {
+    final paths = await pickEntryImages();
+    _controller.addPhotos(paths);
+  }
 
   void _handlePromptContext(String line) {
     _promptContext = line.trim();

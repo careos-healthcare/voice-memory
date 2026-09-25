@@ -52,10 +52,12 @@ abstract interface class LocalMomentRepository {
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
+    List<String> images = const [],
   });
 
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
+    List<String> images = const [],
   });
 
   Future<CapturePipelineOutcome> retryRemoteForEntry({

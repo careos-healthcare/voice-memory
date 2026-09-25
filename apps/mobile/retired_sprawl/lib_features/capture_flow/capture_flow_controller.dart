@@ -373,6 +373,12 @@ class CaptureFlowController extends ChangeNotifier {
     }
   }
 
+  void addPhotos(List<String> paths) {
+    if (paths.isEmpty) return;
+    final next = {..._snapshot.attachedImages, ...paths}.toList();
+    _emit(_snapshot.copyWith(attachedImages: next));
+  }
+
   Future<void> saveTypedCapture(String transcript) async {
     if (_snapshot.isBusy || _snapshot.showsPostSave) return;
     if (!_transition(CaptureFlowPhase.savingLocal)) return;
@@ -658,6 +664,7 @@ class CaptureFlowController extends ChangeNotifier {
       final outcome = await _deps.moments.saveVoiceCapture(
         audioFile: file,
         durationSeconds: durationSeconds,
+        images: _snapshot.attachedImages,
       );
 
       outcome.match(
@@ -851,6 +858,7 @@ class CaptureFlowController extends ChangeNotifier {
 
       final outcome = await _deps.moments.saveTypedCapture(
         transcript: transcript,
+        images: _snapshot.attachedImages,
       );
 
       outcome.match(
@@ -913,6 +921,7 @@ class CaptureFlowController extends ChangeNotifier {
         clearDraft: true,
         clearError: true,
         clearStage: true,
+        clearImages: true,
       ),
     );
   }

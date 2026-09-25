@@ -130,10 +130,9 @@ abstract final class V1CapabilityRegistry {
   );
 
   /// On This Day, calendar, map, and printable journal on the Archive tab.
-  /// Off until reviewed.
   static const bool enableHistoryViews = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_HISTORY_VIEWS',
-    defaultValue: false,
+    defaultValue: true,
   );
 
   static const Set<String> androidPermissionAllowlist = {

@@ -723,7 +723,10 @@ class _NoticedCarousel extends StatelessWidget {
     }
     if (V1CapabilityRegistry.patternExploration) {
       cards.add(
-        const SizedBox(width: 280, child: PatternExplorationEntryCard()),
+        SizedBox(
+          width: 280,
+          child: PatternExplorationEntryCard(entries: feed.entries),
+        ),
       );
     }
     if (cards.isEmpty) {
@@ -819,6 +822,7 @@ HistoryMoment _historyMoment(JournalEntry entry) {
     place: place == null || place.isEmpty ? null : place,
     latitude: entry.display.latitude,
     longitude: entry.display.longitude,
+    imagePaths: entry.images,
   );
 }
 

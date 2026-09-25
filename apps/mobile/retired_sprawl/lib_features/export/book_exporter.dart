@@ -12,6 +12,7 @@ class JournalBookEntry {
     this.mood,
     this.location,
     this.audioQrUrl,
+    this.imagePaths = const [],
   });
 
   final String dateString;
@@ -19,6 +20,7 @@ class JournalBookEntry {
   final String? mood;
   final String? location;
   final String? audioQrUrl;
+  final List<String> imagePaths;
 }
 
 class JournalBook {
@@ -39,6 +41,15 @@ abstract final class BookExporter {
   BookExporter._();
 
   static Future<Uint8List> build(JournalBook book) async {
+    final photos = <String, Uint8List>{};
+    for (final entry in book.entries) {
+      for (final path in entry.imagePaths) {
+        final file = File(path);
+        if (await file.exists()) {
+          photos[path] = await file.readAsBytes();
+        }
+      }
+    }
     final document = pw.Document();
     document.addPage(
       pw.Page(
@@ -91,6 +102,16 @@ abstract final class BookExporter {
                 ),
               pw.SizedBox(height: 8),
               pw.Text(entry.transcript, style: const pw.TextStyle(lineSpacing: 4)),
+              for (final path in entry.imagePaths)
+                if (photos[path] != null)
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(top: 8),
+                    child: pw.Image(
+                      pw.MemoryImage(photos[path]!),
+                      height: 120,
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
               if ((entry.location ?? '').trim().isNotEmpty)
                 pw.Padding(
                   padding: const pw.EdgeInsets.only(top: 6),
@@ -156,6 +177,7 @@ abstract final class BookExporter {
               mood: entry.mood,
               location: entry.place,
               audioQrUrl: 'thoughtprint://entry/${entry.id}',
+              imagePaths: entry.imagePaths,
             ),
         ],
       ),

@@ -94,12 +94,14 @@ class _FakeMoments implements LocalMomentRepository {
   @override
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
+    List<String> images = const [],
   }) async => Left(CapturePipelineFailure('unused'));
 
   @override
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
+    List<String> images = const [],
   }) async => Left(CapturePipelineFailure('unused'));
 }
 

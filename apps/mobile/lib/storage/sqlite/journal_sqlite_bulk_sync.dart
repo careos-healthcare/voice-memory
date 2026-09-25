@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/database/app_database.dart';
 import 'package:archiveme_mobile/features/reflections/data/offline_reflection_knowledge_graph.dart';
@@ -25,6 +27,7 @@ abstract final class JournalSqliteBulkSync {
       final existingById = await drift.journalDao.loadExistingSyncState(ids);
       for (final entry in entries) {
         await drift.journalDao.upsertJournalEntry(entry);
+        await _writeImagesColumn(db, entry);
         await _syncFtsRow(
           drift,
           entry: entry,
@@ -61,6 +64,7 @@ abstract final class JournalSqliteBulkSync {
       final existingById = await drift.journalDao.loadExistingSyncState(ids);
       for (final entry in entries) {
         await drift.journalDao.upsertJournalEntry(entry);
+        await _writeImagesColumn(db, entry);
         await _syncFtsRow(
           drift,
           entry: entry,
@@ -70,6 +74,16 @@ abstract final class JournalSqliteBulkSync {
       }
       await _deleteAbsentRows(drift, db, ids);
     });
+  }
+
+  static Future<void> _writeImagesColumn(Database db, JournalEntry entry) async {
+    final info = await db.rawQuery('PRAGMA table_info($table)');
+    final hasColumn = info.any((row) => row['name'] == 'images_json');
+    if (!hasColumn) return;
+    await db.rawUpdate(
+      'UPDATE $table SET images_json = ? WHERE id = ?',
+      [jsonEncode(entry.images), entry.id],
+    );
   }
 
   static Future<void> _syncFtsRow(
