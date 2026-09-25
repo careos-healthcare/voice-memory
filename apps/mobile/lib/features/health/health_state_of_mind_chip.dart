@@ -25,12 +25,25 @@ class HealthStateOfMindChip extends StatelessWidget {
         padding: EdgeInsets.zero,
         labelPadding: const EdgeInsets.only(left: 2, right: 8),
         avatar: const Icon(Icons.favorite_border, size: 12, color: _health),
-        label: Text(
-          label,
-          style: theme.textTheme.labelSmall?.copyWith(
-            fontSize: 11,
-            color: theme.colorScheme.onSurface,
-          ),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'From Apple Health',
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 11,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 11,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ],
         ),
         backgroundColor: _health.withValues(alpha: 0.08),
         side: const BorderSide(color: Color(0x33E85D75)),

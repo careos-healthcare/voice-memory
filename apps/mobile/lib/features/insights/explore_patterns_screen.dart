@@ -46,6 +46,7 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   final _composer = TextEditingController();
   final _scrollController = ScrollController();
   List<JournalEntry> _journalEntries = const [];
+  List<String> _previewWords = const [];
   bool _cloudOn = false;
 
   @override
@@ -73,9 +74,14 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
             )).isCloudSyncEnabled);
     if (!mounted) return;
     setState(() => _cloudOn = enabled);
-    if (!enabled || !AppServices.isInitialized) return;
+    if (!AppServices.isInitialized) return;
     final rows = await AppServices.instance.journal.loadAll();
-    if (mounted) setState(() => _journalEntries = rows);
+    if (!mounted) return;
+    setState(() {
+      _journalEntries = rows;
+      _previewWords = frequentLocalWords(rows);
+    });
+    if (!enabled) return;
     final seed = widget.seed;
     if (seed == null) return;
     final notifier = ref.read(patternExplorationConversationProvider.notifier)
@@ -145,6 +151,19 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (_previewWords.length >= 2) ...[
+                  const Text(
+                    'Preview',
+                    key: Key('pattern_exploration_local_preview_label'),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    localPatternPreview(_previewWords),
+                    key: const Key('pattern_exploration_local_preview'),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 const Text(
                   PatternExplorationConversationState.cloudLockedMessage,
                   key: Key('pattern_exploration_cloud_locked'),
@@ -400,4 +419,68 @@ class ExploreCitationGraphAction extends ConsumerWidget {
       return null;
     }
   }
+}
+
+const _previewStopWords = {
+  'a',
+  'an',
+  'and',
+  'are',
+  'as',
+  'at',
+  'be',
+  'but',
+  'for',
+  'from',
+  'i',
+  'in',
+  'is',
+  'it',
+  'me',
+  'my',
+  'of',
+  'on',
+  'or',
+  'that',
+  'the',
+  'this',
+  'to',
+  'was',
+  'we',
+  'with',
+  'you',
+  'your',
+};
+
+/// The three words that show up most often in local journal text.
+List<String> frequentLocalWords(List<JournalEntry> entries) {
+  final counts = <String, int>{};
+  for (final entry in entries) {
+    for (final match in RegExp(r"[A-Za-z']+").allMatches(entry.transcript)) {
+      final word = match.group(0)!.toLowerCase();
+      if (word.length < 3 || _previewStopWords.contains(word)) continue;
+      counts[word] = (counts[word] ?? 0) + 1;
+    }
+  }
+  final ranked = counts.entries.toList()
+    ..sort((a, b) {
+      final byCount = b.value.compareTo(a.value);
+      if (byCount != 0) return byCount;
+      return a.key.compareTo(b.key);
+    });
+  return [
+    for (final entry in ranked.take(3))
+      '${entry.key[0].toUpperCase()}${entry.key.substring(1)}',
+  ];
+}
+
+/// Local preview shown before cloud pattern exploration is turned on.
+String localPatternPreview(List<String> words) {
+  final shown = words.take(3).toList();
+  if (shown.length < 2) return '';
+  final mention = shown.length == 2
+      ? '${shown[0]} and ${shown[1]}'
+      : '${shown[0]}, ${shown[1]}, and ${shown[2]}';
+  return 'Example: You frequently mention $mention. '
+      'Turn on Cloud Sync to unlock deep AI pattern analysis.';
 }

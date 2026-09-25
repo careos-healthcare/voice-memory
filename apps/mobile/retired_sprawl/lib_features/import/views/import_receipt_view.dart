@@ -15,7 +15,6 @@ class ImportReceiptView extends StatefulWidget {
   });
 
   static const headline = 'Voice Memo Imported';
-  static const entryDateLabel = 'Entry date';
   static const saveLabel = 'Save to Archive';
 
   final String transcript;
@@ -60,12 +59,7 @@ class _ImportReceiptViewState extends State<ImportReceiptView> {
             ),
             const SizedBox(height: 16),
             Text(
-              ImportReceiptView.entryDateLabel,
-              style: theme.textTheme.labelLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              LocaleDateFormat.dateTime(context, widget.recordedAt),
+              'Original Recording Date: ${LocaleDateFormat.dateTime(context, widget.recordedAt)}',
               key: const Key('import_receipt_entry_date'),
               style: theme.textTheme.titleMedium,
             ),

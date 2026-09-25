@@ -44,6 +44,7 @@ void main() {
     );
 
     expect(find.text('Calm'), findsNWidgets(2));
+    expect(find.text('From Apple Health'), findsNWidgets(2));
     expect(find.text('peaceful'), findsNWidgets(2));
     expect(
       find.byKey(const Key('health_state_of_mind_moment-1')),
@@ -67,6 +68,7 @@ void main() {
       ArchiveEntryCardMeta(entry: _entry(mood: 'neutral', health: 'calm')),
     );
     expect(find.byKey(const Key('archive_mood_moment-1')), findsNothing);
+    expect(find.text('From Apple Health'), findsOneWidget);
     expect(find.text('calm'), findsOneWidget);
   });
 }
