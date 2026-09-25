@@ -6,4 +6,4 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT/apps/mobile"
 
 flutter test test/release/ --update-goldens
-echo "Visually review failures/ before committing."
+echo "ACTION REQUIRED: Open the failures/ directory and visually review each image before committing."

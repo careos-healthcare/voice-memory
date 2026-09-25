@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -75,7 +76,11 @@ class _OnboardingImportFirstStepState
         else
           FilledButton(
             key: const Key('onboarding_import_first_pick'),
-            onPressed: progress.isActive ? null : notifier.pickAndImport,
+            onPressed: progress.isActive
+                ? null
+                : () => notifier.pickAndImport(
+                    confirmCloudUpload: () => CloudConsentModal.ask(context),
+                  ),
             child: const Text(BacklogImportCopy.pickCta),
           ),
         TextButton(

@@ -44,7 +44,10 @@ class PatternExplorationConversationState {
   });
 
   static const cloudLockedMessage =
-      'Turn on Cloud Features in Settings to unlock AI Pattern Exploration.';
+      'Pattern exploration sends the question you type to the Thoughtprint '
+      'app backend. The backend uses that question to read matching entries '
+      'from your server-side fact ledger. Turn on Cloud Features to opt in '
+      'before that request is sent.';
 
   final List<PatternExplorationMessage> messages;
   final bool isSending;

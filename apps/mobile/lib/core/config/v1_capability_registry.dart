@@ -5,6 +5,17 @@ import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart
 import 'package:archiveme_mobile/features/insights/pattern_exploration_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_feature_flags.dart';
 
+/// Launch-profile switches. Health stays on so the HealthKit share string
+/// remains a declared permission.
+abstract final class AppFlags {
+  AppFlags._();
+
+  static const bool enableHealthSync = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_HEALTH_SYNC',
+    defaultValue: true,
+  );
+}
+
 /// Compile-time native capability allowlist for the focused V1 release.
 ///
 /// Keep this file aligned with `docs/V1_PERMISSION_MATRIX.md`, the nine launch
@@ -27,12 +38,10 @@ abstract final class V1CapabilityRegistry {
 
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
+
   /// Apple Health State of Mind permission. The mood sync control stays behind
   /// [appleHealth], which is off until the launch profile turns it on.
-  static const bool health = bool.fromEnvironment(
-    'VOICEMEMORY_ENABLE_HEALTH_SYNC',
-    defaultValue: true,
-  );
+  static const bool health = AppFlags.enableHealthSync;
 
   /// Settings control that reads Apple Health State of Mind. Off until reviewed.
   static const bool appleHealth = bool.fromEnvironment(

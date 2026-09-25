@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/archive_explanations/explanation_model
 import 'package:archiveme_mobile/features/evidence_method/insight.dart';
 import 'package:archiveme_mobile/features/import/import_consent_view.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/experiment_h_onboarding_coordinator.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
@@ -105,12 +106,12 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                         id: progress.insight!.id,
                         insightText: progress.insight!.insightText,
                         kind:
-                            ArchiveInsightKind.values.asNameMap()[progress
-                                .insight!
-                                .kind] ??
+                            ArchiveInsightKind.values
+                                .asNameMap()[progress.insight!.kind] ??
                             ArchiveInsightKind.theme,
                         confidenceBand:
-                            PatternMatchConfidenceBand.values.asNameMap()[progress
+                            PatternMatchConfidenceBand.values
+                                .asNameMap()[progress
                                 .insight!
                                 .confidenceBand] ??
                             PatternMatchConfidenceBand.weak,
@@ -136,7 +137,9 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                             ? progress.fraction
                             : null,
                         minHeight: 8,
-                        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -181,9 +184,7 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                   if (progress.phase == BacklogImportPhase.complete)
                     FilledButton(
                       key: const Key('backlog_import_continue_button'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     )
                   else if (progress.phase == BacklogImportPhase.error) ...[
@@ -193,30 +194,36 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                           ? null
                           : () {
                               notifier.reset();
-                              unawaited(notifier.pickAndImport());
+                              unawaited(
+                                notifier.pickAndImport(
+                                  confirmCloudUpload: () =>
+                                      CloudConsentModal.ask(context),
+                                ),
+                              );
                             },
                       child: const Text(BacklogImportCopy.retryCta),
                     ),
                     TextButton(
                       key: const Key('backlog_import_continue_after_error'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     ),
                   ] else
                     FilledButton(
                       key: const Key('backlog_import_pick_button'),
-                      onPressed: isBusy ? null : notifier.pickAndImport,
+                      onPressed: isBusy
+                          ? null
+                          : () => notifier.pickAndImport(
+                              confirmCloudUpload: () =>
+                                  CloudConsentModal.ask(context),
+                            ),
                       child: const Text(BacklogImportCopy.pickCta),
                     ),
                   if (progress.phase == BacklogImportPhase.idle ||
                       progress.phase == BacklogImportPhase.picking)
                     TextButton(
                       key: const Key('backlog_import_skip_button'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.skipCta),
                     ),
                   const SizedBox(height: AppSpacing.sm),

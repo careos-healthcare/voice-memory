@@ -26,7 +26,9 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
 
   BacklogImportService get _service => ref.read(backlogImportServiceProvider);
 
-  Future<void> pickAndImport() async {
+  Future<void> pickAndImport({
+    Future<bool> Function()? confirmCloudUpload,
+  }) async {
     if (state.isActive) return;
 
     state = state.copyWith(
@@ -43,10 +45,16 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
       return;
     }
 
-    await importFromFiles(files);
+    await importFromFiles(
+      files,
+      confirmCloudUpload: confirmCloudUpload,
+    );
   }
 
-  Future<void> importFromFiles(List<PlatformFile> files) async {
+  Future<void> importFromFiles(
+    List<PlatformFile> files, {
+    Future<bool> Function()? confirmCloudUpload,
+  }) async {
     if (state.isActive) return;
 
     state = state.copyWith(
@@ -66,9 +74,19 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
 
       // Mirror historical notes into local journal for cold-start browsing.
       // Cloud upload is a separate choice and stays off unless that setting is on.
-      final preferences = AppServices.isInitialized
+      var preferences = AppServices.isInitialized
           ? await UserPreferences.load(AppServices.instance.prefs)
           : const UserPreferences();
+      if (!preferences.isCloudSyncEnabled && confirmCloudUpload != null) {
+        final allowed = await confirmCloudUpload();
+        if (allowed && AppServices.isInitialized) {
+          await UserPreferences.setCloudSyncEnabled(
+            AppServices.instance.prefs,
+            true,
+          );
+          preferences = await UserPreferences.load(AppServices.instance.prefs);
+        }
+      }
       if (preferences.isCloudSyncEnabled) {
         final localCoordinator = ExternalImportCoordinator(
           V1AccountDependencies.fromAppServices().journalStore,
@@ -98,8 +116,9 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
               createdAt: recordedAt,
               updatedAt: recordedAt,
               transcript: chunk.rawText?.trim() ?? '',
-              durationSeconds:
-                  chunk.kind == BacklogImportChunkKind.audio ? 1 : 0,
+              durationSeconds: chunk.kind == BacklogImportChunkKind.audio
+                  ? 1
+                  : 0,
               localAudioPath: chunk.audioPath,
               captureSource: 'import',
               reflection: const Reflection(
