@@ -6,9 +6,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  let body: { email?: string };
+  let body: { email?: string; b_hp_time?: string };
   try {
-    body = (await request.json()) as { email?: string };
+    body = (await request.json()) as { email?: string; b_hp_time?: string };
   } catch {
     return Response.json(
       { ok: false, error: "Enter a valid email address." },
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
 
   const result = await signupForWaitlist({
     email: body.email ?? "",
+    honeypot: body.b_hp_time,
     ip: clientIpFromRequest(request),
     store: postgresWaitlistStore,
     sendConfirmation: sendWaitlistConfirmation,

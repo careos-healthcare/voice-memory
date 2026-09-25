@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 
+import { MARKETING_SITE_URL } from "@/lib/site/marketing-site";
 import { waitlistFromAddress, waitlistUnsubscribeUrl } from "@/lib/waitlist/signup";
 
 export function waitlistConfirmationText(unsubscribeUrl: string): string {
@@ -16,23 +17,28 @@ export async function sendWaitlistConfirmation(
 ): Promise<void> {
   if (process.env.NODE_ENV !== "production") return;
 
-  const apiKey = process.env.RESEND_API_KEY?.trim() ?? "";
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured.");
-  }
-
-  const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
-    from: waitlistFromAddress(),
-    to: [email],
-    subject: "You're on the Thoughtprint waitlist",
-    text: waitlistConfirmationText(unsubscribeUrl),
-    headers: {
-      "List-Unsubscribe": `<${unsubscribeUrl}>`,
-    },
-  });
-  if (error) {
-    throw new Error(error.message ?? "Resend rejected the waitlist email.");
+  const listUnsubscribe = `${MARKETING_SITE_URL}/api/waitlist/unsubscribe?email=${encodeURIComponent(email)}`;
+  try {
+    const apiKey = process.env.RESEND_API_KEY?.trim() ?? "";
+    if (!apiKey) {
+      throw new Error("RESEND_API_KEY is not configured.");
+    }
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: waitlistFromAddress(),
+      to: [email],
+      subject: "You're on the Thoughtprint waitlist",
+      text: waitlistConfirmationText(unsubscribeUrl),
+      headers: {
+        "List-Unsubscribe": `<${listUnsubscribe}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
+    });
+    if (error) {
+      console.error("Resend rejected the waitlist email.", error.message);
+    }
+  } catch (error) {
+    console.error("Resend failed to send the waitlist email.", error);
   }
 }
 

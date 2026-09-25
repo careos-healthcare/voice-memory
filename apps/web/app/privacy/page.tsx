@@ -18,6 +18,10 @@ export default function PrivacyPage() {
       {PRIVACY_SECTIONS.map((section) => (
         <TrustSection key={section.title} title={section.title} body={section.body} />
       ))}
+      <TrustSection
+        title="Waitlist"
+        body="We collect only your email address and the time you joined. We use that to send a single launch announcement. Resend delivers the email and Neon stores the address. Every email includes a one-click unsubscribe link."
+      />
     </TrustPageShell>
   );
 }

@@ -19,7 +19,7 @@ export interface WaitlistStore {
 
 export interface WaitlistSignupResult {
   status: number;
-  body: { ok: true } | { ok: false; error: string };
+  body: { ok: true; success: true } | { ok: false; error: string };
 }
 
 export function normalizeWaitlistEmail(value: string): string {
@@ -67,9 +67,13 @@ export async function signupForWaitlist(input: {
   email: string;
   ip: string;
   nowMs?: number;
+  honeypot?: string;
   store: WaitlistStore;
   sendConfirmation?: (email: string, unsubscribeUrl: string) => Promise<void>;
 }): Promise<WaitlistSignupResult> {
+  if ((input.honeypot ?? "").trim().length > 0) {
+    return { status: 200, body: { ok: true, success: true } };
+  }
   if (!isValidWaitlistEmail(input.email)) {
     return { status: 400, body: { ok: false, error: "Enter a valid email address." } };
   }
@@ -81,7 +85,11 @@ export async function signupForWaitlist(input: {
   const token = randomUUID();
   const result = await input.store.insert(email, token);
   if (result === "created") {
-    await input.sendConfirmation?.(email, waitlistUnsubscribeUrl(token));
+    try {
+      await input.sendConfirmation?.(email, waitlistUnsubscribeUrl(token));
+    } catch (error) {
+      console.error("Waitlist confirmation email failed.", error);
+    }
   }
-  return { status: 200, body: { ok: true } };
+  return { status: 200, body: { ok: true, success: true } };
 }

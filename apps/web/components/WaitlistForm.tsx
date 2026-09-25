@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export function WaitlistForm() {
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -15,7 +16,7 @@ export function WaitlistForm() {
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, b_hp_time: honeypot }),
       });
       const payload = (await response.json()) as { ok?: boolean; error?: string };
       if (!response.ok || !payload.ok) {
@@ -33,6 +34,16 @@ export function WaitlistForm() {
 
   return (
     <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <input
+        type="text"
+        name="b_hp_time"
+        value={honeypot}
+        onChange={(event) => setHoneypot(event.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute h-0 w-0 overflow-hidden opacity-0"
+      />
       <label className="sr-only" htmlFor="waitlist-email">
         Email address
       </label>
