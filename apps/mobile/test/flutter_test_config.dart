@@ -42,8 +42,9 @@ Future<void> testExecutable(Future<void> Function() testMain) async {
   await testMain();
 }
 
-/// Registers the same Inter and Newsreader files the app bundles, so golden
-/// text is real type instead of fallback boxes.
+/// Registers the bundled faces plus Roboto, which theme metadata, duration
+/// stamps, and trust footers use. Without Roboto, those lines paint as
+/// fallback blocks.
 Future<void> _loadBundledFonts() async {
   final inter = FontLoader('Inter')
     ..addFont(rootBundle.load('assets/fonts/Inter-Variable.ttf'));
@@ -52,20 +53,30 @@ Future<void> _loadBundledFonts() async {
     ..addFont(rootBundle.load('assets/fonts/Newsreader-Regular.ttf'))
     ..addFont(rootBundle.load('assets/fonts/Newsreader-Italic.ttf'));
   await newsreader.load();
+  await _loadSdkFamily('Roboto', const [
+    'Roboto-Regular.ttf',
+    'Roboto-Medium.ttf',
+    'Roboto-Bold.ttf',
+    'Roboto-Italic.ttf',
+  ]);
   await _loadMaterialIcons();
 }
 
-/// Icon font used by mic, play, and trust-footer glyphs. Inter is the UI face
-/// for TrustStatusFooter and the voice/typed source label.
-Future<void> _loadMaterialIcons() async {
+Future<void> _loadSdkFamily(String family, List<String> fileNames) async {
   final root = Platform.environment['FLUTTER_ROOT'];
   if (root == null || root.isEmpty) return;
-  final file = File(
-    '$root/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
-  );
-  if (!file.existsSync()) return;
-  final bytes = file.readAsBytesSync();
-  final loader = FontLoader('MaterialIcons')
-    ..addFont(Future<ByteData>.value(ByteData.sublistView(bytes)));
-  await loader.load();
+  final loader = FontLoader(family);
+  var added = false;
+  for (final name in fileNames) {
+    final file = File('$root/bin/cache/artifacts/material_fonts/$name');
+    if (!file.existsSync()) continue;
+    final bytes = file.readAsBytesSync();
+    loader.addFont(Future<ByteData>.value(ByteData.sublistView(bytes)));
+    added = true;
+  }
+  if (added) await loader.load();
+}
+
+Future<void> _loadMaterialIcons() async {
+  await _loadSdkFamily('MaterialIcons', const ['MaterialIcons-Regular.otf']);
 }
