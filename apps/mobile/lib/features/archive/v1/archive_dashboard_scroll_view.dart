@@ -11,10 +11,10 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
+import 'package:archiveme_mobile/features/history/history_browse.dart';
+import 'package:archiveme_mobile/features/history/history_hub.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
-import 'package:archiveme_mobile/features/weekly_reflection/weekly_recap.dart';
-import 'package:archiveme_mobile/features/weekly_reflection/weekly_recap_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
@@ -99,11 +99,6 @@ class _ArchiveDashboardScrollViewState
           context: context,
           viewportWidth: viewportConstraints.maxWidth,
         );
-        final weekEntries = ArchiveWeeklyRecapBanner.entriesThisWeek(
-          visibleEntries,
-          DateTime.now(),
-        );
-
         return RefreshIndicator(
           onRefresh: widget.onRefresh,
           child: CustomScrollView(
@@ -168,16 +163,13 @@ class _ArchiveDashboardScrollViewState
                     onSelect: (day) => setState(() => _selectedDay = day),
                   ),
                 ),
+                if (V1CapabilityRegistry.enableHistoryViews)
+                  SliverToBoxAdapter(
+                    child: _ArchiveHistoryViews(entries: visibleEntries),
+                  ),
                 SliverToBoxAdapter(
                   child: ArchiveWeeklyRecapBanner(entries: visibleEntries),
                 ),
-                if (weekEntries.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                      child: _WeeklyRecapNotice(entries: weekEntries),
-                    ),
-                  ),
                 if (V1CapabilityRegistry.trendPatternSummary)
                   SliverToBoxAdapter(
                     child: Padding(
@@ -816,50 +808,48 @@ class _DayHeaderDelegate extends SliverPersistentHeaderDelegate {
       oldDelegate.label != label;
 }
 
-class _WeeklyRecapNotice extends StatelessWidget {
-  const _WeeklyRecapNotice({required this.entries});
+HistoryMoment _historyMoment(JournalEntry entry) {
+  final mood = entry.reflection.mood.trim();
+  final place = entry.display.locationLabel?.trim();
+  return HistoryMoment(
+    id: entry.id,
+    createdAt: entry.createdAt,
+    transcript: entry.transcript,
+    mood: mood.isEmpty ? null : mood,
+    place: place == null || place.isEmpty ? null : place,
+    latitude: entry.display.latitude,
+    longitude: entry.display.longitude,
+  );
+}
+
+class _ArchiveHistoryViews extends StatelessWidget {
+  const _ArchiveHistoryViews({required this.entries});
 
   final List<JournalEntry> entries;
 
-  WeeklyRecap get _recap {
-    final latest = entries.first;
-    return WeeklyRecap(
-      weekKey: 'current',
-      summary: '${entries.length} moments are ready for this week.',
-      keyThemes: const [],
-      emotionalArc: '',
-      verbatimCitations: [
-        VerbatimCitation(
-          text: latest.transcript,
-          entryId: latest.id,
-          timestamp: latest.createdAt.toIso8601String(),
+  Future<void> _open(BuildContext context) async {
+    var source = entries;
+    if (AppServices.isInitialized) {
+      source = await AppServices.instance.journal.loadAll();
+    }
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => HistoryHub(
+          entries: [for (final entry in source) _historyMoment(entry)],
         ),
-      ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final recap = _recap;
-    return WeeklyRecapCard(
-      recap: recap,
-      onOpen: () {
-        unawaited(Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (routeContext) => Scaffold(
-              appBar: AppBar(title: const Text('Weekly recap')),
-              body: WeeklyRecapDetail(
-                recap: recap,
-                onCitation: (citation) {
-                  final offset = audioOffsetSeconds(citation.timestamp);
-                  final query = offset == null ? '' : '?t=$offset';
-                  unawaited(routeContext.push('/entry/${citation.entryId}$query'));
-                },
-              ),
-            ),
-          ),
-        ));
-      },
+    return ListTile(
+      key: const Key('archive_history_hub'),
+      title: const Text('On This Day, Calendar, Map'),
+      subtitle: const Text('Export Printable Journal'),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => unawaited(_open(context)),
     );
   }
 }

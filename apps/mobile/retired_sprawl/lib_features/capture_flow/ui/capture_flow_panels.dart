@@ -317,7 +317,6 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.levels = const [],
     this.draftText,
     this.turns = const [],
-    this.sttRoute = LiveSttRoute.offline,
     super.key,
   });
 
@@ -330,11 +329,15 @@ class CaptureRecordingPanel extends StatelessWidget {
   final List<double> levels;
   final String? draftText;
   final List<LiveConversationTurn> turns;
-  final LiveSttRoute sttRoute;
 
   bool get _showDraft =>
       V1CapabilityRegistry.liveDraftTranscript &&
       LiveDraftTranscript.supportsOnDeviceStreaming;
+
+  String get _dictation => [
+    for (final turn in turns)
+      if (turn.text.trim().isNotEmpty) turn.text.trim(),
+  ].join('\n');
 
   @override
   Widget build(BuildContext context) {
@@ -382,17 +385,8 @@ class CaptureRecordingPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (turns.isNotEmpty)
-                  _LiveTurnBubbles(turns: turns, route: sttRoute)
-                else if (_showDraft)
-                  _BoundedDraft(
-                    text: draftText?.trim() ?? '',
-                  )
-                else if (sttRoute == LiveSttRoute.offline &&
-                    V1CapabilityRegistry.liveDraftTranscript)
-                  const _BoundedDraft(
-                    text: 'Live transcript stays on this phone, or uses Whisper when you are online.',
-                  ),
+                if (_dictation.isNotEmpty || _showDraft)
+                  _BoundedDraft(text: _dictation.isNotEmpty ? _dictation : (draftText?.trim() ?? '')),
                 Row(
                   children: [
                     Expanded(
@@ -451,50 +445,6 @@ class CaptureRecordingPanel extends StatelessWidget {
       ),
     );
     if (discard == true) onCancel();
-  }
-}
-
-class _LiveTurnBubbles extends StatelessWidget {
-  const _LiveTurnBubbles({required this.turns, required this.route});
-
-  final List<LiveConversationTurn> turns;
-  final LiveSttRoute route;
-
-  @override
-  Widget build(BuildContext context) {
-    final routeLabel = switch (route) {
-      LiveSttRoute.onDevice => 'On this phone',
-      LiveSttRoute.whisper => 'Whisper',
-      LiveSttRoute.offline => 'Offline',
-    };
-    return SizedBox(
-      key: const Key('capture_live_turns'),
-      height: 110,
-      width: double.infinity,
-      child: ListView(
-        children: [
-          Text(routeLabel, style: Theme.of(context).textTheme.labelSmall),
-          for (var i = 0; i < turns.length; i++)
-            Align(
-              alignment: turns[i].role == LiveTurnRole.user
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
-              child: Container(
-                key: Key('capture_${turns[i].role.name}_turn_$i'),
-                margin: const EdgeInsets.only(top: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: turns[i].role == LiveTurnRole.user
-                      ? context.palette.accentLight
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(turns[i].text),
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 

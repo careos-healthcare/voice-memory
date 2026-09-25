@@ -510,12 +510,8 @@ class CaptureFlowController extends ChangeNotifier {
     });
     _liveSttRoute = resolveLiveStt(
       onDeviceStreaming: LiveDraftTranscript.supportsOnDeviceStreaming,
-      online: _liveOnline,
     );
-    _liveSession = LiveVoiceSession(
-      respond: _respondToLiveTurn,
-      onChanged: _publishLiveTurns,
-    );
+    _liveSession = LiveVoiceSession(onChanged: _publishLiveTurns);
     unawaited(_amplitudeSubscription?.cancel());
     _amplitudeSubscription = _deps.audio.watchAmplitude().listen((db) {
       if (_disposed || (_elapsed?.isPaused ?? false)) return;
@@ -524,30 +520,10 @@ class CaptureFlowController extends ChangeNotifier {
       _emit(_snapshot.copyWith(amplitudeBars: _amplitudes.displayBars));
     });
     if (V1CapabilityRegistry.liveDraftTranscript &&
-        _liveSttRoute != LiveSttRoute.offline) {
+        _liveSttRoute == LiveSttRoute.onDevice) {
       unawaited(_startLiveDraft());
     }
   }
-
-  bool get _liveOnline {
-    if (kIsWeb) return false;
-    return liveOnlineOverride ?? true;
-  }
-
-  /// Tests set this so a desktop run can exercise the Whisper path.
-  static bool? liveOnlineOverride;
-
-  Future<String> _respondToLiveTurn(
-    String utterance,
-    List<LiveConversationTurn> history,
-  ) async {
-    final reply = liveTurnResponder;
-    if (reply == null) return '';
-    return reply(utterance, history);
-  }
-
-  /// Optional conversational reply after a silence boundary.
-  static LiveTurnResponder? liveTurnResponder;
 
   void _publishLiveTurns() {
     if (_disposed) return;

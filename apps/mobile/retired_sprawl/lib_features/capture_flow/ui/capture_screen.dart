@@ -188,7 +188,6 @@ class _CaptureScreenState extends State<CaptureScreen>
           paused: snapshot.recordingPaused,
           draftText: snapshot.draftTranscript,
           turns: snapshot.conversationTurns,
-          sttRoute: snapshot.liveSttRoute,
           onStop: _controller.stopVoiceCapture,
           onPause: _controller.pauseVoiceCapture,
           onResume: _controller.resumeVoiceCapture,

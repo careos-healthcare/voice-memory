@@ -24,11 +24,7 @@ class ArchiveWeeklyRecapBanner extends StatelessWidget {
     if (!weekJustEnded(now)) return const SizedBox.shrink();
     final week = entriesThisWeek(entries, now);
     if (week.isEmpty) return const SizedBox.shrink();
-    final latest = week.reduce(
-      (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
-    );
-    final words = latest.transcript.trim();
-    final snippet = words.length > 80 ? '${words.substring(0, 80)}…' : words;
+    final arc = emotionalArc(week);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
@@ -47,13 +43,13 @@ class ArchiveWeeklyRecapBanner extends StatelessWidget {
                 '${week.length} saved ${week.length == 1 ? 'moment' : 'moments'}.',
                 style: theme.textTheme.titleMedium,
               ),
-              if (snippet.isNotEmpty) ...[
+              if (arc.isNotEmpty) ...[
                 const SizedBox(height: 6),
-                Text(snippet, style: theme.textTheme.bodyMedium),
+                Text(arc, key: const Key('archive_weekly_emotional_arc')),
                 ViewEvidenceInlineLink(
-                  entryIds: [latest.id],
+                  entryIds: [for (final entry in week) entry.id],
                   surface: 'weekly_recap',
-                  claimContext: 'This week',
+                  claimContext: arc,
                 ),
               ],
             ],
@@ -62,4 +58,30 @@ class ArchiveWeeklyRecapBanner extends StatelessWidget {
       ),
     );
   }
+
+  /// Moods and lines from the whole week, not only the newest moment.
+  static String emotionalArc(List<JournalEntry> week) {
+    final ordered = [...week]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final moods = [
+      for (final entry in ordered)
+        if (entry.reflection.mood.trim().isNotEmpty) entry.reflection.mood.trim(),
+    ];
+    final uniqueMoods = moods.toSet().toList();
+    if (uniqueMoods.length >= 2) {
+      return '${uniqueMoods.first} to ${uniqueMoods.last} across ${ordered.length} moments.';
+    }
+    final lines = [
+      for (final entry in ordered)
+        if (entry.transcript.trim().isNotEmpty) _clip(entry.transcript.trim()),
+    ];
+    if (lines.length >= 2) {
+      return 'Opened with “${lines.first}” and later “${lines.last}”.';
+    }
+    if (lines.length == 1) return lines.single;
+    if (uniqueMoods.length == 1) return uniqueMoods.single;
+    return '';
+  }
+
+  static String _clip(String words) =>
+      words.length > 80 ? '${words.substring(0, 80)}…' : words;
 }
