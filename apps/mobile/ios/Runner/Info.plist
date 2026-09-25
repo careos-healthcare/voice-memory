@@ -45,6 +45,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 	</dict>
+	<key>ExcludedFromBackup</key>
+	<array>
+		<string>archiveme.db</string>
+		<string>archiveme.db-wal</string>
+		<string>archiveme.db-shm</string>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Thoughtprint uses Face ID to unlock the app on this device.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

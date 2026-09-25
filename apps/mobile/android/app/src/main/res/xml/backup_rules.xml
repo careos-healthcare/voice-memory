@@ -9,6 +9,9 @@
     <exclude domain="file" path="journal_entries.encrypted.json" />
     <exclude domain="file" path="mobile_prefs.json" />
     <exclude domain="file" path="accounts/" />
+    <exclude domain="file" path="accounts/archiveme.db" />
+    <exclude domain="file" path="accounts/archiveme.db-wal" />
+    <exclude domain="file" path="accounts/archiveme.db-shm" />
     <exclude domain="file" path="archiveme.db" />
     <exclude domain="file" path="archiveme.db-wal" />
     <exclude domain="file" path="archiveme.db-shm" />

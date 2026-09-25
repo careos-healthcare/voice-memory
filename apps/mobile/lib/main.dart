@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dar
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
+import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +48,12 @@ Future<void> main() async {
     return;
   }
 
-  await completeThoughtprintStartup();
+  try {
+    await completeThoughtprintStartup();
+  } on DatabaseDecryptionFailed {
+    runApp(const ThoughtprintBackupRestoreApp());
+    return;
+  }
   await GentleRemindersService().rescheduleReminders();
   runApp(const GentleRemindersLifecycleHost(child: ThoughtprintApp()));
 }

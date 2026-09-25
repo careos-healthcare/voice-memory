@@ -16,6 +16,14 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:sqflite_sqlcipher/sqflite.dart' as sqlcipher;
 
+/// The on-disk archive cannot be opened with the key on this device.
+///
+/// Typical after a cable or Quick Share copy that moved the database
+/// without the key stored in shared preferences.
+class DatabaseDecryptionFailed implements Exception {
+  const DatabaseDecryptionFailed();
+}
+
 /// Opens the account-scoped SQLite database with SQLCipher and baseline PRAGMAs.
 abstract final class SqliteDatabaseInitializer {
   SqliteDatabaseInitializer._();
@@ -70,18 +78,27 @@ abstract final class SqliteDatabaseInitializer {
 
     final sqflite.Database db;
     if (_usesEncryptedOpen(passwordOverride: passwordOverride)) {
-      if (filePath != ':memory:') {
-        await SqliteEncryptionMigrator.migratePlaintextIfNeeded(
+      try {
+        if (filePath != ':memory:') {
+          await SqliteEncryptionMigrator.migratePlaintextIfNeeded(
+            filePath: filePath,
+            password: password,
+            openEncrypted: _openEncryptedForMigration,
+          );
+        }
+        db = await _openEncrypted(
           filePath: filePath,
           password: password,
-          openEncrypted: _openEncryptedForMigration,
+          singleInstance: singleInstance,
         );
+      } on DatabaseDecryptionFailed {
+        rethrow;
+      } on Object catch (error) {
+        if (_undecryptable(error, filePath)) {
+          throw const DatabaseDecryptionFailed();
+        }
+        rethrow;
       }
-      db = await _openEncrypted(
-        filePath: filePath,
-        password: password,
-        singleInstance: singleInstance,
-      );
     } else {
       db = await _openPlaintext(
         filePath: filePath,
@@ -99,6 +116,17 @@ abstract final class SqliteDatabaseInitializer {
       await _runDeferredTranscriptProvenanceBackfill(db);
     }
     return db;
+  }
+
+  static bool _undecryptable(Object error, String filePath) {
+    final text = error.toString().toLowerCase();
+    final cipherFailure =
+        text.contains('not a database') ||
+        text.contains('file is encrypted') ||
+        text.contains('sqlite_notadb') ||
+        text.contains('hmac');
+    if (!cipherFailure || filePath == ':memory:') return false;
+    return File(filePath).existsSync();
   }
 
   static Future<String> _resolvePassword({
