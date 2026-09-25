@@ -5,13 +5,13 @@ import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart
 import 'package:archiveme_mobile/features/insights/pattern_exploration_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_feature_flags.dart';
 
-/// Launch-profile switches. Health stays on so the HealthKit share string
-/// remains a declared permission.
+/// Launch-profile switches. Apple Health stays on for the beta so the
+/// HealthKit share string and the mood sync control are both active.
 abstract final class AppFlags {
   AppFlags._();
 
-  static const bool enableHealthSync = bool.fromEnvironment(
-    'VOICEMEMORY_ENABLE_HEALTH_SYNC',
+  static const bool appleHealth = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_APPLE_HEALTH',
     defaultValue: true,
   );
 }
@@ -39,15 +39,12 @@ abstract final class V1CapabilityRegistry {
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
 
-  /// Apple Health State of Mind permission. The mood sync control stays behind
-  /// [appleHealth], which is off until the launch profile turns it on.
-  static const bool health = AppFlags.enableHealthSync;
+  /// Apple Health State of Mind. Permission and the Settings control share
+  /// [AppFlags.appleHealth].
+  static const bool health = AppFlags.appleHealth;
 
-  /// Settings control that reads Apple Health State of Mind. Off until reviewed.
-  static const bool appleHealth = bool.fromEnvironment(
-    'VOICEMEMORY_ENABLE_APPLE_HEALTH',
-    defaultValue: false,
-  );
+  /// Settings control that reads Apple Health State of Mind.
+  static const bool appleHealth = AppFlags.appleHealth;
 
   /// Passphrase-sealed journal sync in Settings. Off until reviewed.
   static const bool e2eeSync = bool.fromEnvironment(

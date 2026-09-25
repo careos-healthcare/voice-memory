@@ -22,7 +22,9 @@ const _declarationFlags = <String, bool>{
   'NSBluetoothPeripheralUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSLocalNetworkUsageDescription': V1CapabilityRegistry.localNetwork,
   'NSCameraUsageDescription': V1CapabilityRegistry.cameraAndPhotos,
-  'NSPhotoLibraryUsageDescription': V1CapabilityRegistry.cameraAndPhotos,
+  // image_picker stays linked for journal photos. App Store review requires
+  // this purpose string even when the picker uses PHPicker.
+  'NSPhotoLibraryUsageDescription': true,
   'NSPhotoLibraryAddUsageDescription': V1CapabilityRegistry.cameraAndPhotos,
   'NSMotionUsageDescription': V1CapabilityRegistry.activityRecognition,
   'com.apple.developer.healthkit': V1CapabilityRegistry.health,

@@ -32,7 +32,10 @@ void main() {
     }
 
     if (_dependsOn(pubspec, 'image_picker')) {
-      expect(purposes.containsKey('NSPhotoLibraryUsageDescription'), isFalse);
+      expect(
+        purposes['NSPhotoLibraryUsageDescription'],
+        'Thoughtprint requires photo access so you can attach images to your journal entries.',
+      );
       expect(purposes.containsKey('NSCameraUsageDescription'), isFalse);
     }
   });

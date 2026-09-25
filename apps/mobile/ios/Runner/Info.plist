@@ -70,6 +70,8 @@
 	<string>Thoughtprint turns a recording into text on this device when you ask it to.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Thoughtprint reads the State of Mind you logged in Apple Health so it can show that mood beside the moment from the same day.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Thoughtprint requires photo access so you can attach images to your journal entries.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>CFBundleDocumentTypes</key>
