@@ -69,4 +69,19 @@ void main() {
       'Second morning by the river.',
     ]);
   });
+
+  test('a forgotten label is left out of the cloud copy', () async {
+    final uploaded = <String>[];
+    final service = CloudSyncService(
+      isCloudSyncEnabled: () async => true,
+      forgottenLabels: () async => {'river'},
+      upload: (entryId, transcript) async {
+        uploaded.add(transcript);
+      },
+    );
+
+    await service.uploadEntryToLedger(entry('I mentioned the river again.'));
+
+    expect(uploaded, ['I mentioned the again.']);
+  });
 }

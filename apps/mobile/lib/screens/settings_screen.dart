@@ -28,6 +28,7 @@ import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
+import 'package:archiveme_mobile/features/insights/views/knowledge_manager_view.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_copy.dart';
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
@@ -375,6 +376,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () => unawaited(_confirmDeleteCloudCopy()),
                 child: const Text('Delete my cloud copy'),
               ),
+            ),
+            ListTile(
+              key: const Key('settings_what_i_know'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                KnowledgeManagerView.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'People, places, and themes from your journal.',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const KnowledgeManagerView(),
+                  ),
+                );
+              },
             ),
             if (V1CapabilityRegistry.appleHealth)
               SwitchListTile(
