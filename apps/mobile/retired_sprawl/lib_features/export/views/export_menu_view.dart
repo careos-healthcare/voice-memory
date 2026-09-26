@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/api/api_error_message.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/export/archive_book_exporter.dart';
 import 'package:archiveme_mobile/features/export/obsidian_archive_exporter.dart';
+import 'package:archiveme_mobile/features/export/services/day_one_export_service.dart';
 import 'package:archiveme_mobile/features/export/services/universal_export_service.dart';
 import 'package:archiveme_mobile/security/export_pdf_renderer.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
@@ -15,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-enum _ExportKind { everything, json, pdf, book, obsidian }
+enum _ExportKind { everything, dayOne, json, pdf, book, obsidian }
 
 /// Export choices. The first action packs every format into one zip.
 class ExportMenuView extends StatefulWidget {
@@ -46,6 +47,43 @@ class _ExportMenuViewState extends State<ExportMenuView> {
       final bytes = await UniversalExportService.buildZip(entries: entries);
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/${UniversalExportService.suggestedFileName}');
+      await file.writeAsBytes(bytes);
+      await Share.shareXFiles([
+        XFile(file.path),
+      ], subject: 'Thoughtprint journal export');
+      await BetaAnalyticsHooks.exportResult(success: true);
+      setState(() => _message = 'Export ready (${entries.length} entries).');
+    } catch (e) {
+      await BetaAnalyticsHooks.exportResult(success: false);
+      ReleaseLogger.exceptionFailure(
+        event: 'export_build_failed',
+        category: ReleaseLogCategory.export,
+        error: e,
+      );
+      setState(
+        () => _message = userFacingErrorMessage(
+          e,
+          fallback: 'Export failed. Try again.',
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busyKind = null);
+    }
+  }
+
+  Future<void> _exportDayOne() async {
+    setState(() {
+      _busyKind = _ExportKind.dayOne;
+      _message = null;
+    });
+    try {
+      if (!AppServices.isInitialized) {
+        throw StateError('Archive is not open.');
+      }
+      final entries = await AppServices.instance.journal.loadAll();
+      final bytes = await DayOneExportService.buildZip(entries: entries);
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${DayOneExportService.suggestedFileName}');
       await file.writeAsBytes(bytes);
       await Share.shareXFiles([
         XFile(file.path),
@@ -185,6 +223,12 @@ class _ExportMenuViewState extends State<ExportMenuView> {
               label: 'Export Everything (.zip)',
               onPressed: _exportEverything,
             ),
+            const SizedBox(height: 12),
+            _DayOneExportButton(
+              busy: _busyKind == _ExportKind.dayOne,
+              enabled: !_busy,
+              onPressed: _exportDayOne,
+            ),
             const SizedBox(height: 16),
             const Text(
               'Exports your locally saved entries as JSON, PDF, an archive book, '
@@ -291,6 +335,41 @@ class _ExportButton extends StatelessWidget {
             )
           : const Icon(Icons.share_outlined),
       label: Text(busy ? 'Exporting…' : label),
+    );
+  }
+}
+
+class _DayOneExportButton extends StatelessWidget {
+  const _DayOneExportButton({
+    required this.busy,
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  final bool busy;
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      key: const Key('export_day_one_button'),
+      onPressed: enabled ? onPressed : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          children: [
+            Text(busy ? 'Exporting…' : 'Export to Day One (.zip)'),
+            const SizedBox(height: 4),
+            const Text(
+              'Generates a Day One compatible ZIP to import into other journaling apps.',
+              key: Key('export_day_one_subtitle'),
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppTheme.muted, fontSize: 12, height: 1.3),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
