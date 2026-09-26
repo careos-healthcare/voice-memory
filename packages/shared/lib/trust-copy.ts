@@ -90,7 +90,7 @@ export const PRIVACY_SECTIONS = [
   },
   {
     title: "Location",
-    body: "To display your map securely without tracking SDKs, Thoughtprint requests map tiles from OpenStreetMap. Viewing the map sends the bounding box of the viewed area to OpenStreetMap tile servers, but your journal entries and exact coordinates never leave your device.",
+    body: "Map tiles are loaded from Apple Maps (iPhone) or OpenStreetMap (Android), which can see the area you're viewing, not your entries.",
   },
   {
     title: "Local-first storage",

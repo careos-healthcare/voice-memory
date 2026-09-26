@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/features/archive/views/calendar_view.dart';
 import 'package:archiveme_mobile/features/archive/views/history_hub_view.dart';
 import 'package:archiveme_mobile/features/archive/views/map_view.dart';
 import 'package:archiveme_mobile/features/archive/views/on_this_day_view.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_display_metadata.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -18,6 +19,7 @@ JournalEntry _entry({
   double? longitude,
   String? place,
   String? audio,
+  String? image,
 }) {
   return JournalEntry(
     id: id,
@@ -25,6 +27,15 @@ JournalEntry _entry({
     transcript: transcript,
     durationSeconds: 8,
     localAudioPath: audio,
+    imageEvidence: image == null
+        ? null
+        : ImageEvidence(
+            evidenceId: id,
+            caption: '',
+            mimeType: 'image/jpeg',
+            attachedAt: at,
+            images: [image],
+          ),
     reflection: const Reflection(
       mood: 'calm',
       emotionalIntensity: 1,
@@ -208,6 +219,53 @@ void main() {
     expect(find.text('View Entry'), findsNWidgets(2));
   });
 
+  testWidgets('a cluster sheet lists the date, sentence, play, and photo', (
+    tester,
+  ) async {
+    var played = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: MapView(
+            locationPermissionDenied: false,
+            onPlay: (_) => played = true,
+            entries: [
+              _entry(
+                id: 'home',
+                at: DateTime(2026, 9, 1),
+                place: 'Home',
+                latitude: 51.5,
+                longitude: -0.12,
+                transcript: 'The river was high. Then it fell.',
+                audio: '/tmp/missing-moment.m4a',
+                image: '/tmp/missing-moment.jpg',
+              ),
+              _entry(
+                id: 'later',
+                at: DateTime(2026, 9, 2),
+                place: 'Home',
+                latitude: 51.5,
+                longitude: -0.12,
+                transcript: 'second moment here',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const Key('map_cluster_2')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('map_cluster_cards')), findsOneWidget);
+    expect(find.byKey(const Key('map_date_home')), findsOneWidget);
+    expect(find.text('The river was high.'), findsOneWidget);
+    expect(find.text('Then it fell.'), findsNothing);
+    expect(find.byKey(const Key('archive_entry_images_home')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('map_play_home')));
+    await tester.pump();
+    expect(played, isTrue);
+  });
+
   testWidgets('a map without coordinates explains location tagging', (
     tester,
   ) async {
@@ -234,7 +292,29 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(find.byKey(const Key('map_empty_location_link')), findsOneWidget);
     expect(find.byIcon(Icons.place), findsNothing);
+  });
+
+  testWidgets('the empty map links to the location setting', (tester) async {
+    var opened = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: MapView(
+            locationPermissionDenied: false,
+            onOpenPlaces: () => opened = true,
+            entries: [
+              _entry(id: 'none', at: DateTime(2026, 9, 2), transcript: 'no place'),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const Key('map_empty_location_link')));
+    await tester.pump();
+    expect(opened, isTrue);
   });
 
   testWidgets('a permanently denied location permission covers the map', (

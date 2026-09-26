@@ -54,6 +54,11 @@ abstract class PrivacyScreenCopy {
 
   static const String placeLookupTitle = 'Place names';
 
+  static const String mapTilesTitle = 'Map';
+
+  static const String mapTilesBody =
+      "Map tiles are loaded from Apple Maps (iPhone) or OpenStreetMap (Android), which can see the area you're viewing, not your entries.";
+
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
       'Your archive entries, recorded details, action items, surfacing choices, '
@@ -124,6 +129,7 @@ abstract class PrivacyScreenCopy {
     PrivacySection(title: privateByDefaultTitle, body: privateByDefaultBody),
     PrivacySection(title: onDeviceTitle, body: onDeviceBody),
     PrivacySection(title: placeLookupTitle, body: placeLookupDisclosure),
+    PrivacySection(title: mapTilesTitle, body: mapTilesBody),
     PrivacySection(title: aiProcessingTitle, body: aiProcessingBody),
     PrivacySection(title: encryptedBackupTitle, body: encryptedBackupBody),
     PrivacySection(title: doesNotDoTitle, body: doesNotDoBody),
@@ -141,6 +147,8 @@ abstract class PrivacyScreenCopy {
     onDeviceBody,
     placeLookupTitle,
     placeLookupDisclosure,
+    mapTilesTitle,
+    mapTilesBody,
     aiProcessingTitle,
     aiProcessingBody,
     encryptedBackupTitle,

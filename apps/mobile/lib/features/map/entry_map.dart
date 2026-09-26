@@ -45,6 +45,13 @@ class MapPin {
   }
 }
 
+/// Coordinates shown on the map. Two decimal places is about a kilometre.
+abstract final class EntryMapCoordinates {
+  EntryMapCoordinates._();
+
+  static double coarse(double value) => double.parse(value.toStringAsFixed(2));
+}
+
 /// Groups low-accuracy fixes that share a coordinate, then a nearby cell.
 abstract final class EntryMapClusters {
   EntryMapClusters._();
@@ -60,8 +67,8 @@ abstract final class EntryMapClusters {
     return [
       for (final group in groups.values)
         MapPin(
-          latitude: group.first.latitude!,
-          longitude: group.first.longitude!,
+          latitude: EntryMapCoordinates.coarse(group.first.latitude!),
+          longitude: EntryMapCoordinates.coarse(group.first.longitude!),
           entries: group,
         ),
     ];

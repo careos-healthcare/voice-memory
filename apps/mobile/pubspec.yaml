@@ -83,8 +83,8 @@ dependencies:
   geolocator: ^13.0.4
   geocoding: ^3.0.0
   flutter_map: ^8.3.2
-  flutter_map_marker_cluster: ^8.2.2
   latlong2: ^0.9.1
+  apple_maps_flutter: ^1.4.0
   printing: ^5.14.3
 
 dev_dependencies:

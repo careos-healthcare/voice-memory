@@ -12,12 +12,18 @@ class MapView extends StatefulWidget {
   const MapView({
     required this.entries,
     this.onOpenEntry,
+    this.onPlay,
+    this.onOpenPlaces,
     this.locationPermissionDenied,
     super.key,
   });
 
   final List<JournalEntry> entries;
   final ValueChanged<String>? onOpenEntry;
+  final ValueChanged<JournalEntry>? onPlay;
+
+  /// Opens the location setting. Defaults to the system app settings.
+  final VoidCallback? onOpenPlaces;
 
   /// When set, skips the device permission check.
   final bool? locationPermissionDenied;
@@ -65,6 +71,8 @@ class _MapViewState extends State<MapView> {
           pins: showEmpty ? const [] : pins,
           onPin: (pin) => _openPins(context, [pin], byId),
           onCluster: (grouped) => _openPins(context, grouped, byId),
+          onOpenPlaces: widget.onOpenPlaces ??
+              () => unawaited(Geolocator.openAppSettings()),
         ),
       ],
     );
@@ -99,6 +107,9 @@ class _MapViewState extends State<MapView> {
                 for (final entry in entries)
                   MapPopupCard(
                     entry: entry,
+                    onPlay: widget.onPlay == null
+                        ? null
+                        : () => widget.onPlay!(entry),
                     onViewEntry: widget.onOpenEntry == null
                         ? null
                         : () {

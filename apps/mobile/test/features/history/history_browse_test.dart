@@ -130,6 +130,23 @@ void main() {
     expect(CalendarHeatmap.tier(15, 15), 4);
   });
 
+  test('display coordinates round to two decimal places', () {
+    expect(EntryMapCoordinates.coarse(51.5074), 51.51);
+    expect(EntryMapCoordinates.coarse(-0.126), -0.13);
+    expect(EntryMapCoordinates.coarse(51.5), 51.5);
+    expect(EntryMapCoordinates.coarse(-0.12).toString(), '-0.12');
+    final pins = EntryMapClusters.cluster([
+      _moment(
+        id: 'a',
+        at: DateTime(2026, 9, 1),
+        latitude: 51.5074,
+        longitude: -0.126,
+      ),
+    ]);
+    expect(pins.single.latitude, 51.51);
+    expect(pins.single.longitude, -0.13);
+  });
+
   test('nearby places share one pin', () {
     final pins = EntryMapClusters.cluster([
       _moment(
