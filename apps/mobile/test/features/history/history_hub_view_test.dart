@@ -70,6 +70,42 @@ void main() {
     expect(opened, 'a');
   });
 
+  testWidgets('year view opens a month and a day sheet', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: CalendarView(
+            now: DateTime(2026, 3, 12),
+            entries: [
+              _entry(
+                id: 'a',
+                at: DateTime(2026, 3, 3),
+                transcript: 'march day',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Year'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar_year_view')), findsOneWidget);
+    expect(find.byKey(const Key('calendar_year_month_3')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('calendar_year_3_day_3')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar_day_entries')), findsOneWidget);
+    expect(find.text('march day'), findsOneWidget);
+    await tester.tapAt(const Offset(20, 20));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('calendar_year_month_1')));
+    await tester.pumpAndSettle();
+    expect(find.text('January'), findsOneWidget);
+    expect(find.byKey(const Key('calendar_month_view')), findsOneWidget);
+  });
+
   testWidgets('on this day groups an earlier year and offers playback', (
     tester,
   ) async {

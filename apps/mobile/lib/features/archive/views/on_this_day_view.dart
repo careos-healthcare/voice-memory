@@ -188,5 +188,6 @@ HistoryMoment historyMomentFromEntry(JournalEntry entry) {
     longitude: entry.display.longitude,
     imagePaths: entry.images,
     audioPath: audio == null || audio.isEmpty ? null : audio,
+    durationSeconds: entry.durationSeconds,
   );
 }

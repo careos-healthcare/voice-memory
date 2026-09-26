@@ -211,6 +211,7 @@ class _ArchiveDashboardScrollViewState
                     entries: visibleEntries,
                     selectedDay: _selectedDay,
                     onSelect: (day) => setState(() => _selectedDay = day),
+                    onOpenEntry: widget.onEntryTap,
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -484,11 +485,13 @@ class _MonthStrip extends StatefulWidget {
     required this.entries,
     required this.selectedDay,
     required this.onSelect,
+    required this.onOpenEntry,
   });
 
   final List<JournalEntry> entries;
   final DateTime? selectedDay;
   final ValueChanged<DateTime?> onSelect;
+  final ValueChanged<String> onOpenEntry;
 
   @override
   State<_MonthStrip> createState() => _MonthStripState();
@@ -551,21 +554,23 @@ class _MonthStripState extends State<_MonthStrip> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: TextButton(
+                child: InkWell(
                   key: const Key('archive_calendar_month'),
-                  onPressed: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: widget.selectedDay ?? today,
-                      firstDate: DateTime(1970),
-                      lastDate: today,
-                    );
-                    if (picked == null) return;
-                    widget.onSelect(
-                      DateTime(picked.year, picked.month, picked.day),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => HistoryHub(
+                          entries: widget.entries,
+                          initialIndex: 1,
+                          onOpenEntry: widget.onOpenEntry,
+                        ),
+                      ),
                     );
                   },
-                  child: Text(LocaleDateFormat.month(context, today)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(LocaleDateFormat.month(context, today)),
+                  ),
                 ),
               ),
               Padding(

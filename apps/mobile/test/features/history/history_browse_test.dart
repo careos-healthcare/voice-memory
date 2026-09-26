@@ -66,6 +66,41 @@ void main() {
     expect(opened?.count, 2);
   });
 
+  test('heatmap uses four shades and skips an empty day', () {
+    expect(CalendarHeatmap.tier(0, 100), 0);
+    expect(CalendarHeatmap.tier(10, 100), 1);
+    expect(CalendarHeatmap.tier(50, 100), 2);
+    expect(CalendarHeatmap.tier(75, 100), 3);
+    expect(CalendarHeatmap.tier(100, 100), 4);
+    final primary = const Color(0xFF2563EB);
+    expect(CalendarHeatmap.shade(primary, 1).a, closeTo(0.2, 0.01));
+    expect(CalendarHeatmap.shade(primary, 4).a, closeTo(1, 0.01));
+    expect(CalendarHeatmap.shade(primary, 0).a, 0);
+  });
+
+  test('a longer recording is a heavier day than a short note', () {
+    final days = CalendarMonth.days(
+      month: DateTime(2026, 9),
+      entries: [
+        _moment(id: 'short', at: DateTime(2026, 9, 2), transcript: 'hi'),
+        HistoryMoment(
+          id: 'long',
+          createdAt: DateTime(2026, 9, 4),
+          transcript: 'hi',
+          durationSeconds: 90,
+        ),
+      ],
+    );
+    final light = days.firstWhere((day) => day.day == 2);
+    final heavy = days.firstWhere((day) => day.day == 4);
+    expect(light.volume, 1);
+    expect(heavy.volume, 90);
+    expect(
+      CalendarHeatmap.tier(heavy.volume, 90),
+      greaterThan(CalendarHeatmap.tier(light.volume, 90)),
+    );
+  });
+
   test('nearby places share one pin', () {
     final pins = EntryMapClusters.cluster([
       _moment(
