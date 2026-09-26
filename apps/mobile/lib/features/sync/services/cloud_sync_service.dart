@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/features/insights/knowledge_forget_service.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/sync/plain_text_ledger_consent.dart';
+import 'package:archiveme_mobile/features/sync/services/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -285,16 +286,9 @@ abstract final class E2eeSyncLifecycle {
       );
       if (!preferences.isCloudSyncEnabled) return;
       final passphrase = await E2eeSyncSettings.storedPassphrase();
-      final bundle = await AccountSyncKey.readBundle();
-      if (passphrase == null ||
-          passphrase.trim().isEmpty ||
-          bundle == null) {
-        return;
-      }
-      final accountKey = await AccountSyncKey.unwrap(
-        wrapped: bundle.wrappedByPassphrase,
-        secret: passphrase,
-      );
+      if (passphrase == null || passphrase.trim().isEmpty) return;
+      final accountKey = await _accountKeyFor(passphrase);
+      if (accountKey == null) return;
       final deviceId = await AppServices.instance.deviceIds.getOrCreate();
       final lastRaw = await AppServices.instance.prefs.readString(lastSyncKey);
       final last = lastRaw == null ? null : DateTime.tryParse(lastRaw);
@@ -324,6 +318,32 @@ abstract final class E2eeSyncLifecycle {
       }
     } on Object {
       return;
+    }
+  }
+
+  /// Fetches the account salt before deriving. A local wrap is used only when
+  /// it already carries that salt, or when the server has not published one.
+  static Future<List<int>?> _accountKeyFor(String passphrase) async {
+    final remote = await AccountSyncKeyImport.loadParams();
+    final local = await AccountSyncKey.readBundle();
+    if (remote != null &&
+        (local == null || local.wrappedByPassphrase.salt != remote.salt)) {
+      try {
+        final imported = await AccountSyncKeyImport.unlockWithParams(
+          passphrase: passphrase,
+          params: remote,
+        );
+        return imported.accountKey;
+      } on AccountKeyUnlockFailed {
+        return null;
+      }
+    }
+    final wrapped = local?.wrappedByPassphrase;
+    if (wrapped == null) return null;
+    try {
+      return await AccountSyncKey.unwrap(wrapped: wrapped, secret: passphrase);
+    } on AccountKeyUnlockFailed {
+      return null;
     }
   }
 

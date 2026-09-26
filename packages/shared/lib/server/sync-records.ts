@@ -42,7 +42,13 @@ export class SyncRecordLedger {
   private readonly revokedDevices = new Set<string>();
   private readonly relays = new Map<
     string,
-    { ciphertext: string; nonce: string; expiresAt: number; claimed: boolean }
+    {
+      ciphertext: string;
+      nonce: string;
+      senderPublicKey: string;
+      expiresAt: number;
+      claimed: boolean;
+    }
   >();
 
   push(records: SyncRecordInput[], now = new Date()): SyncPushResult {
@@ -90,14 +96,44 @@ export class SyncRecordLedger {
     return { records: rows, cursor: this.cursor };
   }
 
-  putRelay(id: string, ciphertext: string, nonce: string, now = new Date()) {
+  putRelay(
+    id: string,
+    ciphertext: string,
+    nonce: string,
+    senderPublicKey: string,
+    now = new Date(),
+  ) {
     this.relays.set(id, {
       ciphertext,
       nonce,
+      senderPublicKey,
       expiresAt: now.getTime() + PAIR_EXPIRY_MS,
       claimed: false,
     });
     return { id, expiresAt: new Date(now.getTime() + PAIR_EXPIRY_MS).toISOString() };
+  }
+
+  /** Salt and Argon2id params already published for this account, if any. */
+  readSyncParams(): {
+    salt: string;
+    kdf: unknown;
+    createdAt: string;
+    wrappedByPassphrase: unknown;
+    wrappedByRecovery: unknown;
+  } | null {
+    const keys = this.keys;
+    if (!keys) return null;
+    const wrapped = keys.wrappedByPassphrase as { salt?: unknown } | null;
+    if (!wrapped || typeof wrapped.salt !== "string" || wrapped.salt.length === 0) {
+      return null;
+    }
+    return {
+      salt: wrapped.salt,
+      kdf: keys.kdfParams,
+      createdAt: keys.createdAt,
+      wrappedByPassphrase: keys.wrappedByPassphrase,
+      wrappedByRecovery: keys.wrappedByRecovery,
+    };
   }
 
   storeKeys(input: {
@@ -140,7 +176,12 @@ export class SyncRecordLedger {
       return { ok: false as const, error: "This device link has expired." };
     }
     relay.claimed = true;
-    return { ok: true as const, ciphertext: relay.ciphertext, nonce: relay.nonce };
+    return {
+      ok: true as const,
+      ciphertext: relay.ciphertext,
+      nonce: relay.nonce,
+      senderPublicKey: relay.senderPublicKey,
+    };
   }
 }
 

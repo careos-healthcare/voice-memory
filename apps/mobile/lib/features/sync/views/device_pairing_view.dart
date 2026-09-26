@@ -21,7 +21,7 @@ class DevicePairingView extends StatefulWidget {
 
 class _DevicePairingViewState extends State<DevicePairingView> {
   final _code = TextEditingController();
-  PairingCode? _offer;
+  EphemeralPairingOffer? _offer;
   String? _message;
 
   @override
@@ -31,10 +31,7 @@ class _DevicePairingViewState extends State<DevicePairingView> {
   }
 
   Future<void> _showCode() async {
-    final offer = await widget.service.createPairingCode(
-      masterKey: widget.masterKey,
-      salt: widget.salt,
-    );
+    final offer = await widget.service.createPairingOffer();
     if (!mounted) return;
     setState(() {
       _offer = offer;
@@ -42,11 +39,31 @@ class _DevicePairingViewState extends State<DevicePairingView> {
     });
   }
 
-  Future<void> _accept() async {
+  Future<void> _finish() async {
+    final offer = _offer;
+    if (offer == null) return;
     try {
-      await widget.service.acceptPairingCode(_code.text);
+      await widget.service.finishPairing(offer: offer);
       if (!mounted) return;
       Navigator.of(context).pop(true);
+    } on PairingExpired {
+      setState(() => _message = 'This pairing code has expired.');
+    } on PairingNotAuthentic {
+      setState(() => _message = 'This pairing transfer could not be verified.');
+    } on Object {
+      setState(() => _message = 'The linked key is not ready yet.');
+    }
+  }
+
+  Future<void> _send() async {
+    try {
+      await widget.service.sendAccountKey(
+        scannedPayload: _code.text,
+        accountKey: widget.masterKey,
+        salt: widget.salt,
+      );
+      if (!mounted) return;
+      setState(() => _message = 'The key was sent to the new phone.');
     } on PairingExpired {
       setState(() => _message = 'This pairing code has expired.');
     } on Object {
@@ -64,7 +81,7 @@ class _DevicePairingViewState extends State<DevicePairingView> {
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
-            'On this phone, show a code. On the new phone, scan it or paste the pairing text. The code expires in five minutes. You can also unlock with your passphrase or recovery key.',
+            'On the new phone, show a code. On the phone that already syncs, paste that code so it can send the key. Then finish linking on the new phone. The code expires in five minutes.',
           ),
           const SizedBox(height: 16),
           FilledButton(
@@ -82,6 +99,12 @@ class _DevicePairingViewState extends State<DevicePairingView> {
             ),
             const SizedBox(height: 8),
             SelectableText(offer.payload, key: const Key('pairing_payload')),
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const Key('pairing_finish'),
+              onPressed: _finish,
+              child: const Text('Finish linking'),
+            ),
           ],
           const SizedBox(height: 24),
           TextField(
@@ -89,13 +112,15 @@ class _DevicePairingViewState extends State<DevicePairingView> {
             controller: _code,
             minLines: 2,
             maxLines: 4,
-            decoration: const InputDecoration(labelText: 'Pairing code'),
+            decoration: const InputDecoration(
+              labelText: 'Code from the new phone',
+            ),
           ),
           const SizedBox(height: 12),
           FilledButton(
             key: const Key('pairing_accept'),
-            onPressed: _accept,
-            child: const Text('Link this phone'),
+            onPressed: _send,
+            child: const Text('Send the key to that phone'),
           ),
           if (_message != null) ...[
             const SizedBox(height: 12),

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/core/storage/secure_storage_provider.dart';
 import 'package:archiveme_mobile/features/settings/views/e2ee_setup_view.dart';
+import 'package:archiveme_mobile/features/sync/services/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:archiveme_mobile/features/sync/views/recovery_key_backup_view.dart';
 import 'package:archiveme_mobile/security/app_lock_service.dart';
@@ -90,9 +91,20 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
         recoveryPhrase: stored,
       );
       await AccountSyncKey.storeBundle(bundle);
+      try {
+        await AccountSyncKeyImport.publish(bundle);
+      } on Object {
+        // The next successful sync can publish the same wrapped key.
+      }
       final save = widget.saveMasterKey;
       if (save != null) {
         await save(accountKey, base64Decode(bundle.wrappedByPassphrase.salt), scope);
+      }
+    } else {
+      try {
+        await AccountSyncKeyImport.importExisting(passphrase: stored);
+      } on Object {
+        // The passphrase is still saved. Sync retries the parameter fetch.
       }
     }
     await widget.storePassphrase(stored);

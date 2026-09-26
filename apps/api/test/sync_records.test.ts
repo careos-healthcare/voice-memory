@@ -85,6 +85,35 @@ test("sync pushes are rate limited and media chunks stay at 4 MB", () => {
   if (signed.ok) assert.equal(signed.method, "PUT");
 });
 
+test("sync params keep the published salt and a pair relay stays sealed", () => {
+  const userId = "params-account";
+  const ledger = syncRecordLedger(userId);
+  assert.equal(ledger.readSyncParams(), null);
+  ledger.storeKeys({
+    wrappedByPassphrase: {
+      salt: "c2FsdC1h",
+      ciphertext: "Y2lwaGVy",
+      nonce: "bm9uY2U",
+      innerNonce: "aW5uZXI",
+      kdf: { memoryKiB: 8, iterations: 1, parallelism: 1, hashLength: 32 },
+    },
+    wrappedByRecovery: { salt: "c2FsdC1i" },
+    kdfParams: { memoryKiB: 8, iterations: 1, parallelism: 1, hashLength: 32 },
+  });
+  const params = ledger.readSyncParams();
+  assert.equal(params?.salt, "c2FsdC1h");
+  assert.equal((params?.kdf as { memoryKiB: number }).memoryKiB, 8);
+
+  ledger.putRelay("pair-1", "Y2lwaGVy", "bm9uY2U", "cHVi", new Date("2026-09-26T12:00:00.000Z"));
+  const claimed = ledger.claimRelay("pair-1", new Date("2026-09-26T12:00:00.000Z"));
+  assert.equal(claimed.ok, true);
+  if (claimed.ok) {
+    assert.equal(claimed.senderPublicKey, "cHVi");
+    assert.equal(claimed.ciphertext, "Y2lwaGVy");
+  }
+  assert.equal(ledger.claimRelay("pair-1").ok, false);
+});
+
 test("purge drops encrypted records, media chunks, and devices for one account", () => {
   const userId = "purge-account";
   syncRecordLedger(userId).push([record]);
