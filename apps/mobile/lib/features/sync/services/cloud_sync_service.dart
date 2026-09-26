@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/features/insights/knowledge_forget_service.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
+import 'package:archiveme_mobile/features/sync/plain_text_ledger_consent.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -15,7 +16,8 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
 import 'package:archiveme_mobile/sync/record_sync.dart';
 
-/// Sends journal text to the server fact ledger when cloud features are on.
+/// Sends journal text to the plain-text ledger after opt-in and a signed
+/// plain-text AI processing consent. Encrypted sync stays on [E2eeSyncLifecycle].
 class CloudSyncService {
   CloudSyncService({
     Future<void> Function(String entryId, String transcript, DateTime createdAt)?
@@ -26,7 +28,8 @@ class CloudSyncService {
     Future<void> Function(List<JournalEntry> chunk)? postChunk,
     Future<int> Function()? readCursor,
     Future<void> Function(int cursor)? writeCursor,
-    Future<bool> Function()? isCloudSyncEnabled,
+    Future<bool> Function()? isLedgerOptInEnabled,
+    Future<bool> Function()? plainTextAiConsentSigned,
     Future<List<JournalEntry>> Function()? loadEntries,
     Future<Set<String>> Function()? forgottenLabels,
   }) : _upload = upload ?? _postToApi,
@@ -35,7 +38,9 @@ class CloudSyncService {
        _postChunk = postChunk ?? _postBulkChunk,
        _readCursor = readCursor ?? _readBackfillCursor,
        _writeCursor = writeCursor ?? _writeBackfillCursor,
-       _isCloudSyncEnabled = isCloudSyncEnabled ?? _readCloudPreference,
+       _isLedgerOptInEnabled = isLedgerOptInEnabled ?? _readLedgerOptIn,
+       _plainTextAiConsentSigned =
+           plainTextAiConsentSigned ?? _readPlainTextConsent,
        _loadEntries = loadEntries ?? _readLocalEntries,
        _forgottenLabels = forgottenLabels ?? _readForgottenLabels;
 
@@ -54,11 +59,12 @@ class CloudSyncService {
   final Future<void> Function(List<JournalEntry> chunk) _postChunk;
   final Future<int> Function() _readCursor;
   final Future<void> Function(int cursor) _writeCursor;
-  final Future<bool> Function() _isCloudSyncEnabled;
+  final Future<bool> Function() _isLedgerOptInEnabled;
+  final Future<bool> Function() _plainTextAiConsentSigned;
   final Future<List<JournalEntry>> Function() _loadEntries;
   final Future<Set<String>> Function() _forgottenLabels;
 
-  /// Posts one entry. Does nothing while cloud features are off.
+  /// Posts one entry. Does nothing until ledger opt-in and consent both hold.
   /// Forgotten labels are left out of the copy sent to the server.
   Future<void> uploadEntryToLedger(JournalEntry entry) async {
     await _send(entry, _upload);
@@ -71,7 +77,7 @@ class CloudSyncService {
 
   /// Removes one entry from the server ledger. The phone copy stays.
   Future<void> deleteEntryFromLedger(String entryId) async {
-    if (!await _isCloudSyncEnabled()) return;
+    if (!await _ledgerAllowed()) return;
     if (entryId.isEmpty) return;
     try {
       await _remove(entryId);
@@ -85,7 +91,7 @@ class CloudSyncService {
     Future<void> Function(String entryId, String transcript, DateTime createdAt)
     send,
   ) async {
-    if (!await _isCloudSyncEnabled()) return;
+    if (!await _ledgerAllowed()) return;
     if (entry.isDeleted) return;
     final transcript = omitForgottenLabels(
       entry.transcript.trim(),
@@ -99,13 +105,13 @@ class CloudSyncService {
     }
   }
 
-  /// Pushes every local journal entry once cloud features are on.
+  /// Pushes every local journal entry once the plain-text ledger is allowed.
   static Future<void> backfillLocalEntries() {
     return CloudSyncService().backfill();
   }
 
   Future<void> backfill() async {
-    if (!await _isCloudSyncEnabled()) return;
+    if (!await _ledgerAllowed()) return;
     final entries = await _loadEntries();
     for (final entry in entries) {
       await uploadEntryToLedger(entry);
@@ -119,7 +125,7 @@ class CloudSyncService {
   Future<void> backfillInChunks({
     void Function(int done, int total)? onProgress,
   }) async {
-    if (!await _isCloudSyncEnabled()) return;
+    if (!await _ledgerAllowed()) return;
     final entries = (await _loadEntries())
         .where((entry) => !entry.isDeleted && entry.transcript.trim().isNotEmpty)
         .toList()
@@ -219,10 +225,21 @@ class CloudSyncService {
     );
   }
 
-  static Future<bool> _readCloudPreference() async {
+  Future<bool> _ledgerAllowed() async {
+    if (!await _isLedgerOptInEnabled()) return false;
+    return _plainTextAiConsentSigned();
+  }
+
+  static Future<bool> _readLedgerOptIn() async {
+    if (!V1CapabilityRegistry.isLedgerOptInEnabled) return false;
     if (!AppServices.isInitialized) return false;
     final preferences = await UserPreferences.load(AppServices.instance.prefs);
-    return preferences.isCloudSyncEnabled;
+    return preferences.isLedgerOptInEnabled;
+  }
+
+  static Future<bool> _readPlainTextConsent() async {
+    if (!AppServices.isInitialized) return false;
+    return PlainTextLedgerConsent.isSigned(AppServices.instance.prefs);
   }
 
   static Future<List<JournalEntry>> _readLocalEntries() {

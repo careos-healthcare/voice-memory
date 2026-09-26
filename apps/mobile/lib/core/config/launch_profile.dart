@@ -9,6 +9,9 @@ abstract final class LaunchProfile {
   /// Passphrase-sealed journal sync. On for this release.
   static const bool E2EE_SYNC = true;
 
+  /// Plain-text ledger ingest. Off until a person opts in separately from sync.
+  static const bool LEDGER_OPT_IN = false;
+
   /// Weekly encrypted copy of the journal and its media, kept on this device.
   static const bool AUTO_ENCRYPTED_BACKUP = true;
 }

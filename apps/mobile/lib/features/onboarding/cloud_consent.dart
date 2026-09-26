@@ -16,10 +16,12 @@ class CloudConsent {
     return preferences.isCloudSyncEnabled;
   }
 
-  /// Turns cloud memory on and sends existing entries in chunks.
+  /// Turns cloud memory on.
   ///
   /// [onProgress] reports how many entries have been accepted so far.
   /// A failed chunk stops the job; the next [enable] resumes after it.
+  /// The backfill posts to the plain-text ledger when ledger opt-in and the
+  /// plain-text AI processing consent are already in place.
   Future<void> enable({
     void Function(int done, int total)? onProgress,
   }) async {

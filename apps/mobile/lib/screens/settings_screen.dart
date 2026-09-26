@@ -18,6 +18,7 @@ import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
+import 'package:archiveme_mobile/features/settings/services/sync_management_service.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/features/settings/views/debug_menu_view.dart';
@@ -157,11 +158,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _turnOffSync() async {
-    if (!AppServices.isInitialized) return;
-    await AppServices.instance.prefs.writeBool(
-      E2eeSyncSettings.preferenceKey,
-      false,
-    );
+    final purged = await const SyncManagementService().turnOffSyncAndDeleteServerCopy();
+    if (!purged || !mounted) return;
+    setState(() => _cloudSyncEnabled = false);
   }
 
   String get _reminderStateLabel {

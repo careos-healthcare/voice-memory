@@ -123,6 +123,17 @@ export class SyncRecordLedger {
     this.revokedDevices.add(deviceId);
   }
 
+  storedCount(): number {
+    return this.records.size;
+  }
+
+  deviceCount(): number {
+    const ids = new Set<string>();
+    for (const row of this.records.values()) ids.add(row.deviceId);
+    for (const id of this.revokedDevices) ids.add(id);
+    return ids.size;
+  }
+
   claimRelay(id: string, now = new Date()) {
     const relay = this.relays.get(id);
     if (!relay || relay.claimed || now.getTime() >= relay.expiresAt) {
@@ -134,6 +145,7 @@ export class SyncRecordLedger {
 }
 
 const ledgers = new Map<string, SyncRecordLedger>();
+const mediaChunkIds = new Map<string, Set<string>>();
 
 export function syncRecordLedger(userId: string): SyncRecordLedger {
   const existing = ledgers.get(userId);
@@ -141,6 +153,31 @@ export function syncRecordLedger(userId: string): SyncRecordLedger {
   const created = new SyncRecordLedger();
   ledgers.set(userId, created);
   return created;
+}
+
+export function registerMediaChunk(userId: string, blobId: string): void {
+  const accountId = userId.trim();
+  const id = blobId.trim();
+  if (!accountId || !id) return;
+  const existing = mediaChunkIds.get(accountId) ?? new Set<string>();
+  existing.add(id);
+  mediaChunkIds.set(accountId, existing);
+}
+
+/** Drops the in-memory encrypted records, media chunk ids, and device list. */
+export function dropAccountSyncState(userId: string): {
+  records: number;
+  mediaChunks: number;
+  devices: number;
+} {
+  const accountId = userId.trim();
+  const ledger = ledgers.get(accountId);
+  const records = ledger?.storedCount() ?? 0;
+  const devices = ledger?.deviceCount() ?? 0;
+  ledgers.delete(accountId);
+  const mediaChunks = mediaChunkIds.get(accountId)?.size ?? 0;
+  mediaChunkIds.delete(accountId);
+  return { records, mediaChunks, devices };
 }
 
 export function presignBlobPut(input: {
@@ -151,6 +188,7 @@ export function presignBlobPut(input: {
   if (input.byteLength > MEDIA_CHUNK_BYTES) {
     return { ok: false as const, status: 413, error: "Media chunks are 4 MB." };
   }
+  registerMediaChunk(input.userId, input.blobId);
   return {
     ok: true as const,
     blobId: input.blobId,

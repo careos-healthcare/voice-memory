@@ -58,6 +58,12 @@ abstract final class V1CapabilityRegistry {
     defaultValue: LaunchProfile.E2EE_SYNC,
   );
 
+  /// Plain-text copies for AI processing. Off unless this build turns it on.
+  static const bool isLedgerOptInEnabled = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LEDGER_OPT_IN',
+    defaultValue: LaunchProfile.LEDGER_OPT_IN,
+  );
+
   /// Share-sheet and Open In import of Apple Voice Memos.
   static const bool voiceMemosImport = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_VOICE_MEMOS_IMPORT',

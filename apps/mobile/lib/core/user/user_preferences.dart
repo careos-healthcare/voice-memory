@@ -7,11 +7,13 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 class UserPreferences {
   const UserPreferences({
     this.isCloudSyncEnabled = false,
+    this.isLedgerOptInEnabled = false,
     this.isHealthMoodSyncEnabled = false,
     this.isHealthMoodWriteEnabled = false,
   });
 
   static const cloudSyncPreferenceKey = 'cloud_sync_enabled';
+  static const ledgerOptInPreferenceKey = 'ledger_opt_in_enabled';
   static const healthMoodSyncPreferenceKey = 'health_mood_sync_enabled';
   static const healthMoodWritePreferenceKey = 'health_mood_write_enabled';
 
@@ -19,6 +21,9 @@ class UserPreferences {
   static bool? debugCloudSyncOverride;
 
   final bool isCloudSyncEnabled;
+
+  /// Separate from [isCloudSyncEnabled]. Encrypted sync does not turn this on.
+  final bool isLedgerOptInEnabled;
   final bool isHealthMoodSyncEnabled;
   final bool isHealthMoodWriteEnabled;
 
@@ -26,10 +31,12 @@ class UserPreferences {
     final override = debugCloudSyncOverride;
     final storedCloud = await prefs.readBool(cloudSyncPreferenceKey);
     final cloud = override ?? storedCloud ?? false;
+    final ledger = await prefs.readBool(ledgerOptInPreferenceKey) ?? false;
     final health = await prefs.readBool(healthMoodSyncPreferenceKey) ?? false;
     final write = await prefs.readBool(healthMoodWritePreferenceKey) ?? false;
     return UserPreferences(
       isCloudSyncEnabled: cloud,
+      isLedgerOptInEnabled: ledger,
       isHealthMoodSyncEnabled: health,
       isHealthMoodWriteEnabled: write,
     );
@@ -40,6 +47,13 @@ class UserPreferences {
     bool enabled,
   ) async {
     await prefs.writeBool(cloudSyncPreferenceKey, enabled);
+  }
+
+  static Future<void> setLedgerOptInEnabled(
+    MobilePrefsStore prefs,
+    bool enabled,
+  ) async {
+    await prefs.writeBool(ledgerOptInPreferenceKey, enabled);
   }
 
   static Future<void> setHealthMoodSyncEnabled(

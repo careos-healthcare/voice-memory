@@ -7,7 +7,9 @@ import {
   RATE_LIMIT_PER_MINUTE,
   RATE_MESSAGE,
   SyncRecordLedger,
+  dropAccountSyncState,
   presignBlobPut,
+  syncRecordLedger,
 } from "../../../packages/shared/lib/server/sync-records.ts";
 
 const record = {
@@ -81,4 +83,23 @@ test("sync pushes are rate limited and media chunks stay at 4 MB", () => {
   });
   assert.equal(signed.ok, true);
   if (signed.ok) assert.equal(signed.method, "PUT");
+});
+
+test("purge drops encrypted records, media chunks, and devices for one account", () => {
+  const userId = "purge-account";
+  syncRecordLedger(userId).push([record]);
+  syncRecordLedger(userId).revokeDevice("iphone-b");
+  const signed = presignBlobPut({
+    userId,
+    byteLength: 128,
+    blobId: "chunk-1",
+  });
+  assert.equal(signed.ok, true);
+
+  const dropped = dropAccountSyncState(userId);
+  assert.equal(dropped.records, 1);
+  assert.equal(dropped.mediaChunks, 1);
+  assert.equal(dropped.devices, 2);
+  assert.equal(syncRecordLedger(userId).storedCount(), 0);
+  assert.equal(dropAccountSyncState(userId).mediaChunks, 0);
 });

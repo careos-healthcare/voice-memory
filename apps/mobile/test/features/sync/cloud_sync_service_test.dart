@@ -22,10 +22,29 @@ void main() {
     );
   }
 
-  test('upload stays on the device while cloud features are off', () async {
+  CloudSyncService ledgerService({
+    Future<void> Function(String entryId, String transcript, DateTime createdAt)?
+    upload,
+    Future<void> Function(String entryId)? remove,
+    Future<List<JournalEntry>> Function()? loadEntries,
+    Future<Set<String>> Function()? forgottenLabels,
+    bool ledgerOptIn = true,
+    bool consentSigned = true,
+  }) {
+    return CloudSyncService(
+      isLedgerOptInEnabled: () async => ledgerOptIn,
+      plainTextAiConsentSigned: () async => consentSigned,
+      upload: upload,
+      remove: remove,
+      loadEntries: loadEntries,
+      forgottenLabels: forgottenLabels,
+    );
+  }
+
+  test('upload stays on the device while ledger opt-in is off', () async {
     final uploaded = <String>[];
-    final service = CloudSyncService(
-      isCloudSyncEnabled: () async => false,
+    final service = ledgerService(
+      ledgerOptIn: false,
       upload: (entryId, transcript, createdAt) async {
         uploaded.add('$entryId:$transcript');
       },
@@ -36,10 +55,23 @@ void main() {
     expect(uploaded, isEmpty);
   });
 
-  test('upload posts the transcript when cloud features are on', () async {
+  test('upload stays on the device without plain-text consent', () async {
     final uploaded = <String>[];
-    final service = CloudSyncService(
-      isCloudSyncEnabled: () async => true,
+    final service = ledgerService(
+      consentSigned: false,
+      upload: (entryId, transcript, createdAt) async {
+        uploaded.add('$entryId:$transcript');
+      },
+    );
+
+    await service.uploadEntryToLedger(entry('I mentioned the river again.'));
+
+    expect(uploaded, isEmpty);
+  });
+
+  test('upload posts the transcript when ledger opt-in and consent hold', () async {
+    final uploaded = <String>[];
+    final service = ledgerService(
       upload: (entryId, transcript, createdAt) async {
         uploaded.add('$entryId:$transcript');
       },
@@ -50,10 +82,9 @@ void main() {
     expect(uploaded, ['entry-1:I mentioned the river again.']);
   });
 
-  test('backfill sends each saved entry once cloud features are on', () async {
+  test('backfill sends each saved entry once the ledger is allowed', () async {
     final uploaded = <String>[];
-    final service = CloudSyncService(
-      isCloudSyncEnabled: () async => true,
+    final service = ledgerService(
       loadEntries: () async => [
         entry('First morning by the river.'),
         entry('Second morning by the river.'),
@@ -71,10 +102,9 @@ void main() {
     ]);
   });
 
-  test('a forgotten label is left out of the cloud copy', () async {
+  test('a forgotten label is left out of the ledger copy', () async {
     final uploaded = <String>[];
-    final service = CloudSyncService(
-      isCloudSyncEnabled: () async => true,
+    final service = ledgerService(
       forgottenLabels: () async => {'river'},
       upload: (entryId, transcript, createdAt) async {
         uploaded.add(transcript);
@@ -86,18 +116,17 @@ void main() {
     expect(uploaded, ['I mentioned the again.']);
   });
 
-  test('delete calls the server only when cloud features are on', () async {
+  test('delete calls the server only when the ledger is allowed', () async {
     final removed = <String>[];
-    final enabled = CloudSyncService(
-      isCloudSyncEnabled: () async => true,
+    final enabled = ledgerService(
       remove: (entryId) async {
         removed.add(entryId);
       },
     );
     await enabled.deleteEntryFromLedger('entry-1');
 
-    final disabled = CloudSyncService(
-      isCloudSyncEnabled: () async => false,
+    final disabled = ledgerService(
+      ledgerOptIn: false,
       remove: (entryId) async {
         removed.add('off-$entryId');
       },
@@ -107,17 +136,31 @@ void main() {
     expect(removed, ['entry-1']);
   });
 
-  test('a local deletion deletes the server copy when cloud is on', () async {
+  test('a local deletion deletes the ledger copy when ingest is allowed', () async {
     final removed = <String>[];
-    final service = CloudSyncService(
-      isCloudSyncEnabled: () async => true,
+    final service = ledgerService(
       remove: (entryId) async {
         removed.add(entryId);
       },
     );
-    await JournalCloudLedgerInterceptor(service: service).onEntrySaved(
-      entry('I mentioned the river again.').markDeleted(),
-    );
+    await JournalCloudLedgerInterceptor(
+      service: service,
+      mayIngest: () async => true,
+    ).onEntrySaved(entry('I mentioned the river again.').markDeleted());
     expect(removed, ['entry-1']);
+  });
+
+  test('the interceptor stays quiet when ledger consent is missing', () async {
+    final removed = <String>[];
+    final service = ledgerService(
+      remove: (entryId) async {
+        removed.add(entryId);
+      },
+    );
+    await JournalCloudLedgerInterceptor(
+      service: service,
+      mayIngest: () async => false,
+    ).onEntrySaved(entry('I mentioned the river again.').markDeleted());
+    expect(removed, isEmpty);
   });
 }
