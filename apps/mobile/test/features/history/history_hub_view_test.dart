@@ -279,15 +279,26 @@ void main() {
         ),
       ),
     );
+    await tester.ensureVisible(
+      find.byKey(const Key('export_printable_journal')),
+    );
     await tester.tap(find.byKey(const Key('export_printable_journal')));
     await tester.pump();
     expect(start, DateTime(2026, 1, 1));
 
     await tester.tap(find.byKey(const Key('book_range_six_months')));
     await tester.pump();
+    await tester.ensureVisible(
+      find.byKey(const Key('export_printable_journal')),
+    );
     await tester.tap(find.byKey(const Key('export_printable_journal')));
     await tester.pump();
     expect(start, DateTime(2026, 3, 26));
+    expect(
+      find.text('Your year in your own words, printed.'),
+      findsOneWidget,
+    );
+    expect(find.text('Print at Home (AirPrint)'), findsOneWidget);
     expect(
       find.text(
         'Include playable audio QR codes (requires temporary cloud upload)',
@@ -304,6 +315,32 @@ void main() {
       find.byKey(const Key('book_audio_qr_toggle')),
     );
     expect(toggle.value, isFalse);
+  });
+
+  testWidgets('print at home uses the chosen year', (tester) async {
+    DateTime? start;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: BookExportView(
+            now: DateTime(2026, 9, 26),
+            entries: [
+              _entry(id: 'a', at: DateTime(2026, 3, 8)),
+            ],
+            onPrint: (from, _) async => start = from,
+          ),
+        ),
+      ),
+    );
+    await tester.ensureVisible(find.byKey(const Key('book_print_at_home')));
+    await tester.tap(find.byKey(const Key('book_print_at_home')));
+    await tester.pump();
+    expect(start, DateTime(2026, 1, 1));
+    expect(
+      find.text('A small book of this year, ready to keep or give as a gift.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('the archive row opens the calendar with the saved moments', (
