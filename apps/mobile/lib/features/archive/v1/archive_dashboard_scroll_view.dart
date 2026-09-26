@@ -21,6 +21,8 @@ import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
+import 'package:archiveme_mobile/features/insights/views/weekly_recap_view.dart';
+import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_weekly_recap_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
@@ -72,6 +74,20 @@ class _ArchiveDashboardScrollViewState
   DateTime? _selectedDay;
   _CaptureKindFilter _kind = _CaptureKindFilter.all;
   String? _tagId;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!WeeklyRecapNotificationService.takePending()) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => WeeklyRecapView(entries: widget.visibleEntries),
+        ),
+      );
+    });
+  }
 
   ArchiveFeedState get feed => widget.feed;
   List<JournalEntry> get visibleEntries => widget.visibleEntries;
@@ -170,6 +186,10 @@ class _ArchiveDashboardScrollViewState
                 SliverToBoxAdapter(
                   child: ArchiveWeeklyRecapBanner(entries: visibleEntries),
                 ),
+                if (V1CapabilityRegistry.weeklyRecapBanner)
+                  SliverToBoxAdapter(
+                    child: PastWeeklyRecaps(entries: visibleEntries),
+                  ),
                 if (V1CapabilityRegistry.trendPatternSummary)
                   SliverToBoxAdapter(
                     child: Padding(
@@ -179,7 +199,10 @@ class _ArchiveDashboardScrollViewState
                       child: TrendPatternSummaryCard(
                         citedEntryIds: [
                           for (final entry in visibleEntries)
-                            if (DateTime.now().difference(entry.createdAt).inDays <= 7)
+                            if (DateTime.now()
+                                    .difference(entry.createdAt)
+                                    .inDays <=
+                                7)
                               entry.id,
                         ],
                       ),

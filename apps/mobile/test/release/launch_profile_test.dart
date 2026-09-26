@@ -29,26 +29,41 @@ void main() {
     expect(mobileProfile['THOUGHTPRINT_DARK_MODE_READY'], isFalse);
   });
 
-  test('beta profile matches compile-time flags and enables the reviewed set', () {
-    final decoded = jsonDecode(profileFile.readAsStringSync());
-    expect(decoded, isA<Map<String, dynamic>>());
-    final profile = Map<String, dynamic>.from(decoded as Map);
+  test(
+    'beta profile matches compile-time flags and enables the reviewed set',
+    () {
+      final decoded = jsonDecode(profileFile.readAsStringSync());
+      expect(decoded, isA<Map<String, dynamic>>());
+      final profile = Map<String, dynamic>.from(decoded as Map);
 
-    final referenced = _boolDefinesIn(_flagSources(packageRoot));
+      final referenced = _boolDefinesIn(_flagSources(packageRoot));
 
-    final missing = referenced.difference(profile.keys.toSet());
-    final unknown = profile.keys.toSet().difference(referenced);
-    expect(missing, isEmpty, reason: 'referenced in code but missing from beta_1.json');
-    expect(unknown, isEmpty, reason: 'present in beta_1.json but not a known flag');
+      final missing = referenced.difference(profile.keys.toSet());
+      final unknown = profile.keys.toSet().difference(referenced);
+      expect(
+        missing,
+        isEmpty,
+        reason: 'referenced in code but missing from beta_1.json',
+      );
+      expect(
+        unknown,
+        isEmpty,
+        reason: 'present in beta_1.json but not a known flag',
+      );
 
-    for (final entry in profile.entries) {
-      if (_enabledBetaFlags.contains(entry.key)) {
-        expect(entry.value, isTrue, reason: '${entry.key} is on for this beta');
-      } else {
-        expect(entry.value, isFalse, reason: '${entry.key} stays off');
+      for (final entry in profile.entries) {
+        if (_enabledBetaFlags.contains(entry.key)) {
+          expect(
+            entry.value,
+            isTrue,
+            reason: '${entry.key} is on for this beta',
+          );
+        } else {
+          expect(entry.value, isFalse, reason: '${entry.key} stays off');
+        }
       }
-    }
-  });
+    },
+  );
 }
 
 const _enabledBetaFlags = {
@@ -63,6 +78,7 @@ const _enabledBetaFlags = {
   'VOICEMEMORY_ENABLE_TREND_PATTERN_SUMMARY',
   'VOICEMEMORY_ENABLE_HISTORY_VIEWS',
   'VOICEMEMORY_ENABLE_PATTERN_EXPLORATION',
+  'WEEKLY_RECAP_BANNER',
 };
 
 Set<String> _boolDefinesIn(Iterable<File> files) {
@@ -71,26 +87,24 @@ Set<String> _boolDefinesIn(Iterable<File> files) {
   );
   final names = <String>{};
   for (final file in files) {
-    names.addAll(pattern.allMatches(file.readAsStringSync()).map((m) => m.group(1)!));
+    names.addAll(
+      pattern.allMatches(file.readAsStringSync()).map((m) => m.group(1)!),
+    );
   }
   return names;
 }
 
 List<File> _flagSources(Directory packageRoot) {
   final lib = Directory('${packageRoot.path}/lib');
-  final files = lib
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((file) {
-        final path = file.path.replaceAll('\\', '/');
-        if (!path.endsWith('.dart')) return false;
-        if (path.contains('/retired_sprawl/')) return false;
-        return path.contains('feature_flag') ||
-            path.endsWith('/v1_capability_registry.dart') ||
-            path.endsWith('/app_palette.dart') ||
-            path.endsWith('/post_save_stability_gate.dart');
-      })
-      .toList();
+  final files = lib.listSync(recursive: true).whereType<File>().where((file) {
+    final path = file.path.replaceAll('\\', '/');
+    if (!path.endsWith('.dart')) return false;
+    if (path.contains('/retired_sprawl/')) return false;
+    return path.contains('feature_flag') ||
+        path.endsWith('/v1_capability_registry.dart') ||
+        path.endsWith('/app_palette.dart') ||
+        path.endsWith('/post_save_stability_gate.dart');
+  }).toList();
   expect(files, isNotEmpty);
   return files;
 }

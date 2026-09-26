@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_co
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
+import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
@@ -609,6 +610,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       dailyEnabled: daily,
                       weeklyEnabled: weekly,
                     );
+                if (weekly) {
+                  unawaited(
+                    WeeklyRecapNotificationService.schedule(
+                      now: DateTime.now(),
+                    ),
+                  );
+                }
               },
             ),
             const PrivacyDataControlsSection(),

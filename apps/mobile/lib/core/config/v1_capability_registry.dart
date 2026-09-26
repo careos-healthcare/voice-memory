@@ -160,10 +160,10 @@ abstract final class V1CapabilityRegistry {
   /// Cited questions after a save. Off until the saved answers are reviewed.
   static const bool postSaveFollowUp = AppFlags.postSaveFollowUp;
 
-  /// Sunday/Monday archive recap. Off until the copy is reviewed.
+  /// Sunday/Monday archive recap, on for beta 1.
   static const bool weeklyRecapBanner = bool.fromEnvironment(
     'WEEKLY_RECAP_BANNER',
-    defaultValue: false,
+    defaultValue: true,
   );
 
   /// On This Day, calendar, map, and printable journal on the Archive tab.

@@ -20,7 +20,8 @@ class JournalReminderPreferences extends StatefulWidget {
       _JournalReminderPreferencesState();
 }
 
-class _JournalReminderPreferencesState extends State<JournalReminderPreferences> {
+class _JournalReminderPreferencesState
+    extends State<JournalReminderPreferences> {
   var _daily = false;
   var _weekly = false;
 
@@ -32,7 +33,9 @@ class _JournalReminderPreferencesState extends State<JournalReminderPreferences>
 
   Future<void> _load() async {
     final daily = await widget.readEnabled(JournalReminderPreferences.dailyKey);
-    final weekly = await widget.readEnabled(JournalReminderPreferences.weeklyKey);
+    final weekly = await widget.readEnabled(
+      JournalReminderPreferences.weeklyKey,
+    );
     if (!mounted) return;
     setState(() {
       _daily = daily;
@@ -58,12 +61,13 @@ class _JournalReminderPreferencesState extends State<JournalReminderPreferences>
           contentPadding: EdgeInsets.zero,
           title: const Text('Daily reflection at 8:00 PM'),
           value: _daily,
-          onChanged: (value) => _set(JournalReminderPreferences.dailyKey, value),
+          onChanged: (value) =>
+              _set(JournalReminderPreferences.dailyKey, value),
         ),
         SwitchListTile(
           key: const Key('settings_weekly_recap'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('Weekly recap on Sunday morning'),
+          title: const Text('Weekly recap on Sunday evening'),
           value: _weekly,
           onChanged: (value) =>
               _set(JournalReminderPreferences.weeklyKey, value),
