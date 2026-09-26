@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:archiveme_mobile/core/storage/secure_file_storage.dart';
 import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
@@ -40,7 +41,7 @@ void main() {
         documentsDirectory: () async => dir,
       ).processAndStoreImage(raw);
 
-      expect(stored.highResPath, startsWith('${dir.path}/journal-images/'));
+      expect(stored.highResPath, startsWith('${dir.path}/photos/_inbox/'));
       expect(stored.highResPath, endsWith('.jpg'));
       expect(stored.thumbnailPath, endsWith('_thumb.jpg'));
       expect(protected, [stored.highResPath, stored.thumbnailPath]);
@@ -53,9 +54,10 @@ void main() {
       final thumb = img.decodeImage(
         File(stored.thumbnailPath).readAsBytesSync(),
       )!;
-      expect(thumb.width, ImageProcessorService.thumbnailSize);
-      expect(thumb.height, ImageProcessorService.thumbnailSize);
-      final center = thumb.getPixel(128, 128);
+      expect(math.max(thumb.width, thumb.height), ImageProcessorService.thumbnailSize);
+      expect(thumb.width, 400);
+      expect(thumb.height, closeTo(133, 2));
+      final center = thumb.getPixel(200, 60);
       expect(center.r, greaterThan(150));
       expect(center.g, lessThan(40));
 

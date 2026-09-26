@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/local_tran
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
@@ -61,6 +62,12 @@ class PipelineLocalMomentRepository implements LocalMomentRepository {
       (failure) => Future.value(Left(failure)),
       (success) async {
         final current = success.entry.imageEvidence;
+        final placed = <String>[];
+        for (final path in images) {
+          placed.add(
+            await ImageProcessorService.adoptIntoEntry(path, success.entry.id),
+          );
+        }
         final updated = success.entry.copyWith(
           imageEvidence: ImageEvidence(
             evidenceId: current?.evidenceId.isNotEmpty == true
@@ -75,8 +82,8 @@ class PipelineLocalMomentRepository implements LocalMomentRepository {
             height: current?.height,
             contentHash: current?.contentHash,
             source: current?.source ?? 'picker',
-            localPath: current?.localPath ?? images.first,
-            images: images,
+            localPath: current?.localPath ?? placed.first,
+            images: placed,
           ),
         );
         await _journalStore.save(updated);

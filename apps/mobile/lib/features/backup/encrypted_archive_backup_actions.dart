@@ -5,7 +5,9 @@ import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_codec.
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_destination.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_service.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_workmanager.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/storage/app_storage_paths.dart';
 import 'package:archiveme_mobile/storage/audio/local_audio_storage_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -68,7 +70,7 @@ class EncryptedArchiveBackupSettingsTile extends StatelessWidget {
                       '${AppServices.instance.documentsBasePath}/'
                       '${LocalAudioStorageService.pendingAudioDirectoryName}',
                     ),
-                    photosDirectory: _photosDirectory(),
+                    photosDirectory: await _photosDirectory(),
                     destination: FileEncryptedArchiveBackupDestination(
                       File(path),
                     ),
@@ -138,7 +140,7 @@ Future<void> backupArchiveNow(String passphrase) async {
     final service = EncryptedArchiveBackupService(
       databaseFile: database,
       audioDirectory: audio,
-      photosDirectory: _photosDirectory(),
+      photosDirectory: await _photosDirectory(),
       destination: ICloudEncryptedArchiveBackupDestination(),
       secureStorage: AppServices.instance.secureStorage,
     );
@@ -148,7 +150,7 @@ Future<void> backupArchiveNow(String passphrase) async {
   final sealed = await EncryptedArchiveBackupCodec.seal(
     databaseFile: database,
     audioDirectory: audio,
-    photosDirectory: _photosDirectory(),
+    photosDirectory: await _photosDirectory(),
     passphrase: passphrase,
   );
   final savedPath = await FilePicker.platform.saveFile(
@@ -184,7 +186,7 @@ Future<void> restoreArchive(String passphrase) async {
     final service = EncryptedArchiveBackupService(
       databaseFile: database,
       audioDirectory: audio,
-      photosDirectory: _photosDirectory(),
+      photosDirectory: await _photosDirectory(),
       destination: ICloudEncryptedArchiveBackupDestination(),
     );
     await service.restoreFromBackup(passphrase);
@@ -198,12 +200,13 @@ Future<void> restoreArchive(String passphrase) async {
     passphrase: passphrase,
     databaseFile: database,
     audioDirectory: audio,
-    photosDirectory: _photosDirectory(),
+    photosDirectory: await _photosDirectory(),
   );
 }
 
-Directory _photosDirectory() {
-  return Directory('${AppServices.instance.documentsBasePath}/journal-images');
+Future<Directory> _photosDirectory() async {
+  final support = await AppStoragePaths.applicationSupportDirectory();
+  return Directory('${support.path}/${ImageProcessorService.photosFolderName}');
 }
 
 /// Onboarding control. Hidden while the flag is off.

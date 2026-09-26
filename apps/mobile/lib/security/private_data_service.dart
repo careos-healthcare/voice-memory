@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
@@ -241,6 +242,7 @@ class PrivateDataService {
     }
 
     await _journal.delete(id);
+    await _removePhotos(entry);
     await TempRecordingCleanup.purgeRetryRecordings(
       tempDir: await _resolveTempDirectory(),
     );
@@ -277,6 +279,10 @@ class PrivateDataService {
       throw ArgumentError('Confirmation phrase did not match.');
     }
     final accountsDir = Directory('$documentsBasePath/accounts');
+    final photosDir = Directory('$documentsBasePath/photos');
+    if (await photosDir.exists()) {
+      await photosDir.delete(recursive: true);
+    }
     if (!await accountsDir.exists()) return 0;
     var wipedCount = 0;
     for (final entity in accountsDir.listSync()) {
@@ -299,7 +305,9 @@ class PrivateDataService {
       if (path != null && path.isNotEmpty) {
         await _deleteFileIfExists(path);
       }
+      await _removePhotos(entry);
     }
+    await _deletePhotoRoots(entries);
 
     await _journal.clearAll();
     await TempRecordingCleanup.purgeTempRecordings(
@@ -406,6 +414,44 @@ class PrivateDataService {
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});
+    }
+  }
+
+  Future<void> _removePhotos(JournalEntry entry) async {
+    final folders = <String>{};
+    for (final path in entry.images) {
+      await _deleteFileIfExists(path);
+      await _deleteFileIfExists(ImageProcessorService.thumbnailPathFor(path));
+      final parent = File(path).parent;
+      if (parent.path.endsWith('/${entry.id}') ||
+          parent.path.endsWith('\\${entry.id}')) {
+        folders.add(parent.path);
+      }
+    }
+    for (final folder in folders) {
+      final dir = Directory(folder);
+      if (dir.existsSync()) {
+        await dir.delete(recursive: true);
+      }
+    }
+  }
+
+  Future<void> _deletePhotoRoots(List<JournalEntry> entries) async {
+    final roots = <String>{};
+    for (final entry in entries) {
+      for (final path in entry.images) {
+        final photos = File(path).parent.parent;
+        final name = photos.path.split(RegExp(r'[/\\]')).last;
+        if (name == ImageProcessorService.photosFolderName) {
+          roots.add(photos.path);
+        }
+      }
+    }
+    for (final root in roots) {
+      final dir = Directory(root);
+      if (dir.existsSync()) {
+        await dir.delete(recursive: true);
+      }
     }
   }
 

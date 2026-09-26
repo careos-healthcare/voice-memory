@@ -107,7 +107,7 @@ abstract final class ObsidianArchiveExporter {
     for (final photo in entry.photoFileNames) {
       final name = _fileName(photo);
       if (name == null) continue;
-      buffer.writeln('![Photo](photos/$name)');
+      buffer.writeln('![[photos/$name]]');
     }
     return buffer.toString();
   }

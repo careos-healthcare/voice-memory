@@ -5,6 +5,10 @@ import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
 import 'package:archiveme_mobile/features/capture/views/voice_chat_view.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
@@ -137,6 +141,47 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
       entry: entry,
       place: place,
     );
+    await _load();
+  }
+
+  Future<void> _addPhoto(JournalEntry entry) async {
+    final paths = await pickEntryImages(entryId: entry.id);
+    if (paths.isEmpty || !mounted) return;
+    await _saveImages(entry, [...entry.images, ...paths]);
+  }
+
+  Future<void> _deletePhoto(JournalEntry entry, String path) async {
+    final file = File(path);
+    if (file.existsSync()) await file.delete();
+    final thumb = File(ImageProcessorService.thumbnailPathFor(path));
+    if (thumb.existsSync()) await thumb.delete();
+    final next = [
+      for (final item in entry.images)
+        if (item != path) item,
+    ];
+    await _saveImages(entry, next);
+  }
+
+  Future<void> _saveImages(JournalEntry entry, List<String> images) async {
+    final current = entry.imageEvidence;
+    final evidence = images.isEmpty
+        ? null
+        : ImageEvidence(
+            evidenceId: current?.evidenceId.isNotEmpty == true
+                ? current!.evidenceId
+                : entry.id,
+            caption: current?.caption ?? '',
+            mimeType: current?.mimeType ?? 'image/jpeg',
+            attachedAt: current?.attachedAt ?? DateTime.now().toUtc(),
+            localPath: images.first,
+            images: images,
+          );
+    final updated = entry.copyWith(imageEvidence: evidence);
+    if (widget.previewEntry != null) {
+      if (mounted) setState(() => _entry = updated);
+      return;
+    }
+    await _accountDeps.journalStore.save(updated);
     await _load();
   }
 
@@ -407,9 +452,25 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
               questions: entry.aiQuestions,
             ),
           ),
+        if (V1CapabilityRegistry.photoAttachments) ...[
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              key: const Key('entry_detail_add_photo'),
+              onPressed: () => unawaited(_addPhoto(entry)),
+              icon: const Icon(Icons.photo_outlined),
+              label: const Text('Add a photo'),
+            ),
+          ),
+        ],
         if (entry.images.isNotEmpty) ...[
           const SizedBox(height: 12),
-          EntryPhotoStrip(entryId: entry.id, paths: entry.images),
+          EntryPhotoStrip(
+            entryId: entry.id,
+            paths: entry.images,
+            onDelete: (path) => _deletePhoto(entry, path),
+          ),
         ],
         if (speakableText != null && widget.accountDependencies != null)
           Offstage(

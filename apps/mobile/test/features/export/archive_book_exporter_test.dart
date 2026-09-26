@@ -119,7 +119,7 @@ void main() {
     expect(markdown, contains('- work'));
     expect(markdown, contains('audio: clip.m4a'));
     expect(markdown, contains('![Audio](audio/clip.m4a)'));
-    expect(markdown, contains('![Photo](photos/moment.jpg)'));
+    expect(markdown, contains('![[photos/moment.jpg]]'));
     expect(markdown, contains('I said this on that day.'));
     expect(markdown.contains('/var/'), isFalse);
     expect(

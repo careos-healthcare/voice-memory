@@ -72,7 +72,7 @@ void main() {
 
     final note = text(names.singleWhere((name) => name.startsWith('markdown/')));
     expect(note, contains('![Audio](audio/note.m4a)'));
-    expect(note, contains('![Photo](photos/shot.jpg)'));
+    expect(note, contains('![[photos/shot.jpg]]'));
     expect(note, contains('- walk'));
 
     final readme = text('README.md');

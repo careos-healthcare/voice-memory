@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Cropped first photo for an archive card.
 class EntryPhotoThumbnail extends StatelessWidget {
@@ -35,10 +36,16 @@ class EntryPhotoThumbnail extends StatelessWidget {
 
 /// Horizontal strip of every photo attached to a moment.
 class EntryPhotoStrip extends StatelessWidget {
-  const EntryPhotoStrip({required this.entryId, required this.paths, super.key});
+  const EntryPhotoStrip({
+    required this.entryId,
+    required this.paths,
+    this.onDelete,
+    super.key,
+  });
 
   final String entryId;
   final List<String> paths;
+  final Future<void> Function(String path)? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +62,11 @@ class EntryPhotoStrip extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8),
             child: GestureDetector(
               key: Key('entry_detail_image_${entryId}_$index'),
-              onTap: () => EntryPhotoViewer.open(context, path),
+              onTap: () => EntryPhotoViewer.open(
+                context,
+                path,
+                onDelete: onDelete,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: EntryPhoto(path: path, size: 96),
@@ -108,17 +119,56 @@ class EntryPhoto extends StatelessWidget {
 
 /// Full-screen photo with pinch zoom and a close button.
 class EntryPhotoViewer extends StatelessWidget {
-  const EntryPhotoViewer({required this.path, super.key});
+  const EntryPhotoViewer({required this.path, this.onDelete, super.key});
 
   final String path;
+  final Future<void> Function(String path)? onDelete;
 
-  static Future<void> open(BuildContext context, String path) {
+  static Future<void> open(
+    BuildContext context,
+    String path, {
+    Future<void> Function(String path)? onDelete,
+  }) {
     return Navigator.of(context).push(
       MaterialPageRoute<void>(
         fullscreenDialog: true,
-        builder: (_) => EntryPhotoViewer(path: path),
+        builder: (_) => EntryPhotoViewer(path: path, onDelete: onDelete),
       ),
     );
+  }
+
+  Future<void> _share() async {
+    await Share.shareXFiles([
+      XFile(path, mimeType: 'image/jpeg'),
+    ]);
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final delete = onDelete;
+    if (delete == null) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete this photo?'),
+          content: const Text('This removes the photo from this moment.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              key: const Key('entry_photo_delete_confirm'),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !context.mounted) return;
+    await delete(path);
+    if (context.mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -135,6 +185,21 @@ class EntryPhotoViewer extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
         ),
+        actions: [
+          IconButton(
+            key: const Key('entry_photo_viewer_share'),
+            tooltip: 'Share',
+            onPressed: _share,
+            icon: const Icon(Icons.ios_share),
+          ),
+          if (onDelete != null)
+            IconButton(
+              key: const Key('entry_photo_viewer_delete'),
+              tooltip: 'Delete',
+              onPressed: () => _confirmDelete(context),
+              icon: const Icon(Icons.delete_outline),
+            ),
+        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

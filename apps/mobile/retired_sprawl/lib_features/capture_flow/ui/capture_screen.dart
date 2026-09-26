@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:archiveme_mobile/core/config/live_conversation_feature_flags.dart';
@@ -297,6 +298,16 @@ class _CaptureScreenState extends State<CaptureScreen>
                 ? () => unawaited(_openPendingTranscriptRecovery(entry))
                 : null,
           ),
+          if (V1CapabilityRegistry.photoAttachments)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: const Key('receipt_add_photo'),
+                onPressed: () => unawaited(_addPhoto()),
+                icon: const Icon(Icons.photo_outlined),
+                label: const Text('Add a photo'),
+              ),
+            ),
         ],
       ),
     );
@@ -305,8 +316,13 @@ class _CaptureScreenState extends State<CaptureScreen>
   String? _promptContext;
 
   Future<void> _addPhoto([ImageSource source = ImageSource.gallery]) async {
-    final paths = await pickEntryImages(source: source);
-    _controller.addPhotos(paths);
+    final saved = _controller.snapshot.savedEntry;
+    final paths = await pickEntryImages(source: source, entryId: saved?.id);
+    if (saved == null) {
+      _controller.addPhotos(paths);
+      return;
+    }
+    await _controller.attachPhotosToSavedEntry(paths);
   }
 
   void _handlePromptContext(String line) {

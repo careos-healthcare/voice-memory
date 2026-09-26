@@ -16,6 +16,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:archiveme_mobile/widgets/security/archive_privacy_controls_card.dart';
 import 'package:archiveme_mobile/widgets/security/setup_pin_screen.dart';
+import 'package:archiveme_mobile/widgets/settings/photo_storage_section.dart';
 import 'package:archiveme_mobile/widgets/security/wipe_local_archive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -359,6 +360,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
         onTap: _wipeBusy ? null : _wipeLocalArchive,
         destructive: true,
       ),
+      const PhotoStorageSection(),
       if (V1BillingCapability.isProductionReachable)
         _tile(
           key: const Key('security_restore_purchases'),

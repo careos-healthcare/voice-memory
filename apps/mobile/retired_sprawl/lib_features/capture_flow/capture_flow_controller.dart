@@ -24,6 +24,8 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
@@ -395,6 +397,38 @@ class CaptureFlowController extends ChangeNotifier {
     if (paths.isEmpty) return;
     final next = {..._snapshot.attachedImages, ...paths}.toList();
     _emit(_snapshot.copyWith(attachedImages: next));
+  }
+
+  Future<void> attachPhotosToSavedEntry(List<String> paths) async {
+    final entry = _snapshot.savedEntry;
+    if (entry == null || paths.isEmpty) {
+      addPhotos(paths);
+      return;
+    }
+    final placed = <String>[];
+    for (final path in paths) {
+      placed.add(await ImageProcessorService.adoptIntoEntry(path, entry.id));
+    }
+    final images = {...entry.images, ...placed}.toList();
+    final current = entry.imageEvidence;
+    final updated = entry.copyWith(
+      imageEvidence: ImageEvidence(
+        evidenceId: current?.evidenceId.isNotEmpty == true
+            ? current!.evidenceId
+            : entry.id,
+        caption: current?.caption ?? '',
+        mimeType: current?.mimeType ?? 'image/jpeg',
+        attachedAt: current?.attachedAt ?? DateTime.now().toUtc(),
+        localPath: images.first,
+        images: images,
+      ),
+    );
+    if (AppServices.isInitialized) {
+      await AppServices.instance.journalStore.save(updated);
+    }
+    _emit(
+      _snapshot.copyWith(savedEntry: updated, attachedImages: images),
+    );
   }
 
   Future<void> saveTypedCapture(String transcript) async {

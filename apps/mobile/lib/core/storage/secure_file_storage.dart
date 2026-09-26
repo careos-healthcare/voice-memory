@@ -14,6 +14,10 @@ abstract final class SecureFileStorage {
   /// Test stand-in for [setFileProtectionComplete].
   static Future<void> Function(String path)? debugProtect;
 
+  /// Lets a host test call the iOS protection channel.
+  @visibleForTesting
+  static var debugForceChannel = false;
+
   static Future<File> writeImage({
     required String path,
     required List<int> bytes,
@@ -25,7 +29,7 @@ abstract final class SecureFileStorage {
   }
 
   static Future<void> _setFileProtectionComplete(String path) async {
-    if (kIsWeb || !Platform.isIOS) return;
+    if (!debugForceChannel && (kIsWeb || !Platform.isIOS)) return;
     await channel.invokeMethod<void>('setFileProtectionComplete', path);
   }
 }
