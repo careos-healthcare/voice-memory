@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/config/trial_mode.dart';
 import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/features/notifications/reminder_backend_provider.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_model.dart';
 import 'package:archiveme_mobile/features/trial/hook_rescue_decision_engine.dart';
@@ -114,6 +115,7 @@ abstract class CheckInReminderService {
       final local = createLocalCheckInReminderBackend();
       local.onTapPayload = (payload) {
         _pendingTapPayload = payload;
+        WeeklyRecapNotificationService.rememberTap(payload);
         JournalNotificationPayload.remember(payload);
         ActivationTracker.trackReminderTapped();
         ActivationTracker.trackRealReminderTapped();

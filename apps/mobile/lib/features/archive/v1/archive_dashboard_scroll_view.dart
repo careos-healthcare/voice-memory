@@ -20,6 +20,7 @@ import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
+import 'package:archiveme_mobile/features/archive/views/on_this_day_view.dart';
 import 'package:archiveme_mobile/features/insights/views/weekly_recap_view.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_weekly_recap_banner.dart';
@@ -77,15 +78,42 @@ class _ArchiveDashboardScrollViewState
   @override
   void initState() {
     super.initState();
-    if (!WeeklyRecapNotificationService.takePending()) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+    WeeklyRecapNotificationService.onRouteRequested = _openPendingNotifications;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _openPendingNotifications(),
+    );
+  }
+
+  @override
+  void dispose() {
+    if (WeeklyRecapNotificationService.onRouteRequested ==
+        _openPendingNotifications) {
+      WeeklyRecapNotificationService.onRouteRequested = null;
+    }
+    super.dispose();
+  }
+
+  void _openPendingNotifications() {
+    if (!mounted) return;
+    final openRecap = WeeklyRecapNotificationService.takePending();
+    final openDay = NotificationService.takeOnThisDay();
+    if (openRecap) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => WeeklyRecapView(entries: widget.visibleEntries),
         ),
       );
-    });
+    }
+    if (openDay) {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => OnThisDayView(
+            entries: widget.visibleEntries,
+            now: DateTime.now(),
+          ),
+        ),
+      );
+    }
   }
 
   ArchiveFeedState get feed => widget.feed;

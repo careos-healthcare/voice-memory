@@ -16,6 +16,7 @@ import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_action
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
+import 'package:archiveme_mobile/features/settings/views/debug_menu_view.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
@@ -829,6 +830,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               destructive: true,
             ),
             const SizedBox(height: AppSpacing.md),
+            if (NotificationDebugAccess.debugMode)
+              _tile(
+                'Notification debug',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DebugMenuView(),
+                  ),
+                ),
+              ),
             Text(
               ConsumerUiCopy.appVersion,
               style: ArchiveMobileTypography.cardLabel(
@@ -837,9 +847,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              versionLabel,
-              style: ArchiveMobileTypography.explanationBody(context),
+            GestureDetector(
+              key: const Key('settings_app_version'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                if (!NotificationDebugAccess.registerTap()) return;
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DebugMenuView(),
+                  ),
+                );
+              },
+              child: Text(
+                versionLabel,
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             const TrustStatusFooter(),
