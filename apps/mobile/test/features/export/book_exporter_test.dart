@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
+import 'package:archiveme_mobile/features/export/printed_book_quote.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 JournalBook _book(List<JournalBookEntry> entries) {
@@ -88,7 +89,55 @@ void main() {
       expect(_pageCount(bytes), 5);
     },
   );
+
+  test('the quote uses the rendered page count and cover width', () async {
+    final bytes = await BookExporter.build(
+      _book([_entry(8, transcript: 'the river was high')]),
+    );
+    final pages = _pageCount(bytes);
+    final quote = PrintedBookQuote.forPages(
+      pageCount: pages,
+      size: BookPageSize.a5,
+    );
+    expect(quote.pageCount, pages);
+    expect(
+      quote.coverWidthInches,
+      LuluCover.widthInches(pageCount: pages, trimWidthInches: 5.83),
+    );
+    expect(LuluCover.widthInches(pageCount: 100, trimWidthInches: 6), 12.4752);
+    expect(BookExporter.marginsFor(BookPageSize.a5).left, greaterThanOrEqualTo(36));
+    expect(latin1.decode(bytes, allowInvalid: true).contains('thoughtprint://'), isFalse);
+  });
+
+  test('a large book reports progress', () async {
+    final updates = <int>[];
+    final dir = await Directory.systemTemp.createTemp('book_photos_');
+    final photo = File('${dir.path}/dot.jpg');
+    await photo.writeAsBytes(base64Decode(_tinyJpeg));
+    final entries = [
+      for (var index = 0; index < 1000; index++)
+        JournalBookEntry(
+          dateString:
+              '2024-${((index % 12) + 1).toString().padLeft(2, '0')}-01',
+          transcript: 'moment $index',
+          imagePaths: index < 200 ? [photo.path] : const [],
+        ),
+    ];
+    final started = Stopwatch()..start();
+    final bytes = await BookExporter.build(
+      JournalBook(title: 'Year', author: '', entries: entries),
+      onProgress: (done, total) => updates.add(done),
+    );
+    started.stop();
+    expect(started.elapsed, lessThan(const Duration(seconds: 60)));
+    expect(bytes, isNotEmpty);
+    expect(updates, isNotEmpty);
+    expect(updates.last, greaterThan(0));
+  });
 }
+
+const _tinyJpeg =
+    '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=';
 
 String _pdfWords(Uint8List bytes) {
   final raw = latin1.decode(bytes, allowInvalid: true);

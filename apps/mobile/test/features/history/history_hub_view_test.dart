@@ -378,7 +378,7 @@ void main() {
       find.text('Your year in your own words, printed.'),
       findsOneWidget,
     );
-    expect(find.text('Print at Home (AirPrint)'), findsOneWidget);
+    expect(find.text('Print'), findsOneWidget);
     expect(
       find.text(
         'Include playable audio QR codes (requires temporary cloud upload)',

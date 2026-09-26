@@ -195,6 +195,12 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   request_count integer NOT NULL DEFAULT 0,
   PRIMARY KEY (subject_key, window_start)
 )`,
+  `CREATE TABLE IF NOT EXISTS book_orders (
+  id text PRIMARY KEY,
+  status text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE INDEX IF NOT EXISTS book_orders_created_at_idx ON book_orders (created_at DESC)`,
   `CREATE TABLE IF NOT EXISTS product_event_counts (
   event_name text NOT NULL,
   day_key text NOT NULL,

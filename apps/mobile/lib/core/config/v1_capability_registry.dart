@@ -173,6 +173,12 @@ abstract final class V1CapabilityRegistry {
     defaultValue: true,
   );
 
+  /// Lulu printed books. Stays off until a sandbox order completes.
+  static const bool printedBooks = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_PRINTED_BOOKS',
+    defaultValue: false,
+  );
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',

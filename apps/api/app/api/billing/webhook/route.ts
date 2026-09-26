@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { processStripeWebhookEvent } from "@/lib/billing/stripe-webhook-handler";
 import { getStripeBillingConfig } from "@/lib/billing/stripe-config";
+import { bookOrderLedger } from "@/lib/server/printed-books";
 import {
   apiErrorFromException,
   apiErrorResponse,
@@ -35,6 +36,20 @@ export async function POST(request: Request) {
     const result = await processStripeWebhookEvent(event, (id) =>
       stripe.subscriptions.retrieve(id),
     );
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      if (session.metadata?.kind === "printed_book") {
+        await bookOrderLedger().fulfillAfterPayment(
+          {
+            id: session.id,
+            payment_status: session.payment_status ?? undefined,
+            metadata: session.metadata,
+          },
+          async () => ({ id: `lulu_${session.id}` }),
+          async () => true,
+        );
+      }
+    }
     logServerEvent("billing_webhook", {
       type: event.type,
       eventId: event.id,

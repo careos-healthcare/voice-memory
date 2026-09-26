@@ -6,12 +6,16 @@ import 'package:archiveme_mobile/features/history/history_browse.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+enum BookPageSize { a5, usTrade }
+
 class JournalBookEntry {
   const JournalBookEntry({
     required this.dateString,
     required this.transcript,
     this.mood,
     this.location,
+    /// Future option. Hosted audio conflicts with a local-first book, so
+    /// [JournalBook.includeAudioQr] stays off and this is not drawn.
     this.audioQrUrl,
     this.imagePaths = const [],
   });
@@ -20,6 +24,8 @@ class JournalBookEntry {
   final String transcript;
   final String? mood;
   final String? location;
+
+  /// Not used unless the book opts in. Left for a later hosted-audio book.
   final String? audioQrUrl;
   final List<String> imagePaths;
 }
@@ -30,12 +36,22 @@ class JournalBook {
     required this.entries,
     this.subtitle = 'A printed journal',
     this.author = 'Thoughtprint',
+    this.pageSize = BookPageSize.a5,
+    this.includeThenAndNow = true,
+    this.includeAudioQr = false,
   });
 
   final String title;
   final String subtitle;
+
+  /// Empty when the reader leaves their name off the cover.
   final String author;
   final List<JournalBookEntry> entries;
+  final BookPageSize pageSize;
+  final bool includeThenAndNow;
+
+  /// Off by default. A playable code needs hosted audio.
+  final bool includeAudioQr;
 }
 
 class _Chapter {
@@ -70,53 +86,67 @@ abstract final class BookExporter {
     'December',
   ];
 
-  static Future<Uint8List> build(JournalBook book) async {
+  static Future<Uint8List> build(
+    JournalBook book, {
+    void Function(int done, int total)? onProgress,
+  }) async {
     final font = await PdfFonts.newsreader();
     final italic = await PdfFonts.newsreaderItalic();
+    final label = await PdfFonts.inter(font);
     final theme = pw.ThemeData.withFont(
       base: font,
       bold: font,
       italic: italic,
       boldItalic: italic,
     );
-    final photos = await _photos(book.entries);
     final chapters = _chapters(book.entries);
-    final quotes = _pullQuotes(chapters);
-    final plan = await _plan(
-      chapters: chapters,
-      quotes: quotes,
-      theme: theme,
-      font: font,
-      italic: italic,
-      photos: photos,
-    );
+    final quotes = book.includeThenAndNow
+        ? _pullQuotes(chapters)
+        : const <_PullQuote?>[];
+    final plan = _plan(chapters: chapters, quotes: quotes);
     final document = pw.Document(theme: theme);
+    final steps = 2 + chapters.length + quotes.whereType<_PullQuote>().length;
+    var done = 0;
+    void tick() {
+      done += 1;
+      onProgress?.call(done, steps);
+    }
+
     document.addPage(_cover(book, font, italic));
-    document.addPage(_contents(chapters, plan.starts, font));
+    tick();
+    document.addPage(_contents(book, chapters, plan.starts, font));
+    tick();
     for (var index = 0; index < plan.blanksBeforeFirst; index++) {
-      document.addPage(_blank());
+      document.addPage(_blank(book));
     }
     for (var index = 0; index < chapters.length; index++) {
+      final photos = await _photos(chapters[index].entries);
       document.addPage(
         _chapterPages(
+          book: book,
           chapter: chapters[index],
           startPage: plan.starts[index],
           theme: theme,
           font: font,
-          italic: italic,
+          label: label,
           photos: photos,
         ),
       );
-      if (index >= quotes.length) continue;
+      tick();
+      if (!book.includeThenAndNow || index >= quotes.length) continue;
       final quote = quotes[index];
       for (var blank = 0; blank < plan.blanksBeforeQuote[index]; blank++) {
-        document.addPage(_blank());
+        document.addPage(_blank(book));
       }
-      if (quote != null) document.addPage(_quotePage(quote, italic, font));
+      if (quote != null) {
+        document.addPage(_quotePage(book, quote, italic, font));
+        tick();
+      }
       for (var blank = 0; blank < plan.blanksAfterQuote[index]; blank++) {
-        document.addPage(_blank());
+        document.addPage(_blank(book));
       }
     }
+    onProgress?.call(steps, steps);
     return document.save();
   }
 
@@ -142,6 +172,12 @@ abstract final class BookExporter {
     required DateTime start,
     required DateTime end,
     Map<String, String> audioQrUrls = const {},
+    bool includeAudioQr = false,
+    BookPageSize pageSize = BookPageSize.a5,
+    bool includeThenAndNow = true,
+    String title = 'Thoughtprint',
+    String author = 'Thoughtprint',
+    void Function(int done, int total)? onProgress,
   }) {
     final selected = entries.where((entry) {
       final day = DateTime(
@@ -157,8 +193,12 @@ abstract final class BookExporter {
     final last = selected.isEmpty ? end : selected.last.createdAt;
     return build(
       JournalBook(
-        title: 'Thoughtprint',
+        title: title,
         subtitle: '${_dayLabel(first)} – ${_dayLabel(last)}',
+        author: author,
+        pageSize: pageSize,
+        includeThenAndNow: includeThenAndNow,
+        includeAudioQr: includeAudioQr,
         entries: [
           for (final entry in selected)
             JournalBookEntry(
@@ -166,11 +206,12 @@ abstract final class BookExporter {
               transcript: entry.transcript,
               mood: entry.mood,
               location: entry.place,
-              audioQrUrl: audioQrUrls[entry.id],
+              audioQrUrl: includeAudioQr ? audioQrUrls[entry.id] : null,
               imagePaths: entry.imagePaths,
             ),
         ],
       ),
+      onProgress: onProgress,
     );
   }
 
@@ -218,14 +259,25 @@ abstract final class BookExporter {
     return quotes;
   }
 
-  static Future<_Plan> _plan({
+  static PdfPageFormat formatFor(BookPageSize size) {
+    if (size == BookPageSize.usTrade) {
+      return const PdfPageFormat(6 * PdfPageFormat.inch, 9 * PdfPageFormat.inch);
+    }
+    return PdfPageFormat.a5;
+  }
+
+  /// Inside edge is at least half an inch so a home printer can bind the sheet.
+  static pw.EdgeInsets marginsFor(BookPageSize size) {
+    final page = formatFor(size);
+    final gutter = 0.5 * PdfPageFormat.inch;
+    final vertical = gutter < page.height / 4 ? 40.0 : gutter;
+    return pw.EdgeInsets.fromLTRB(gutter, vertical, gutter, vertical);
+  }
+
+  static _Plan _plan({
     required List<_Chapter> chapters,
     required List<_PullQuote?> quotes,
-    required pw.ThemeData theme,
-    required pw.Font font,
-    required pw.Font italic,
-    required Map<String, Uint8List> photos,
-  }) async {
+  }) {
     final starts = <int>[];
     final blanksBeforeQuote = <int>[];
     final blanksAfterQuote = <int>[];
@@ -237,16 +289,7 @@ abstract final class BookExporter {
     }
     for (var index = 0; index < chapters.length; index++) {
       starts.add(next);
-      final count = await _pageCount(
-        _chapterPages(
-          chapter: chapters[index],
-          startPage: next,
-          theme: theme,
-          font: font,
-          italic: italic,
-          photos: photos,
-        ),
-      );
+      final count = _estimatedPages(chapters[index]);
       next += count;
       if (index >= quotes.length) continue;
       final quote = quotes[index];
@@ -271,30 +314,34 @@ abstract final class BookExporter {
     );
   }
 
-  static Future<int> _pageCount(pw.Page page) async {
-    final document = pw.Document();
-    document.addPage(page);
-    await document.save();
-    return document.document.pdfPageList.pages.length;
+  /// One text page holds about 1,800 characters. A photo takes a page of its own.
+  static int _estimatedPages(_Chapter chapter) {
+    var characters = 0;
+    var photos = 0;
+    for (final entry in chapter.entries) {
+      characters += entry.transcript.length;
+      photos += entry.imagePaths.length;
+    }
+    final textPages = characters <= 1800 ? 1 : (characters / 1800).ceil();
+    return textPages + photos;
   }
 
   static pw.Page _cover(JournalBook book, pw.Font font, pw.Font italic) {
     final year = _coverYear(book);
-    final name = book.author.trim().isEmpty
-        ? 'Thoughtprint'
-        : book.author.trim();
+    final name = book.author.trim();
     final range = book.entries.isEmpty
         ? book.subtitle
         : '${book.entries.first.dateString} – ${book.entries.last.dateString}';
+    final heading = name.isEmpty ? book.title : "$name's Journal - $year";
     return pw.Page(
-      pageFormat: PdfPageFormat.a5,
+      pageFormat: formatFor(book.pageSize),
       theme: pw.ThemeData.withFont(base: font, italic: italic),
       build: (context) => pw.Center(
         child: pw.Column(
           mainAxisAlignment: pw.MainAxisAlignment.center,
           children: [
             pw.Text(
-              "$name's Journal - $year",
+              heading,
               textAlign: pw.TextAlign.center,
               style: pw.TextStyle(font: font, fontSize: 28),
             ),
@@ -317,13 +364,14 @@ abstract final class BookExporter {
   }
 
   static pw.Page _contents(
+    JournalBook book,
     List<_Chapter> chapters,
     List<int> starts,
     pw.Font font,
   ) {
     return pw.Page(
-      pageFormat: PdfPageFormat.a5,
-      margin: const pw.EdgeInsets.all(40),
+      pageFormat: formatFor(book.pageSize),
+      margin: marginsFor(book.pageSize),
       build: (context) => pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
         children: [
@@ -359,26 +407,27 @@ abstract final class BookExporter {
     );
   }
 
-  static pw.Page _blank() {
+  static pw.Page _blank(JournalBook book) {
     return pw.Page(
-      pageFormat: PdfPageFormat.a5,
+      pageFormat: formatFor(book.pageSize),
       build: (context) => pw.SizedBox(),
     );
   }
 
   static pw.MultiPage _chapterPages({
+    required JournalBook book,
     required _Chapter chapter,
     required int startPage,
     required pw.ThemeData theme,
     required pw.Font font,
-    required pw.Font italic,
+    required pw.Font label,
     required Map<String, Uint8List> photos,
   }) {
     return pw.MultiPage(
-      pageFormat: PdfPageFormat.a5,
+      pageFormat: formatFor(book.pageSize),
       theme: theme,
       maxPages: 400,
-      margin: const pw.EdgeInsets.fromLTRB(40, 48, 40, 48),
+      margin: marginsFor(book.pageSize),
       footer: (context) => pw.Container(
         height: 24,
         alignment: pw.Alignment.center,
@@ -395,18 +444,13 @@ abstract final class BookExporter {
         pw.SizedBox(height: 18),
         for (final entry in chapter.entries) ...[
           pw.Text(
-            entry.dateString,
-            style: pw.TextStyle(font: font, fontSize: 11),
+            _metaLine(entry),
+            style: pw.TextStyle(font: label, fontSize: 9),
           ),
-          if ((entry.location ?? '').trim().isNotEmpty)
-            pw.Text(
-              entry.location!.trim(),
-              style: pw.TextStyle(font: italic, fontSize: 11),
-            ),
-          pw.SizedBox(height: 8),
+          pw.SizedBox(height: 6),
           pw.Text(
             entry.transcript,
-            style: pw.TextStyle(font: font, fontSize: 12, lineSpacing: 4),
+            style: const pw.TextStyle(fontSize: 11, lineSpacing: 3),
           ),
           for (final path in entry.imagePaths)
             if (photos[path] != null)
@@ -414,11 +458,10 @@ abstract final class BookExporter {
                 padding: const pw.EdgeInsets.only(top: 10),
                 child: pw.Image(
                   pw.MemoryImage(photos[path]!),
-                  height: 180,
-                  fit: pw.BoxFit.contain,
+                  fit: pw.BoxFit.fitWidth,
                 ),
               ),
-          if ((entry.audioQrUrl ?? '').trim().isNotEmpty)
+          if (book.includeAudioQr && (entry.audioQrUrl ?? '').trim().isNotEmpty)
             pw.Padding(
               padding: const pw.EdgeInsets.only(top: 8),
               child: pw.BarcodeWidget(
@@ -434,10 +477,24 @@ abstract final class BookExporter {
     );
   }
 
-  static pw.Page _quotePage(_PullQuote quote, pw.Font italic, pw.Font font) {
+  static String _metaLine(JournalBookEntry entry) {
+    final parts = [
+      entry.dateString.trim(),
+      (entry.location ?? '').trim(),
+      (entry.mood ?? '').trim(),
+    ].where((part) => part.isNotEmpty);
+    return parts.join(' · ');
+  }
+
+  static pw.Page _quotePage(
+    JournalBook book,
+    _PullQuote quote,
+    pw.Font italic,
+    pw.Font font,
+  ) {
     return pw.Page(
-      pageFormat: PdfPageFormat.a5,
-      margin: const pw.EdgeInsets.all(48),
+      pageFormat: formatFor(book.pageSize),
+      margin: marginsFor(book.pageSize),
       build: (context) => pw.Center(
         child: pw.Column(
           mainAxisAlignment: pw.MainAxisAlignment.center,

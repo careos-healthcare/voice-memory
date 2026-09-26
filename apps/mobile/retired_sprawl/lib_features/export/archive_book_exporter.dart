@@ -155,12 +155,19 @@ abstract final class ArchiveBookExporter {
   }
 
   /// Draws one page at a time so a large archive is not one widget list.
-  static Future<Uint8List> renderPages(List<ArchiveBookPage> pages) async {
+  static Future<Uint8List> renderPages(
+    List<ArchiveBookPage> pages, {
+    PdfPageFormat format = PdfPageFormat.a5,
+    void Function(int done, int total)? onProgress,
+  }) async {
     final document = pw.Document(title: 'Thoughtprint archive');
-    for (final page in pages) {
+    const gutter = 0.5 * PdfPageFormat.inch;
+    for (var index = 0; index < pages.length; index++) {
+      final page = pages[index];
       document.addPage(
         pw.Page(
-          pageFormat: PdfPageFormat.a4,
+          pageFormat: format,
+          margin: const pw.EdgeInsets.fromLTRB(gutter, 40, gutter, 40),
           build: (context) => pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
@@ -173,6 +180,7 @@ abstract final class ArchiveBookExporter {
           ),
         ),
       );
+      onProgress?.call(index + 1, pages.length);
     }
     return document.save();
   }

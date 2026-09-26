@@ -4,7 +4,9 @@ import 'dart:typed_data';
 import 'package:archiveme_mobile/features/archive/views/on_this_day_view.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
 import 'package:archiveme_mobile/features/export/services/qr_audio_service.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/export/views/pod_checkout_view.dart';
+import 'package:archiveme_mobile/features/export/views/printed_book_order_view.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -40,7 +42,18 @@ class BookExportView extends StatefulWidget {
 class _BookExportViewState extends State<BookExportView> {
   var _pastSixMonths = false;
   var _includeAudioQr = false;
+  var _usTrade = false;
   var _saving = false;
+  var _progress = 0.0;
+  final _title = TextEditingController(text: 'Thoughtprint');
+  final _author = TextEditingController();
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _author.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +63,12 @@ class _BookExportViewState extends State<BookExportView> {
         .where((entry) => _inRange(entry, range.$1, range.$2))
         .length;
     final theme = Theme.of(context);
-    return ListView(
+    return SingleChildScrollView(
       key: const Key('book_export_view'),
       padding: const EdgeInsets.all(16),
-      children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         DecoratedBox(
           decoration: BoxDecoration(
             color: AppColors.backgroundSecondary,
@@ -111,6 +126,38 @@ class _BookExportViewState extends State<BookExportView> {
           ],
         ),
         const SizedBox(height: 16),
+        TextField(
+          key: const Key('book_title'),
+          controller: _title,
+          decoration: const InputDecoration(labelText: 'Title'),
+        ),
+        TextField(
+          key: const Key('book_author'),
+          controller: _author,
+          decoration: const InputDecoration(
+            labelText: 'Your name',
+            hintText: 'Optional',
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              key: const Key('book_size_a5'),
+              label: const Text('A5'),
+              selected: !_usTrade,
+              onSelected: (_) => setState(() => _usTrade = false),
+            ),
+            ChoiceChip(
+              key: const Key('book_size_trade'),
+              label: const Text('US Trade'),
+              selected: _usTrade,
+              onSelected: (_) => setState(() => _usTrade = true),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
         Text('$count moments in this range'),
         const SizedBox(height: 8),
         SwitchListTile(
@@ -128,10 +175,15 @@ class _BookExportViewState extends State<BookExportView> {
           ),
         ),
         const SizedBox(height: 8),
+        if (_saving)
+          LinearProgressIndicator(
+            key: const Key('book_export_progress'),
+            value: _progress == 0 ? null : _progress,
+          ),
         FilledButton(
           key: const Key('book_print_at_home'),
           onPressed: _saving ? null : () => _print(range.$1, range.$2),
-          child: const Text('Print at Home (AirPrint)'),
+          child: const Text('Print'),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
@@ -145,7 +197,8 @@ class _BookExportViewState extends State<BookExportView> {
           onPressed: _saving ? null : () => _orderPrinted(range.$1, range.$2),
           child: const Text('Order a printed book'),
         ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -207,6 +260,14 @@ class _BookExportViewState extends State<BookExportView> {
       start: start,
       end: end,
       audioQrUrls: audio.urls,
+      includeAudioQr: _includeAudioQr,
+      pageSize: _usTrade ? BookPageSize.usTrade : BookPageSize.a5,
+      title: _title.text.trim().isEmpty ? 'Thoughtprint' : _title.text.trim(),
+      author: _author.text.trim(),
+      onProgress: (done, total) {
+        if (!mounted || total == 0) return;
+        setState(() => _progress = done / total);
+      },
     );
   }
 
@@ -216,7 +277,10 @@ class _BookExportViewState extends State<BookExportView> {
       await custom(start, end);
       return;
     }
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _progress = 0;
+    });
     try {
       final bytes = await _pdfBytes(start, end);
       await Printing.layoutPdf(
@@ -248,9 +312,14 @@ class _BookExportViewState extends State<BookExportView> {
     try {
       final bytes = await _pdfBytes(start, end);
       if (!mounted) return;
+      final pages = RegExp(r'/Type\s*/Page(?!s)')
+          .allMatches(String.fromCharCodes(bytes))
+          .length;
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => PodCheckoutView(pdf: bytes),
+          builder: (_) => V1CapabilityRegistry.printedBooks
+              ? PrintedBookOrderView(pageCount: pages)
+              : PodCheckoutView(pdf: bytes),
         ),
       );
     } finally {

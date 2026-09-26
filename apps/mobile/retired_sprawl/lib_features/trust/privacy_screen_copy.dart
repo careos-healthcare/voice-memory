@@ -59,6 +59,11 @@ abstract class PrivacyScreenCopy {
   static const String mapTilesBody =
       "Map tiles are loaded from Apple Maps (iPhone) or OpenStreetMap (Android), which can see the area you're viewing, not your entries.";
 
+  static const String printedBookTitle = 'Printed books';
+
+  static const String printedBookBody =
+      'A printed book sends the PDF of the dates you choose to Lulu. Lulu deletes that file after printing where their API allows. Thoughtprint keeps only the order id, its status, and when the order was placed.';
+
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
       'Your archive entries, recorded details, action items, surfacing choices, '
@@ -130,6 +135,7 @@ abstract class PrivacyScreenCopy {
     PrivacySection(title: onDeviceTitle, body: onDeviceBody),
     PrivacySection(title: placeLookupTitle, body: placeLookupDisclosure),
     PrivacySection(title: mapTilesTitle, body: mapTilesBody),
+    PrivacySection(title: printedBookTitle, body: printedBookBody),
     PrivacySection(title: aiProcessingTitle, body: aiProcessingBody),
     PrivacySection(title: encryptedBackupTitle, body: encryptedBackupBody),
     PrivacySection(title: doesNotDoTitle, body: doesNotDoBody),
@@ -149,6 +155,8 @@ abstract class PrivacyScreenCopy {
     placeLookupDisclosure,
     mapTilesTitle,
     mapTilesBody,
+    printedBookTitle,
+    printedBookBody,
     aiProcessingTitle,
     aiProcessingBody,
     encryptedBackupTitle,

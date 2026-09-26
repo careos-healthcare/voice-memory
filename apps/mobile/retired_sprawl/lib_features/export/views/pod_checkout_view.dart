@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 /// Shown before any cover or margin control, and again beside the checkbox.
 const podPrintConsentCopy =
-    'To print your book, your generated PDF will be securely uploaded to our printing partner. It will be deleted immediately after your order is fulfilled.';
+    "To print your book, the PDF (your entries and photos in this date range) is sent to Lulu, our printer. It's deleted after printing.";
 
 /// Consent first, then cover and margin choices. The PDF is not accepted
 /// for upload until the checkbox is on and the upload button is pressed.

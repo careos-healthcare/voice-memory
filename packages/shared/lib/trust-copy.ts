@@ -93,6 +93,10 @@ export const PRIVACY_SECTIONS = [
     body: "Map tiles are loaded from Apple Maps (iPhone) or OpenStreetMap (Android), which can see the area you're viewing, not your entries.",
   },
   {
+    title: "Printed books",
+    body: "A printed book sends the PDF of the dates you choose to Lulu. Lulu deletes that file after printing where their API allows. Thoughtprint keeps only the order id, its status, and when the order was placed.",
+  },
+  {
     title: "Local-first storage",
     body: LOCAL_FIRST_SUMMARY,
   },
