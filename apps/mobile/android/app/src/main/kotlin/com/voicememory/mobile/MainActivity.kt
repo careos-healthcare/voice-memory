@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -13,6 +14,8 @@ class MainActivity : FlutterFragmentActivity() {
     private val legacyCleanupChannelName = "archive_me/excluded_capability_cleanup"
     private val compressorChannelName = "archive_me/capture_audio_compressor"
     private val nativeSpeechChannelName = "archive_me/native_speech_transcription"
+    private val nativeSpeechDraftChannelName =
+        "archive_me/native_speech_transcription_draft"
     private val hardwareMonitorChannelName = "archive_me/hardware_monitor"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -23,6 +26,10 @@ class MainActivity : FlutterFragmentActivity() {
             .setMethodCallHandler(::handleCompressorMethod)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, nativeSpeechChannelName)
             .setMethodCallHandler(::handleNativeSpeechMethod)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            nativeSpeechDraftChannelName,
+        ).setStreamHandler(NativeSpeechTranscriptionHandler)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, hardwareMonitorChannelName)
             .setMethodCallHandler(::handleHardwareMonitorMethod)
     }

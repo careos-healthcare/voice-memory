@@ -105,6 +105,13 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    packaging {
+        jniLibs {
+            // sherpa-onnx and onnxruntime-android both ship this library.
+            pickFirsts += "lib/*/libonnxruntime.so"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.voicememory.mobile"
         // minSdk 26 — satisfies llama_cpp_dart (24), SQLCipher/sqflite (21),
@@ -158,6 +165,7 @@ configurations.configureEach {
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.27.0")
+    implementation("com.github.k2-fsa.sherpa-onnx:sherpa-onnx:v1.13.5")
 }
 
 

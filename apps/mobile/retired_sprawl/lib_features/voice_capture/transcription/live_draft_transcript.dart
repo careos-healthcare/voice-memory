@@ -8,9 +8,10 @@ import 'package:flutter/services.dart';
 /// Partial on-device recognition while a recording is in progress.
 ///
 /// Partials are for the recording screen only. Callers must not store them
-/// or stamp them as speech-to-text provenance. Android has no
-/// on-device streaming recogniser here, so [supportsOnDeviceStreaming] is
-/// false and the draft area stays hidden.
+/// or stamp them as speech-to-text provenance. iOS uses the on-device
+/// speech recogniser. Android streams the microphone through the bundled
+/// Sherpa model, with the on-device platform recogniser if that model
+/// cannot start.
 abstract final class LiveDraftTranscript {
   static const channelName = 'archive_me/native_speech_transcription';
   static const eventChannelName =
@@ -21,7 +22,7 @@ abstract final class LiveDraftTranscript {
 
   static bool get supportsOnDeviceStreaming {
     if (kIsWeb) return false;
-    return Platform.isIOS;
+    return Platform.isIOS || Platform.isAndroid;
   }
 
   static Stream<String> partials() {
