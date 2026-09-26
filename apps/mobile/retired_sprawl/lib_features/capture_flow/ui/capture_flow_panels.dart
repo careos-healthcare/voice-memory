@@ -12,6 +12,8 @@ import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_photos.dart';
 import 'package:archiveme_mobile/widgets/record/idle_resurfacing_prompt.dart';
 import 'package:flutter/material.dart';
 
@@ -101,101 +103,101 @@ class CaptureReadyPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-                Text(
-                  captureDateLine(now ?? DateTime.now()),
-                  key: const Key('capture_date_line'),
-                  style: muted,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                if (!attachMode)
-                  _PromptChip(
-                    onSelected: (line) {
-                      onPromptContext?.call(line);
-                    },
-                  ),
-                if (_showsPermissionCopy) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    MicrophonePermissionCopy.neededTitle,
-                    style: ArchiveMobileTypography.responsiveSectionTitle(
-                      context,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(MicrophonePermissionCopy.neededBody, style: bodyStyle),
-                  const SizedBox(height: AppSpacing.md),
-                  TextButton(
-                    onPressed: saving ? null : onStartVoice,
-                    child: const Text(
-                      MicrophonePermissionCopy.requestMicrophoneCta,
-                    ),
-                  ),
-                ],
-                if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    errorMessage!,
-                    style: bodyStyle.copyWith(color: context.palette.error),
-                  ),
-                ],
-                if (permissionRequiresSettings) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    MicrophonePermissionCopy.statusBlocked,
-                    style: bodyStyle,
-                  ),
-                ] else if (permissionBlocked) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    MicrophonePermissionCopy.typeInsteadBlockedHelper,
-                    style: bodyStyle,
-                  ),
-                ],
+        Text(
+          captureDateLine(now ?? DateTime.now()),
+          key: const Key('capture_date_line'),
+          style: muted,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (!attachMode)
+          _PromptChip(
+            onSelected: (line) {
+              onPromptContext?.call(line);
+            },
+          ),
+        if (_showsPermissionCopy) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            MicrophonePermissionCopy.neededTitle,
+            style: ArchiveMobileTypography.responsiveSectionTitle(
+              context,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(MicrophonePermissionCopy.neededBody, style: bodyStyle),
+          const SizedBox(height: AppSpacing.md),
+          TextButton(
+            onPressed: saving ? null : onStartVoice,
+            child: const Text(
+              MicrophonePermissionCopy.requestMicrophoneCta,
+            ),
+          ),
+        ],
+        if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            errorMessage!,
+            style: bodyStyle.copyWith(color: context.palette.error),
+          ),
+        ],
+        if (permissionRequiresSettings) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            MicrophonePermissionCopy.statusBlocked,
+            style: bodyStyle,
+          ),
+        ] else if (permissionBlocked) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            MicrophonePermissionCopy.typeInsteadBlockedHelper,
+            style: bodyStyle,
+          ),
+        ],
         const Spacer(),
         const IdleResurfacingPrompt(),
         Center(
-                  child: KeyedSubtree(
-                    key: const Key('capture_start_voice'),
-                    child: Semantics(
-                      button: true,
-                      label: MicrophonePermissionCopy.startRecordingLabel,
-                      child: Material(
-                        key: const Key('capture_record_button'),
-                        color: context.palette.accentPrimary,
-                        shape: const CircleBorder(),
-                        clipBehavior: Clip.antiAlias,
-                        child: InkWell(
-                          onTap: saving ? null : onStartVoice,
-                          customBorder: const CircleBorder(),
-                          child: const SizedBox(
-                            width: 96,
-                            height: 96,
-                            child: Icon(
-                              Icons.mic,
-                              color: Colors.white,
-                              size: 36,
-                            ),
-                          ),
-                        ),
-                      ),
+          child: KeyedSubtree(
+            key: const Key('capture_start_voice'),
+            child: Semantics(
+              button: true,
+              label: MicrophonePermissionCopy.startRecordingLabel,
+              child: Material(
+                key: const Key('capture_record_button'),
+                color: context.palette.accentPrimary,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: saving ? null : onStartVoice,
+                  customBorder: const CircleBorder(),
+                  child: const SizedBox(
+                    width: 96,
+                    height: 96,
+                    child: Icon(
+                      Icons.mic,
+                      color: Colors.white,
+                      size: 36,
                     ),
                   ),
                 ),
-                if (!attachMode) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  TextButton(
-                    key: const Key('capture_type_instead'),
-                    onPressed: saving
-                        ? null
-                        : () => onSwitchMode(CaptureInputMode.typed),
-                    child: Text(MicrophonePermissionCopy.typeInsteadCta),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  MicrophonePermissionCopy.savedOnDevice,
-                  textAlign: TextAlign.center,
-                  style: muted,
+              ),
+            ),
+          ),
+        ),
+        if (!attachMode) ...[
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            key: const Key('capture_type_instead'),
+            onPressed: saving
+                ? null
+                : () => onSwitchMode(CaptureInputMode.typed),
+            child: Text(MicrophonePermissionCopy.typeInsteadCta),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          MicrophonePermissionCopy.savedOnDevice,
+          textAlign: TextAlign.center,
+          style: muted,
         ),
       ],
     );
@@ -331,8 +333,9 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.draftText,
     this.turns = const [],
     this.chatLines = const [],
-    this.onAddPhoto,
-    this.imageCount = 0,
+    this.onTakePhoto,
+    this.onChoosePhoto,
+    this.imagePaths = const [],
     super.key,
   });
 
@@ -346,8 +349,9 @@ class CaptureRecordingPanel extends StatelessWidget {
   final String? draftText;
   final List<LiveConversationTurn> turns;
   final List<VoiceChatLine> chatLines;
-  final VoidCallback? onAddPhoto;
-  final int imageCount;
+  final VoidCallback? onTakePhoto;
+  final VoidCallback? onChoosePhoto;
+  final List<String> imagePaths;
 
   bool get _showDraft =>
       V1CapabilityRegistry.liveDraftTranscript &&
@@ -414,13 +418,46 @@ class CaptureRecordingPanel extends StatelessWidget {
                     ),
                   )
                 else if (_dictation.isNotEmpty || _showDraft)
-                  _BoundedDraft(text: _dictation.isNotEmpty ? _dictation : (draftText?.trim() ?? '')),
-                if (onAddPhoto != null)
-                  TextButton.icon(
-                    key: const Key('capture_add_photo'),
-                    onPressed: onAddPhoto,
-                    icon: const Icon(Icons.photo_outlined),
-                    label: Text(imageCount == 0 ? 'Add a photo' : '$imageCount photos'),
+                  _BoundedDraft(
+                    text: _dictation.isNotEmpty
+                        ? _dictation
+                        : (draftText?.trim() ?? ''),
+                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      key: const Key('capture_photo_camera'),
+                      tooltip: 'Take a photo',
+                      onPressed: onTakePhoto,
+                      icon: const Icon(Icons.photo_camera_outlined),
+                    ),
+                    IconButton(
+                      key: const Key('capture_photo_gallery'),
+                      tooltip: 'Choose a photo',
+                      onPressed: onChoosePhoto,
+                      icon: const Icon(Icons.photo_library_outlined),
+                    ),
+                  ],
+                ),
+                if (imagePaths.isNotEmpty)
+                  SizedBox(
+                    key: const Key('capture_photo_strip'),
+                    height: 64,
+                    width: double.infinity,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: imagePaths.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        return EntryPhoto(
+                          key: Key('capture_photo_thumb_$index'),
+                          path: ImageProcessorService.previewPath(
+                            imagePaths[index],
+                          ),
+                          size: 56,
+                        );
+                      },
+                    ),
                   ),
                 Row(
                   children: [
@@ -521,9 +558,7 @@ class _BoundedDraftState extends State<_BoundedDraft> {
       child: SingleChildScrollView(
         controller: _scroll,
         child: Text(
-          waiting
-              ? 'Draft — final text is saved after you stop'
-              : widget.text,
+          waiting ? 'Draft — final text is saved after you stop' : widget.text,
           key: const Key('capture_draft_label'),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: context.palette.textMuted,

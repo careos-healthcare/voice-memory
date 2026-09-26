@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -71,25 +72,28 @@ class _CaptureScreenState extends State<CaptureScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _controller = CaptureFlowController(
-      widget.dependencies ??
-          CaptureFlowDependencies.fromAccount(_accountDeps),
+      widget.dependencies ?? CaptureFlowDependencies.fromAccount(_accountDeps),
       attachToEntryId: widget.attachToEntryId,
       routineKindOverride:
           widget.routineKindOverride ??
           CaptureRoutineLaunchController.takePendingRoutine(),
       stopBackgroundCapture: widget.stopBackgroundCapture,
     );
-    _typedController = TextEditingController(text: widget.initialTypedText ?? '');
+    _typedController = TextEditingController(
+      text: widget.initialTypedText ?? '',
+    );
     _controller.addListener(_syncNavigationActivity);
     _controller.setInputMode(widget.initialInputMode);
-    unawaited(_controller.initialize().then((_) {
-      if (!mounted) return;
-      if (widget.adoptBackgroundCapture) {
-        _controller.showBackgroundRecordingUi();
-      } else if (widget.autoRecord) {
-        unawaited(_controller.startVoiceCapture());
-      }
-    }));
+    unawaited(
+      _controller.initialize().then((_) {
+        if (!mounted) return;
+        if (widget.adoptBackgroundCapture) {
+          _controller.showBackgroundRecordingUi();
+        } else if (widget.autoRecord) {
+          unawaited(_controller.startVoiceCapture());
+        }
+      }),
+    );
   }
 
   @override
@@ -123,8 +127,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       CaptureFlowPhase.recording => RecordNavigationActivity.recording,
       CaptureFlowPhase.stopping ||
       CaptureFlowPhase.savingLocal ||
-      CaptureFlowPhase.processingRemote =>
-        RecordNavigationActivity.processing,
+      CaptureFlowPhase.processingRemote => RecordNavigationActivity.processing,
       _ => RecordNavigationActivity.idle,
     };
     nav.update(activity);
@@ -155,61 +158,62 @@ class _CaptureScreenState extends State<CaptureScreen>
     }
 
     return switch (snapshot.phase) {
-        CaptureFlowPhase.ready => CaptureReadyPanel(
-          inputMode: snapshot.inputMode,
-          attachMode: snapshot.isAttachMode,
-          onStartVoice: _controller.startVoiceCapture,
-          onSaveTyped: _controller.saveTypedCapture,
-          onSwitchMode: _controller.setInputMode,
-          permissionBlocked: snapshot.permissionBlocked,
-          permissionRequiresSettings: snapshot.permissionRequiresSettings,
-          microphoneGranted: snapshot.microphoneGranted,
-          onPromptContext: _handlePromptContext,
-          errorMessage: snapshot.errorMessage,
-          typedController: _typedController,
-          saving: false,
-          routinePrompt: snapshot.showsRoutinePrompt
-              ? snapshot.routinePrompt
-              : null,
-          routinePromptLoading: snapshot.routinePromptLoading,
-          onSelectRoutinePrompt: _handleRoutinePromptSelected,
-          onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
-          onAddPhoto: _addPhoto,
-          imageCount: snapshot.attachedImages.length,
-        ),
-        CaptureFlowPhase.requestingPermission ||
-        CaptureFlowPhase.stopping ||
-        CaptureFlowPhase.savingLocal ||
-        CaptureFlowPhase.processingRemote => CaptureBusyPanel(
-          label: snapshot.stageLabel,
-          savedOnDevice: snapshot.deviceSaveVisible,
-          transcript: snapshot.savedEntry?.transcript,
-        ),
-        CaptureFlowPhase.recording => CaptureRecordingPanel(
-          duration: snapshot.recordingDuration,
-          levels: snapshot.amplitudeBars,
-          paused: snapshot.recordingPaused,
-          draftText: snapshot.draftTranscript,
-          turns: snapshot.conversationTurns,
-          chatLines: snapshot.chatLines,
-          onStop: _controller.stopVoiceCapture,
-          onPause: _controller.pauseVoiceCapture,
-          onResume: _controller.resumeVoiceCapture,
-          onCancel: _controller.cancelVoiceCapture,
-          onAddPhoto: _addPhoto,
-          imageCount: snapshot.attachedImages.length,
-        ),
-        CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
-          message: snapshot.errorMessage ?? 'Something went wrong.',
-          hasLocalSave: snapshot.hasLocalSave,
-          onRetry: snapshot.hasLocalSave
-              ? _controller.retryRemoteProcessing
-              : null,
-          onDismiss: _controller.resetToReady,
-        ),
-        CaptureFlowPhase.savedLocal ||
-        CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
-      };
+      CaptureFlowPhase.ready => CaptureReadyPanel(
+        inputMode: snapshot.inputMode,
+        attachMode: snapshot.isAttachMode,
+        onStartVoice: _controller.startVoiceCapture,
+        onSaveTyped: _controller.saveTypedCapture,
+        onSwitchMode: _controller.setInputMode,
+        permissionBlocked: snapshot.permissionBlocked,
+        permissionRequiresSettings: snapshot.permissionRequiresSettings,
+        microphoneGranted: snapshot.microphoneGranted,
+        onPromptContext: _handlePromptContext,
+        errorMessage: snapshot.errorMessage,
+        typedController: _typedController,
+        saving: false,
+        routinePrompt: snapshot.showsRoutinePrompt
+            ? snapshot.routinePrompt
+            : null,
+        routinePromptLoading: snapshot.routinePromptLoading,
+        onSelectRoutinePrompt: _handleRoutinePromptSelected,
+        onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
+        onAddPhoto: _addPhoto,
+        imageCount: snapshot.attachedImages.length,
+      ),
+      CaptureFlowPhase.requestingPermission ||
+      CaptureFlowPhase.stopping ||
+      CaptureFlowPhase.savingLocal ||
+      CaptureFlowPhase.processingRemote => CaptureBusyPanel(
+        label: snapshot.stageLabel,
+        savedOnDevice: snapshot.deviceSaveVisible,
+        transcript: snapshot.savedEntry?.transcript,
+      ),
+      CaptureFlowPhase.recording => CaptureRecordingPanel(
+        duration: snapshot.recordingDuration,
+        levels: snapshot.amplitudeBars,
+        paused: snapshot.recordingPaused,
+        draftText: snapshot.draftTranscript,
+        turns: snapshot.conversationTurns,
+        chatLines: snapshot.chatLines,
+        onStop: _controller.stopVoiceCapture,
+        onPause: _controller.pauseVoiceCapture,
+        onResume: _controller.resumeVoiceCapture,
+        onCancel: _controller.cancelVoiceCapture,
+        onTakePhoto: () => _addPhoto(ImageSource.camera),
+        onChoosePhoto: () => _addPhoto(ImageSource.gallery),
+        imagePaths: snapshot.attachedImages,
+      ),
+      CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
+        message: snapshot.errorMessage ?? 'Something went wrong.',
+        hasLocalSave: snapshot.hasLocalSave,
+        onRetry: snapshot.hasLocalSave
+            ? _controller.retryRemoteProcessing
+            : null,
+        onDismiss: _controller.resetToReady,
+      ),
+      CaptureFlowPhase.savedLocal ||
+      CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
+    };
   }
 
   Widget _buildReceipt(BuildContext context, CaptureFlowSnapshot snapshot) {
@@ -247,7 +251,8 @@ class _CaptureScreenState extends State<CaptureScreen>
             onRecordAnother: _controller.resetToReady,
             onViewArchive: () => context.go('/archive-belief'),
             onChooseWhatLeaves: () => context.push('/privacy-trust-centre'),
-            onRetryRemote: remoteStatus == MomentSaveRemoteStatus.failedRetryable
+            onRetryRemote:
+                remoteStatus == MomentSaveRemoteStatus.failedRetryable
                 ? _controller.retryRemoteProcessing
                 : null,
             onCorrectText: TranscriptCorrectionGate.entryAllowsCorrection(entry)
@@ -264,8 +269,8 @@ class _CaptureScreenState extends State<CaptureScreen>
 
   String? _promptContext;
 
-  Future<void> _addPhoto() async {
-    final paths = await pickEntryImages();
+  Future<void> _addPhoto([ImageSource source = ImageSource.gallery]) async {
+    final paths = await pickEntryImages(source: source);
     _controller.addPhotos(paths);
   }
 

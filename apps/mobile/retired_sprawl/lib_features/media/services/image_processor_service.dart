@@ -27,6 +27,22 @@ class ImageProcessorService {
   static const thumbnailSize = 256;
   static const jpegQuality = 80;
 
+  /// Preview written beside [highResPath] by [processAndStoreImage].
+  static String thumbnailPathFor(String highResPath) {
+    if (highResPath.endsWith('_thumb.jpg')) return highResPath;
+    final slash = highResPath.lastIndexOf('/');
+    final dot = highResPath.lastIndexOf('.');
+    if (dot <= slash) return '${highResPath}_thumb.jpg';
+    return '${highResPath.substring(0, dot)}_thumb${highResPath.substring(dot)}';
+  }
+
+  /// The 256px preview when it is on disk, otherwise the stored photo.
+  static String previewPath(String highResPath) {
+    final thumb = thumbnailPathFor(highResPath);
+    if (thumb != highResPath && File(thumb).existsSync()) return thumb;
+    return highResPath;
+  }
+
   final Future<Directory> Function() _documentsDirectory;
 
   Future<LocalMediaObject> processAndStoreImage(File rawImage) async {

@@ -64,10 +64,10 @@ abstract final class V1CapabilityRegistry {
     defaultValue: true,
   );
 
-  /// Photo attachments and image evidence. Off until reviewed.
+  /// Photo attachments and image evidence on a moment.
   static const bool photoAttachments = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_PHOTO_ATTACHMENTS',
-    defaultValue: false,
+    defaultValue: true,
   );
   static const bool bluetooth = false;
   static const bool localNetwork = false;

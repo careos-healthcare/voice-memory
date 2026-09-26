@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_photos.dart';
@@ -61,7 +62,9 @@ class ArchiveEntryCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
                     child: EntryPhotoThumbnail(
-                      path: entry.images.first,
+                      path: ImageProcessorService.previewPath(
+                        entry.images.first,
+                      ),
                       entryId: entry.id,
                     ),
                   ),
@@ -176,16 +179,14 @@ class ArchiveEntryCardPreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-      pending ? 'Transcript processing…' : text,
-      maxLines: 4,
-      overflow: TextOverflow.ellipsis,
-      style: pending
-          ? ArchiveMobileTypography.uiBody(context)
-          : ArchiveMobileTypography.userWords(context),
-      ),
+          pending ? 'Transcript processing…' : text,
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
+          style: pending
+              ? ArchiveMobileTypography.uiBody(context)
+              : ArchiveMobileTypography.userWords(context),
+        ),
       ],
     );
   }
 }
-
-
