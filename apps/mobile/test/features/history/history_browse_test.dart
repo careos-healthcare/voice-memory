@@ -121,6 +121,16 @@ void main() {
     expect(pins.single.label, 'Home');
   });
 
+  test('identical low-accuracy coordinates share one pin', () {
+    final pins = EntryMapClusters.cluster([
+      _moment(id: 'a', at: DateTime(2026, 9, 1), latitude: 51.5, longitude: -0.12),
+      _moment(id: 'b', at: DateTime(2026, 9, 2), latitude: 51.5, longitude: -0.12),
+    ]);
+    expect(pins, hasLength(1));
+    expect(pins.single.isCluster, isTrue);
+    expect(pins.single.entries.map((entry) => entry.id), ['a', 'b']);
+  });
+
   test('printable journal starts a chapter for the month', () async {
     final bytes = await BookExporter.render(
       entries: [

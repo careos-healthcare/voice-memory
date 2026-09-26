@@ -140,6 +140,7 @@ void main() {
         theme: AppTheme.light(),
         home: Scaffold(
           body: MapView(
+            locationPermissionDenied: false,
             entries: [
               _entry(
                 id: 'home',
@@ -167,6 +168,95 @@ void main() {
     await tester.tap(find.byKey(const Key('map_open_home')));
     await tester.pumpAndSettle();
     expect(opened, 'home');
+  });
+
+  testWidgets('identical coordinates open a row of cards', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: MapView(
+            locationPermissionDenied: false,
+            entries: [
+              _entry(
+                id: 'first',
+                at: DateTime(2026, 9, 1),
+                place: 'Home',
+                latitude: 51.5,
+                longitude: -0.12,
+                transcript: 'first moment here',
+              ),
+              _entry(
+                id: 'second',
+                at: DateTime(2026, 9, 2),
+                place: 'Home',
+                latitude: 51.5,
+                longitude: -0.12,
+                transcript: 'second moment here',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.byIcon(Icons.place), findsNothing);
+    await tester.tap(find.byKey(const Key('map_cluster_2')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('map_cluster_cards')), findsOneWidget);
+    expect(find.text('first moment here'), findsOneWidget);
+    expect(find.text('second moment here'), findsOneWidget);
+    expect(find.text('View Entry'), findsNWidgets(2));
+  });
+
+  testWidgets('a map without coordinates explains location tagging', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: MapView(
+            locationPermissionDenied: false,
+            entries: [
+              _entry(id: 'none', at: DateTime(2026, 9, 2), transcript: 'no place'),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(
+      find.text(
+        'No locations recorded yet. Turn on location tagging while recording to build your map.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byIcon(Icons.place), findsNothing);
+  });
+
+  testWidgets('a permanently denied location permission covers the map', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: MapView(
+            locationPermissionDenied: true,
+            entries: [
+              _entry(
+                id: 'home',
+                at: DateTime(2026, 9, 1),
+                place: 'Home',
+                latitude: 51.5,
+                longitude: -0.12,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('map_empty_state')), findsOneWidget);
+    expect(find.byIcon(Icons.place), findsNothing);
   });
 
   testWidgets('printable journal shares the chosen range', (tester) async {

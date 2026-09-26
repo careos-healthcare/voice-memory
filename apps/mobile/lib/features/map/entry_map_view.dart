@@ -39,9 +39,22 @@ class EntryMapView extends StatelessWidget {
                   top: bounds.y(pin.latitude, height) - 18,
                   child: IconButton(
                     key: Key('map_pin_${pin.latitude}_${pin.longitude}'),
-                    tooltip: pin.label,
+                    tooltip: pin.isCluster
+                        ? '${pin.entries.length} moments'
+                        : pin.label,
                     onPressed: () => onPin(pin),
-                    icon: const Icon(Icons.place),
+                    icon: pin.isCluster
+                        ? CircleAvatar(
+                            key: Key('map_cluster_${pin.entries.length}'),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                            child: Text('${pin.entries.length}'),
+                          )
+                        : const Icon(Icons.place),
                   ),
                 ),
             ],

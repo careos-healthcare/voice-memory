@@ -7,14 +7,24 @@ class EntryPhotoThumbnail extends StatelessWidget {
   const EntryPhotoThumbnail({
     required this.path,
     required this.entryId,
+    this.fill = false,
     super.key,
   });
 
   final String path;
   final String entryId;
+  final bool fill;
 
   @override
   Widget build(BuildContext context) {
+    if (fill) {
+      return ClipRRect(
+        key: Key('archive_entry_images_$entryId'),
+        child: SizedBox.expand(
+          child: EntryPhoto(path: path, fit: BoxFit.cover),
+        ),
+      );
+    }
     return ClipRRect(
       key: Key('archive_entry_images_$entryId'),
       borderRadius: BorderRadius.circular(8),
