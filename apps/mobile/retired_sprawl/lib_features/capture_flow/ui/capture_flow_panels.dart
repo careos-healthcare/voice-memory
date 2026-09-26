@@ -2,6 +2,8 @@ import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
+import 'package:archiveme_mobile/features/capture/views/voice_chat_view.dart';
 import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
@@ -328,6 +330,7 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.levels = const [],
     this.draftText,
     this.turns = const [],
+    this.chatLines = const [],
     this.onAddPhoto,
     this.imageCount = 0,
     super.key,
@@ -342,6 +345,7 @@ class CaptureRecordingPanel extends StatelessWidget {
   final List<double> levels;
   final String? draftText;
   final List<LiveConversationTurn> turns;
+  final List<VoiceChatLine> chatLines;
   final VoidCallback? onAddPhoto;
   final int imageCount;
 
@@ -400,7 +404,16 @@ class CaptureRecordingPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (_dictation.isNotEmpty || _showDraft)
+                if (chatLines.isNotEmpty)
+                  SizedBox(
+                    key: const Key('capture_voice_chat'),
+                    height: 160,
+                    width: double.infinity,
+                    child: SingleChildScrollView(
+                      child: VoiceChatView(lines: chatLines),
+                    ),
+                  )
+                else if (_dictation.isNotEmpty || _showDraft)
                   _BoundedDraft(text: _dictation.isNotEmpty ? _dictation : (draftText?.trim() ?? '')),
                 if (onAddPhoto != null)
                   TextButton.icon(

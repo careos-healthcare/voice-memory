@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/core/json/json_converters.dart';
 import 'package:archiveme_mobile/core/copy_with_unset.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:archiveme_mobile/models/app_spoken_question.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/features/journal/presentation/models/journal_display_presentation.dart';
 import 'package:archiveme_mobile/models/journal_display_metadata.dart';
@@ -254,6 +255,9 @@ abstract class JournalEntry with _$JournalEntry {
   bool get preserveOriginal => display.preserveOriginal;
   String? get captureContextTag => display.captureContextTag;
   String? get captureSource => display.captureSource;
+
+  /// Questions the app spoke. Never part of [transcript].
+  List<AppSpokenQuestion> get aiQuestions => display.aiQuestions;
 
   /// UI-facing display state derived from persisted metadata.
   JournalDisplayPresentation get displayPresentation =>

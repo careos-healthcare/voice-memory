@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/audio/audio_session_manager.dart';
 import 'package:archiveme_mobile/core/database/database_provider.dart';
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
 
 /// Speaks one short question and can be cut off mid-sentence.
@@ -129,10 +130,12 @@ class ReflectWithMeSession {
     this.energyThresholdDb = -45,
     this.maxAppTurns = 3,
     this.onChanged,
+    DateTime Function()? clock,
     Timer Function(Duration duration, void Function() callback)? startTimer,
   }) : audioSession = audioSession ?? AudioSessionManager(),
        readAloud = readAloud ?? ReadAloudService(),
        _questions = questions ?? ReflectQuestionGenerator(),
+       _clock = clock ?? DateTime.now,
        _startTimer = startTimer ?? Timer.new;
 
   final AudioSessionManager audioSession;
@@ -142,10 +145,13 @@ class ReflectWithMeSession {
   final double energyThresholdDb;
   final int maxAppTurns;
   final void Function()? onChanged;
+  final DateTime Function() _clock;
   final Timer Function(Duration duration, void Function() callback) _startTimer;
 
   final List<String> questions = [];
+  final List<VoiceChatLine> lines = [];
   var transcript = '';
+  var _openUser = '';
   var appTurns = 0;
   var conversationActive = true;
   var readingAloud = false;
@@ -160,7 +166,10 @@ class ReflectWithMeSession {
   Future<void> start() => audioSession.enterReflectMode();
 
   void notePartial(String text) {
-    transcript = text;
+    _openUser = text.trim();
+    transcript = _userWords();
+    _upsertPartialUser();
+    onChanged?.call();
   }
 
   /// STT reported that the user started a new utterance.
@@ -178,6 +187,8 @@ class ReflectWithMeSession {
     conversationActive = false;
     _silenceTimer?.cancel();
     _silenceTimer = null;
+    _freezeUser();
+    transcript = _userWords();
     if (readingAloud) {
       readingAloud = false;
       await readAloud.stop();
@@ -226,6 +237,15 @@ class ReflectWithMeSession {
     }
     appTurns += 1;
     questions.add(question);
+    _freezeUser();
+    lines.add(
+      VoiceChatLine(
+        role: VoiceChatRole.app,
+        text: question,
+        at: _clock().toUtc(),
+      ),
+    );
+    transcript = _userWords();
     readingAloud = true;
     onChanged?.call();
     await readAloud.speak(question);
@@ -233,5 +253,42 @@ class ReflectWithMeSession {
     _asking = false;
     if (appTurns >= maxAppTurns) conversationActive = false;
     onChanged?.call();
+  }
+
+  String _userWords() {
+    final parts = <String>[
+      for (final line in lines)
+        if (line.isUser && !line.partial && line.text.trim().isNotEmpty)
+          line.text.trim(),
+      if (_openUser.isNotEmpty) _openUser,
+    ];
+    return parts.join(' ');
+  }
+
+  void _upsertPartialUser() {
+    lines.removeWhere((line) => line.partial);
+    if (_openUser.isEmpty) return;
+    lines.add(
+      VoiceChatLine(
+        role: VoiceChatRole.user,
+        text: _openUser,
+        at: _clock().toUtc(),
+        partial: true,
+      ),
+    );
+  }
+
+  void _freezeUser() {
+    final text = _openUser.trim();
+    _openUser = '';
+    lines.removeWhere((line) => line.partial);
+    if (text.isEmpty) return;
+    lines.add(
+      VoiceChatLine(
+        role: VoiceChatRole.user,
+        text: text,
+        at: _clock().toUtc(),
+      ),
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
 import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
@@ -55,6 +56,7 @@ class CaptureFlowSnapshot {
     this.draftTranscript,
     this.deviceSaveVisible = false,
     this.conversationTurns = const [],
+    this.chatLines = const [],
     this.liveSttRoute = LiveSttRoute.offline,
     this.attachedImages = const [],
   });
@@ -102,8 +104,11 @@ class CaptureFlowSnapshot {
   /// On-screen partials only. Never written to [JournalEntry.transcript].
   final String? draftTranscript;
 
-  /// User and assistant bubbles for the live recording. Not saved.
+  /// User dictation lines for the live recording. Not saved.
   final List<LiveConversationTurn> conversationTurns;
+
+  /// Reflect-with-me bubbles. Saved separately from the transcript.
+  final List<VoiceChatLine> chatLines;
 
   /// Which listener is producing [draftTranscript].
   final LiveSttRoute liveSttRoute;
@@ -162,6 +167,7 @@ class CaptureFlowSnapshot {
     String? draftTranscript,
     bool? deviceSaveVisible,
     List<LiveConversationTurn>? conversationTurns,
+    List<VoiceChatLine>? chatLines,
     LiveSttRoute? liveSttRoute,
     List<String>? attachedImages,
     bool clearImages = false,
@@ -208,6 +214,7 @@ class CaptureFlowSnapshot {
       conversationTurns: clearDraft
           ? const []
           : (conversationTurns ?? this.conversationTurns),
+      chatLines: clearDraft ? const [] : (chatLines ?? this.chatLines),
       liveSttRoute: liveSttRoute ?? this.liveSttRoute,
       attachedImages: clearImages
           ? const []

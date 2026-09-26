@@ -5,6 +5,8 @@ import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
+import 'package:archiveme_mobile/features/capture/views/voice_chat_view.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
@@ -354,13 +356,22 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           startAt: widget.startAt,
         ),
         const SizedBox(height: 8),
-        Text(
-          view.primary,
-          key: const Key('entry_detail_recorded_body'),
-          style: ArchiveMobileTypography.userWords(context).copyWith(
-            height: 1.55,
+        if (entry.aiQuestions.isEmpty)
+          Text(
+            view.primary,
+            key: const Key('entry_detail_recorded_body'),
+            style: ArchiveMobileTypography.userWords(context).copyWith(
+              height: 1.55,
+            ),
+          )
+        else
+          VoiceChatView(
+            key: const Key('entry_detail_recorded_body'),
+            lines: savedConversationLines(
+              transcript: entry.transcript,
+              questions: entry.aiQuestions,
+            ),
           ),
-        ),
         if (entry.images.isNotEmpty) ...[
           const SizedBox(height: 12),
           EntryPhotoStrip(entryId: entry.id, paths: entry.images),
