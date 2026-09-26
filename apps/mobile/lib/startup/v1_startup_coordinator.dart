@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.da
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
 import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
 import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
+import 'package:archiveme_mobile/features/memory/services/vector_backfill_service.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
@@ -98,6 +99,7 @@ abstract final class V1StartupCoordinator {
     unawaited(_importPendingVoiceMemo());
     unawaited(RecordSyncRuntime.onLaunchOrResume());
     SyncScheduler.instance.startForeground();
+    VectorBackfillService.startOnBoot();
     PrivateStorageAudit.logAuditReport();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

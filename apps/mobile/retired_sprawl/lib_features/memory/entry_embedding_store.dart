@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/journal/domain/interceptors/journal_save_interceptor.dart';
+import 'package:archiveme_mobile/features/memory/services/vector_backfill_service.dart';
 import 'package:archiveme_mobile/features/search/onnx_reflection_embedding_inference.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
@@ -269,11 +270,16 @@ class EntryEmbeddingSaveInterceptor implements JournalSaveInterceptor {
   Future<void> onEntrySaved(JournalEntry entry) async {
     if (!AppServices.isInitialized) return;
     try {
+      if (entry.isDeleted) {
+        await VectorBackfillService.onEntrySaved(entry);
+        return;
+      }
       final store = EntryEmbeddingStore(
         AppServices.instance.sqliteDatabase.database,
       );
       await store.remember(entry);
       unawaited(EntryEmbeddingBackfill.instance.pump(store));
+      unawaited(VectorBackfillService.onEntrySaved(entry));
     } on Object {
       return;
     }
@@ -364,12 +370,11 @@ int? sentenceStartSeconds(
 }
 
 double cosineSimilarity(List<double> a, List<double> b) {
-  final length = math.min(a.length, b.length);
-  if (length == 0) return 0;
+  if (a.length != b.length || a.isEmpty) return 0;
   var dot = 0.0;
   var normA = 0.0;
   var normB = 0.0;
-  for (var i = 0; i < length; i++) {
+  for (var i = 0; i < a.length; i++) {
     dot += a[i] * b[i];
     normA += a[i] * a[i];
     normB += b[i] * b[i];

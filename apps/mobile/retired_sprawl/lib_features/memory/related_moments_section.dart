@@ -1,13 +1,14 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/audio/audio_player_service.dart';
 import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/memory/entry_embedding_store.dart';
 import 'package:archiveme_mobile/features/memory/related_entries_service.dart';
+import 'package:archiveme_mobile/features/memory/services/local_vector_db.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,8 +42,21 @@ class _RelatedMomentsSectionState extends State<RelatedMomentsSection> {
         widget.entry,
         candidates: entries,
       );
+      final vectors = LocalVectorDb(
+        AppServices.instance.sqliteDatabase.database,
+      );
+      final hits = await vectors.nearestToEntry(widget.entry.id);
+      final offsets = {for (final hit in hits) hit.entryId: hit.startTimeMs};
       if (!mounted) return;
-      setState(() => _matches = matches);
+      setState(() {
+        _matches = [
+          for (final match in matches)
+            if (offsets[match.id] case final start?)
+              match.atChunk(start)
+            else
+              match,
+        ];
+      });
     } on Object {
       return;
     }
@@ -70,10 +84,18 @@ class _RelatedMomentsSectionState extends State<RelatedMomentsSection> {
           InkWell(
             key: Key('entry_detail_related_open_${match.id}'),
             onTap: () {
-              final seconds = match.startSeconds ?? 0;
+              final offset = match.startTimeMs ?? (match.startSeconds ?? 0) * 1000;
+              final path = match.localAudioPath;
+              if (path != null && path.isNotEmpty) {
+                final player = AudioPlayerService();
+                unawaited(() async {
+                  await player.play(path);
+                  await player.seek(Duration(milliseconds: offset));
+                }());
+              }
               final router = GoRouter.maybeOf(context);
               if (router == null) return;
-              router.push('/entry/${match.id}?t=$seconds');
+              unawaited(router.push('/entry/${match.id}?ms=$offset'));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +110,7 @@ class _RelatedMomentsSectionState extends State<RelatedMomentsSection> {
             _RelatedPlayButton(
               entryId: match.id,
               audioPath: match.localAudioPath!,
-              startSeconds: match.startSeconds,
+              startTimeMs: match.startTimeMs ?? (match.startSeconds ?? 0) * 1000,
             ),
         ],
       ],
@@ -100,34 +122,29 @@ class _RelatedPlayButton extends StatefulWidget {
   const _RelatedPlayButton({
     required this.entryId,
     required this.audioPath,
-    this.startSeconds,
+    required this.startTimeMs,
   });
 
   final String entryId;
   final String audioPath;
-  final int? startSeconds;
+  final int startTimeMs;
 
   @override
   State<_RelatedPlayButton> createState() => _RelatedPlayButtonState();
 }
 
 class _RelatedPlayButtonState extends State<_RelatedPlayButton> {
-  AudioPlayer? _player;
+  final _audio = AudioPlayerService();
 
   @override
   void dispose() {
-    unawaited(_player?.dispose());
+    unawaited(_audio.dispose());
     super.dispose();
   }
 
   Future<void> _play() async {
-    final player = _player ??= AudioPlayer();
-    await player.stop();
-    await player.play(DeviceFileSource(widget.audioPath));
-    final start = widget.startSeconds;
-    if (start != null && start > 0) {
-      await player.seek(Duration(seconds: start));
-    }
+    await _audio.play(widget.audioPath);
+    await _audio.seek(Duration(milliseconds: widget.startTimeMs));
   }
 
   @override

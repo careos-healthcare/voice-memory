@@ -19,6 +19,7 @@ class SimilarEntry {
     this.localAudioPath,
     this.quote,
     this.startSeconds,
+    this.startTimeMs,
   });
 
   final String id;
@@ -32,7 +33,23 @@ class SimilarEntry {
 
   /// Seconds into the recording where [quote] starts, when word timestamps exist.
   final int? startSeconds;
+
+  /// Milliseconds into the recording where the matched chunk starts.
+  final int? startTimeMs;
   final double cosineSimilarity;
+
+  SimilarEntry atChunk(int startTimeMs) {
+    return SimilarEntry(
+      id: id,
+      createdAt: createdAt,
+      transcript: transcript,
+      cosineSimilarity: cosineSimilarity,
+      localAudioPath: localAudioPath,
+      quote: quote,
+      startSeconds: startSeconds,
+      startTimeMs: startTimeMs,
+    );
+  }
 }
 
 /// Local SQLCipher access for journal vectors stored in `reflection_embeddings`.

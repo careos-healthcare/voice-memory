@@ -120,6 +120,8 @@ flutter:
   uses-material-design: true
   assets:
     - config/backend_url.txt
+    - assets/models/all-MiniLM-L6-v2.onnx
+    - assets/models/vocab.txt
   fonts:
     - family: Newsreader
       fonts:

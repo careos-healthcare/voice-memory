@@ -408,10 +408,13 @@ final GoRouter appRouter = GoRouter(
       path: '/entry/:id',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
+        final ms = int.tryParse(state.uri.queryParameters['ms'] ?? '');
         final seconds = int.tryParse(state.uri.queryParameters['t'] ?? '');
         return EntryDetailScreen(
           entryId: state.pathParameters['id'] ?? '',
-          startAt: Duration(seconds: seconds ?? 0),
+          startAt: ms != null
+              ? Duration(milliseconds: ms)
+              : Duration(seconds: seconds ?? 0),
         );
       },
     ),
