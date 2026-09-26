@@ -71,7 +71,7 @@
 	<key>NSHealthShareUsageDescription</key>
 	<string>Thoughtprint reads the State of Mind you logged in Apple Health so it can show that mood beside the moment from the same day.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Thoughtprint can save the mood you choose in a journal entry to Apple Health State of Mind.</string>
+	<string>Thoughtprint saves the mood you choose to Apple Health, only if you turn this on.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Thoughtprint lets you attach photos you choose to a moment. Photos stay on your device unless you turn on sync.</string>
 	<key>NSCameraUsageDescription</key>

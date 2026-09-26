@@ -349,11 +349,25 @@ final class HealthStateOfMindHandler {
       let mood = (call.arguments as? [String: Any])?["mood"] as? String ?? ""
       Task {
         do {
-          try await Self.write(mood: mood)
+          let uuid = try await Self.write(mood: mood)
+          result(uuid)
+        } catch {
+          result(nil)
+        }
+      }
+    case "deleteStateOfMind":
+      let uuid = (call.arguments as? [String: Any])?["uuid"] as? String ?? ""
+      Task {
+        do {
+          try await Self.delete(uuid: uuid)
           result(true)
         } catch {
           result(false)
         }
+      }
+    case "authorizationStatus":
+      Task {
+        result(Self.authorization())
       }
     default:
       result(FlutterMethodNotImplemented)
@@ -373,10 +387,51 @@ final class HealthStateOfMindHandler {
   }
 
   @available(iOS 18.0, *)
-  private static func write(mood: String) async throws {
+  private static func authorization() -> String {
+    guard HKHealthStore.isHealthDataAvailable() else { return "denied" }
+    let status = HKHealthStore().authorizationStatus(for: HKObjectType.stateOfMindType())
+    switch status {
+    case .sharingAuthorized:
+      return "authorized"
+    case .sharingDenied:
+      return "denied"
+    default:
+      return "notDetermined"
+    }
+  }
+
+  @available(iOS 18.0, *)
+  private static func write(mood: String) async throws -> String {
     let store = HKHealthStore()
-    guard HKHealthStore.isHealthDataAvailable() else { return }
-    try await store.save(Self.sample(mood: mood))
+    guard HKHealthStore.isHealthDataAvailable() else { return "" }
+    let sample = Self.sample(mood: mood)
+    try await store.save(sample)
+    return sample.uuid.uuidString
+  }
+
+  @available(iOS 18.0, *)
+  private static func delete(uuid: String) async throws {
+    guard let id = UUID(uuidString: uuid) else { return }
+    let store = HKHealthStore()
+    let type = HKObjectType.stateOfMindType()
+    let predicate = HKQuery.predicateForObject(with: id)
+    let samples: [HKSample] = try await withCheckedThrowingContinuation { continuation in
+      let query = HKSampleQuery(
+        sampleType: type,
+        predicate: predicate,
+        limit: 1,
+        sortDescriptors: nil
+      ) { _, found, error in
+        if let error {
+          continuation.resume(throwing: error)
+          return
+        }
+        continuation.resume(returning: (found as? [HKSample]) ?? [])
+      }
+      store.execute(query)
+    }
+    if samples.isEmpty { return }
+    try await store.delete(samples)
   }
 
   @available(iOS 18.0, *)

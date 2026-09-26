@@ -16,7 +16,25 @@ abstract final class StateOfMindReader {
   @visibleForTesting
   static Future<String?> Function(DateTime day)? debugLookup;
 
+  static final Map<String, String?> _cache = {};
+
+  @visibleForTesting
+  static void clearCache() => _cache.clear();
+
+  static String dayKey(DateTime day) {
+    final local = day.toLocal();
+    return '${local.year}-${local.month}-${local.day}';
+  }
+
   static Future<String?> forDay(DateTime day) async {
+    final key = dayKey(day);
+    if (_cache.containsKey(key)) return _cache[key];
+    final label = await _read(day);
+    _cache[key] = label;
+    return label;
+  }
+
+  static Future<String?> _read(DateTime day) async {
     final override = debugLookup;
     if (override != null) return override(day);
     if (kIsWeb || !Platform.isIOS) return null;
@@ -39,7 +57,7 @@ abstract final class StateOfMindReader {
     final current = entry.reflection;
     return entry.copyWith(
       reflection: Reflection(
-        mood: current.mood.isEmpty ? StateOfMindMood.word(label) : current.mood,
+        mood: current.mood,
         emotionalIntensity: current.emotionalIntensity,
         recurringThemes: current.recurringThemes,
         exactLanguagePattern: current.exactLanguagePattern,

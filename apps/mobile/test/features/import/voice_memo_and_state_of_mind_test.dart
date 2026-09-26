@@ -104,6 +104,7 @@ void main() {
     );
     final attached = await StateOfMindReader.attach(entry);
     expect(attached.reflection.healthStateOfMind, 'calm');
+    expect(attached.reflection.mood, isEmpty);
     expect(attached.toJson()['reflection']['healthStateOfMind'], 'calm');
   });
 

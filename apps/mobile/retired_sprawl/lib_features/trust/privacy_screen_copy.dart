@@ -64,6 +64,14 @@ abstract class PrivacyScreenCopy {
   static const String printedBookBody =
       'A printed book sends the PDF of the dates you choose to Lulu. Lulu deletes that file after printing where their API allows. Thoughtprint keeps only the order id, its status, and when the order was placed.';
 
+  static const String appleHealthTitle = 'Apple Health';
+
+  static const String appleHealthBody =
+      'On iPhone, turning on Apple Health shows the State of Mind you logged '
+      'that day beside the moment. Turning on saving moods writes the mood you '
+      'pick to Apple Health. Deleting that mood removes the sample Thoughtprint '
+      'wrote. Android does not use Apple Health.';
+
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
       'Your archive entries, recorded details, action items, surfacing choices, '
@@ -136,6 +144,7 @@ abstract class PrivacyScreenCopy {
     PrivacySection(title: placeLookupTitle, body: placeLookupDisclosure),
     PrivacySection(title: mapTilesTitle, body: mapTilesBody),
     PrivacySection(title: printedBookTitle, body: printedBookBody),
+    PrivacySection(title: appleHealthTitle, body: appleHealthBody),
     PrivacySection(title: aiProcessingTitle, body: aiProcessingBody),
     PrivacySection(title: encryptedBackupTitle, body: encryptedBackupBody),
     PrivacySection(title: doesNotDoTitle, body: doesNotDoBody),
@@ -157,6 +166,8 @@ abstract class PrivacyScreenCopy {
     mapTilesBody,
     printedBookTitle,
     printedBookBody,
+    appleHealthTitle,
+    appleHealthBody,
     aiProcessingTitle,
     aiProcessingBody,
     encryptedBackupTitle,

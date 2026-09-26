@@ -13,6 +13,26 @@ abstract final class HealthFactory {
   @visibleForTesting
   static Future<bool> Function({required bool update})? debugRequest;
 
+  @visibleForTesting
+  static Future<String> Function()? debugStatus;
+
+  /// `authorized`, `denied`, or `notDetermined`. Reading a sample does not call this.
+  static Future<String> authorizationStatus() async {
+    final override = debugStatus;
+    if (override != null) return override();
+    if (!AppleHealthPlatform.supportsStateOfMind) return 'denied';
+    try {
+      final status = await StateOfMindReader.channel.invokeMethod<String>(
+        'authorizationStatus',
+      );
+      return status ?? 'notDetermined';
+    } on PlatformException {
+      return 'denied';
+    } on MissingPluginException {
+      return 'notDetermined';
+    }
+  }
+
   static Future<bool> requestAuthorization({bool update = false}) async {
     final override = debugRequest;
     if (override != null) return override(update: update);

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/features/health/apple_health_platform.dart';
 import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -62,8 +61,11 @@ class EntryContextPlaceholders extends StatelessWidget {
               label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
               onTap: onMood == null ? null : () => _pickMood(context),
             ),
-            if (AppleHealthPlatform.isIos && health.isNotEmpty)
-              HealthStateOfMindChip(label: health, entryId: entry.id),
+            LazyHealthStateOfMindChip(
+              storedLabel: health,
+              entryId: entry.id,
+              createdAt: entry.createdAt,
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -92,6 +94,11 @@ class EntryContextPlaceholders extends StatelessWidget {
                   label: Text(choice),
                   onPressed: () => Navigator.pop(context, choice),
                 ),
+              ActionChip(
+                key: const Key('mood_chip_clear'),
+                label: const Text('Clear'),
+                onPressed: () => Navigator.pop(context, ''),
+              ),
             ],
           ),
         ),

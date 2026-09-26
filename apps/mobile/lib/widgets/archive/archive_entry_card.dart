@@ -139,7 +139,8 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             key: Key('archive_voice_memo_${entry.id}'),
           ),
         if (_showsMood ||
-            (AppleHealthPlatform.isIos && _healthLabel.isNotEmpty))
+            (AppleHealthPlatform.isIos && _healthLabel.isNotEmpty) ||
+            AppleHealthPlatform.supportsStateOfMind)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Wrap(
@@ -154,11 +155,11 @@ class ArchiveEntryCardMeta extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                if (AppleHealthPlatform.isIos && _healthLabel.isNotEmpty)
-                  HealthStateOfMindChip(
-                    label: _healthLabel,
-                    entryId: entry.id,
-                  ),
+                LazyHealthStateOfMindChip(
+                  storedLabel: _healthLabel,
+                  entryId: entry.id,
+                  createdAt: entry.createdAt,
+                ),
               ],
             ),
           ),

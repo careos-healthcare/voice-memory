@@ -97,6 +97,10 @@ export const PRIVACY_SECTIONS = [
     body: "A printed book sends the PDF of the dates you choose to Lulu. Lulu deletes that file after printing where their API allows. Thoughtprint keeps only the order id, its status, and when the order was placed.",
   },
   {
+    title: "Apple Health",
+    body: "On iPhone, turning on Apple Health shows the State of Mind you logged that day beside the moment. Turning on saving moods writes the mood you pick to Apple Health. Deleting that mood removes the sample Thoughtprint wrote. Android does not use Apple Health.",
+  },
+  {
     title: "Local-first storage",
     body: LOCAL_FIRST_SUMMARY,
   },

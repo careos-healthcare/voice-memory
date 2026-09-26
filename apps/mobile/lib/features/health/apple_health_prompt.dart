@@ -2,10 +2,10 @@ import 'package:archiveme_mobile/features/health/health_factory.dart';
 import 'package:flutter/material.dart';
 
 const appleHealthReadExplanation =
-    'Thoughtprint reads your Apple Health State of Mind to help reflect on your day, without storing raw health data on our servers.';
+    'Thoughtprint can show your Apple Health State of Mind next to your moments, and save the mood you pick in Thoughtprint to Apple Health.';
 
 const appleHealthWriteExplanation =
-    'Thoughtprint can save the mood you choose in a journal entry to Apple Health State of Mind.';
+    'Thoughtprint saves the mood you choose to Apple Health, only if you turn this on.';
 
 /// Shows the explanation, then asks HealthKit only after Allow.
 Future<bool> confirmThenRequestAppleHealthRead(BuildContext context) async {

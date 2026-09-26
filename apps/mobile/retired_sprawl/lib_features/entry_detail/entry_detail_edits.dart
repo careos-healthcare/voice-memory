@@ -73,7 +73,7 @@ Future<void> saveEntryMood({
       ),
     ),
   );
-  await StateOfMindWriter.writeJournalMood(chosen);
+  await StateOfMindWriter.writeJournalMood(chosen, entryId: entry.id);
 }
 
 /// Newest first, matching the archive query `created_at DESC, id DESC`.
