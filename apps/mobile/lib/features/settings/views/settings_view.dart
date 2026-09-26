@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:archiveme_mobile/core/config/launch_profile.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/export/services/auto_backup_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Weekly encrypted backup kept in the device's files.
@@ -11,11 +16,15 @@ class AutomaticWeeklyBackupToggle extends StatefulWidget {
     this.readEnabled,
     this.writeEnabled,
     this.onEnabled,
+    this.readLastBackup,
+    this.onBackupNow,
   });
 
   final Future<bool> Function()? readEnabled;
   final Future<void> Function(bool enabled)? writeEnabled;
   final Future<void> Function()? onEnabled;
+  final Future<DateTime?> Function()? readLastBackup;
+  final Future<void> Function()? onBackupNow;
 
   @override
   State<AutomaticWeeklyBackupToggle> createState() =>
@@ -26,6 +35,7 @@ class _AutomaticWeeklyBackupToggleState
     extends State<AutomaticWeeklyBackupToggle> {
   var _enabled = true;
   var _ready = false;
+  DateTime? _lastBackup;
 
   @override
   void initState() {
@@ -35,11 +45,45 @@ class _AutomaticWeeklyBackupToggleState
 
   Future<void> _load() async {
     final enabled = await _read();
+    final last = await _readLast();
     if (!mounted) return;
     setState(() {
       _enabled = enabled;
+      _lastBackup = last;
       _ready = true;
     });
+  }
+
+  Future<DateTime?> _readLast() async {
+    final injected = widget.readLastBackup;
+    if (injected != null) return injected();
+    if (!AppServices.isInitialized) return null;
+    final raw = await AppServices.instance.prefs.readString(
+      AutoBackupService.lastBackupKey,
+    );
+    return raw == null ? null : DateTime.tryParse(raw);
+  }
+
+  Future<void> _chooseFolder() async {
+    final path = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: 'Choose backup folder',
+    );
+    if (path == null || path.isEmpty || !AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeString(
+      AutoBackupService.folderPreferenceKey,
+      path,
+    );
+  }
+
+  Future<void> _backupNow() async {
+    final injected = widget.onBackupNow;
+    if (injected != null) {
+      await injected();
+    } else {
+      await AutoBackupService.runScheduled(force: true);
+    }
+    final last = await _readLast();
+    if (mounted) setState(() => _lastBackup = last);
   }
 
   Future<bool> _read() async {
@@ -68,7 +112,10 @@ class _AutomaticWeeklyBackupToggleState
   @override
   Widget build(BuildContext context) {
     if (!LaunchProfile.AUTO_ENCRYPTED_BACKUP) return const SizedBox.shrink();
-    return SwitchListTile(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile(
       key: const Key('settings_auto_encrypted_backup'),
       contentPadding: EdgeInsets.zero,
       title: Text(
@@ -87,6 +134,29 @@ class _AutomaticWeeklyBackupToggleState
               if (value) await widget.onEnabled?.call();
             }
           : null,
+        ),
+        Text(
+          AutoBackupService.statusLabel(_lastBackup, DateTime.now()),
+          key: const Key('settings_backup_status'),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            key: const Key('settings_backup_now'),
+            onPressed: _ready ? () => unawaited(_backupNow()) : null,
+            child: const Text('Back up now'),
+          ),
+        ),
+        if (!kIsWeb && Platform.isAndroid)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('settings_backup_choose_folder'),
+              onPressed: _ready ? () => unawaited(_chooseFolder()) : null,
+              child: const Text('Choose backup folder'),
+            ),
+          ),
+      ],
     );
   }
 }

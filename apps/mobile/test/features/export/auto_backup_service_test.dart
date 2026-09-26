@@ -6,14 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('a week-old backup is replaced and only three copies are kept', () async {
+  test('a week-old backup is replaced and only four copies are kept', () async {
     final root = await Directory.systemTemp.createTemp('auto_backup');
     addTearDown(() => root.delete(recursive: true));
     final clock = DateTime.utc(2026, 9, 26, 12);
     DateTime? last = clock.subtract(const Duration(days: 8));
     var enabled = true;
-    for (final name in ['a.zip', 'b.zip', 'c.zip']) {
-      await File('${root.path}/${AutoBackupService.filePrefix}$name').writeAsBytes([1]);
+    final older = ['a.zip', 'b.zip', 'c.zip', 'd.zip'];
+    for (var index = 0; index < older.length; index++) {
+      final file = File(
+        '${root.path}/${AutoBackupService.filePrefix}${older[index]}',
+      );
+      await file.writeAsBytes([1]);
+      file.setLastModifiedSync(clock.subtract(Duration(days: 5 - index)));
     }
 
     final wrote = await AutoBackupService(
@@ -32,7 +37,9 @@ void main() {
         .whereType<File>()
         .map((file) => file.uri.pathSegments.last)
         .toList();
-    expect(kept, hasLength(AutoBackupService.retainedBackups));
+    expect(AutoBackupService.retainedBackups, 4);
+    expect(kept, hasLength(4));
+    expect(kept.any((name) => name.endsWith('a.zip')), isFalse);
     expect(kept.any((name) => name.contains('2026-09-26')), isTrue);
     expect(last, clock);
   });

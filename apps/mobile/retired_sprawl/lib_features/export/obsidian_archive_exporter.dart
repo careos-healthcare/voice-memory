@@ -68,14 +68,20 @@ abstract final class ObsidianArchiveExporter {
   static Map<String, List<int>> markdownDocuments({
     required List<ArchiveBookEntry> entries,
     String directory = 'notes',
+    bool preserveMediaLinks = false,
   }) {
     return {
       for (final entry in entries)
-        '$directory/${_noteName(entry)}': utf8.encode(_markdown(entry)),
+        '$directory/${_noteName(entry)}': utf8.encode(
+          _markdown(entry, preserveMediaLinks: preserveMediaLinks),
+        ),
     };
   }
 
-  static String _markdown(ArchiveBookEntry entry) {
+  static String _markdown(
+    ArchiveBookEntry entry, {
+    bool preserveMediaLinks = false,
+  }) {
     final tags = entry.tags
         .map((tag) => tag.trim())
         .where((tag) => tag.isNotEmpty)
@@ -99,15 +105,27 @@ abstract final class ObsidianArchiveExporter {
       ..writeln('---')
       ..writeln()
       ..writeln(entry.transcript.trim());
-    if (audio != null) {
-      buffer
-        ..writeln()
-        ..writeln('![Audio](audio/$audio)');
-    }
-    for (final photo in entry.photoFileNames) {
-      final name = _fileName(photo);
-      if (name == null) continue;
-      buffer.writeln('![[photos/$name]]');
+    if (preserveMediaLinks) {
+      final href = entry.audioFileName?.trim();
+      if (href != null && href.isNotEmpty) {
+        buffer
+          ..writeln()
+          ..writeln('![Audio]($href)');
+      }
+      for (final photo in entry.photoFileNames) {
+        buffer.writeln('![[$photo]]');
+      }
+    } else {
+      if (audio != null) {
+        buffer
+          ..writeln()
+          ..writeln('![Audio](audio/$audio)');
+      }
+      for (final photo in entry.photoFileNames) {
+        final name = _fileName(photo);
+        if (name == null) continue;
+        buffer.writeln('![[photos/$name]]');
+      }
     }
     return buffer.toString();
   }

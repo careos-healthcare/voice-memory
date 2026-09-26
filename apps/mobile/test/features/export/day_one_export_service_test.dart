@@ -77,6 +77,9 @@ void main() {
     final audioObjects = row['audio'] as List;
     expect(photos.single['md5'], photoHash);
     expect(audioObjects.single['md5'], audioHash);
+    expect(row['audios'], audioObjects);
+    expect(row['uuid'], 'moment-1');
+    expect(DayOneExportService.matchesDocumentedFields(journal), isTrue);
     expect(journal.toString().contains(root.path), isFalse);
   });
 }

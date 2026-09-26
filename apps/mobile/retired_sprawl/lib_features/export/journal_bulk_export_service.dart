@@ -67,6 +67,61 @@ class JournalBulkExportPayload {
   final int entryCount;
   final Map<String, dynamic> entries;
 
+  /// One entry for `journal.json`. Device paths are replaced with
+  /// `audio/<id>.m4a` and `photos/<id>/<n>.jpg`.
+  static Map<String, dynamic> archiveEntry(JournalEntry entry) {
+    final row = jsonDecode(jsonEncode(entry.toJson())) as Map<String, dynamic>;
+    _stripDevicePaths(row);
+    final id = _safeId(entry.id);
+    final audio = entry.audioUrl;
+    if (audio != null && audio.toLowerCase().trim().endsWith('.m4a')) {
+      row['audio_file'] = 'audio/$id.m4a';
+    }
+    final photos = <String>[];
+    var index = 1;
+    for (final image in entry.images) {
+      if (ZipArchiverService.photoFileName(image) == null) continue;
+      photos.add('photos/$id/$index.jpg');
+      index += 1;
+    }
+    if (photos.isNotEmpty) row['images'] = photos;
+    return row;
+  }
+
+  static String _safeId(String id) {
+    final safe = id.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '');
+    return safe.isEmpty ? 'entry' : safe;
+  }
+
+  static void _stripDevicePaths(Object? node) {
+    if (node is Map) {
+      for (final key in node.keys.toList()) {
+        final value = node[key];
+        if (key == 'localAudioPath' || key == 'audioUrl') {
+          node.remove(key);
+          continue;
+        }
+        if (value is String && _isDevicePath(value)) {
+          node.remove(key);
+          continue;
+        }
+        _stripDevicePaths(value);
+      }
+      return;
+    }
+    if (node is List) {
+      node.removeWhere((item) => item is String && _isDevicePath(item));
+      for (final item in node.toList()) {
+        _stripDevicePaths(item);
+      }
+    }
+  }
+
+  static bool _isDevicePath(String value) {
+    final trimmed = value.trim();
+    return trimmed.startsWith('/') || trimmed.contains(r':\');
+  }
+
   String toJsonString() => const JsonEncoder.withIndent('  ').convert(entries);
 
   static JournalBulkExportPayload fromJsonString(String raw) {

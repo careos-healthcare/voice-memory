@@ -26,7 +26,8 @@ class AutoBackupService {
   static const lastBackupKey = 'auto_encrypted_backup_last_at';
   static const passphraseKey = 'auto_encrypted_backup_passphrase';
   static const interval = Duration(days: 7);
-  static const retainedBackups = 3;
+  static const retainedBackups = 4;
+  static const folderPreferenceKey = 'auto_encrypted_backup_folder';
   static const filePrefix = 'thoughtprint-backup-';
 
   final Future<bool> Function() readEnabled;
@@ -38,7 +39,7 @@ class AutoBackupService {
   final DateTime Function()? now;
 
   /// Silent check used when the app opens or returns to the foreground.
-  static Future<bool> runScheduled() async {
+  static Future<bool> runScheduled({bool force = false}) async {
     if (!LaunchProfile.AUTO_ENCRYPTED_BACKUP || !AppServices.isInitialized) {
       return false;
     }
@@ -65,14 +66,31 @@ class AutoBackupService {
         },
         destinationDirectory: backupDirectory,
       );
-      return service.runIfDue();
+      return service.runIfDue(force: force);
     } on Object {
       return false;
     }
   }
 
-  /// Documents on iOS, so Files can show the zip. App external files on Android.
+  static String statusLabel(DateTime? last, DateTime now) {
+    if (last == null) return 'Not backed up yet';
+    final days = now.toUtc().difference(last.toUtc()).inDays;
+    if (days <= 0) return 'Backed up today';
+    if (days == 1) return 'Backed up 1 day ago';
+    return 'Backed up $days days ago';
+  }
+
+  /// Documents on iOS, so Files and iCloud Drive can show the zip.
+  /// On Android, a folder chosen with the system picker is used when set.
   static Future<Directory> backupDirectory() async {
+    if (AppServices.isInitialized) {
+      final chosen = await AppServices.instance.prefs.readString(
+        folderPreferenceKey,
+      );
+      if (chosen != null && chosen.trim().isNotEmpty) {
+        return Directory(chosen.trim());
+      }
+    }
     if (!kIsWeb && Platform.isAndroid) {
       final external = await getExternalStorageDirectory();
       final root = external ?? await getApplicationDocumentsDirectory();
@@ -82,12 +100,14 @@ class AutoBackupService {
     return Directory('${docs.path}/ThoughtprintBackups');
   }
 
-  Future<bool> runIfDue() async {
+  Future<bool> runIfDue({bool force = false}) async {
     if (!LaunchProfile.AUTO_ENCRYPTED_BACKUP) return false;
     if (!await readEnabled()) return false;
     final clock = (now ?? DateTime.now)().toUtc();
     final last = await readLastBackup();
-    if (last != null && clock.difference(last.toUtc()) < interval) {
+    if (!force &&
+        last != null &&
+        clock.difference(last.toUtc()) < interval) {
       return false;
     }
     final bytes = await exportZip(await loadEntries());

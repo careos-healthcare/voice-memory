@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.da
 import 'package:archiveme_mobile/features/export/archive_book_exporter.dart';
 import 'package:archiveme_mobile/features/export/obsidian_archive_exporter.dart';
 import 'package:archiveme_mobile/features/export/services/day_one_export_service.dart';
-import 'package:archiveme_mobile/features/export/services/universal_export_service.dart';
+import 'package:archiveme_mobile/features/export/services/thoughtprint_full_export.dart';
 import 'package:archiveme_mobile/security/export_pdf_renderer.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/security/release_logger.dart';
@@ -29,6 +29,8 @@ class ExportMenuView extends StatefulWidget {
 class _ExportMenuViewState extends State<ExportMenuView> {
   _ExportKind? _busyKind;
   String? _message;
+  double? _progress;
+  var _includeBook = false;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
 
@@ -44,10 +46,29 @@ class _ExportMenuViewState extends State<ExportMenuView> {
         throw StateError('Archive is not open.');
       }
       final entries = await AppServices.instance.journal.loadAll();
-      final bytes = await UniversalExportService.buildZip(entries: entries);
+      List<int>? book;
+      if (_includeBook) {
+        book = await ArchiveBookExporter.export(
+          entries: [
+            for (final entry in entries.where((item) => !item.isDeleted))
+              ArchiveBookEntry(
+                id: entry.id,
+                recordedAt: entry.createdAt,
+                transcript: entry.transcript,
+              ),
+          ],
+        );
+      }
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/${UniversalExportService.suggestedFileName}');
-      await file.writeAsBytes(bytes);
+      final file = await ThoughtprintFullExport.write(
+        entries: entries,
+        outputDirectory: dir,
+        includeBook: _includeBook,
+        bookPdf: book,
+        onProgress: (value) {
+          if (mounted) setState(() => _progress = value);
+        },
+      );
       await Share.shareXFiles([
         XFile(file.path),
       ], subject: 'Thoughtprint journal export');
@@ -220,8 +241,26 @@ class _ExportMenuViewState extends State<ExportMenuView> {
               buttonKey: const Key('export_everything_button'),
               busy: _busyKind == _ExportKind.everything,
               enabled: !_busy,
-              label: 'Export Everything (.zip)',
+              label: 'Export everything',
               onPressed: _exportEverything,
+            ),
+            if (_progress != null && _busyKind == _ExportKind.everything)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: LinearProgressIndicator(
+                  key: const Key('export_everything_progress'),
+                  value: _progress,
+                ),
+              ),
+            CheckboxListTile(
+              key: const Key('export_include_book'),
+              contentPadding: EdgeInsets.zero,
+              value: _includeBook,
+              onChanged: _busy
+                  ? null
+                  : (value) => setState(() => _includeBook = value ?? false),
+              title: const Text('Include book.pdf'),
+              controlAffinity: ListTileControlAffinity.leading,
             ),
             const SizedBox(height: 12),
             _DayOneExportButton(
@@ -359,7 +398,7 @@ class _DayOneExportButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           children: [
-            Text(busy ? 'Exporting…' : 'Export to Day One (.zip)'),
+            Text(busy ? 'Exporting…' : 'Export in Day One format'),
             const SizedBox(height: 4),
             const Text(
               'Generates a Day One compatible ZIP to import into other journaling apps.',

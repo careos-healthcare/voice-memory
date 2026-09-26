@@ -7,12 +7,13 @@ import 'package:archiveme_mobile/core/network/api_failure_mapper.dart';
 import 'package:archiveme_mobile/core/network/voice_memory_api_routes.dart';
 import 'package:archiveme_mobile/core/network/http_transport.dart';
 import 'package:archiveme_mobile/core/network/multipart_file_part.dart';
+import 'package:archiveme_mobile/features/export/services/thoughtprint_full_export.dart';
 import 'package:archiveme_mobile/features/import/day_one_json_parser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
-const _supportedExtensions = {'txt', 'csv', 'json', 'md', 'm4a', 'mp3'};
+const _supportedExtensions = {'txt', 'csv', 'json', 'md', 'm4a', 'mp3', 'zip'};
 const _textBatchSize = 20;
 const _uuid = Uuid();
 
@@ -161,6 +162,28 @@ class BacklogImportService {
     for (final file in files) {
       final extension = _extensionFor(file.name);
       if (extension == null) continue;
+
+      if (extension == 'zip') {
+        if (!file.name.startsWith('thoughtprint-export')) continue;
+        final bytes = file.bytes ?? _readBytes(file);
+        if (bytes == null) continue;
+        final restored = ThoughtprintFullExport.readBytes(
+          bytes,
+          Directory.systemTemp.createTempSync('thoughtprint-import-'),
+        );
+        chunks.addAll([
+          for (final entry in restored)
+            BacklogImportChunk(
+              entryId: entry.id.isEmpty ? _uuid.v4() : entry.id,
+              sourceFile: file.name,
+              kind: BacklogImportChunkKind.text,
+              rawText: entry.transcript,
+              audioPath: entry.audioPath,
+              createdAt: entry.createdAt,
+            ),
+        ]);
+        continue;
+      }
 
       if (extension == 'm4a' || extension == 'mp3') {
         final path = file.path;
@@ -544,6 +567,14 @@ class BacklogImportService {
       return rightDate.compareTo(leftDate);
     });
     return textChunks.first.rawText?.trim();
+  }
+
+  List<int>? _readBytes(PlatformFile file) {
+    final path = file.path;
+    if (path == null || path.isEmpty) return null;
+    final source = File(path);
+    if (!source.existsSync()) return null;
+    return source.readAsBytesSync();
   }
 
   String? _readTextContent(PlatformFile file) {

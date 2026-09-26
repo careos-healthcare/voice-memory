@@ -14,6 +14,26 @@ abstract final class DayOneExportService {
 
   static const suggestedFileName = 'thoughtprint-day-one.zip';
   static const journalFileName = 'Journal.json';
+  static const documentedEntryFields = [
+    'uuid',
+    'text',
+    'creationDate',
+    'photos',
+    'audios',
+  ];
+
+  /// True when every entry has the fields Day One documents for a journal file.
+  static bool matchesDocumentedFields(Map<String, dynamic> journal) {
+    final entries = journal['entries'];
+    if (entries is! List || entries.isEmpty) return false;
+    for (final row in entries) {
+      if (row is! Map) return false;
+      for (final field in documentedEntryFields) {
+        if (!row.containsKey(field)) return false;
+      }
+    }
+    return true;
+  }
 
   static Future<Uint8List> buildZip({
     required List<JournalEntry> entries,
@@ -107,6 +127,7 @@ abstract final class DayOneExportService {
       if (location != null) 'location': location,
       'photos': photos,
       'audio': audio,
+      'audios': audio,
     };
   }
 
