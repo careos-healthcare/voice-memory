@@ -85,7 +85,7 @@ void main() {
 
     final question = await generator.next(transcript: 'the river', turn: 0);
 
-    expect(question, 'What stood out just then?');
+    expect(question, "You said 'the river'. What stood out just then?");
     expect(cloudCalls, 0);
   });
 
@@ -101,7 +101,8 @@ void main() {
           cosineSimilarity: 0.9,
         ),
       ],
-      rephrase: (draft) async => 'What changed by the river?',
+      rephrase: (draft) async =>
+          "What's different since you said 'I kept walking by the river after work.'?",
       cloudQuestion: (_) async {
         cloudCalls += 1;
         return 'Cloud question.';
@@ -110,7 +111,10 @@ void main() {
 
     final question = await generator.next(transcript: 'the river', turn: 0);
 
-    expect(question, 'What changed by the river?');
+    expect(
+      question,
+      "What's different since you said 'I kept walking by the river after work.'?",
+    );
     expect(cloudCalls, 0);
   });
 
@@ -156,7 +160,10 @@ void main() {
     pending!.fire();
     await _settle();
     expect(session.appTurns, 1);
-    expect(session.questions.single, 'What stood out just then?');
+    expect(
+      session.questions.single,
+      "You said 'the deadline moved'. What stood out just then?",
+    );
   });
 
   test('speech during playback stops the question', () async {

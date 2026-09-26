@@ -6,6 +6,9 @@ import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
+import 'package:archiveme_mobile/features/capture/controllers/live_voice_session.dart';
+import 'package:archiveme_mobile/features/capture/reflect_capture_audio.dart';
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
 import 'package:archiveme_mobile/features/capture_flow/live_voice_session.dart';
 import 'package:archiveme_mobile/features/capture_flow/recording_feedback.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_log.dart';
@@ -22,6 +25,7 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/speech_loc
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -55,6 +59,9 @@ class CaptureFlowController extends ChangeNotifier {
   RecordingAmplitudeSeries _amplitudes = RecordingAmplitudeSeries();
   StreamSubscription<String>? _draftSubscription;
   LiveVoiceSession? _liveSession;
+  ReflectWithMeSession? _reflect;
+  List<VoiceChatLine> _reflectLines = const [];
+  var reflectWithMe = false;
   LiveSttRoute _liveSttRoute = LiveSttRoute.offline;
   StreamSubscription<PipelineState>? _pipelineStageSubscription;
   StreamSubscription<VadSegmentEvent>? _thoughtSegmentSubscription;
@@ -63,6 +70,16 @@ class CaptureFlowController extends ChangeNotifier {
   bool _disposed = false;
 
   CaptureFlowSnapshot get snapshot => _snapshot;
+
+  void setReflectWithMe(bool enabled) {
+    reflectWithMe = enabled;
+    ReflectCaptureAudio.enabled = enabled;
+  }
+
+  Future<void> endReflect() async {
+    await _reflect?.end();
+    _publishReflect();
+  }
 
   Future<void> initialize() async {
     final count = await _deps.moments.entryCount();
@@ -519,11 +536,21 @@ class CaptureFlowController extends ChangeNotifier {
       onDeviceStreaming: LiveDraftTranscript.supportsOnDeviceStreaming,
     );
     _liveSession = LiveVoiceSession(onChanged: _publishLiveTurns);
+    if (reflectWithMe) {
+      _reflect = ReflectWithMeSession(
+        onChanged: _publishReflect,
+        onSpeaking: (speaking) {
+          unawaited(LiveDraftTranscript.setPaused(speaking));
+        },
+      );
+      unawaited(_reflect!.start());
+    }
     unawaited(_amplitudeSubscription?.cancel());
     _amplitudeSubscription = _deps.audio.watchAmplitude().listen((db) {
       if (_disposed || (_elapsed?.isPaused ?? false)) return;
       _amplitudes.addDb(db);
       _liveSession?.noteLevel(db);
+      _reflect?.noteLevel(db);
       _emit(_snapshot.copyWith(amplitudeBars: _amplitudes.displayBars));
     });
     if (V1CapabilityRegistry.liveDraftTranscript &&
@@ -546,11 +573,23 @@ class CaptureFlowController extends ChangeNotifier {
     );
   }
 
+  void _publishReflect() {
+    final session = _reflect;
+    if (_disposed || session == null) return;
+    _emit(
+      _snapshot.copyWith(
+        chatLines: List<VoiceChatLine>.of(session.lines),
+        draftTranscript: session.transcript,
+      ),
+    );
+  }
+
   Future<void> _startLiveDraft() async {
     await _draftSubscription?.cancel();
     _draftSubscription = LiveDraftTranscript.partials().listen((text) {
       if (_disposed || text.trim().isEmpty) return;
       _liveSession?.notePartial(text);
+      _reflect?.notePartial(text);
       _emit(
         _snapshot.copyWith(
           draftTranscript: text,
@@ -579,6 +618,12 @@ class CaptureFlowController extends ChangeNotifier {
     _durationSubscription = null;
     await _draftSubscription?.cancel();
     _draftSubscription = null;
+    final reflect = _reflect;
+    if (reflect != null) {
+      await reflect.close();
+      _reflectLines = List<VoiceChatLine>.of(reflect.lines);
+      _reflect = null;
+    }
     await _liveSession?.close();
     _liveSession = null;
     if (V1CapabilityRegistry.liveDraftTranscript) {
@@ -913,13 +958,23 @@ class CaptureFlowController extends ChangeNotifier {
     final count = incrementEntryCount
         ? _snapshot.entryCount + 1
         : _snapshot.entryCount;
+    var entry = RecordingDraftPolicy.entryKeepingPipelineTranscript(
+      entry: result.entry,
+      draft: _snapshot.draftTranscript,
+    );
+    if (_reflectLines.isNotEmpty) {
+      entry = EntrySavePipeline.consolidate(
+        entry: entry,
+        lines: _reflectLines,
+      );
+      final stored = entry;
+      _reflectLines = const [];
+      unawaited(_storeConversation(stored));
+    }
     _emit(
       _snapshot.copyWith(
         phase: phase,
-        savedEntry: RecordingDraftPolicy.entryKeepingPipelineTranscript(
-          entry: result.entry,
-          draft: _snapshot.draftTranscript,
-        ),
+        savedEntry: entry,
         pipelineResult: result,
         entryCount: count,
         hasLocalSave: result.localSaved,
@@ -931,6 +986,15 @@ class CaptureFlowController extends ChangeNotifier {
         clearImages: true,
       ),
     );
+  }
+
+  Future<void> _storeConversation(JournalEntry entry) async {
+    if (!AppServices.isInitialized) return;
+    try {
+      await AppServices.instance.journalStore.save(entry);
+    } on Object {
+      return;
+    }
   }
 
   void _failRecoverable(

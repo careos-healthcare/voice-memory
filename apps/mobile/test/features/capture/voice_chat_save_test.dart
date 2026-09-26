@@ -177,7 +177,10 @@ void main() {
       lines: session.lines,
     );
     expect(saved.transcript, 'the river');
-    expect(saved.aiQuestions.single.text, 'What stood out just then?');
+    expect(
+      saved.aiQuestions.single.text,
+      "You said 'the river'. What stood out just then?",
+    );
     expect(saved.transcript.contains('What stood out'), isFalse);
   });
 }

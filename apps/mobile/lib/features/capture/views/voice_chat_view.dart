@@ -63,12 +63,27 @@ class VoiceChatView extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    line.text,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      color: scheme.onSecondaryContainer,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Thoughtprint asked',
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: scheme.onSecondaryContainer.withValues(
+                            alpha: 0.7,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        line.text,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: scheme.onSecondaryContainer.withValues(
+                            alpha: 0.72,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

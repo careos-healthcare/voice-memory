@@ -14,6 +14,7 @@ import 'package:archiveme_mobile/features/capture/native_quick_capture.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segmented_recording_coordinator.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
+import 'package:archiveme_mobile/features/capture/reflect_capture_audio.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_capture_diagnostics.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_diag_log.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_level_monitor.dart';
@@ -355,7 +356,7 @@ class RecordingService extends Notifier<RecordingState> {
       mode: _captureAudioMode,
     );
     await _activeRecorder.start(
-      AudioCaptureDiagnostics.iosCaptureConfig,
+      ReflectCaptureAudio.apply(AudioCaptureDiagnostics.iosCaptureConfig),
       path: path,
     );
     unawaited(NativeQuickCapture.recordingStarted());

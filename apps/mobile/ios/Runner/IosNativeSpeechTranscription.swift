@@ -622,6 +622,23 @@ final class IosNativeSpeechTranscriptionHandler {
     case "stopLiveDraft":
       IosLiveDraftSpeech.shared.stop()
       result(nil)
+    case "pauseLiveDraft":
+      IosLiveDraftSpeech.shared.paused = true
+      result(nil)
+    case "resumeLiveDraft":
+      IosLiveDraftSpeech.shared.paused = false
+      result(nil)
+    case "probeLiveDraft":
+      let args = call.arguments as? [String: Any]
+      let localeId = args?["localeIdentifier"] as? String ?? ""
+      let recognizer = localeId.isEmpty
+        ? nil
+        : SFSpeechRecognizer(locale: Locale(identifier: localeId))
+      result([
+        "sherpa": false,
+        "platform": false,
+        "iosOnDevice": recognizer?.supportsOnDeviceRecognition ?? false,
+      ])
     case "supportsOnDeviceRecognition":
       // A malformed call is answered with an error rather than `false`.
       // `PlatformLocalTranscriptionAvailability` reads a throw as "could not
@@ -660,6 +677,7 @@ final class IosLiveDraftSpeech: NSObject, FlutterStreamHandler {
   private var request: SFSpeechAudioBufferRecognitionRequest?
   private var task: SFSpeechRecognitionTask?
   private var recognizer: SFSpeechRecognizer?
+  var paused = false
 
   func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
     sink = events
@@ -700,7 +718,8 @@ final class IosLiveDraftSpeech: NSObject, FlutterStreamHandler {
     let format = input.outputFormat(forBus: 0)
     input.removeTap(onBus: 0)
     input.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
-      self?.request?.append(buffer)
+      guard let self, !self.paused else { return }
+      self.request?.append(buffer)
     }
     engine.prepare()
     do {
@@ -713,6 +732,7 @@ final class IosLiveDraftSpeech: NSObject, FlutterStreamHandler {
   }
 
   func stop() {
+    paused = false
     engine.stop()
     engine.inputNode.removeTap(onBus: 0)
     request?.endAudio()

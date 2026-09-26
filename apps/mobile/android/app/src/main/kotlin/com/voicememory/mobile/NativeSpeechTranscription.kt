@@ -46,6 +46,7 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
 
     private val main = Handler(Looper.getMainLooper())
     private val running = AtomicBoolean(false)
+    private val paused = AtomicBoolean(false)
 
     @Volatile
     private var sink: EventChannel.EventSink? = null
@@ -64,7 +65,30 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
             "startLiveDraft" -> startLiveDraft(
                 context.applicationContext,
                 call.argument<String>("localeIdentifier"),
+                call.argument<Boolean>("preferSherpa") ?: true,
+                call.argument<String>("modelDir"),
                 result,
+            )
+            "feedLiveDraftPcm" -> {
+                val bytes = call.arguments as? ByteArray
+                if (bytes != null) feedPcm(bytes)
+                result.success(null)
+            }
+            "pauseLiveDraft" -> {
+                paused.set(true)
+                platformRecognizer?.stopListening()
+                result.success(null)
+            }
+            "resumeLiveDraft" -> {
+                paused.set(false)
+                restartPlatform()
+                result.success(null)
+            }
+            "probeLiveDraft" -> result.success(
+                mapOf(
+                    "sherpa" to (prepareModels(context.applicationContext) != null),
+                    "platform" to (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S),
+                ),
             )
             "stopLiveDraft" -> {
                 stopLiveDraft()
@@ -83,14 +107,19 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
         stopLiveDraft()
     }
 
+    private var platformIntent: Intent? = null
+
     private fun startLiveDraft(
         context: Context,
         locale: String?,
+        preferSherpa: Boolean,
+        modelDir: String?,
         result: MethodChannel.Result,
     ) {
         stopLiveDraft()
+        paused.set(false)
         Thread {
-            val sherpa = tryStartSherpa(context)
+            val sherpa = preferSherpa && tryStartSherpa(context, modelDir)
             main.post {
                 val started = sherpa || tryStartPlatform(context, locale)
                 if (started) {
@@ -106,9 +135,9 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
         }.start()
     }
 
-    private fun tryStartSherpa(context: Context): Boolean {
+    private fun tryStartSherpa(context: Context, modelDir: String?): Boolean {
         return try {
-            val dir = prepareModels(context) ?: return false
+            val dir = modelDirectory(context, modelDir) ?: return false
             val config = OnlineRecognizerConfig(
                 modelConfig = OnlineModelConfig(
                     transducer = OnlineTransducerModelConfig(
@@ -128,12 +157,30 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
             val onlineStream = online.createStream()
             recognizer = online
             stream = onlineStream
-            startPcmLoop(online, onlineStream)
+            running.set(true)
             true
         } catch (_: Throwable) {
             stopLiveDraft()
             false
         }
+    }
+
+    private fun modelDirectory(context: Context, modelDir: String?): File? {
+        val requested = modelDir?.let(::File)
+        if (requested != null && modelFiles.all { name ->
+                File(requested, name).isFile && File(requested, name).length() > 0L
+            }
+        ) {
+            return requested
+        }
+        val downloaded = File(context.filesDir, "streaming_zipformer_en")
+        if (modelFiles.all { name ->
+                File(downloaded, name).isFile && File(downloaded, name).length() > 0L
+            }
+        ) {
+            return downloaded
+        }
+        return prepareModels(context)
     }
 
     private fun prepareModels(context: Context): File? {
@@ -165,53 +212,30 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
         return false
     }
 
-    private fun startPcmLoop(online: OnlineRecognizer, onlineStream: OnlineStream) {
-        val sampleRate = 16000
-        val min = AudioRecord.getMinBufferSize(
-            sampleRate,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT,
-        )
-        require(min > 0) { "microphone buffer is unavailable" }
-        val record = AudioRecord(
-            MediaRecorder.AudioSource.VOICE_RECOGNITION,
-            sampleRate,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT,
-            min * 2,
-        )
-        check(record.state == AudioRecord.STATE_INITIALIZED) {
-            record.release()
-            "microphone is unavailable"
+    private fun feedPcm(bytes: ByteArray) {
+        if (paused.get() || !running.get() || bytes.size < 2) return
+        val online = recognizer ?: return
+        val onlineStream = stream ?: return
+        val samples = FloatArray(bytes.size / 2)
+        var index = 0
+        while (index < samples.size) {
+            val lo = bytes[index * 2].toInt() and 0xff
+            val hi = bytes[index * 2 + 1].toInt() and 0xff
+            var value = lo or (hi shl 8)
+            if (value >= 0x8000) value -= 0x10000
+            samples[index] = value / 32768.0f
+            index += 1
         }
-        audioRecord = record
-        running.set(true)
-        record.startRecording()
-        val thread = Thread {
-            val pcm = ShortArray(min)
-            var last = ""
-            while (running.get()) {
-            val count = record.read(pcm, 0, pcm.size)
-            if (count <= 0) continue
-            val samples = FloatArray(count) { index -> pcm[index] / 32768.0f }
-            try {
-                onlineStream.acceptWaveform(samples, sampleRate)
-                while (online.isReady(onlineStream)) {
-                    online.decode(onlineStream)
-                }
-                val text = online.getResult(onlineStream).text.trim()
-                if (text.isNotEmpty() && text != last) {
-                    last = text
-                    emit(text)
-                }
-            } catch (_: Throwable) {
-                break
+        try {
+            onlineStream.acceptWaveform(samples, 16000)
+            while (online.isReady(onlineStream)) {
+                online.decode(onlineStream)
             }
-            }
+            val text = online.getResult(onlineStream).text.trim()
+            if (text.isNotEmpty()) emit(text)
+        } catch (_: Throwable) {
+            // A bad chunk does not open another microphone.
         }
-        thread.name = "sherpa-live-draft"
-        captureThread = thread
-        thread.start()
     }
 
     private fun tryStartPlatform(context: Context, locale: String?): Boolean {
@@ -246,6 +270,9 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
                 }
             }
+            platformIntent = intent
+            val manager = context.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            manager.mode = android.media.AudioManager.MODE_IN_COMMUNICATION
             speech.startListening(intent)
             true
         } catch (_: Throwable) {
@@ -298,6 +325,18 @@ object NativeSpeechTranscriptionHandler : EventChannel.StreamHandler {
             destroy()
         }
         platformRecognizer = null
+        platformIntent = null
+    }
+
+    private fun restartPlatform() {
+        val speech = platformRecognizer ?: return
+        val intent = platformIntent ?: return
+        if (paused.get()) return
+        try {
+            speech.startListening(intent)
+        } catch (_: Throwable) {
+            // The on-device recogniser has already stopped.
+        }
     }
 
     private fun releaseSherpa() {

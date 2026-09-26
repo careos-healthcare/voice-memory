@@ -38,6 +38,7 @@ class CaptureReadyPanel extends StatelessWidget {
     this.now,
     this.onAddPhoto,
     this.imageCount = 0,
+    this.leading,
     super.key,
   });
 
@@ -64,6 +65,7 @@ class CaptureReadyPanel extends StatelessWidget {
   final DateTime? now;
   final VoidCallback? onAddPhoto;
   final int imageCount;
+  final Widget? leading;
 
   bool get _showsPermissionCopy =>
       MicrophonePermissionCopy.showsPermissionExplanation(
@@ -103,6 +105,7 @@ class CaptureReadyPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (leading != null) leading!,
         Text(
           captureDateLine(now ?? DateTime.now()),
           key: const Key('capture_date_line'),
@@ -336,6 +339,7 @@ class CaptureRecordingPanel extends StatelessWidget {
     this.onTakePhoto,
     this.onChoosePhoto,
     this.imagePaths = const [],
+    this.onThatsAll,
     super.key,
   });
 
@@ -352,6 +356,7 @@ class CaptureRecordingPanel extends StatelessWidget {
   final VoidCallback? onTakePhoto;
   final VoidCallback? onChoosePhoto;
   final List<String> imagePaths;
+  final VoidCallback? onThatsAll;
 
   bool get _showDraft =>
       V1CapabilityRegistry.liveDraftTranscript &&
@@ -422,6 +427,23 @@ class CaptureRecordingPanel extends StatelessWidget {
                     text: _dictation.isNotEmpty
                         ? _dictation
                         : (draftText?.trim() ?? ''),
+                  ),
+                if (LiveDraftTranscript.statusMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      LiveDraftTranscript.statusMessage,
+                      key: const Key('live_draft_download_status'),
+                    ),
+                  ),
+                if (onThatsAll != null)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      key: const Key('reflect_thats_all'),
+                      onPressed: onThatsAll,
+                      child: const Text("That's all"),
+                    ),
                   ),
                 Row(
                   children: [

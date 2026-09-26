@@ -22,6 +22,7 @@ class PostSaveFollowUp extends StatefulWidget {
   const PostSaveFollowUp({
     required this.entry,
     this.dictate,
+    this.saveLinkedEntry,
     super.key,
   });
 
@@ -30,6 +31,9 @@ class PostSaveFollowUp extends StatefulWidget {
   /// Fills the answer from speech. Tests pass a stand-in. The live path uses
   /// the on-device recognizer and a language the person already confirmed.
   final Future<void> Function(ValueChanged<String> onText)? dictate;
+
+  /// Stores the linked answer. Tests pass a stand-in for the journal.
+  final Future<void> Function(JournalEntry note)? saveLinkedEntry;
 
   static const maxTurns = 3;
 
@@ -109,7 +113,6 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
   }
 
   Future<void> _saveAnswer(String text) async {
-    if (!AppServices.isInitialized) return;
     final now = DateTime.now().toUtc();
     final id = const Uuid().v4();
     final note = JournalEntry(
@@ -128,6 +131,12 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
       captureSource: 'post_save_follow_up',
       parentHookId: widget.entry.id,
     );
+    final custom = widget.saveLinkedEntry;
+    if (custom != null) {
+      await custom(note);
+      return;
+    }
+    if (!AppServices.isInitialized) return;
     await AppServices.instance.journalStore.save(note, captureKind: 'typed');
   }
 

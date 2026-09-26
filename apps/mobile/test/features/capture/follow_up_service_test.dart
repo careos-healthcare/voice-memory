@@ -137,4 +137,32 @@ void main() {
       'It sits more quietly now.',
     );
   });
+
+  testWidgets('a spoken follow-up is saved as a linked entry', (tester) async {
+    JournalEntry? saved;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PostSaveFollowUp(
+            entry: current(),
+            dictate: (onText) async {
+              onText('It sits more quietly now.');
+            },
+            saveLinkedEntry: (note) async {
+              saved = note;
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('post_save_follow_up_mic')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('post_save_follow_up_send')));
+    await tester.pump();
+
+    expect(saved?.transcript, 'It sits more quietly now.');
+    expect(saved?.parentHookId, 'today');
+    expect(saved?.transcript.contains('How does'), isFalse);
+  });
 }

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/audio/audio_session_manager.dart';
 import 'package:archiveme_mobile/core/database/database_provider.dart';
+import 'package:archiveme_mobile/features/capture/reflect_question_policy.dart';
 import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
+import 'package:flutter/foundation.dart';
 
 /// Speaks one short question and can be cut off mid-sentence.
 ///
@@ -78,43 +80,66 @@ class ReflectQuestionGenerator {
     required String transcript,
     required int turn,
   }) async {
-    var question = templates[turn % templates.length];
+    if (!ReflectQuestionPolicy.canAskAnother(questionsAlreadyAsked: turn)) {
+      return '';
+    }
+    final last = ReflectQuestionPolicy.verbatimSentence(transcript);
+    String? earlierQuote;
+    DateTime? earlierOn;
     final finder = findSimilarEntries;
-    if (finder != null && transcript.trim().isNotEmpty) {
+    if (finder != null && last.isNotEmpty) {
       final matches = await finder(transcript);
       if (matches.isNotEmpty) {
-        final quote = shortVerbatimQuote(matches.first.transcript);
+        final quote = ReflectQuestionPolicy.verbatimSentence(
+          matches.first.transcript,
+        );
         if (quote.isNotEmpty) {
-          question = 'You once said "$quote". What is different now?';
+          earlierQuote = quote;
+          earlierOn = matches.first.createdAt;
         }
       }
     }
-
+    final template = ReflectQuestionPolicy.localQuestion(
+      lastSentence: last,
+      earlierQuote: earlierQuote,
+      earlierOn: earlierOn,
+    );
+    final sources = [
+      transcript,
+      if (earlierQuote != null) earlierQuote,
+    ];
     final local = rephrase;
     if (local != null) {
-      final rewritten = await local(question);
-      final spoken = _oneSentence(rewritten);
-      if (spoken != null) return spoken;
+      try {
+        final rewritten = await local(template).timeout(
+          ReflectQuestionPolicy.gemmaTimeout,
+        );
+        if (ReflectQuestionPolicy.accept(
+          question: rewritten ?? '',
+          requiredQuote: earlierQuote,
+          sources: sources,
+        )) {
+          return rewritten!.trim();
+        }
+      } on TimeoutException {
+        // The template is already a question.
+      }
     }
-
     if (cloudSyncEnabled) {
       final remote = cloudQuestion;
       if (remote != null) {
         final rewritten = await remote(transcript);
-        final spoken = _oneSentence(rewritten);
-        if (spoken != null) return spoken;
+        if (ReflectQuestionPolicy.accept(
+          question: rewritten ?? '',
+          requiredQuote: earlierQuote,
+          sources: sources,
+        )) {
+          return rewritten!.trim();
+        }
       }
     }
-    return question;
+    return template;
   }
-}
-
-String? _oneSentence(String? value) {
-  final trimmed = value?.trim() ?? '';
-  if (trimmed.isEmpty) return null;
-  final match = RegExp(r'[.?!]').firstMatch(trimmed);
-  if (match == null) return trimmed;
-  return trimmed.substring(0, match.end);
 }
 
 /// Silence, a short spoken question, then the microphone again.
@@ -126,10 +151,11 @@ class ReflectWithMeSession {
     AudioSessionManager? audioSession,
     ReadAloudService? readAloud,
     ReflectQuestionGenerator? questions,
-    this.silence = const Duration(milliseconds: 1500),
+    this.silence = ReflectQuestionPolicy.silence,
     this.energyThresholdDb = -45,
     this.maxAppTurns = 3,
     this.onChanged,
+    this.onSpeaking,
     DateTime Function()? clock,
     Timer Function(Duration duration, void Function() callback)? startTimer,
   }) : audioSession = audioSession ?? AudioSessionManager(),
@@ -145,6 +171,7 @@ class ReflectWithMeSession {
   final double energyThresholdDb;
   final int maxAppTurns;
   final void Function()? onChanged;
+  final void Function(bool speaking)? onSpeaking;
   final DateTime Function() _clock;
   final Timer Function(Duration duration, void Function() callback) _startTimer;
 
@@ -166,6 +193,15 @@ class ReflectWithMeSession {
   Future<void> start() => audioSession.enterReflectMode();
 
   void notePartial(String text) {
+    if (ReflectQuestionPolicy.isClosing(text)) {
+      conversationActive = false;
+      _silenceTimer?.cancel();
+      _silenceTimer = null;
+      _openUser = '';
+      lines.removeWhere((line) => line.partial);
+      onChanged?.call();
+      return;
+    }
     _openUser = text.trim();
     transcript = _userWords();
     _upsertPartialUser();
@@ -191,6 +227,7 @@ class ReflectWithMeSession {
     transcript = _userWords();
     if (readingAloud) {
       readingAloud = false;
+      onSpeaking?.call(false);
       await readAloud.stop();
     }
   }
@@ -202,6 +239,7 @@ class ReflectWithMeSession {
     if (_asking) _speechDuringAsk = true;
     if (!readingAloud) return;
     readingAloud = false;
+    onSpeaking?.call(false);
     unawaited(readAloud.stop());
   }
 
@@ -215,14 +253,22 @@ class ReflectWithMeSession {
     });
   }
 
+  Future<void> end() async {
+    conversationActive = false;
+    _silenceTimer?.cancel();
+    _silenceTimer = null;
+    await close();
+  }
+
   Future<void> _appTurn() async {
-    if (!conversationActive || _asking || appTurns >= maxAppTurns) {
+    if (!conversationActive || _asking || !ReflectQuestionPolicy.canAskAnother(questionsAlreadyAsked: appTurns)) {
       if (appTurns >= maxAppTurns) conversationActive = false;
       return;
     }
     _asking = true;
     _speechDuringAsk = false;
     _heardSpeech = false;
+    final decided = _clock();
     final String question;
     try {
       question = await _questions.next(transcript: transcript, turn: appTurns);
@@ -230,10 +276,14 @@ class ReflectWithMeSession {
       _asking = false;
       return;
     }
-    if (!conversationActive || _speechDuringAsk) {
+    if (question.trim().isEmpty || !conversationActive || _speechDuringAsk) {
       _asking = false;
       _speechDuringAsk = false;
       return;
+    }
+    if (kDebugMode) {
+      final waited = _clock().difference(decided).inMilliseconds;
+      debugPrint('reflect question latency ${waited}ms');
     }
     appTurns += 1;
     questions.add(question);
@@ -247,9 +297,11 @@ class ReflectWithMeSession {
     );
     transcript = _userWords();
     readingAloud = true;
+    onSpeaking?.call(true);
     onChanged?.call();
     await readAloud.speak(question);
     readingAloud = false;
+    onSpeaking?.call(false);
     _asking = false;
     if (appTurns >= maxAppTurns) conversationActive = false;
     onChanged?.call();

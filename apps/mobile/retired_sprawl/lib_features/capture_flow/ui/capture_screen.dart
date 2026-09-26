@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:archiveme_mobile/core/config/live_conversation_feature_flags.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -22,6 +23,7 @@ import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/record/correct_transcript_sheet.dart';
 import 'package:archiveme_mobile/widgets/record/moment_save_receipt_card.dart';
 import 'package:archiveme_mobile/widgets/record/pending_transcript_recovery_sheet.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -63,6 +65,7 @@ class _CaptureScreenState extends State<CaptureScreen>
     with WidgetsBindingObserver {
   late final CaptureFlowController _controller;
   late final TextEditingController _typedController;
+  var _reflect = false;
 
   V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -84,6 +87,7 @@ class _CaptureScreenState extends State<CaptureScreen>
     );
     _controller.addListener(_syncNavigationActivity);
     _controller.setInputMode(widget.initialInputMode);
+    unawaited(_loadReflectChoice());
     unawaited(
       _controller.initialize().then((_) {
         if (!mounted) return;
@@ -94,6 +98,24 @@ class _CaptureScreenState extends State<CaptureScreen>
         }
       }),
     );
+  }
+
+  Future<void> _loadReflectChoice() async {
+    if (!LiveConversationFeatureFlags.enabled) return;
+    final stored = AppServices.isInitialized
+        ? await AppServices.instance.prefs.readBool('reflect_with_me')
+        : null;
+    if (!mounted) return;
+    final enabled = stored ?? false;
+    _controller.setReflectWithMe(enabled);
+    setState(() => _reflect = enabled);
+  }
+
+  Future<void> _setReflect(bool value) async {
+    _controller.setReflectWithMe(value);
+    setState(() => _reflect = value);
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeBool('reflect_with_me', value);
   }
 
   @override
@@ -179,6 +201,7 @@ class _CaptureScreenState extends State<CaptureScreen>
         onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
         onAddPhoto: _addPhoto,
         imageCount: snapshot.attachedImages.length,
+        leading: _reflectToggle(),
       ),
       CaptureFlowPhase.requestingPermission ||
       CaptureFlowPhase.stopping ||
@@ -202,6 +225,7 @@ class _CaptureScreenState extends State<CaptureScreen>
         onTakePhoto: () => _addPhoto(ImageSource.camera),
         onChoosePhoto: () => _addPhoto(ImageSource.gallery),
         imagePaths: snapshot.attachedImages,
+        onThatsAll: _reflect ? () => unawaited(_controller.endReflect()) : null,
       ),
       CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
         message: snapshot.errorMessage ?? 'Something went wrong.',
@@ -214,6 +238,17 @@ class _CaptureScreenState extends State<CaptureScreen>
       CaptureFlowPhase.savedLocal ||
       CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
     };
+  }
+
+  Widget? _reflectToggle() {
+    if (!LiveConversationFeatureFlags.enabled) return null;
+    return SwitchListTile(
+      key: const Key('reflect_with_me_toggle'),
+      contentPadding: EdgeInsets.zero,
+      title: const Text('Reflect with me'),
+      value: _reflect,
+      onChanged: (value) => unawaited(_setReflect(value)),
+    );
   }
 
   Widget _buildReceipt(BuildContext context, CaptureFlowSnapshot snapshot) {
