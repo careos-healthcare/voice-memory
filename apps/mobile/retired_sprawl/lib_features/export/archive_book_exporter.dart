@@ -11,6 +11,7 @@ class ArchiveBookEntry {
     required this.transcript,
     this.tags = const [],
     this.audioFileName,
+    this.photoFileNames = const [],
   });
 
   final String id;
@@ -18,6 +19,7 @@ class ArchiveBookEntry {
   final String transcript;
   final List<String> tags;
   final String? audioFileName;
+  final List<String> photoFileNames;
 }
 
 /// A pattern page may only repeat quotes that already appear in entries.

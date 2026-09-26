@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/features/export/full_archive_transfer.dart';
 import 'package:archiveme_mobile/features/export/import_guides.dart';
+import 'package:archiveme_mobile/features/export/services/archive_transfer_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -39,20 +40,9 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
     setState(() => _busy = true);
     try {
       final saved = await AppServices.instance.journal.loadAll();
-      final bytes = await FullArchiveTransfer.exportZip(
+      final bytes = await ArchiveTransferService.exportZip(
         vault: await _vault(),
-        entries: [
-          for (final entry in saved)
-            ArchiveTransferEntry(
-              id: entry.id,
-              createdAt: entry.createdAt,
-              transcript: entry.transcript,
-              mood: entry.reflection.mood.trim().isEmpty
-                  ? null
-                  : entry.reflection.mood.trim(),
-              place: entry.display.locationLabel,
-            ),
-        ],
+        entries: saved,
       );
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/thoughtprint-archive.zip');

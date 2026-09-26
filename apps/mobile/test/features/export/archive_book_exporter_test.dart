@@ -99,10 +99,14 @@ void main() {
           transcript: 'I said this on that day.',
           tags: const ['work'],
           audioFileName: 'clip.m4a',
+          photoFileNames: const ['moment.jpg'],
         ),
       ],
       audioByFileName: {
         'clip.m4a': [1, 2, 3],
+      },
+      photosByFileName: {
+        'moment.jpg': [4, 5],
       },
     );
     final archive = ZipDecoder().decodeBytes(bytes);
@@ -114,9 +118,16 @@ void main() {
     expect(markdown, contains('tags:'));
     expect(markdown, contains('- work'));
     expect(markdown, contains('audio: clip.m4a'));
+    expect(markdown, contains('![Audio](audio/clip.m4a)'));
+    expect(markdown, contains('![Photo](photos/moment.jpg)'));
     expect(markdown, contains('I said this on that day.'));
+    expect(markdown.contains('/var/'), isFalse);
     expect(
       archive.files.any((file) => file.name == 'audio/clip.m4a'),
+      isTrue,
+    );
+    expect(
+      archive.files.any((file) => file.name == 'photos/moment.jpg'),
       isTrue,
     );
   });

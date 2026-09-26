@@ -33,16 +33,17 @@ class _JournalBulkExportScreenState extends State<JournalBulkExportScreen> {
       final service = JournalBulkExportService(
         repository: JournalSqliteRepository(AppServices.instance.sqliteDatabase),
       );
-      final payload = await service.buildExport();
+      final archive = await service.buildZip();
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/archiveme_journal_export.json');
-      await file.writeAsString(payload.toJsonString());
+      final file = File('${dir.path}/archiveme_journal_export.zip');
+      await file.writeAsBytes(archive.zipBytes);
       await Share.shareXFiles(
         [XFile(file.path)],
         subject: 'Thoughtprint journal export',
       );
       setState(
-        () => _message = 'Exported ${payload.entryCount} entries to JSON.',
+        () => _message =
+            'Exported ${archive.payload.entryCount} entries with their recordings and photos.',
       );
     } catch (e, stackTrace) {
       setState(() => _message = 'Export failed. Try again.');
@@ -61,8 +62,9 @@ class _JournalBulkExportScreenState extends State<JournalBulkExportScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Exports non-deleted journal entries as open JSON via local SQLite. '
-              'Includes transcripts, reflections, timestamps, and insight citations. '
+              'Exports non-deleted journal entries as a zip. '
+              'The journal file uses relative names for recordings and photos, '
+              'and those files travel in the archive. '
               'Share sheet only — nothing is uploaded automatically.',
               style: TextStyle(color: AppTheme.muted, height: 1.4),
             ),

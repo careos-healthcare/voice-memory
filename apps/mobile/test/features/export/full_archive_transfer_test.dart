@@ -44,9 +44,18 @@ void main() {
         ),
       ],
       audio: {'e1.m4a': utf8.encode('audio-bytes')},
+      photos: {'bridge.jpg': utf8.encode('photo-bytes')},
     );
     final names = ZipDecoder().decodeBytes(bytes).files.map((file) => file.name);
-    expect(names, containsAll(['manifest.json', 'journal.json', 'audio/e1.m4a']));
+    expect(
+      names,
+      containsAll([
+        'manifest.json',
+        'journal.json',
+        'audio/e1.m4a',
+        'photos/bridge.jpg',
+      ]),
+    );
     final imported = await FullArchiveTransfer.importZip(
       vault: vault,
       bytes: bytes,

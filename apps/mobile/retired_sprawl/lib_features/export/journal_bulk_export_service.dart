@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:archiveme_mobile/features/export/services/zip_archiver_service.dart';
 import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_catalog.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
@@ -39,8 +41,10 @@ class JournalBulkExportPayload {
           'transcript': entry.transcript,
           'reflection': entry.reflection.toJson(),
           'isArchived': entry.isArchived,
-          if (entry.localAudioPath != null && entry.localAudioPath!.isNotEmpty)
-            'localAudioPath': entry.localAudioPath,
+          ...ZipArchiverService.portableMediaFields(
+            audioPath: entry.audioUrl,
+            images: entry.images,
+          ),
           if (entry.proof.verifiedProof != null)
             'verifiedProof': entry.proof.verifiedProof!.toJson(),
         },
@@ -86,14 +90,36 @@ class JournalBulkExportService {
   final MemoryTransparencyCatalog catalog;
 
   Future<JournalBulkExportPayload> buildExport() async {
+    final entries = await _loadEntries();
+    return JournalBulkExportPayload.fromEntries(
+      entries: entries,
+      insights: catalog.build(entries: entries),
+    );
+  }
+
+  /// Journal JSON plus the recordings and full-size photos those entries name.
+  Future<({JournalBulkExportPayload payload, Uint8List zipBytes})>
+  buildZip() async {
+    final entries = await _loadEntries();
+    final payload = JournalBulkExportPayload.fromEntries(
+      entries: entries,
+      insights: catalog.build(entries: entries),
+    );
+    final packed = await ZipArchiverService.packEntries(entries);
+    return (
+      payload: payload,
+      zipBytes: ZipArchiverService.encode(
+        documents: {'journal.json': utf8.encode(payload.toJsonString())},
+        audio: packed.audioByName,
+        photos: packed.photosByName,
+      ),
+    );
+  }
+
+  Future<List<JournalEntry>> _loadEntries() async {
     await CaregiverSessionGuard.assertOwnerAccess(
       CaregiverSessionGuard.exportJournalBulk,
     );
-    final entries = await repository.fetchAllActive();
-    final insights = catalog.build(entries: entries);
-    return JournalBulkExportPayload.fromEntries(
-      entries: entries,
-      insights: insights,
-    );
+    return repository.fetchAllActive();
   }
 }

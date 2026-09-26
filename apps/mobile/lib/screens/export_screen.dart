@@ -58,9 +58,10 @@ class _ExportScreenState extends State<ExportScreen> {
         );
       } else if (kind == _ExportKind.obsidian) {
         file = File('${dir.path}/thoughtprint-obsidian.zip');
+        final saved = await AppServices.instance.journal.loadAll();
         await file.writeAsBytes(
-          ObsidianArchiveExporter.buildZip(
-            entries: bookEntries,
+          await ObsidianArchiveExporter.buildZipFromJournal(
+            entries: saved,
             start: _rangeStart,
             end: _rangeEnd,
           ),

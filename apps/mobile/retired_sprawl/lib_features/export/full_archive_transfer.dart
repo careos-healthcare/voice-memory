@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/features/export/services/zip_archiver_service.dart';
 
 class ArchiveTransferEntry {
   const ArchiveTransferEntry({
@@ -13,6 +14,7 @@ class ArchiveTransferEntry {
     this.mood,
     this.place,
     this.audioFileName,
+    this.photoFileNames = const [],
   });
 
   final String id;
@@ -22,6 +24,7 @@ class ArchiveTransferEntry {
   final String? mood;
   final String? place;
   final String? audioFileName;
+  final List<String> photoFileNames;
 
   Map<String, Object?> toJson() => {
     'id': id,
@@ -31,6 +34,7 @@ class ArchiveTransferEntry {
     'mood': mood,
     'place': place,
     'audioFileName': audioFileName,
+    'photoFileNames': photoFileNames,
   };
 
   factory ArchiveTransferEntry.fromJson(Map<String, Object?> json) {
@@ -45,6 +49,11 @@ class ArchiveTransferEntry {
       mood: json['mood'] as String?,
       place: json['place'] as String?,
       audioFileName: json['audioFileName'] as String?,
+      photoFileNames: [
+        for (final name
+            in (json['photoFileNames'] as List<Object?>? ?? const []))
+          name.toString(),
+      ],
     );
   }
 }
@@ -68,6 +77,7 @@ abstract final class FullArchiveTransfer {
     required PassphraseVault vault,
     required List<ArchiveTransferEntry> entries,
     Map<String, List<int>> audio = const {},
+    Map<String, List<int>> photos = const {},
   }) async {
     final journal = jsonEncode({
       'entries': entries.map((entry) => entry.toJson()).toList(),
@@ -79,13 +89,14 @@ abstract final class FullArchiveTransfer {
       'salt': encrypted.salt,
       'nonce': encrypted.nonce,
     });
-    final archive = Archive();
-    archive.addFile(_file('manifest.json', utf8.encode(manifest)));
-    archive.addFile(_file('journal.json', base64Decode(encrypted.ciphertext)));
-    for (final item in audio.entries) {
-      archive.addFile(_file('audio/${item.key}', item.value));
-    }
-    return Uint8List.fromList(ZipEncoder().encode(archive));
+    return ZipArchiverService.encode(
+      documents: {
+        'manifest.json': utf8.encode(manifest),
+        'journal.json': base64Decode(encrypted.ciphertext),
+      },
+      audio: audio,
+      photos: photos,
+    );
   }
 
   static Future<ArchiveBundle> importZip({
@@ -132,9 +143,5 @@ abstract final class FullArchiveTransfer {
       }
     }
     return byId.values.toList();
-  }
-
-  static ArchiveFile _file(String name, List<int> bytes) {
-    return ArchiveFile(name, bytes.length, bytes);
   }
 }

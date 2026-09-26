@@ -68,6 +68,7 @@ class EncryptedArchiveBackupSettingsTile extends StatelessWidget {
                       '${AppServices.instance.documentsBasePath}/'
                       '${LocalAudioStorageService.pendingAudioDirectoryName}',
                     ),
+                    photosDirectory: _photosDirectory(),
                     destination: FileEncryptedArchiveBackupDestination(
                       File(path),
                     ),
@@ -137,6 +138,7 @@ Future<void> backupArchiveNow(String passphrase) async {
     final service = EncryptedArchiveBackupService(
       databaseFile: database,
       audioDirectory: audio,
+      photosDirectory: _photosDirectory(),
       destination: ICloudEncryptedArchiveBackupDestination(),
       secureStorage: AppServices.instance.secureStorage,
     );
@@ -146,6 +148,7 @@ Future<void> backupArchiveNow(String passphrase) async {
   final sealed = await EncryptedArchiveBackupCodec.seal(
     databaseFile: database,
     audioDirectory: audio,
+    photosDirectory: _photosDirectory(),
     passphrase: passphrase,
   );
   final savedPath = await FilePicker.platform.saveFile(
@@ -181,6 +184,7 @@ Future<void> restoreArchive(String passphrase) async {
     final service = EncryptedArchiveBackupService(
       databaseFile: database,
       audioDirectory: audio,
+      photosDirectory: _photosDirectory(),
       destination: ICloudEncryptedArchiveBackupDestination(),
     );
     await service.restoreFromBackup(passphrase);
@@ -194,7 +198,12 @@ Future<void> restoreArchive(String passphrase) async {
     passphrase: passphrase,
     databaseFile: database,
     audioDirectory: audio,
+    photosDirectory: _photosDirectory(),
   );
+}
+
+Directory _photosDirectory() {
+  return Directory('${AppServices.instance.documentsBasePath}/journal-images');
 }
 
 /// Onboarding control. Hidden while the flag is off.

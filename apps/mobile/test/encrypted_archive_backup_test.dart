@@ -55,6 +55,41 @@ void main() {
     ]);
   });
 
+  test('encrypted backup keeps full-size photos beside the audio', () async {
+    final sourceDb = File('${root.path}/source.db');
+    final sourceAudio = Directory('${root.path}/audio');
+    final sourcePhotos = Directory('${root.path}/photos');
+    await sourceAudio.create();
+    await sourcePhotos.create();
+    await sourceDb.writeAsBytes([1, 2, 3]);
+    await File('${sourceAudio.path}/clip.m4a').writeAsBytes([9]);
+    await File('${sourcePhotos.path}/shot.jpg').writeAsBytes([4, 5]);
+    await File('${sourcePhotos.path}/shot_thumb.jpg').writeAsBytes([1]);
+
+    final sealed = await EncryptedArchiveBackupCodec.seal(
+      databaseFile: sourceDb,
+      audioDirectory: sourceAudio,
+      photosDirectory: sourcePhotos,
+      passphrase: 'correct horse',
+      profile: ArchiveBackupKdfProfile.test,
+    );
+
+    final restoredPhotos = Directory('${root.path}/restored-photos');
+    await EncryptedArchiveBackupCodec.restore(
+      sealed: sealed,
+      passphrase: 'correct horse',
+      databaseFile: File('${root.path}/restored.db'),
+      audioDirectory: Directory('${root.path}/restored-audio'),
+      photosDirectory: restoredPhotos,
+    );
+
+    expect(await File('${restoredPhotos.path}/shot.jpg').readAsBytes(), [
+      4,
+      5,
+    ]);
+    expect(File('${restoredPhotos.path}/shot_thumb.jpg').existsSync(), isFalse);
+  });
+
   test('wrong passphrase fails cleanly', () async {
     final sourceDb = File('${root.path}/source.db');
     await sourceDb.writeAsBytes([1, 2, 3, 4]);
