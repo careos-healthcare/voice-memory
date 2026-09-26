@@ -73,9 +73,9 @@
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Thoughtprint can save the mood you choose in a journal entry to Apple Health State of Mind.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Thoughtprint requires access to your photos to attach them to your journal entries.</string>
+	<string>Thoughtprint lets you attach photos you choose to a moment. Photos stay on your device unless you turn on sync.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Thoughtprint requires camera access so you can take photos directly inside your journal.</string>
+	<string>Thoughtprint lets you take a photo to attach to a moment.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

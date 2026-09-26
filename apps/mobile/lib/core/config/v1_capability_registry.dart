@@ -6,8 +6,7 @@ import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart
 import 'package:archiveme_mobile/features/insights/pattern_exploration_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_feature_flags.dart';
 
-/// Launch-profile switches. Apple Health stays on for the beta so the
-/// HealthKit share string and the mood sync control are both active.
+/// Launch-profile switches. Apple Health is the single health switch.
 abstract final class AppFlags {
   AppFlags._();
 
@@ -46,11 +45,11 @@ abstract final class V1CapabilityRegistry {
   static const bool notifications = true;
   static const bool backgroundProcessing = false;
 
-  /// Apple Health State of Mind. Permission and the Settings control share
-  /// [AppFlags.appleHealth].
+  /// Apple Health State of Mind. Off until [AppFlags.appleHealth] is turned on.
   static const bool health = AppFlags.appleHealth;
 
-  /// Settings control that reads Apple Health State of Mind.
+  /// The one HealthKit switch. Settings, the share string, and the
+  /// entitlement all follow it.
   static const bool appleHealth = AppFlags.appleHealth;
 
   /// Passphrase-sealed journal sync in Settings.

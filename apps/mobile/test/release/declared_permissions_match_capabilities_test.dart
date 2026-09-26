@@ -10,8 +10,8 @@ const _declarationFlags = <String, bool>{
   'NSMicrophoneUsageDescription': V1CapabilityRegistry.microphone,
   'NSFaceIDUsageDescription': V1CapabilityRegistry.biometricLock,
   'NSSpeechRecognitionUsageDescription': V1CapabilityRegistry.speechRecognition,
-  'NSHealthShareUsageDescription': V1CapabilityRegistry.health,
-  'NSHealthUpdateUsageDescription': V1CapabilityRegistry.health,
+  'NSHealthShareUsageDescription': V1CapabilityRegistry.appleHealth,
+  'NSHealthUpdateUsageDescription': V1CapabilityRegistry.appleHealth,
   'NSCalendarsFullAccessUsageDescription': V1CapabilityRegistry.calendar,
   'NSCalendarsUsageDescription': V1CapabilityRegistry.calendar,
   'NSLocationWhenInUseUsageDescription': V1CapabilityRegistry.location,
@@ -21,14 +21,11 @@ const _declarationFlags = <String, bool>{
   'NSBluetoothAlwaysUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSBluetoothPeripheralUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSLocalNetworkUsageDescription': V1CapabilityRegistry.localNetwork,
-  // Taking a photo inside a journal entry requires this purpose string.
-  'NSCameraUsageDescription': true,
-  // image_picker stays linked for journal photos. App Store review requires
-  // this purpose string even when the picker uses PHPicker.
-  'NSPhotoLibraryUsageDescription': true,
+  'NSCameraUsageDescription': V1CapabilityRegistry.photoAttachments,
+  'NSPhotoLibraryUsageDescription': V1CapabilityRegistry.photoAttachments,
   'NSPhotoLibraryAddUsageDescription': V1CapabilityRegistry.cameraAndPhotos,
   'NSMotionUsageDescription': V1CapabilityRegistry.activityRecognition,
-  'com.apple.developer.healthkit': V1CapabilityRegistry.health,
+  'com.apple.developer.healthkit': V1CapabilityRegistry.appleHealth,
   'aps-environment': V1CapabilityRegistry.notifications,
   'android.permission.RECORD_AUDIO': V1CapabilityRegistry.microphone,
   'android.permission.USE_BIOMETRIC': V1CapabilityRegistry.biometricLock,
@@ -46,7 +43,7 @@ const _declarationFlags = <String, bool>{
   'android.permission.NEARBY_WIFI_DEVICES': V1CapabilityRegistry.nearbyWifi,
   'android.permission.READ_CALENDAR': V1CapabilityRegistry.calendar,
   'android.permission.WRITE_CALENDAR': V1CapabilityRegistry.calendar,
-  'android.permission.health.READ_STEPS': V1CapabilityRegistry.health,
+  'android.permission.health.READ_STEPS': V1CapabilityRegistry.appleHealth,
   'android.permission.ACTIVITY_RECOGNITION':
       V1CapabilityRegistry.activityRecognition,
   'android.permission.READ_MEDIA_AUDIO': false,
