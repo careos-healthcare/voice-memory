@@ -107,6 +107,7 @@ import 'package:archiveme_mobile/services/sync/background_sync_queue_gateway.dar
 import 'package:archiveme_mobile/services/sync/background_sync_queue_worker.dart';
 import 'package:archiveme_mobile/services/sync/deferred_proof_admission_reconciler.dart';
 import 'package:archiveme_mobile/features/journal/infrastructure/journal_fact_ledger_citation_interceptor.dart';
+import 'package:archiveme_mobile/features/sync/journal_cloud_ledger_interceptor.dart';
 import 'package:archiveme_mobile/services/sync/journal_save_sync_enqueue_interceptor.dart';
 import 'package:archiveme_mobile/features/coach/local_rag/local_coach_conversation_service.dart';
 import 'package:archiveme_mobile/features/insights/rag/local_routine_rag_engine.dart';
@@ -1743,6 +1744,7 @@ class AppServices {
       leading.add(JournalSaveSyncEnqueueInterceptor(worker));
     }
     leading.add(const JournalFactLedgerCitationInterceptor());
+    leading.add(const JournalCloudLedgerInterceptor());
     final reflectionWorker = services._reflectionEmbeddingIndexWorker;
     if (reflectionWorker != null) {
       leading.add(JournalReflectionEmbeddingInterceptor(reflectionWorker));

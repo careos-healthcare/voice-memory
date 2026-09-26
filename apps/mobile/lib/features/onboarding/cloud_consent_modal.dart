@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
+import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 
 /// Asks before journal text is uploaded for cloud features.
@@ -55,6 +60,15 @@ class CloudConsentModal {
         );
       },
     );
+    if (allowed == true) {
+      if (AppServices.isInitialized) {
+        await UserPreferences.setCloudSyncEnabled(
+          AppServices.instance.prefs,
+          true,
+        );
+      }
+      unawaited(CloudSyncService.backfillLocalEntries());
+    }
     return allowed ?? false;
   }
 }

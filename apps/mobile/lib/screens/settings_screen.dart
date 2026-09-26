@@ -250,7 +250,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
     if (confirmed != true || !mounted) return;
-    _showCloudDeleteResult(await _deleteCloudCopy());
+    final deleted = await _deleteCloudCopy();
+    if (deleted) {
+      await _setCloudSync(false);
+    }
+    _showCloudDeleteResult(deleted);
   }
 
   Future<void> _onCloudSyncChanged(bool enabled) async {

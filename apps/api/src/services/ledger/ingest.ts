@@ -64,3 +64,23 @@ export async function ingestTranscriptChunk(
         : String(row.created_at),
   };
 }
+
+/** Replaces any stored text for this entry, then stores the current transcript. */
+export async function replaceJournalTranscript(
+  userId: string,
+  entryId: string,
+  transcriptText: string,
+): Promise<IngestTranscriptChunkResult> {
+  assertPostgresAvailable();
+  const normalizedUserId = userId.trim();
+  const normalizedEntryId = entryId.trim();
+  if (!normalizedUserId || !normalizedEntryId) {
+    throw new Error("userId and entryId are required for ledger ingestion.");
+  }
+
+  await dbQuery(
+    `DELETE FROM fact_ledger WHERE user_id = $1 AND entry_id = $2`,
+    [normalizedUserId, normalizedEntryId],
+  );
+  return ingestTranscriptChunk(normalizedUserId, normalizedEntryId, transcriptText);
+}
