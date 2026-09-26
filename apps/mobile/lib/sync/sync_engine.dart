@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/data/network/sync_api_client.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
 import 'package:archiveme_mobile/sync/sync_conflict_resolution.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
@@ -375,5 +376,43 @@ class SyncEngine {
       },
       onFailure: ApiFailureResult.new,
     );
+  }
+}
+
+/// Pushes per-entry records after a short pause, and pulls on a foreground timer.
+class RecordSyncEngine {
+  RecordSyncEngine({
+    required this.push,
+    required this.pull,
+    this.debounce = RecordSyncSchedule.pushDebounce,
+    this.now = DateTime.now,
+  });
+
+  final Future<void> Function() push;
+  final Future<void> Function() pull;
+  final Duration debounce;
+  final DateTime Function() now;
+  DateTime? lastPull;
+  int attempt = 0;
+
+  Duration get retryAfter => RecordSyncSchedule.backoff(attempt);
+
+  bool get shouldPull => RecordSyncSchedule.pullDue(lastPull, now());
+
+  void noteSave(void Function(Duration delay) schedule) {
+    schedule(debounce);
+  }
+
+  Future<void> catchUp() async {
+    if (!shouldPull && attempt == 0) return;
+    try {
+      await pull();
+      await push();
+      lastPull = now().toUtc();
+      attempt = 0;
+    } catch (_) {
+      attempt += 1;
+      rethrow;
+    }
   }
 }

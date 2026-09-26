@@ -1,6 +1,7 @@
 import AVFoundation
 import Flutter
 import HealthKit
+import Security
 import UIKit
 import WatchConnectivity
 import workmanager_apple
@@ -232,6 +233,31 @@ import workmanager_apple
       default:
         result(FlutterMethodNotImplemented)
       }
+    }
+    let keychain = FlutterMethodChannel(
+      name: "archive_me/account_keychain",
+      binaryMessenger: controller.binaryMessenger
+    )
+    keychain.setMethodCallHandler { call, result in
+      guard call.method == "save",
+            let args = call.arguments as? [String: Any],
+            let encoded = args["key"] as? String,
+            let data = Data(base64Encoded: encoded) else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      let query: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
+        kSecAttrAccount as String: "thoughtprint.account-key",
+        kSecAttrService as String: "thoughtprint.sync",
+        kSecAttrSynchronizable as String: kCFBooleanTrue as Any,
+      ]
+      SecItemDelete(query as CFDictionary)
+      var add = query
+      add[kSecValueData as String] = data
+      add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+      let status = SecItemAdd(add as CFDictionary, nil)
+      result(status == errSecSuccess)
     }
   }
 }

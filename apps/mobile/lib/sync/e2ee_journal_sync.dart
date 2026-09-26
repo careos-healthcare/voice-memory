@@ -5,8 +5,10 @@ import 'package:archiveme_mobile/api/models/sync_dto.dart';
 import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart' as e2ee;
 import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 
-/// Serializes SQLite journal rows, seals them, and keeps the newer copy.
+/// Legacy whole-journal snapshot. New sync seals one [SealedSyncRecord] per entry.
+/// [migrateSnapshot] turns a decrypted snapshot into those records.
 abstract final class E2eeJournalSync {
   E2eeJournalSync._();
 
@@ -111,5 +113,44 @@ abstract final class E2eeJournalSync {
       for (final row in rows)
         if (row is Map) JournalEntry.fromJson(Map<String, dynamic>.from(row)),
     ];
+  }
+
+  /// Upgrades a decrypted snapshot into per-entry records on the next sync.
+  static Future<List<SealedSyncRecord>> migrateSnapshot({
+    required List<int> accountKey,
+    required List<JournalEntry> entries,
+    required String deviceId,
+  }) async {
+    final records = <SealedSyncRecord>[];
+    for (final entry in entries) {
+      final when = entry.updatedAt;
+      records.add(
+        await RecordSync.sealEntry(
+          accountKey: accountKey,
+          recordId: entry.id,
+          version: 1,
+          deviceId: deviceId,
+          state: EntryFieldState(
+            transcript: entry.transcript,
+            baseTranscript: entry.transcript,
+            transcriptUpdatedAt: when,
+            transcriptDeviceId: deviceId,
+            title: entry.display.title ?? '',
+            titleUpdatedAt: when,
+            titleDeviceId: deviceId,
+            mood: entry.reflection.mood,
+            moodUpdatedAt: when,
+            moodDeviceId: deviceId,
+            place: entry.display.locationLabel ?? '',
+            placeUpdatedAt: when,
+            placeDeviceId: deviceId,
+            tags: const [],
+            tagsUpdatedAt: when,
+            tagsDeviceId: deviceId,
+          ),
+        ),
+      );
+    }
+    return records;
   }
 }

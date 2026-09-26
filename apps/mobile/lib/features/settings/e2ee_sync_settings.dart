@@ -111,3 +111,84 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
     );
   }
 }
+
+class E2eeSyncDevice {
+  const E2eeSyncDevice({
+    required this.id,
+    required this.name,
+    required this.lastSeen,
+  });
+
+  final String id;
+  final String name;
+  final String lastSeen;
+}
+
+/// Status, devices, and recovery actions for record sync.
+class E2eeSyncStatusPanel extends StatelessWidget {
+  const E2eeSyncStatusPanel({
+    required this.status,
+    required this.devices,
+    required this.onRemoveDevice,
+    required this.onChangePassphrase,
+    required this.onShowRecoveryKey,
+    required this.onTurnOff,
+    this.downloadOnWifi = false,
+    this.onDownloadOnWifi,
+    super.key,
+  });
+
+  final String status;
+  final List<E2eeSyncDevice> devices;
+  final ValueChanged<String> onRemoveDevice;
+  final VoidCallback onChangePassphrase;
+  final VoidCallback onShowRecoveryKey;
+  final VoidCallback onTurnOff;
+  final bool downloadOnWifi;
+  final ValueChanged<bool>? onDownloadOnWifi;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(status, key: const Key('e2ee_sync_status')),
+        SwitchListTile(
+          key: const Key('e2ee_download_on_wifi'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Download all media on Wi-Fi'),
+          value: downloadOnWifi,
+          onChanged: onDownloadOnWifi,
+        ),
+        for (final device in devices)
+          ListTile(
+            key: Key('e2ee_device_${device.id}'),
+            contentPadding: EdgeInsets.zero,
+            title: Text(device.name),
+            subtitle: Text(device.lastSeen),
+            trailing: TextButton(
+              key: Key('e2ee_remove_device_${device.id}'),
+              onPressed: () => onRemoveDevice(device.id),
+              child: const Text('Remove device'),
+            ),
+          ),
+        TextButton(
+          key: const Key('e2ee_change_passphrase'),
+          onPressed: onChangePassphrase,
+          child: const Text('Change passphrase'),
+        ),
+        TextButton(
+          key: const Key('e2ee_show_recovery_key'),
+          onPressed: onShowRecoveryKey,
+          child: const Text('Show recovery key'),
+        ),
+        const Text('Showing the recovery key asks for Face ID first.'),
+        TextButton(
+          key: const Key('e2ee_turn_off_sync'),
+          onPressed: onTurnOff,
+          child: const Text('Turn off sync and delete server copy'),
+        ),
+      ],
+    );
+  }
+}

@@ -13,11 +13,13 @@ import {
   summarizeBlobs,
 } from "@/lib/server/sync-route-log";
 import { upsertEncryptedBlobs } from "@/lib/server/sync-store";
+import { syncRecordLedger, type SyncRecordInput } from "@/lib/server/sync-records";
 import type { EncryptedPayload, SyncBlobType } from "@/types/sync";
 
 export const runtime = "nodejs";
 
 interface PushBody {
+  records?: SyncRecordInput[];
   blobs?: Array<{
     id: string;
     type: SyncBlobType;
@@ -83,6 +85,22 @@ export async function POST(request: Request) {
       responseShape: "body_too_large",
     });
     return syncApiFailure("SYNC_PUSH_TOO_LARGE", { status: 413, requestId });
+  }
+
+  const records = body.records ?? [];
+  if (records.length > 0) {
+    const report = syncRecordLedger(session.userId).push(records);
+    if (!report.ok) {
+      return syncApiFailure(
+        report.status === 413
+          ? "SYNC_PUSH_TOO_LARGE"
+          : report.status === 429
+            ? "SYNC_PUSH_TOO_MANY_BLOBS"
+            : "PLAINTEXT_NOT_ACCEPTED",
+        { status: report.status, requestId },
+      );
+    }
+    return syncApiSuccess({ cursor: report.cursor, records: report.records });
   }
 
   const blobs = body.blobs ?? [];

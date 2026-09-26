@@ -39,6 +39,7 @@ const promises = [
 const features = [
   "Add a mood or a place to any moment",
   "Apple Voice Memos import",
+  "Live cross-device sync keeps each moment encrypted on your phone. The server stores the sealed copy, not the words you said.",
 ];
 
 export default function HomePage() {
