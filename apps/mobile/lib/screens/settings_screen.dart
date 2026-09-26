@@ -59,6 +59,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/sync/sync_engine.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -94,6 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _healthMoodSyncEnabled = false;
   bool _healthMoodWriteEnabled = false;
   bool _healthRevoked = false;
+  bool _downloadMediaOnWifi = false;
   List<JournalEntry> _journalEntries = const [];
   final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
@@ -102,6 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
     unawaited(_loadCloudSync());
+    unawaited(_loadDownloadOnWifi());
     unawaited(
       PackageInfo.fromPlatform().then((info) {
         if (mounted) setState(() => _packageInfo = info);
@@ -120,6 +123,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
           setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
         }
       }),
+    );
+  }
+
+  Future<void> _loadDownloadOnWifi() async {
+    if (!AppServices.isInitialized) return;
+    final value = await AppServices.instance.prefs.readBool(
+      'e2ee_download_on_wifi',
+    );
+    if (mounted && value != null) {
+      setState(() => _downloadMediaOnWifi = value);
+    }
+  }
+
+  Future<void> _showRecoveryKey() async {
+    final allowed = await RecoveryKeyReveal.confirm();
+    if (!allowed || !mounted) return;
+    final phrase = await E2eeSyncSettings.storedPassphrase();
+    if (!mounted || phrase == null || phrase.isEmpty) return;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recovery key'),
+        content: Text(phrase),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _turnOffSync() async {
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeBool(
+      E2eeSyncSettings.preferenceKey,
+      false,
     );
   }
 
@@ -637,6 +678,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
                 storePassphrase: E2eeSyncSettings.storeInVault,
+              ),
+            if (V1CapabilityRegistry.e2eeSync)
+              E2eeSyncStatusPanel(
+                status: RecordSyncRuntime.statusLabel(DateTime.now()),
+                devices: const [],
+                downloadOnWifi: _downloadMediaOnWifi,
+                onDownloadOnWifi: (value) {
+                  setState(() => _downloadMediaOnWifi = value);
+                  if (!AppServices.isInitialized) return;
+                  unawaited(
+                    AppServices.instance.prefs.writeBool(
+                      'e2ee_download_on_wifi',
+                      value,
+                    ),
+                  );
+                },
+                onRemoveDevice: (_) {},
+                onChangePassphrase: () {},
+                onShowRecoveryKey: () => unawaited(_showRecoveryKey()),
+                onTurnOff: () => unawaited(_turnOffSync()),
               ),
             JournalReminderPreferences(
               readEnabled: (key) async {

@@ -4,8 +4,10 @@ import 'dart:math';
 import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/features/sync/views/transcript_conflict_badge.dart';
 import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
 import 'package:archiveme_mobile/sync/record_sync.dart';
+import 'package:flutter/material.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -163,6 +165,30 @@ void main() {
     expect(merged.conflict!.remote, 'the river fell');
     expect(merged.state.title, 'Morning');
     expect(merged.state.transcript, 'the river');
+    final kept = RecordSync.keepTranscript(
+      merged.state,
+      merged.conflict!.local,
+      DateTime.utc(2026, 3, 3),
+    );
+    expect(kept.transcript, 'the river was high');
+    expect(kept.baseTranscript, 'the river was high');
+  });
+
+  testWidgets('a conflict badge offers both versions', (tester) async {
+    String? chosen;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: TranscriptConflictBadge(
+          local: 'the river was high',
+          remote: 'the river fell',
+          onKeep: (value) => chosen = value,
+        ),
+      ),
+    );
+    expect(find.text('Conflict'), findsOneWidget);
+    expect(find.text('Keep this one'), findsNWidgets(2));
+    await tester.tap(find.byKey(const Key('transcript_conflict_keep_remote')));
+    expect(chosen, 'the river fell');
   });
 
   test('offline edits on two devices converge field by field', () {

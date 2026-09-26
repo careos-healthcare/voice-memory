@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/sync/sync_engine.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
@@ -100,6 +101,7 @@ class _GentleRemindersLifecycleHostState
     if (state == AppLifecycleState.resumed) {
       unawaited(_syncZone());
       unawaited(_importPendingVoiceMemo());
+      unawaited(RecordSyncRuntime.onLaunchOrResume());
       unawaited(AutoBackupService.runScheduled());
     }
   }

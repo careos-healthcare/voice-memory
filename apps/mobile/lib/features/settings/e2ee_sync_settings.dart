@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/settings/views/e2ee_setup_view.dart';
 import 'package:archiveme_mobile/features/sync/services/crypto_vault.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:archiveme_mobile/features/sync/views/recovery_key_backup_view.dart';
+import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:flutter/material.dart';
 
 /// Settings switch that generates a passphrase and asks the user to keep it.
@@ -35,6 +36,10 @@ class E2eeSyncSettings extends StatefulWidget {
   /// Writes the passphrase into the same secure store the vault uses.
   static Future<void> storeInVault(String passphrase) {
     return SaltStore.secureStorage().write(passphraseKey, passphrase);
+  }
+
+  static Future<String?> storedPassphrase() {
+    return SaltStore.secureStorage().read(passphraseKey);
   }
 
   @override
@@ -109,6 +114,20 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
       value: _enabled,
       onChanged: _toggle,
     );
+  }
+}
+
+/// Face ID (or the device biometric) before the recovery phrase is shown.
+abstract final class RecoveryKeyReveal {
+  RecoveryKeyReveal._();
+
+  static Future<bool> Function(String reason)? debugConfirm;
+
+  static Future<bool> confirm() {
+    final override = debugConfirm;
+    const reason = 'Show your Thoughtprint recovery key';
+    if (override != null) return override(reason);
+    return LocalAuthBiometricAuthenticator().authenticate(reason);
   }
 }
 

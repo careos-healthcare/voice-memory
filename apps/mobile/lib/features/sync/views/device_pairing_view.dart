@@ -59,12 +59,12 @@ class _DevicePairingViewState extends State<DevicePairingView> {
     final offer = _offer;
     return Scaffold(
       key: const Key('device_pairing_view'),
-      appBar: AppBar(title: const Text('Link a phone')),
+      appBar: AppBar(title: const Text('Link a new device')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
-            'On this phone, show a code. On the new phone, scan it or paste the pairing text. The code expires in two minutes.',
+            'On this phone, show a code. On the new phone, scan it or paste the pairing text. The code expires in five minutes. You can also unlock with your passphrase or recovery key.',
           ),
           const SizedBox(height: 16),
           FilledButton(

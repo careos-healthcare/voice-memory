@@ -1,12 +1,42 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/features/sync/services/crypto_vault.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 /// Shows a new 24-word key, then requires the words to be typed back.
 class RecoveryKeyBackupView extends StatefulWidget {
-  const RecoveryKeyBackupView({required this.phrase, super.key});
+  const RecoveryKeyBackupView({
+    required this.phrase,
+    this.onPrint,
+    super.key,
+  });
 
   final String phrase;
+  final Future<void> Function(String phrase)? onPrint;
+
+  static Future<void> printPhrase(String phrase) {
+    return Printing.layoutPdf(
+      name: 'Thoughtprint recovery key',
+      onLayout: (format) async {
+        final doc = pw.Document();
+        doc.addPage(
+          pw.Page(
+            pageFormat: format,
+            build: (context) => pw.Padding(
+              padding: const pw.EdgeInsets.all(32),
+              child: pw.Text(
+                'Thoughtprint recovery key\n\n$phrase\n\nKeep this page private.',
+              ),
+            ),
+          ),
+        );
+        return doc.save();
+      },
+    );
+  }
 
   static const instruction =
       'Write down these 24 words in order. They are the only way to open your journal on a new phone if this one is lost.';
@@ -50,7 +80,17 @@ class _RecoveryKeyBackupViewState extends State<RecoveryKeyBackupView> {
               onPressed: CryptoVault.verifyRecoveryPhrase(widget.phrase)
                   ? () => setState(() => _checking = true)
                   : null,
-              child: const Text('I wrote them down'),
+              child: const Text("I've saved it"),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              key: const Key('recovery_print'),
+              onPressed: () {
+                final print =
+                    widget.onPrint ?? RecoveryKeyBackupView.printPhrase;
+                unawaited(print(widget.phrase));
+              },
+              child: const Text('Print or save as PDF'),
             ),
           ] else ...[
             const Text(

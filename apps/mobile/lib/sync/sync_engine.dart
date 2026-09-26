@@ -409,10 +409,43 @@ class RecordSyncEngine {
       await pull();
       await push();
       lastPull = now().toUtc();
+      RecordSyncRuntime.lastSynced = lastPull;
       attempt = 0;
     } catch (_) {
       attempt += 1;
       rethrow;
     }
+  }
+}
+
+/// Installed by startup. Launch and resume pull when one is due.
+abstract final class RecordSyncRuntime {
+  RecordSyncRuntime._();
+
+  static RecordSyncEngine? engine;
+  static DateTime? lastSynced;
+  static Timer? _foreground;
+
+  static String statusLabel(DateTime now) {
+    final at = lastSynced;
+    if (at == null) return 'Not synced yet';
+    final minutes = now.difference(at).inMinutes;
+    if (minutes < 1) return 'Synced just now';
+    if (minutes == 1) return 'Synced 1 minute ago';
+    return 'Synced $minutes minutes ago';
+  }
+
+  static void ensureForegroundTimer() {
+    if (_foreground != null) return;
+    _foreground = Timer.periodic(RecordSyncSchedule.foregroundPull, (_) {
+      unawaited(onLaunchOrResume());
+    });
+  }
+
+  static Future<void> onLaunchOrResume() async {
+    ensureForegroundTimer();
+    final current = engine;
+    if (current == null || !current.shouldPull) return;
+    await current.catchUp();
   }
 }

@@ -33,6 +33,13 @@ export class SyncRecordLedger {
   bytes = 0;
   private readonly records = new Map<string, StoredRecord>();
   private readonly hits: number[] = [];
+  private keys: {
+    wrappedByPassphrase: unknown;
+    wrappedByRecovery: unknown;
+    kdfParams: unknown;
+    createdAt: string;
+  } | null = null;
+  private readonly revokedDevices = new Set<string>();
   private readonly relays = new Map<
     string,
     { ciphertext: string; nonce: string; expiresAt: number; claimed: boolean }
@@ -43,6 +50,9 @@ export class SyncRecordLedger {
     while (this.hits.length > 0 && stamp - this.hits[0] >= 60_000) this.hits.shift();
     if (this.hits.length >= RATE_LIMIT_PER_MINUTE) {
       return { ok: false, status: 429, error: RATE_MESSAGE };
+    }
+    if (records.some((record) => this.revokedDevices.has(record.deviceId))) {
+      return { ok: false, status: 401, error: "This device was removed." };
     }
     for (const record of records) {
       const bag = record as unknown as Record<string, unknown>;
@@ -88,6 +98,29 @@ export class SyncRecordLedger {
       claimed: false,
     });
     return { id, expiresAt: new Date(now.getTime() + PAIR_EXPIRY_MS).toISOString() };
+  }
+
+  storeKeys(input: {
+    wrappedByPassphrase: unknown;
+    wrappedByRecovery: unknown;
+    kdfParams: unknown;
+    createdAt?: string;
+  }) {
+    this.keys = {
+      wrappedByPassphrase: input.wrappedByPassphrase,
+      wrappedByRecovery: input.wrappedByRecovery,
+      kdfParams: input.kdfParams,
+      createdAt: input.createdAt ?? new Date().toISOString(),
+    };
+    return this.keys;
+  }
+
+  readKeys() {
+    return this.keys;
+  }
+
+  revokeDevice(deviceId: string) {
+    this.revokedDevices.add(deviceId);
   }
 
   claimRelay(id: string, now = new Date()) {

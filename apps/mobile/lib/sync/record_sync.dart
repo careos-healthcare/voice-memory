@@ -432,6 +432,14 @@ abstract final class RecordSync {
     );
   }
 
+  static EntryFieldState keepTranscript(EntryFieldState state, String chosen, DateTime now) {
+    return state.copyWith(
+      transcript: chosen,
+      baseTranscript: chosen,
+      transcriptUpdatedAt: now.toUtc(),
+    );
+  }
+
   static Map<String, EntryFieldState> apply({
     required Map<String, EntryFieldState> local,
     required List<({String id, SealedSyncRecord? tombstone, EntryFieldState? entry})> remote,

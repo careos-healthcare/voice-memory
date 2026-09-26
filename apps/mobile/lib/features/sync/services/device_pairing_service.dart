@@ -54,7 +54,7 @@ class DevicePairingService {
        _random = random ?? Random.secure();
 
   static const storageKey = 'thoughtprint_master_key';
-  static const pairingLifetime = Duration(minutes: 2);
+  static const pairingLifetime = Duration(minutes: 5);
   static const _prefix = 'tp-pair:';
 
   final MasterKeyKeychainScope scope;
@@ -97,7 +97,7 @@ class DevicePairingService {
     );
   }
 
-  /// Seals the master key for two minutes. The new phone scans [PairingCode.payload].
+  /// Seals the master key for five minutes. The new phone scans [PairingCode.payload].
   Future<PairingCode> createPairingCode({
     required List<int> masterKey,
     required List<int> salt,

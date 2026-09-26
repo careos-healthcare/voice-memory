@@ -10,6 +10,7 @@ import {
   readContentLength,
 } from "@/lib/server/sync-route-log";
 import { readSyncChangesSince } from "@/lib/server/sync-store";
+import { syncRecordLedger } from "@/lib/server/sync-records";
 
 export const runtime = "nodejs";
 
@@ -50,7 +51,12 @@ export async function GET(request: Request) {
       blobCount: payload.blobs.length,
       changeCount: payload.changes.length,
     });
-    return syncApiSuccess(payload as unknown as Record<string, unknown>);
+    const page = syncRecordLedger(session.userId).pull(sinceSequence);
+    return syncApiSuccess({
+      ...(payload as unknown as Record<string, unknown>),
+      records: page.records,
+      cursor: page.cursor,
+    });
   } catch (error) {
     log({
       ok: false,

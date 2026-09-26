@@ -84,7 +84,7 @@ void main() {
     expect(
       () => service.openPairingCode(
         code.payload,
-        now: now.add(const Duration(minutes: 3)),
+        now: now.add(const Duration(minutes: 6)),
       ),
       throwsA(isA<PairingExpired>()),
     );
