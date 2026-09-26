@@ -140,7 +140,6 @@ class _WeeklyRecapViewState extends State<WeeklyRecapView> {
               transcript: entry.transcript,
               mood: entry.reflection.mood,
               location: entry.display.locationLabel,
-              audioQrUrl: entry.localAudioPath,
             ),
         ],
       ),

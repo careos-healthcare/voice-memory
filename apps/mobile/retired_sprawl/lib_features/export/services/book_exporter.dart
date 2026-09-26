@@ -141,6 +141,7 @@ abstract final class BookExporter {
     required List<HistoryMoment> entries,
     required DateTime start,
     required DateTime end,
+    Map<String, String> audioQrUrls = const {},
   }) {
     final selected = entries.where((entry) {
       final day = DateTime(
@@ -165,7 +166,7 @@ abstract final class BookExporter {
               transcript: entry.transcript,
               mood: entry.mood,
               location: entry.place,
-              audioQrUrl: 'thoughtprint://entry/${entry.id}',
+              audioQrUrl: audioQrUrls[entry.id],
               imagePaths: entry.imagePaths,
             ),
         ],

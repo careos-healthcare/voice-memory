@@ -121,6 +121,10 @@ abstract final class VoiceMemoryApiRoutes {
     '/api/journal/export',
     {VoiceMemoryHttpMethod.get},
   );
+  static const exportAudioQr = VoiceMemoryApiEndpoint(
+    '/api/export/audio-qr',
+    {VoiceMemoryHttpMethod.get, VoiceMemoryHttpMethod.post},
+  );
 
   // — Account & user data —
   static const accountDelete = VoiceMemoryApiEndpoint(
@@ -277,6 +281,7 @@ abstract final class VoiceMemoryApiRoutes {
     syncPush,
     journal,
     journalExport,
+    exportAudioQr,
     accountDelete,
     userData,
     insightsCorrections,

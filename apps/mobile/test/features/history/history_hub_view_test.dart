@@ -218,7 +218,11 @@ void main() {
           body: MapView(
             locationPermissionDenied: false,
             entries: [
-              _entry(id: 'none', at: DateTime(2026, 9, 2), transcript: 'no place'),
+              _entry(
+                id: 'none',
+                at: DateTime(2026, 9, 2),
+                transcript: 'no place',
+              ),
             ],
           ),
         ),
@@ -284,6 +288,22 @@ void main() {
     await tester.tap(find.byKey(const Key('export_printable_journal')));
     await tester.pump();
     expect(start, DateTime(2026, 3, 26));
+    expect(
+      find.text(
+        'Include playable audio QR codes (requires temporary cloud upload)',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'This temporarily pushes encrypted audio to the cloud to generate the link. Each link expires after 30 days.',
+      ),
+      findsOneWidget,
+    );
+    final toggle = tester.widget<SwitchListTile>(
+      find.byKey(const Key('book_audio_qr_toggle')),
+    );
+    expect(toggle.value, isFalse);
   });
 
   testWidgets('the archive row opens the calendar with the saved moments', (
