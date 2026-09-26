@@ -9,4 +9,7 @@ abstract final class LaunchProfile {
 
   /// Passphrase-sealed journal sync. On for this release.
   static const bool E2EE_SYNC = true;
+
+  /// Weekly encrypted copy of the journal and its media, kept on this device.
+  static const bool AUTO_ENCRYPTED_BACKUP = true;
 }

@@ -17,10 +17,12 @@ import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/features/settings/views/debug_menu_view.dart';
+import 'package:archiveme_mobile/features/settings/views/settings_view.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
 import 'package:archiveme_mobile/features/export/archive_transfer_screen.dart';
+import 'package:archiveme_mobile/features/export/services/auto_backup_service.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
@@ -600,6 +602,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => context.push('/privacy-security'),
             ),
             const EncryptedArchiveBackupSettingsTile(),
+            AutomaticWeeklyBackupToggle(
+              onEnabled: AutoBackupService.runScheduled,
+            ),
             SpeechLanguagePreferences(
               readLanguage: () async {
                 if (!AppServices.isInitialized) return null;

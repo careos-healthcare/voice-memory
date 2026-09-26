@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/core/notifications/journal_reminder_slots.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
+import 'package:archiveme_mobile/features/export/services/auto_backup_service.dart';
 import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
@@ -86,6 +87,7 @@ class _GentleRemindersLifecycleHostState
     WidgetsBinding.instance.addObserver(this);
     unawaited(_syncZone());
     unawaited(GentleRemindersService().rescheduleReminders());
+    unawaited(AutoBackupService.runScheduled());
   }
 
   @override
@@ -99,6 +101,7 @@ class _GentleRemindersLifecycleHostState
     if (state == AppLifecycleState.resumed) {
       unawaited(_syncZone());
       unawaited(_importPendingVoiceMemo());
+      unawaited(AutoBackupService.runScheduled());
     }
   }
 

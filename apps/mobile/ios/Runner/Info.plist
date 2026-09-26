@@ -78,6 +78,8 @@
 	<string>Thoughtprint requires camera access so you can take photos directly inside your journal.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
