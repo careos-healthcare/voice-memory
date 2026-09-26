@@ -14,6 +14,11 @@ abstract final class AppFlags {
     'VOICEMEMORY_ENABLE_APPLE_HEALTH',
     defaultValue: true,
   );
+
+  /// Cited questions after a save. Off until the saved answers are reviewed.
+  static const bool postSaveFollowUp = bool.fromEnvironment(
+    'POST_SAVE_FOLLOW_UP',
+  );
 }
 
 /// Compile-time native capability allowlist for the focused V1 release.
@@ -153,10 +158,7 @@ abstract final class V1CapabilityRegistry {
   );
 
   /// Cited questions after a save. Off until the saved answers are reviewed.
-  static const bool postSaveFollowUp = bool.fromEnvironment(
-    'POST_SAVE_FOLLOW_UP',
-    defaultValue: false,
-  );
+  static const bool postSaveFollowUp = AppFlags.postSaveFollowUp;
 
   /// Sunday/Monday archive recap. Off until the copy is reviewed.
   static const bool weeklyRecapBanner = bool.fromEnvironment(

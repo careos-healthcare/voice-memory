@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/capture/services/follow_up_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,7 +30,16 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
   final _answer = TextEditingController();
   final _turns = <String>[];
   StreamSubscription<String>? _partials;
+  FollowUpReflection? _followUp;
   var _listening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (AppFlags.postSaveFollowUp) {
+      unawaited(_loadFollowUp());
+    }
+  }
 
   @override
   void dispose() {
@@ -38,6 +49,12 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
     }
     _answer.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadFollowUp() async {
+    final followUp = await FollowUpService().forEntry(widget.entry);
+    if (!mounted || followUp == null) return;
+    setState(() => _followUp = followUp);
   }
 
   /// First sentence of the saved moment, or the whole moment when it is short.
@@ -53,6 +70,8 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
   }
 
   String get _question {
+    final cited = _followUp;
+    if (_turns.isEmpty && cited != null) return cited.question;
     final quote = sentenceFrom(widget.entry.transcript);
     if (quote.isEmpty) {
       return switch (_turns.length) {
@@ -126,11 +145,22 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
     }
     final done = _turns.length >= PostSaveFollowUp.maxTurns;
     final theme = Theme.of(context);
+    final cited = _followUp;
     return Column(
       key: const Key('post_save_follow_up'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(_question, style: theme.textTheme.bodyLarge),
+        if (cited != null && _turns.isEmpty)
+          FollowUpCitationBlock(
+            followUp: cited,
+            currentEntryId: widget.entry.id,
+          )
+        else
+          Text(
+            _question,
+            key: const Key('post_save_follow_up_question'),
+            style: theme.textTheme.bodyLarge,
+          ),
         if (!done) ...[
           const SizedBox(height: 8),
           TextField(
@@ -162,6 +192,43 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
             key: const Key('post_save_follow_up_done'),
             style: theme.textTheme.bodyMedium,
           ),
+      ],
+    );
+  }
+}
+
+/// Quotes from the past entry and today's entry, then the question they explain.
+class FollowUpCitationBlock extends StatelessWidget {
+  const FollowUpCitationBlock({
+    required this.followUp,
+    required this.currentEntryId,
+    super.key,
+  });
+
+  final FollowUpReflection followUp;
+  final String currentEntryId;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          followUp.citation,
+          key: const Key('post_save_follow_up_citation'),
+          style: theme.textTheme.bodyMedium,
+        ),
+        ViewEvidenceInlineLink(
+          entryIds: [followUp.pastEntryId, currentEntryId],
+          surface: 'post_save_follow_up',
+          claimContext: followUp.citation,
+        ),
+        Text(
+          followUp.question,
+          key: const Key('post_save_follow_up_question'),
+          style: theme.textTheme.bodyLarge,
+        ),
       ],
     );
   }
