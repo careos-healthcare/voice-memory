@@ -8,6 +8,7 @@ class HistoryMoment {
     this.latitude,
     this.longitude,
     this.imagePaths = const [],
+    this.audioPath,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class HistoryMoment {
   final double? latitude;
   final double? longitude;
   final List<String> imagePaths;
+  final String? audioPath;
 }
 
 /// Same month and day in earlier years. Matches
