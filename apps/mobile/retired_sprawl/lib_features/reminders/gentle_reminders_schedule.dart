@@ -38,12 +38,16 @@ class GentleReminderNotice {
     required this.title,
     required this.body,
     required this.when,
+    this.payload,
   });
 
   final String id;
   final String title;
   final String body;
   final DateTime when;
+
+  /// Notification payload. Opens the weekly recap when set to `weekly-recap`.
+  final String? payload;
 }
 
 class OnThisDayCandidate {
@@ -70,6 +74,10 @@ abstract final class GentleReminderSchedule {
   static String onThisDayId(String entryId) => 'gentle.on_this_day.$entryId';
 
   static String checkBackId(String entryId) => 'gentle.check_back.$entryId';
+
+  static const weeklyRecapId = 'gentle.weekly_recap';
+  static const weeklyRecapPayload = 'weekly-recap';
+  static const weeklyRecapHour = 19;
 
   static DateTime nextDaily({
     required DateTime now,
@@ -164,6 +172,35 @@ abstract final class GentleReminderSchedule {
       );
     }
     return notices;
+  }
+
+  /// Next Sunday at 19:00 local. A Sunday after that time waits a week.
+  static GentleReminderNotice? weeklyRecap({
+    required bool enabled,
+    required DateTime now,
+    int hour = weeklyRecapHour,
+    int minute = 0,
+    QuietHours quietHours = QuietHours.off,
+  }) {
+    if (!enabled) return null;
+    final daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
+    var when = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    ).add(Duration(days: daysUntilSunday));
+    if (!when.isAfter(now)) {
+      when = when.add(const Duration(days: 7));
+    }
+    return GentleReminderNotice(
+      id: weeklyRecapId,
+      title: GentleRemindersCopy.weeklyRecapNotificationTitle,
+      body: GentleRemindersCopy.weeklyRecapNotificationBody,
+      when: quietHours.place(when),
+      payload: weeklyRecapPayload,
+    );
   }
 
   static GentleReminderNotice checkBack({

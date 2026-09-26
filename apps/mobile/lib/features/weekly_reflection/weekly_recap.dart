@@ -38,7 +38,6 @@ class WeeklyRecap {
     required this.weekKey,
     required this.summary,
     required this.keyThemes,
-    required this.emotionalArc,
     required this.verbatimCitations,
   });
 
@@ -51,7 +50,6 @@ class WeeklyRecap {
         for (final theme in (json['keyThemes'] as List<Object?>? ?? const []))
           theme.toString(),
       ],
-      emotionalArc: json['emotionalArc'] as String? ?? '',
       verbatimCitations: [
         for (final item in (citations is List ? citations : const <Object?>[]))
           if (item is Map)
@@ -63,14 +61,12 @@ class WeeklyRecap {
   final String weekKey;
   final String summary;
   final List<String> keyThemes;
-  final String emotionalArc;
   final List<VerbatimCitation> verbatimCitations;
 
   Map<String, Object?> toJson() => {
     'weekKey': weekKey,
     'summary': summary,
     'keyThemes': keyThemes,
-    'emotionalArc': emotionalArc,
     'verbatimCitations': verbatimCitations.map((item) => item.toJson()).toList(),
   };
 }

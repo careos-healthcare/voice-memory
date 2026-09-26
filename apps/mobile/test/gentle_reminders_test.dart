@@ -159,6 +159,29 @@ void main() {
     },
   );
 
+  test('weekly recap is Sunday at 19:00 and survives reschedule', () {
+    final friday = DateTime(2026, 9, 25, 12);
+    final settings = const GentleReminderSettings(weeklyRecapEnabled: true);
+    final first = GentleRemindersService.noticesFor(
+      settings: settings,
+      now: friday,
+    );
+    final weekly = first.singleWhere(
+      (notice) => notice.id == GentleReminderSchedule.weeklyRecapId,
+    );
+    expect(weekly.when, DateTime(2026, 9, 27, 19));
+    expect(weekly.body, 'Your week in your own words is ready.');
+    expect(weekly.payload, 'weekly-recap');
+
+    final again = GentleRemindersService.noticesFor(
+      settings: settings,
+      now: DateTime(2026, 9, 26, 8),
+    );
+    final weeklyAgain = again.singleWhere((notice) => notice.id == weekly.id);
+    expect(weeklyAgain.when, weekly.when);
+    expect(weeklyAgain.payload, weekly.payload);
+  });
+
   test('copy has no streak counter', () {
     final visible = [
       GentleRemindersCopy.optInTitle,

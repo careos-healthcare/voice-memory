@@ -8,17 +8,47 @@ class GentleReminderSettings {
     this.dailyEnabled = false,
     this.onThisDayEnabled = false,
     this.checkBackEnabled = false,
+    this.weeklyRecapEnabled = true,
     this.dailyHour = 9,
     this.dailyMinute = 0,
+    this.weeklyHour = GentleReminderSchedule.weeklyRecapHour,
+    this.weeklyMinute = 0,
     this.quietHours = QuietHours.off,
   });
 
   final bool dailyEnabled;
   final bool onThisDayEnabled;
   final bool checkBackEnabled;
+  final bool weeklyRecapEnabled;
   final int dailyHour;
   final int dailyMinute;
+  final int weeklyHour;
+  final int weeklyMinute;
   final QuietHours quietHours;
+
+  GentleReminderSettings copyWith({
+    bool? dailyEnabled,
+    bool? onThisDayEnabled,
+    bool? checkBackEnabled,
+    bool? weeklyRecapEnabled,
+    int? dailyHour,
+    int? dailyMinute,
+    int? weeklyHour,
+    int? weeklyMinute,
+    QuietHours? quietHours,
+  }) {
+    return GentleReminderSettings(
+      dailyEnabled: dailyEnabled ?? this.dailyEnabled,
+      onThisDayEnabled: onThisDayEnabled ?? this.onThisDayEnabled,
+      checkBackEnabled: checkBackEnabled ?? this.checkBackEnabled,
+      weeklyRecapEnabled: weeklyRecapEnabled ?? this.weeklyRecapEnabled,
+      dailyHour: dailyHour ?? this.dailyHour,
+      dailyMinute: dailyMinute ?? this.dailyMinute,
+      weeklyHour: weeklyHour ?? this.weeklyHour,
+      weeklyMinute: weeklyMinute ?? this.weeklyMinute,
+      quietHours: quietHours ?? this.quietHours,
+    );
+  }
 }
 
 /// Schedules and cancels local reminders. Does nothing while the flag is off,
@@ -39,21 +69,11 @@ class GentleRemindersService {
       await cancel(previouslyScheduledIds);
       return const [];
     }
-    final notices = <GentleReminderNotice>[
-      ...GentleReminderSchedule.dailySlots(
-        enabled: settings.dailyEnabled,
-        now: now,
-        hour: settings.dailyHour,
-        minute: settings.dailyMinute,
-        quietHours: settings.quietHours,
-      ),
-      ...GentleReminderSchedule.onThisDay(
-        enabled: settings.onThisDayEnabled,
-        now: now,
-        entries: entries,
-        quietHours: settings.quietHours,
-      ),
-    ];
+    final notices = noticesFor(
+      settings: settings,
+      now: now,
+      entries: entries,
+    );
     return _replace(
       previouslyScheduledIds: previouslyScheduledIds,
       notices: notices,
@@ -110,9 +130,16 @@ class GentleRemindersService {
       dailyEnabled: await prefs.readBool('gentle_daily') ?? false,
       onThisDayEnabled: await prefs.readBool('gentle_on_this_day') ?? false,
       checkBackEnabled: await prefs.readBool('gentle_check_back') ?? false,
+      weeklyRecapEnabled: await prefs.readBool('gentle_weekly') ?? true,
       dailyHour: int.tryParse(await prefs.readString('gentle_hour') ?? '') ?? 9,
       dailyMinute:
           int.tryParse(await prefs.readString('gentle_minute') ?? '') ?? 0,
+      weeklyHour:
+          int.tryParse(await prefs.readString('gentle_weekly_hour') ?? '') ??
+          GentleReminderSchedule.weeklyRecapHour,
+      weeklyMinute:
+          int.tryParse(await prefs.readString('gentle_weekly_minute') ?? '') ??
+          0,
       quietHours: QuietHours(
         startMinute: start ?? 0,
         endMinute: end ?? 0,
@@ -124,6 +151,37 @@ class GentleRemindersService {
       now: now ?? DateTime.now(),
     );
     await prefs.writeString('gentle_scheduled_ids', ids.join(','));
+  }
+
+  /// Notices [rescheduleReminders] asks the device to keep.
+  static List<GentleReminderNotice> noticesFor({
+    required GentleReminderSettings settings,
+    required DateTime now,
+    List<OnThisDayCandidate> entries = const [],
+  }) {
+    final weekly = GentleReminderSchedule.weeklyRecap(
+      enabled: settings.weeklyRecapEnabled,
+      now: now,
+      hour: settings.weeklyHour,
+      minute: settings.weeklyMinute,
+      quietHours: settings.quietHours,
+    );
+    return [
+      ...GentleReminderSchedule.dailySlots(
+        enabled: settings.dailyEnabled,
+        now: now,
+        hour: settings.dailyHour,
+        minute: settings.dailyMinute,
+        quietHours: settings.quietHours,
+      ),
+      ...GentleReminderSchedule.onThisDay(
+        enabled: settings.onThisDayEnabled,
+        now: now,
+        entries: entries,
+        quietHours: settings.quietHours,
+      ),
+      if (weekly != null) weekly,
+    ];
   }
 
   Future<void> cancel(List<String> ids) async {
@@ -150,7 +208,7 @@ class GentleRemindersService {
         title: notice.title,
         body: notice.body,
         when: notice.when,
-        payload: notice.id,
+        payload: notice.payload ?? notice.id,
       );
     }
     final keptCheckBack = keepCheckBack

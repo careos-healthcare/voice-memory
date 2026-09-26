@@ -11,10 +11,14 @@ abstract final class GentleRemindersCopy {
   static const settingsDaily = 'Daily nudge';
   static const settingsOnThisDay = 'On this day';
   static const settingsCheckBack = 'Check back';
+  static const settingsWeeklyRecap = 'Weekly recap';
   static const settingsQuietHours = 'Quiet hours';
 
   static const dailyNotificationTitle = 'If you want to record';
   static const dailyNotificationBody = 'There is no need to record today.';
   static const onThisDayNotificationTitle = 'From your archive';
   static const checkBackNotificationTitle = 'You asked to look at this again';
+  static const weeklyRecapNotificationTitle = 'Your week in your own words';
+  static const weeklyRecapNotificationBody =
+      'Your week in your own words is ready.';
 }

@@ -16,7 +16,6 @@ export interface VerbatimCitation {
 export interface WeeklyRecap {
   summary: string;
   keyThemes: string[];
-  emotionalArc: string;
   verbatimCitations: VerbatimCitation[];
 }
 
@@ -262,13 +261,6 @@ export function aggregateWeeklyRecap(
     .slice(0, 3)
     .map(([word]) => word);
 
-  const emotionalArc =
-    priorWeekSimilarity == null
-      ? "This week stands on its own."
-      : priorWeekSimilarity >= 0.8
-        ? "This week continues last week's thread."
-        : "This week shifts away from last week.";
-
   const verbatimCitations = current.slice(0, 3).map((entry) => ({
     text: entry.text.trim().slice(0, 140),
     entryId: entry.entryId,
@@ -277,9 +269,8 @@ export function aggregateWeeklyRecap(
 
   const themeLine = keyThemes.length > 0 ? keyThemes.join(", ") : "a few quiet notes";
   return {
-    summary: `Across ${current.length} moments you returned to ${themeLine}. ${emotionalArc}`,
+    summary: `Across ${current.length} moments you returned to ${themeLine}.`,
     keyThemes,
-    emotionalArc,
     verbatimCitations,
     priorWeekSimilarity,
   };
@@ -295,7 +286,6 @@ export async function synthesizeWeeklyRecap(
     return {
       summary: draft.summary,
       keyThemes: draft.keyThemes,
-      emotionalArc: draft.emotionalArc,
       verbatimCitations: draft.verbatimCitations,
     };
   }
@@ -303,7 +293,6 @@ export async function synthesizeWeeklyRecap(
   return {
     summary: overlay.summary?.trim() || draft.summary,
     keyThemes: Array.isArray(overlay.keyThemes) ? overlay.keyThemes : draft.keyThemes,
-    emotionalArc: overlay.emotionalArc?.trim() || draft.emotionalArc,
     verbatimCitations: Array.isArray(overlay.verbatimCitations)
       ? overlay.verbatimCitations
       : draft.verbatimCitations,

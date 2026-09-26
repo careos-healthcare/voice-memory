@@ -67,8 +67,8 @@ test("compares this week with the prior week by embedding similarity", () => {
     now,
   );
   assert.ok((recap.priorWeekSimilarity ?? 0) > 0.9);
-  assert.match(recap.emotionalArc, /continues last week/);
   assert.equal(recap.verbatimCitations[0]?.entryId, "now");
+  assert.equal("emotionalArc" in recap, false);
 });
 
 test("uses a mock model overlay without dropping citations", async () => {

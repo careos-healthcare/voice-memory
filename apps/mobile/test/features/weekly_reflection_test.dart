@@ -164,9 +164,9 @@ void main() {
           recap: recap,
           cloudSummary: const WeeklyRecap(
             weekKey: '2026-09-27',
-            summary: 'You returned to the river.',
+            summary:
+                'You returned to the river. The river was loud this morning. A line with no source.',
             keyThemes: ['river'],
-            emotionalArc: 'This week shifts away from last week.',
             verbatimCitations: [
               VerbatimCitation(
                 text: 'The river was loud this morning.',
@@ -186,12 +186,13 @@ void main() {
     expect(find.byKey(const Key('weekly_play_a')), findsWidgets);
 
     await tester.scrollUntilVisible(
-      find.text('AI-Written Summary'),
+      find.text('Written by AI from your entries'),
       200,
     );
-    expect(find.text('AI-Written Summary'), findsOneWidget);
-    expect(find.text('You returned to the river.'), findsOneWidget);
-    expect(find.text('This week shifts away from last week.'), findsNothing);
+    expect(find.text('Written by AI from your entries'), findsOneWidget);
+    expect(find.text('The river was loud this morning.'), findsWidgets);
+    expect(find.text('You returned to the river.'), findsNothing);
+    expect(find.text('A line with no source.'), findsNothing);
     expect(find.text('· View evidence'), findsWidgets);
 
     await tester.tap(find.byKey(const Key('weekly_recap_share')));

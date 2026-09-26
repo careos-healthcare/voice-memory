@@ -22,6 +22,7 @@ import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_not
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/features/archive/views/on_this_day_view.dart';
 import 'package:archiveme_mobile/features/insights/views/weekly_recap_view.dart';
+import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_screen.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_weekly_recap_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
@@ -100,7 +101,8 @@ class _ArchiveDashboardScrollViewState
     if (openRecap) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => WeeklyRecapView(entries: widget.visibleEntries),
+          builder: (_) =>
+              WeeklyRecapScreen(entries: widget.visibleEntries),
         ),
       );
     }

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
 import 'package:archiveme_mobile/features/insights/services/local_recap_generator.dart';
+import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_builder.dart';
+import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_screen.dart';
 import 'package:archiveme_mobile/features/weekly_reflection/weekly_recap.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -258,7 +260,18 @@ class PastWeeklyRecaps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final endings = LocalRecapGenerator.weekEndings(entries);
+    final clock = now ?? DateTime.now();
+    final endings = WeeklyRecapBuilder.pastWeekEndings(entries, now: clock);
+    for (final ending in endings) {
+      WeeklyRecapCache.read(ending) ??
+          WeeklyRecapCache.put(
+            WeeklyRecapBuilder.build(
+              entries,
+              now: clock,
+              weekEnding: ending,
+            ),
+          );
+    }
     if (endings.isEmpty) return const SizedBox.shrink();
     return Column(
       key: const Key('past_weekly_recaps'),
@@ -267,7 +280,7 @@ class PastWeeklyRecaps extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           child: Text(
-            'Weeks',
+            'Past recaps',
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
@@ -289,7 +302,7 @@ class PastWeeklyRecaps extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => WeeklyRecapView(
+                      builder: (_) => WeeklyRecapScreen(
                         entries: entries,
                         weekEnding: ending,
                         now: now,
@@ -412,8 +425,19 @@ class _CloudSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle('AI-Written Summary'),
-        Text(summary.summary, key: const Key('weekly_ai_summary')),
+        const _SectionTitle('Written by AI from your entries'),
+        for (final sentence in WeeklyRecapBuilder.citedSentences(
+          summary: summary.summary,
+          citations: [
+            for (final citation in summary.verbatimCitations)
+              (text: citation.text, entryId: citation.entryId),
+          ],
+          validEntryIds: {
+            for (final citation in summary.verbatimCitations)
+              if (citation.entryId.isNotEmpty) citation.entryId,
+          },
+        ))
+          Text(sentence, key: const Key('weekly_ai_summary')),
         if (ids.isNotEmpty)
           ViewEvidenceInlineLink(
             entryIds: ids,

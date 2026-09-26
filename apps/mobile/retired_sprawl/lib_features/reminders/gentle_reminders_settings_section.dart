@@ -50,48 +50,43 @@ class _GentleRemindersSettingsSectionState
           contentPadding: EdgeInsets.zero,
           title: const Text(GentleRemindersCopy.settingsDaily),
           value: settings.dailyEnabled,
-          onChanged: (value) => _update(
-            GentleReminderSettings(
-              dailyEnabled: value,
-              onThisDayEnabled: settings.onThisDayEnabled,
-              checkBackEnabled: settings.checkBackEnabled,
-              dailyHour: settings.dailyHour,
-              dailyMinute: settings.dailyMinute,
-              quietHours: settings.quietHours,
-            ),
-          ),
+          onChanged: (value) => _update(settings.copyWith(dailyEnabled: value)),
         ),
         SwitchListTile(
           key: const Key('settings_gentle_on_this_day'),
           contentPadding: EdgeInsets.zero,
           title: const Text(GentleRemindersCopy.settingsOnThisDay),
           value: settings.onThisDayEnabled,
-          onChanged: (value) => _update(
-            GentleReminderSettings(
-              dailyEnabled: settings.dailyEnabled,
-              onThisDayEnabled: value,
-              checkBackEnabled: settings.checkBackEnabled,
-              dailyHour: settings.dailyHour,
-              dailyMinute: settings.dailyMinute,
-              quietHours: settings.quietHours,
-            ),
-          ),
+          onChanged: (value) =>
+              _update(settings.copyWith(onThisDayEnabled: value)),
         ),
         SwitchListTile(
           key: const Key('settings_gentle_check_back'),
           contentPadding: EdgeInsets.zero,
           title: const Text(GentleRemindersCopy.settingsCheckBack),
           value: settings.checkBackEnabled,
-          onChanged: (value) => _update(
-            GentleReminderSettings(
-              dailyEnabled: settings.dailyEnabled,
-              onThisDayEnabled: settings.onThisDayEnabled,
-              checkBackEnabled: value,
-              dailyHour: settings.dailyHour,
-              dailyMinute: settings.dailyMinute,
-              quietHours: settings.quietHours,
-            ),
+          onChanged: (value) =>
+              _update(settings.copyWith(checkBackEnabled: value)),
+        ),
+        SwitchListTile(
+          key: const Key('settings_gentle_weekly_recap'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text(GentleRemindersCopy.settingsWeeklyRecap),
+          subtitle: Text(
+            'Sunday ${_label(settings.weeklyHour * 60 + settings.weeklyMinute)}',
           ),
+          value: settings.weeklyRecapEnabled,
+          onChanged: (value) =>
+              _update(settings.copyWith(weeklyRecapEnabled: value)),
+        ),
+        ListTile(
+          key: const Key('settings_gentle_weekly_time'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Weekly recap time'),
+          subtitle: Text(
+            _label(settings.weeklyHour * 60 + settings.weeklyMinute),
+          ),
+          onTap: () => _pickWeeklyTime(context, settings),
         ),
         ListTile(
           key: const Key('settings_gentle_quiet_hours'),
@@ -119,17 +114,27 @@ class _GentleRemindersSettingsSectionState
     final daily = await prefs.readBool('gentle_daily') ?? false;
     final onThisDay = await prefs.readBool('gentle_on_this_day') ?? false;
     final checkBack = await prefs.readBool('gentle_check_back') ?? false;
+    final weekly = await prefs.readBool('gentle_weekly') ?? true;
     final hour = int.tryParse(await prefs.readString('gentle_hour') ?? '') ?? 9;
     final minute =
         int.tryParse(await prefs.readString('gentle_minute') ?? '') ?? 0;
+    final weeklyHour =
+        int.tryParse(await prefs.readString('gentle_weekly_hour') ?? '') ??
+        GentleReminderSchedule.weeklyRecapHour;
+    final weeklyMinute =
+        int.tryParse(await prefs.readString('gentle_weekly_minute') ?? '') ??
+        0;
     if (!mounted) return;
     setState(() {
       _settings = GentleReminderSettings(
         dailyEnabled: daily,
         onThisDayEnabled: onThisDay,
         checkBackEnabled: checkBack,
+        weeklyRecapEnabled: weekly,
         dailyHour: hour,
         dailyMinute: minute,
+        weeklyHour: weeklyHour,
+        weeklyMinute: weeklyMinute,
         quietHours: QuietHours(
           startMinute: start ?? 0,
           endMinute: end ?? 0,
@@ -147,8 +152,11 @@ class _GentleRemindersSettingsSectionState
     await prefs.writeBool('gentle_daily', next.dailyEnabled);
     await prefs.writeBool('gentle_on_this_day', next.onThisDayEnabled);
     await prefs.writeBool('gentle_check_back', next.checkBackEnabled);
+    await prefs.writeBool('gentle_weekly', next.weeklyRecapEnabled);
     await prefs.writeString('gentle_hour', '${next.dailyHour}');
     await prefs.writeString('gentle_minute', '${next.dailyMinute}');
+    await prefs.writeString('gentle_weekly_hour', '${next.weeklyHour}');
+    await prefs.writeString('gentle_weekly_minute', '${next.weeklyMinute}');
     await prefs.writeString(
       'gentle_quiet_start',
       '${next.quietHours.startMinute}',
@@ -184,17 +192,29 @@ class _GentleRemindersSettingsSectionState
     );
     if (end == null) return;
     await _update(
-      GentleReminderSettings(
-        dailyEnabled: settings.dailyEnabled,
-        onThisDayEnabled: settings.onThisDayEnabled,
-        checkBackEnabled: settings.checkBackEnabled,
-        dailyHour: settings.dailyHour,
-        dailyMinute: settings.dailyMinute,
+      settings.copyWith(
         quietHours: QuietHours(
           startMinute: start.hour * 60 + start.minute,
           endMinute: end.hour * 60 + end.minute,
         ),
       ),
+    );
+  }
+
+  Future<void> _pickWeeklyTime(
+    BuildContext context,
+    GentleReminderSettings settings,
+  ) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: settings.weeklyHour,
+        minute: settings.weeklyMinute,
+      ),
+    );
+    if (picked == null) return;
+    await _update(
+      settings.copyWith(weeklyHour: picked.hour, weeklyMinute: picked.minute),
     );
   }
 

@@ -1,44 +1,42 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/features/insights/services/local_recap_generator.dart';
-import 'package:archiveme_mobile/features/insights/views/weekly_recap_view.dart';
+import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_builder.dart';
+import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_screen.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
-/// Short week-in-review shown when the week has just ended.
+/// Short week-in-review shown from Sunday morning through Tuesday night.
 class ArchiveWeeklyRecapBanner extends StatelessWidget {
-  const ArchiveWeeklyRecapBanner({required this.entries, super.key});
+  const ArchiveWeeklyRecapBanner({
+    required this.entries,
+    this.now,
+    super.key,
+  });
 
   final List<JournalEntry> entries;
+  final DateTime? now;
 
   static bool weekJustEnded(DateTime now) =>
-      now.weekday == DateTime.sunday || now.weekday == DateTime.monday;
+      WeeklyRecapBuilder.bannerWindow(now);
 
   static List<JournalEntry> entriesThisWeek(
     List<JournalEntry> entries,
     DateTime now,
   ) {
-    final start = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).subtract(const Duration(days: 6));
-    return entries
-        .where((entry) => !entry.createdAt.toLocal().isBefore(start))
-        .toList();
+    return WeeklyRecapBuilder.build(entries, now: now).entries;
   }
 
   @override
   Widget build(BuildContext context) {
     if (!V1CapabilityRegistry.weeklyRecapBanner) return const SizedBox.shrink();
-    final now = DateTime.now();
-    if (!weekJustEnded(now)) return const SizedBox.shrink();
-    final week = entriesThisWeek(entries, now);
+    final clock = now ?? DateTime.now();
+    if (!weekJustEnded(clock)) return const SizedBox.shrink();
+    final week = entriesThisWeek(entries, clock);
     if (week.isEmpty) return const SizedBox.shrink();
-    final recap = const LocalRecapGenerator().build(entries, now: now);
+    final recap = WeeklyRecapBuilder.build(entries, now: clock);
     final theme = Theme.of(context);
     final claim =
-        '${recap.daysRecorded} ${recap.daysRecorded == 1 ? 'day' : 'days'} · ${recap.totalMinutes} ${recap.totalMinutes == 1 ? 'minute' : 'minutes'}';
+        '${recap.daysRecorded} of 7 days · ${recap.totalMinutes} ${recap.totalMinutes == 1 ? 'minute' : 'minutes'}';
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Material(
@@ -49,7 +47,10 @@ class ArchiveWeeklyRecapBanner extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => WeeklyRecapView(entries: entries, now: now),
+                builder: (_) => WeeklyRecapScreen(
+                  entries: entries,
+                  now: clock,
+                ),
               ),
             );
           },
