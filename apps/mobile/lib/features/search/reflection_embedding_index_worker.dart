@@ -145,6 +145,19 @@ class ReflectionEmbeddingIndexWorker {
     );
   }
 
+  /// Embeds the saved transcript with the local ONNX encoder and stores it.
+  Future<bool> indexSpokenTranscript(JournalEntry entry) async {
+    if (entry.isDeleted) {
+      await _repository.deleteEmbedding(entry.id);
+      return false;
+    }
+    final transcript = entry.transcript.trim();
+    if (transcript.length < ReflectionTextProcessor.minTextChars) {
+      return indexEntry(entry);
+    }
+    return _indexReflection(entryId: entry.id, text: transcript);
+  }
+
   Future<bool> indexReflectionDto({
     required String entryId,
     required ReflectionDto reflection,

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/evidence_contract/evidence_eligibility_policy.dart';
@@ -14,17 +17,20 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart'
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:archiveme_mobile/widgets/record/post_save_follow_up.dart';
 import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Single post-save receipt for focused beta — local confirmation, transcript,
 /// actions, and optional remote status. No stacked milestone or proof cards.
-class MomentSaveReceiptCard extends StatelessWidget {
+class MomentSaveReceiptCard extends StatefulWidget {
   const MomentSaveReceiptCard({
     required this.entry,
     required this.entryCount,
@@ -34,6 +40,7 @@ class MomentSaveReceiptCard extends StatelessWidget {
     this.mirror,
     this.remoteStatus = MomentSaveRemoteStatus.none,
     this.syncNote,
+    this.similarEntries,
     this.onCorrectText,
     this.onRetryRemote,
     this.onTypeWhatYouSaid,
@@ -45,12 +52,62 @@ class MomentSaveReceiptCard extends StatelessWidget {
   final DailyMirrorResult? mirror;
   final MomentSaveRemoteStatus remoteStatus;
   final String? syncNote;
+
+  /// Past entries already resolved for this receipt. When omitted, the card
+  /// reads the saved embedding and asks the local database.
+  final List<SimilarEntry>? similarEntries;
   final VoidCallback onRecordAnother;
   final VoidCallback onViewArchive;
   final VoidCallback? onCorrectText;
   final VoidCallback? onRetryRemote;
   final VoidCallback? onTypeWhatYouSaid;
   final VoidCallback? onChooseWhatLeaves;
+
+  @override
+  State<MomentSaveReceiptCard> createState() => _MomentSaveReceiptCardState();
+}
+
+class _MomentSaveReceiptCardState extends State<MomentSaveReceiptCard> {
+  List<SimilarEntry> _similar = const [];
+
+  JournalEntry get entry => widget.entry;
+  int get entryCount => widget.entryCount;
+  DailyMirrorResult? get mirror => widget.mirror;
+  MomentSaveRemoteStatus get remoteStatus => widget.remoteStatus;
+  String? get syncNote => widget.syncNote;
+  VoidCallback get onRecordAnother => widget.onRecordAnother;
+  VoidCallback get onViewArchive => widget.onViewArchive;
+  VoidCallback? get onCorrectText => widget.onCorrectText;
+  VoidCallback? get onRetryRemote => widget.onRetryRemote;
+  VoidCallback? get onTypeWhatYouSaid => widget.onTypeWhatYouSaid;
+  VoidCallback? get onChooseWhatLeaves => widget.onChooseWhatLeaves;
+
+  @override
+  void initState() {
+    super.initState();
+    final provided = widget.similarEntries;
+    if (provided != null) {
+      _similar = provided;
+      return;
+    }
+    unawaited(_loadSimilarEntries());
+  }
+
+  Future<void> _loadSimilarEntries() async {
+    if (!AppServices.isInitialized) return;
+    try {
+      final database = DatabaseProvider(
+        AppServices.instance.sqliteDatabase.database,
+      );
+      final vector = await database.readEmbedding(entry.id);
+      if (vector == null || !mounted) return;
+      final matches = await database.findSimilarEntries(vector);
+      if (!mounted) return;
+      setState(() => _similar = matches);
+    } on Object {
+      return;
+    }
+  }
 
   bool get _isDegraded => VoiceCaptureQuality.isDegradedVoiceCapture(entry);
 
@@ -90,11 +147,11 @@ class MomentSaveReceiptCard extends StatelessWidget {
     );
     final heardText = postSaveRecordedSummary(entry);
 
-  String receiptDuration(JournalEntry value) {
-    final minutes = value.durationSeconds ~/ 60;
-    final seconds = value.durationSeconds % 60;
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
-  }
+    String receiptDuration(JournalEntry value) {
+      final minutes = value.durationSeconds ~/ 60;
+      final seconds = value.durationSeconds % 60;
+      return '$minutes:${seconds.toString().padLeft(2, '0')}';
+    }
 
     return Semantics(
       container: true,
@@ -176,6 +233,41 @@ class MomentSaveReceiptCard extends StatelessWidget {
                   key: const Key('moment_save_receipt_relationship_evidence'),
                   style: secondaryStyle,
                 ),
+              ],
+            ],
+            if (_similar.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                "You've talked about this before",
+                key: const Key('moment_save_receipt_similar'),
+                style: titleStyle,
+              ),
+              ViewEvidenceInlineLink(
+                entryIds: [for (final match in _similar) match.id],
+                surface: 'moment_save_receipt_similar',
+                claimContext: "You've talked about this before",
+              ),
+              for (final match in _similar) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  LocaleDateFormat.date(context, match.createdAt),
+                  key: Key('moment_save_receipt_similar_date_${match.id}'),
+                  style: secondaryStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  shortVerbatimQuote(match.transcript),
+                  key: Key('moment_save_receipt_similar_quote_${match.id}'),
+                  style: bodyStyle,
+                ),
+                if (match.localAudioPath != null)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: _SimilarEntryPlayButton(
+                      entryId: match.id,
+                      audioPath: match.localAudioPath!,
+                    ),
+                  ),
               ],
             ],
             if (_buildRemoteStatus(context, secondaryStyle)
@@ -279,6 +371,46 @@ class _ContinueExploringCta extends StatelessWidget {
         ),
         child: const Text(_label),
       ),
+    );
+  }
+}
+
+class _SimilarEntryPlayButton extends StatefulWidget {
+  const _SimilarEntryPlayButton({
+    required this.entryId,
+    required this.audioPath,
+  });
+
+  final String entryId;
+  final String audioPath;
+
+  @override
+  State<_SimilarEntryPlayButton> createState() =>
+      _SimilarEntryPlayButtonState();
+}
+
+class _SimilarEntryPlayButtonState extends State<_SimilarEntryPlayButton> {
+  AudioPlayer? _player;
+
+  @override
+  void dispose() {
+    unawaited(_player?.dispose());
+    super.dispose();
+  }
+
+  Future<void> _play() async {
+    final player = _player ??= AudioPlayer();
+    await player.stop();
+    await player.play(DeviceFileSource(widget.audioPath));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      key: Key('moment_save_receipt_similar_play_${widget.entryId}'),
+      onPressed: () => unawaited(_play()),
+      icon: const Icon(Icons.play_arrow, size: 18),
+      label: const Text('Play'),
     );
   }
 }
