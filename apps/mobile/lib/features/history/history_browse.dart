@@ -27,8 +27,10 @@ class HistoryMoment {
 abstract final class OnThisDayQuery {
   OnThisDayQuery._();
 
+  /// Same month and day in earlier years, skipping memories hidden from this view.
   static const sql =
-      "WHERE strftime('%m-%d', created_at) = strftime('%m-%d', 'now')";
+      "WHERE strftime('%m-%d', created_at) = strftime('%m-%d', 'now') "
+      'AND is_silenced_from_on_this_day = 0';
 
   static List<HistoryMoment> match(List<HistoryMoment> entries, DateTime now) {
     return [

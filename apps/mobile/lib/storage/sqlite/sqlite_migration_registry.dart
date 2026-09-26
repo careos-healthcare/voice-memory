@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_016_audio_p
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_017_capture_audio_metadata.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcript_provenance.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_entry_images.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_on_this_day_silence.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
@@ -46,6 +47,7 @@ class SqliteMigrationRegistry {
     Migration017CaptureAudioMetadata(),
     Migration018TranscriptProvenance(),
     Migration019EntryImages(),
+    Migration020OnThisDaySilence(),
   ];
 
   static int get latestVersion =>

@@ -267,6 +267,9 @@ abstract class JournalEntry with _$JournalEntry {
 
   /// Local file paths or URLs stored with this moment.
   List<String> get images => imageEvidence?.images ?? const [];
+
+  /// Saved recording path used by playback.
+  String? get audioUrl => localAudioPath;
   CognitiveBiomarkers? get biomarkers => proof.biomarkers;
   String? get parentHookId => proof.parentHookId;
   bool get wasGrounded => proof.wasGrounded;

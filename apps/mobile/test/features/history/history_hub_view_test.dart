@@ -91,7 +91,7 @@ void main() {
         ),
       ),
     );
-    expect(find.text('2 Years Ago - 2024'), findsOneWidget);
+    expect(find.text('2 years ago'), findsOneWidget);
     expect(find.byKey(const Key('on_this_day_then')), findsOneWidget);
     expect(find.byKey(const Key('on_this_day_today')), findsNothing);
     expect(find.byKey(const Key('on_this_day_play_then')), findsOneWidget);

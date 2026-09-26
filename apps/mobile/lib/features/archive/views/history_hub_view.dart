@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/features/archive/views/book_export_view.dart';
 import 'package:archiveme_mobile/features/archive/views/calendar_view.dart';
 import 'package:archiveme_mobile/features/archive/views/map_view.dart';
@@ -174,7 +175,16 @@ class _HistoryHubState extends State<HistoryHub> {
       case 3:
         return BookExportView(entries: widget.entries, now: now);
       default:
-        return OnThisDayView(entries: widget.entries, now: now);
+        return OnThisDayView(
+          entries: widget.entries,
+          now: now,
+          onSilence: (id) async {
+            if (!AppServices.isInitialized) return;
+            await DatabaseProvider(
+              AppServices.instance.sqliteDatabase.database,
+            ).silenceEntryFromOnThisDay(id);
+          },
+        );
     }
   }
 }

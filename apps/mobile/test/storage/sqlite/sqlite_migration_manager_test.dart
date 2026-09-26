@@ -21,7 +21,7 @@ void main() {
         SqliteMigrationManager.latestVersion,
       );
       expect(registry.migrations.length, SqliteMigrationManager.latestVersion);
-      expect(SqliteMigrationManager.latestVersion, 19);
+      expect(SqliteMigrationManager.latestVersion, 20);
     });
 
     test('rejects non-sequential migration versions', () {
@@ -115,6 +115,11 @@ void main() {
 
       await harness.expectVersion(db, SqliteMigrationManager.latestVersion);
       await harness.expectTableExists(db, 'journal_entries');
+      final columns = await db.rawQuery('PRAGMA table_info(journal_entries)');
+      expect(
+        columns.any((row) => row['name'] == 'is_silenced_from_on_this_day'),
+        isTrue,
+      );
       await harness.expectTableExists(
         db,
         Migration011ReflectionGraphFts.ftsTable,

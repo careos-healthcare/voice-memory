@@ -33,6 +33,7 @@ HistoryMoment _moment({
 void main() {
   test('on this day keeps the same month and day from earlier years', () {
     expect(OnThisDayQuery.sql, contains("strftime('%m-%d', created_at)"));
+    expect(OnThisDayQuery.sql, contains('is_silenced_from_on_this_day = 0'));
     final now = DateTime(2026, 9, 25);
     final matches = OnThisDayQuery.match([
       _moment(id: 'old', at: DateTime(2024, 9, 25)),
@@ -67,8 +68,19 @@ void main() {
 
   test('nearby places share one pin', () {
     final pins = EntryMapClusters.cluster([
-      _moment(id: 'a', at: DateTime(2026, 9, 1), latitude: 51.51, longitude: -0.12, place: 'Home'),
-      _moment(id: 'b', at: DateTime(2026, 9, 2), latitude: 51.52, longitude: -0.11),
+      _moment(
+        id: 'a',
+        at: DateTime(2026, 9, 1),
+        latitude: 51.51,
+        longitude: -0.12,
+        place: 'Home',
+      ),
+      _moment(
+        id: 'b',
+        at: DateTime(2026, 9, 2),
+        latitude: 51.52,
+        longitude: -0.11,
+      ),
     ]);
     expect(pins, hasLength(1));
     expect(pins.single.label, 'Home');

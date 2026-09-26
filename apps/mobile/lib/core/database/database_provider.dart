@@ -116,6 +116,26 @@ class DatabaseProvider {
     return scored.take(limit).toList(growable: false);
   }
 
+  static const onThisDaySilenceColumn = 'is_silenced_from_on_this_day';
+
+  /// Hides one moment from On This Day without deleting it.
+  Future<void> silenceEntryFromOnThisDay(String entryId) async {
+    if (entryId.isEmpty) return;
+    final info = await _db.rawQuery('PRAGMA table_info(journal_entries)');
+    final exists = info.any((row) => row['name'] == onThisDaySilenceColumn);
+    if (!exists) {
+      await _db.execute(
+        'ALTER TABLE journal_entries ADD COLUMN $onThisDaySilenceColumn INTEGER NOT NULL DEFAULT 0',
+      );
+    }
+    await _db.update(
+      'journal_entries',
+      {onThisDaySilenceColumn: 1},
+      where: 'id = ?',
+      whereArgs: [entryId],
+    );
+  }
+
   static String? _audioPath(Object? payloadJson) {
     if (payloadJson is! String || payloadJson.isEmpty) return null;
     try {
