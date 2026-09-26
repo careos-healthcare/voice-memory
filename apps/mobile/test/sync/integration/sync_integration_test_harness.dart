@@ -17,7 +17,6 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -132,7 +131,6 @@ final class SyncIntegrationTestHarness {
     required this.outbox,
     required this.journalSqlite,
     required this.syncApi,
-    required this.engine,
     required this.coordinator,
     required this.syncService,
   });
@@ -144,7 +142,6 @@ final class SyncIntegrationTestHarness {
   final SyncOutboxStore outbox;
   final JournalSqliteRepository journalSqlite;
   final PartitionedSyncApiClient syncApi;
-  final SyncEngine engine;
   final EncryptedJournalSyncCoordinator coordinator;
   final SyncService syncService;
 
@@ -179,13 +176,6 @@ final class SyncIntegrationTestHarness {
       pullEntries: initialRemoteEntries,
     );
 
-    final engine = SyncEngine(
-      syncApi: syncApi,
-      journal: journal,
-      outbox: outbox,
-      backoff: engineBackoff,
-    );
-
     final coordinator = EncryptedJournalSyncCoordinator(
       syncApi: syncApi,
       journal: journal,
@@ -193,7 +183,7 @@ final class SyncIntegrationTestHarness {
       deviceIds: TestDeviceIdStore(),
       keyStore: keyStore,
       outboxStore: outbox,
-      syncEngine: engine,
+      backoff: engineBackoff,
     );
 
     final holder = SyncRepositoryHolder()
@@ -211,7 +201,6 @@ final class SyncIntegrationTestHarness {
       outbox: outbox,
       journalSqlite: JournalSqliteRepository(sqliteDb),
       syncApi: syncApi,
-      engine: engine,
       coordinator: coordinator,
       syncService: syncService,
     );
@@ -225,6 +214,8 @@ final class SyncIntegrationTestHarness {
   void failNextPushAttempts(int count) => syncApi.failNextPushAttempts(count);
 
   Future<SyncResult> syncNow() => syncService.syncNow();
+
+  Future<List<JournalEntry>> pendingQueue() => journal.pendingSyncQueue();
 
   Future<void> savePendingEdit(JournalEntry entry) async {
     await journal.saveEdit(

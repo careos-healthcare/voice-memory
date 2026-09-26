@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/features/sync/services/crypto_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -77,7 +77,7 @@ class _RecoveryKeyBackupViewState extends State<RecoveryKeyBackupView> {
             const SizedBox(height: 16),
             FilledButton(
               key: const Key('recovery_wrote_them_down'),
-              onPressed: CryptoVault.verifyRecoveryPhrase(widget.phrase)
+              onPressed: AccountSyncKey.verifyRecoveryPhrase(widget.phrase)
                   ? () => setState(() => _checking = true)
                   : null,
               child: const Text("I've saved it"),

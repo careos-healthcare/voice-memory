@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/full_archive_transfer.dart';
 import 'package:archiveme_mobile/features/export/services/zip_archiver_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -11,12 +11,12 @@ abstract final class ArchiveTransferService {
   ArchiveTransferService._();
 
   static Future<Uint8List> exportZip({
-    required PassphraseVault vault,
+    required List<int> accountKey,
     required List<JournalEntry> entries,
   }) async {
     final packed = await ZipArchiverService.packEntries(entries);
     return FullArchiveTransfer.exportZip(
-      vault: vault,
+      accountKey: accountKey,
       entries: [
         for (final entry in entries)
           ArchiveTransferEntry(

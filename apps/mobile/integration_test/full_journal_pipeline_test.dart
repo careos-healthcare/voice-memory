@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
-import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -24,16 +26,19 @@ void main() {
 
   testWidgets('stage 2 encrypts and restores the fixture transcript', (tester) async {
     final transcript = JournalFixtures.rawEntryJson['transcript'].toString();
-    final service = E2EEncryptionService();
-    final payload = await service.encryptText(
-      transcript,
-      JournalFixtures.testPassphrase,
+    final accountKey = AccountSyncKey.generate(Random(2));
+    final sealed = await RecordSync.seal(
+      accountKey: accountKey,
+      recordId: 'entry-river-2026',
+      kind: SyncRecordKind.entry,
+      version: 1,
+      updatedAt: DateTime.utc(2026, 3, 8),
+      deviceId: 'test',
+      plaintext: {'transcript': transcript},
     );
-    expect(payload.ciphertext, isNot(contains(transcript)));
-    expect(
-      await service.decryptText(payload, JournalFixtures.testPassphrase),
-      transcript,
-    );
+    expect(sealed.ciphertext, isNot(contains(transcript)));
+    final opened = await RecordSync.open(accountKey: accountKey, record: sealed);
+    expect(opened['transcript'], transcript);
   });
 
   testWidgets('stage 3 writes a PDF book larger than 1KB', (tester) async {

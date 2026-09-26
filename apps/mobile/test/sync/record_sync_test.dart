@@ -63,6 +63,7 @@ void main() {
   test('encrypt and decrypt a record, and a wrong passphrase fails cleanly', () async {
     expect(AccountKdfParams.production.memoryKiB, 64 * 1024);
     expect(AccountKdfParams.production.iterations, 3);
+    expect(AccountKdfParams.production.parallelism, 4);
     final account = AccountSyncKey.generate(Random(4));
     const passphrase = 'correct horse battery';
     final recovery = AccountSyncKey.recoveryPhrase(Random(9));
@@ -268,7 +269,12 @@ void main() {
     expect(entry.transcript, transcript);
     expect(entry.blobIds, ['photo-0']);
     expect(restoredMedia, media);
-    expect(chunks.single.ciphertext.contains('saved on the first phone'), isFalse);
+    expect(
+      utf8.decode(chunks.single.ciphertext, allowMalformed: true).contains(
+        'saved on the first phone',
+      ),
+      isFalse,
+    );
 
     final now = DateTime.utc(2026, 9, 26, 12);
     final handoff = await RecordSync.issuePairTicket(

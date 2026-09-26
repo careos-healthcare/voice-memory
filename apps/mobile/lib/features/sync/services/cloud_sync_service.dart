@@ -3,16 +3,17 @@ import 'dart:convert';
 
 import 'package:archiveme_mobile/api/models/sync_dto.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/features/insights/knowledge_forget_service.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
-import 'package:archiveme_mobile/features/sync/services/e2ee_journal_sync.dart';
-import 'package:archiveme_mobile/features/sync/services/entry_encryption_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 
 /// Sends journal text to the server fact ledger when cloud features are on.
 class CloudSyncService {
@@ -256,6 +257,8 @@ abstract final class E2eeSyncLifecycle {
     return queue.enqueue(_syncIfEnabled);
   }
 
+  static const lastSyncKey = 'last_sync_time';
+
   static Future<void> _syncIfEnabled() async {
     if (!V1CapabilityRegistry.e2eeSync) return;
     if (!AppServices.isInitialized) return;
@@ -264,73 +267,112 @@ abstract final class E2eeSyncLifecycle {
         AppServices.instance.prefs,
       );
       if (!preferences.isCloudSyncEnabled) return;
-      final box = SaltStore.secureStorage();
-      final passphrase = await box.read(E2eeSyncSettings.passphraseKey);
-      if (passphrase == null || passphrase.trim().isEmpty) return;
-      final vault = await PassphraseVault.open(
-        passphrase: passphrase,
-        store: box,
+      final passphrase = await E2eeSyncSettings.storedPassphrase();
+      final bundle = await AccountSyncKey.readBundle();
+      if (passphrase == null ||
+          passphrase.trim().isEmpty ||
+          bundle == null) {
+        return;
+      }
+      final accountKey = await AccountSyncKey.unwrap(
+        wrapped: bundle.wrappedByPassphrase,
+        secret: passphrase,
       );
-      final cipher = await E2eeJournalCipher.open(
-        passphrase: passphrase,
-        store: box,
-      );
-      final lastRaw = await AppServices.instance.prefs.readString(
-        E2eeDeltaSync.lastSyncKey,
-      );
+      final deviceId = await AppServices.instance.deviceIds.getOrCreate();
+      final lastRaw = await AppServices.instance.prefs.readString(lastSyncKey);
       final last = lastRaw == null ? null : DateTime.tryParse(lastRaw);
+      await _applyRemote(accountKey: accountKey, since: last);
       final local = await AppServices.instance.journal.loadAll();
-      final remote = await _pull(last);
-      final result = await E2eeDeltaSync.run(
-        cloudSyncEnabled: true,
-        lastSyncTime: last,
-        localEntries: local,
-        remote: remote,
-        encryptEntry: cipher.encryptEntry,
-        decryptEntry: cipher.decryptEntry,
-        saveLocal: (entry) => AppServices.instance.journalStore.save(entry),
-        push: _push,
-      );
-      final syncedAt = result.syncedAt;
-      if (result.completed && syncedAt != null) {
-        await AppServices.instance.prefs.writeString(
-          E2eeDeltaSync.lastSyncKey,
-          syncedAt.toUtc().toIso8601String(),
+      final records = <SealedSyncRecord>[];
+      for (final entry in local) {
+        records.add(
+          await RecordSync.sealEntry(
+            accountKey: accountKey,
+            recordId: entry.id,
+            version: 1,
+            deviceId: deviceId,
+            state: E2eeJournalSync.fieldsFor(entry, deviceId),
+          ),
         );
-        final attachments = _attachmentSync(EntryEncryptionService(vault));
-        for (final entry in local) {
-          await attachments.uploadEntryAttachments(entry);
-        }
+      }
+      await _push(records);
+      final syncedAt = DateTime.now().toUtc();
+      await AppServices.instance.prefs.writeString(
+        lastSyncKey,
+        syncedAt.toIso8601String(),
+      );
+      final attachments = _attachmentSync(accountKey);
+      for (final entry in local) {
+        await attachments.uploadEntryAttachments(entry);
       }
     } on Object {
       return;
     }
   }
 
-  static Future<List<RemoteEncryptedEntry>> _pull(DateTime? since) async {
+  static Future<void> _applyRemote({
+    required List<int> accountKey,
+    required DateTime? since,
+  }) async {
+    final local = await AppServices.instance.journal.loadAll();
     final client = HttpSyncApiClient(AppServices.instance.httpTransport);
     final result = await client.syncPull();
-    return result.when(
+    final remote = result.when(
       success: (body) {
         final pull = SyncPullResponseDto.fromJson(body);
         return [
           for (final blob in pull.blobs)
-            if (blob.type == E2eeDeltaSync.entryBlobType)
+            if (blob.type == SyncRecordKind.entry.name)
               if (DateTime.tryParse(blob.updatedAt) case final updated?)
                 if (since == null || updated.isAfter(since))
-                  RemoteEncryptedEntry(
-                    id: blob.id,
+                  SealedSyncRecord(
+                    recordId: blob.id,
+                    kind: SyncRecordKind.entry,
+                    version: 1,
+                    updatedAt: updated,
+                    deviceId: '',
                     ciphertext: blob.encrypted.ciphertext,
                     nonce: blob.encrypted.iv,
-                    updatedAt: updated,
+                    keyVersion: RecordSync.keyVersion,
                   ),
         ];
       },
-      onFailure: (_) => const <RemoteEncryptedEntry>[],
+      onFailure: (_) => const <SealedSyncRecord>[],
     );
+    final byId = {for (final entry in local) entry.id: entry};
+    for (final record in remote) {
+      final opened = await RecordSync.openEntry(
+        accountKey: accountKey,
+        record: record,
+      );
+      final current = byId[record.recordId];
+      if (current != null && !record.updatedAt.isAfter(current.updatedAt)) {
+        continue;
+      }
+      final next = (current ??
+              JournalEntry(
+                id: record.recordId,
+                createdAt: record.updatedAt,
+                transcript: '',
+                durationSeconds: 0,
+                reflection: const Reflection(
+                  mood: '',
+                  emotionalIntensity: 0,
+                  recurringThemes: [],
+                  exactLanguagePattern: '',
+                  concreteObservation: '',
+                  repeatedSignal: '',
+                ),
+              ))
+          .copyWith(
+            transcript: opened.transcript,
+            updatedAt: record.updatedAt,
+          );
+      await AppServices.instance.journalStore.save(next);
+    }
   }
 
-  static Future<void> _push(List<EncryptedJournalPush> records) async {
+  static Future<void> _push(List<SealedSyncRecord> records) async {
     if (records.isEmpty) return;
     final client = HttpSyncApiClient(AppServices.instance.httpTransport);
     final result = await client.syncPush(
@@ -338,8 +380,8 @@ abstract final class E2eeSyncLifecycle {
         blobs: [
           for (final record in records)
             SyncBlobPushDto(
-              id: record.id,
-              type: E2eeDeltaSync.entryBlobType,
+              id: record.recordId,
+              type: record.kind.name,
               encrypted: EncryptedPayloadDto(
                 ciphertext: record.ciphertext,
                 iv: record.nonce,
@@ -356,12 +398,10 @@ abstract final class E2eeSyncLifecycle {
 
   static const attachmentSignPath = '/api/sync/attachments/sign';
 
-  static AttachmentSyncService _attachmentSync(
-    EntryEncryptionService encryption,
-  ) {
+  static AttachmentSyncService _attachmentSync(List<int> accountKey) {
     final transport = AppServices.instance.httpTransport;
     final service = AttachmentSyncService(
-      encryption: encryption,
+      accountKey: accountKey,
       sign:
           ({
             required String entryId,
@@ -400,7 +440,7 @@ abstract final class E2eeSyncLifecycle {
       putBytes: (grant, body) async {
         final response = await transport.client.put(
           grant.url,
-          headers: {'Content-Type': 'application/json', ...grant.headers},
+          headers: {'Content-Type': 'application/octet-stream', ...grant.headers},
           body: body,
         );
         if (response.statusCode >= 400) {

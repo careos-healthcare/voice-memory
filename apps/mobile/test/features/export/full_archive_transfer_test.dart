@@ -1,37 +1,42 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:archive/archive.dart';
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/full_archive_transfer.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('a passphrase encrypts text the server cannot read', () async {
-    final store = SaltStore();
-    final vault = await PassphraseVault.open(
-      passphrase: 'correct horse',
-      store: store,
+    AccountSyncKey.debugKdf = Argon2id(
+      parallelism: 1,
+      memory: 32,
+      iterations: 1,
+      hashLength: 32,
     );
-    final blob = await vault.encrypt(utf8.encode('private journal'));
-    expect(blob.ciphertext, isNot(contains('private journal')));
-    final clear = await vault.decrypt(blob);
-    expect(utf8.decode(clear), 'private journal');
-    final again = await PassphraseVault.open(
-      passphrase: 'correct horse',
-      store: store,
+    addTearDown(() => AccountSyncKey.debugKdf = null);
+    const passphrase = 'correct horse';
+    final account = AccountSyncKey.generate(Random(3));
+    final bundle = await AccountSyncKey.wrap(
+      accountKey: account,
+      passphrase: passphrase,
+      recoveryPhrase: passphrase,
     );
-    expect(utf8.decode(await again.decrypt(blob)), 'private journal');
+    final opened = await AccountSyncKey.unwrap(
+      wrapped: bundle.wrappedByPassphrase,
+      secret: passphrase,
+    );
+    expect(opened, account);
+    expect(jsonEncode(bundle.toJson()), isNot(contains('private journal')));
   });
 
   test('a full archive round-trips journal entries and audio', () async {
-    final vault = await PassphraseVault.open(
-      passphrase: 'archive',
-      store: SaltStore(),
-    );
+    final account = AccountSyncKey.generate(Random(5));
     final bytes = await FullArchiveTransfer.exportZip(
-      vault: vault,
+      accountKey: account,
       entries: [
         ArchiveTransferEntry(
           id: 'e1',
@@ -57,7 +62,7 @@ void main() {
       ]),
     );
     final imported = await FullArchiveTransfer.importZip(
-      vault: vault,
+      accountKey: account,
       bytes: bytes,
     );
     expect(imported.schemaVersion, 1);

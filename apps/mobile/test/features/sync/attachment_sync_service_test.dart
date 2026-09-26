@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
-import 'package:archiveme_mobile/features/sync/services/entry_encryption_service.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -13,11 +13,6 @@ void main() {
   test(
     'audio and photos upload as ciphertext and download only when missing',
     () async {
-      final vault = await PassphraseVault.open(
-        passphrase: 'thoughtprint-sync-passphrase',
-        store: SaltStore(),
-      );
-      final encryption = EntryEncryptionService(vault);
       final dir = await Directory.systemTemp.createTemp(
         'thoughtprint-attachments',
       );
@@ -31,7 +26,7 @@ void main() {
 
       final uploaded = <String, List<int>>{};
       final service = AttachmentSyncService(
-        encryption: encryption,
+        accountKey: AccountSyncKey.generate(Random(2)),
         sign:
             ({
               required String entryId,
@@ -77,9 +72,9 @@ void main() {
 
       expect(uploaded, hasLength(2));
       for (final body in uploaded.values) {
-        final text = utf8.decode(body);
+        final text = utf8.decode(body, allowMalformed: true);
         expect(text.contains(marker), isFalse);
-        expect(text.contains('nonce'), isTrue);
+        expect(() => jsonDecode(utf8.decode(body)), throwsFormatException);
       }
 
       expect(

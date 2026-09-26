@@ -255,7 +255,7 @@ void main() {
       await harness.savePendingEdit(
         origin.copyWith(transcript: 'device-a offline'),
       );
-      expect(await harness.engine.pendingQueue(), hasLength(1));
+      expect(await harness.pendingQueue(), hasLength(1));
 
       final remoteWinner = origin.copyWith(
         transcript: 'device-b remote winner',

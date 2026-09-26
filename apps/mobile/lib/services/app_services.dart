@@ -12,8 +12,6 @@ import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
 import 'package:archiveme_mobile/core/config/excluded_native_capability_cleanup.dart';
 import 'package:archiveme_mobile/config/trial_mode.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart';
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
 import 'package:archiveme_mobile/core/di/storage_providers.dart';
@@ -56,8 +54,8 @@ import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_thought
 import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_why_matters_store.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
 import 'package:archiveme_mobile/storage/drift/journal_database.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_background_service.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/background_task_account_registry.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/sync/cloud_backup.dart';
@@ -1216,15 +1214,10 @@ class AppServices {
       AppDatabase.fromSqflite(s.sqliteDatabase.database),
     );
     final outboxBackgroundService = SyncOutboxBackgroundService(
-      syncEngine: SyncEngine(
+      drainer: SyncOutboxDrainer(
         syncApi: HttpSyncApiClient(s.httpTransport),
         journal: s.journalStore,
         outbox: outboxStore,
-        encryption: E2EEncryptionService(),
-        openVault: (passphrase) => PassphraseVault.open(
-          passphrase: passphrase,
-          store: SaltStore.secureStorage(),
-        ),
       ),
     );
     final backgroundSyncController = appProviderContainer

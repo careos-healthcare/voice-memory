@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:archiveme_mobile/core/config/launch_profile.dart';
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/services/archive_transfer_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -54,13 +54,23 @@ class AutoBackupService {
         writeLastBackup: (at) => prefs.writeString(lastBackupKey, at.toUtc().toIso8601String()),
         loadEntries: () => AppServices.instance.journal.loadAll(),
         exportZip: (entries) async {
-          final vault = await PassphraseVault.open(
-            passphrase: await _passphrase(),
-            store: SaltStore.secureStorage(),
-            saltKey: 'auto_backup_salt',
+          final passphrase = await _passphrase();
+          final existing = await AccountSyncKey.readBundle();
+          final bundle = existing ??
+              await AccountSyncKey.wrap(
+                accountKey: AccountSyncKey.generate(),
+                passphrase: passphrase,
+                recoveryPhrase: AccountSyncKey.recoveryPhrase(),
+              );
+          if (existing == null) {
+            await AccountSyncKey.storeBundle(bundle);
+          }
+          final accountKey = await AccountSyncKey.unwrap(
+            wrapped: bundle.wrappedByPassphrase,
+            secret: passphrase,
           );
           return ArchiveTransferService.exportZip(
-            vault: vault,
+            accountKey: accountKey,
             entries: entries,
           );
         },

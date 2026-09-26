@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 
 abstract final class JournalFixtures {
   JournalFixtures._();
@@ -18,13 +20,6 @@ abstract final class JournalFixtures {
     'audioUrl': 'thoughtprint://entry/entry-river-2026',
     'language': 'en',
   };
-
-  static EncryptedPayload get mockEncryptedPayload => const EncryptedPayload(
-    ciphertext: 'dGhlIHJpdmVyIHdhcyBoaWdo',
-    nonce: 'bm9uY2UtMTIzNDU2Nzg=',
-    mac: 'bWFjLXRhZy1maXh0dXJl',
-    salt: 'c2FsdC1mb3ItdGVzdHM=',
-  );
 
   static List<JournalBookEntry> getBookEntriesFixture() {
     return const [
@@ -84,7 +79,8 @@ abstract final class JournalFixtures {
 class JournalTestEntry {
   const JournalTestEntry({
     required this.text,
-    required this.payload,
+    required this.ciphertext,
+    required this.accountKey,
     required this.latitude,
     required this.longitude,
     required this.audioUrl,
@@ -95,7 +91,8 @@ class JournalTestEntry {
   });
 
   final String text;
-  final EncryptedPayload payload;
+  final String ciphertext;
+  final List<int> accountKey;
   final double latitude;
   final double longitude;
   final String audioUrl;
@@ -114,12 +111,21 @@ Future<JournalTestEntry> makeJournalEntry({
   String dateString = '2026-03-08',
   String mood = 'quiet',
   String location = 'bridge',
-  E2EEncryptionService? encryption,
 }) async {
-  final service = encryption ?? E2EEncryptionService();
+  final accountKey = AccountSyncKey.generate(Random(4));
+  final sealed = await RecordSync.seal(
+    accountKey: accountKey,
+    recordId: 'fixture',
+    kind: SyncRecordKind.entry,
+    version: 1,
+    updatedAt: DateTime.utc(2026, 3, 8),
+    deviceId: 'test',
+    plaintext: {'transcript': text, 'passphrase': passphrase},
+  );
   return JournalTestEntry(
     text: text,
-    payload: await service.encryptText(text, passphrase),
+    ciphertext: sealed.ciphertext,
+    accountKey: accountKey,
     latitude: latitude,
     longitude: longitude,
     audioUrl: audioUrl,

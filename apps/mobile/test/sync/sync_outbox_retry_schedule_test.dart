@@ -12,7 +12,8 @@ import 'package:archiveme_mobile/storage/drift/journal_database.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_drainer.dart';
+import 'package:archiveme_mobile/sync/sync_push_status.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -123,7 +124,7 @@ void main() {
     final journal = await JournalStore.open('${dir.path}/journal.json');
     final db = await openTestAppSqliteDatabase();
     final store = SyncOutboxStore(AppDatabase.fromSqflite(db.database));
-    final engine = SyncEngine(
+    final drainer = SyncOutboxDrainer(
       syncApi: _FailingSyncApiClient(),
       journal: journal,
       outbox: store,
@@ -135,7 +136,7 @@ void main() {
 
     await store.enqueue(_blob);
 
-    final drain = await engine.drainOutbox();
+    final drain = await drainer.drainOutbox();
     expect(drain, isA<ApiFailureResult<SyncOutboxDrainResult>>());
     expect(await store.pendingCount(), 0);
     expect(await store.nextReadyAt(), isNotNull);

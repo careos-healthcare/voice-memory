@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/features/sync/services/entry_encryption_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:flutter/foundation.dart';
 
 /// A short-lived permission to upload or download one encrypted file.
@@ -14,16 +13,17 @@ class SignedObjectGrant {
   final Map<String, String> headers;
 }
 
-/// Encrypts each audio or image file, then stores only the ciphertext.
+/// Encrypts each audio or image file into 4 MB chunks and stores only those
+/// bytes in object storage.
 class AttachmentSyncService {
   AttachmentSyncService({
-    required EntryEncryptionService encryption,
+    required List<int> accountKey,
     required this.sign,
     required this.putBytes,
     required this.getBytes,
-  }) : _encryption = encryption;
+  }) : _accountKey = accountKey;
 
-  final EntryEncryptionService _encryption;
+  final List<int> _accountKey;
   final Future<SignedObjectGrant> Function({
     required String entryId,
     required String name,
@@ -58,7 +58,7 @@ class AttachmentSyncService {
     }
   }
 
-  /// Downloads a missing local file, decrypts it, and writes it beside the entry.
+  /// Downloads missing chunk objects, decrypts them, and writes the file.
   Future<bool> ensureLocalFile({
     required String entryId,
     required String path,
@@ -66,15 +66,32 @@ class AttachmentSyncService {
     final file = File(path);
     if (file.existsSync() && file.lengthSync() > 0) return false;
     final name = _name(path);
-    final grant = await sign(entryId: entryId, name: name, method: 'GET');
-    final body = await getBytes(grant);
-    final decoded = jsonDecode(utf8.decode(body));
-    if (decoded is! Map) {
-      throw const FormatException('Encrypted attachment was not an object.');
+    final chunks = <SealedMediaChunk>[];
+    for (var index = 0; index < 1024; index++) {
+      try {
+        final grant = await sign(
+          entryId: entryId,
+          name: '$name-$index',
+          method: 'GET',
+        );
+        final body = await getBytes(grant);
+        chunks.add(
+          SealedMediaChunk.fromObjectBytes(
+            blobId: '$name-$index',
+            index: index,
+            objectBytes: body,
+          ),
+        );
+      } on Object {
+        break;
+      }
     }
-    final clear = await _encryption.decryptBytes(
-      nonce: decoded['nonce'] as String,
-      ciphertext: decoded['ciphertext'] as String,
+    if (chunks.isEmpty) {
+      throw StateError('Encrypted attachment was missing.');
+    }
+    final clear = await RecordSync.openMedia(
+      accountKey: _accountKey,
+      chunks: chunks,
     );
     await file.parent.create(recursive: true);
     await file.writeAsBytes(clear, flush: true);
@@ -101,20 +118,19 @@ class AttachmentSyncService {
   }
 
   Future<void> _upload(String entryId, File file) async {
-    final sealed = await _encryption.encryptBytes(await file.readAsBytes());
-    final body = utf8.encode(
-      jsonEncode({
-        'version': EntryEncryptionService.version,
-        'nonce': sealed.nonce,
-        'ciphertext': sealed.ciphertext,
-      }),
+    final chunks = await RecordSync.sealMedia(
+      accountKey: _accountKey,
+      bytes: await file.readAsBytes(),
+      blobPrefix: _name(file.path),
     );
-    final grant = await sign(
-      entryId: entryId,
-      name: _name(file.path),
-      method: 'PUT',
-    );
-    await putBytes(grant, body);
+    for (final chunk in chunks) {
+      final grant = await sign(
+        entryId: entryId,
+        name: chunk.blobId,
+        method: 'PUT',
+      );
+      await putBytes(grant, chunk.objectBytes);
+    }
   }
 
   static bool _isMedia(String path) {

@@ -91,8 +91,6 @@ abstract final class CloudBackupPackager {
       final snapshot = await crypto.decryptSnapshot(envelope.payload);
       _assertIntegrity(snapshot);
       return snapshot;
-    } on SyncCryptoException {
-      throw CloudBackupException('WRONG_PASSPHRASE');
     } on SecretBoxAuthenticationError {
       throw CloudBackupException('WRONG_PASSPHRASE');
     } on FormatException {

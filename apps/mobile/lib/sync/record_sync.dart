@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
 import 'package:cryptography/cryptography.dart';
 
 /// How often a record sync runs, and how long a tombstone is kept.
@@ -219,10 +221,35 @@ class SealedMediaChunk {
     required this.nonce,
   });
 
+  static const nonceBytes = 24;
+
   final String blobId;
   final int index;
-  final String ciphertext;
-  final String nonce;
+
+  /// Raw XChaCha20-Poly1305 ciphertext and tag. Not base64.
+  final List<int> ciphertext;
+
+  /// Raw 24-byte nonce. Not base64.
+  final List<int> nonce;
+
+  /// Object-storage body: nonce, then ciphertext. Not a JSON document.
+  List<int> get objectBytes => [...nonce, ...ciphertext];
+
+  factory SealedMediaChunk.fromObjectBytes({
+    required String blobId,
+    required int index,
+    required List<int> objectBytes,
+  }) {
+    if (objectBytes.length <= nonceBytes) {
+      throw const FormatException('Encrypted media chunk was truncated.');
+    }
+    return SealedMediaChunk(
+      blobId: blobId,
+      index: index,
+      nonce: objectBytes.sublist(0, nonceBytes),
+      ciphertext: objectBytes.sublist(nonceBytes),
+    );
+  }
 }
 
 class PairTicket {
@@ -251,6 +278,53 @@ abstract final class RecordSync {
   RecordSync._();
 
   static const keyVersion = 1;
+
+  static String envelopeBinding({
+    required String accountNamespace,
+    required String blobType,
+    required String blobId,
+    required int schemaVersion,
+  }) => '$accountNamespace|$blobType|$blobId|$schemaVersion';
+
+  static Future<EncryptedPayload> sealJson({
+    required List<int> accountKey,
+    required Map<String, dynamic> plaintext,
+  }) async {
+    final box = await Xchacha20.poly1305Aead().encrypt(
+      utf8.encode(jsonEncode(plaintext)),
+      secretKey: SecretKey(accountKey),
+    );
+    return EncryptedPayload(
+      ciphertext: _pack(box),
+      iv: base64Encode(box.nonce),
+    );
+  }
+
+  static Future<Map<String, dynamic>> openJson({
+    required List<int> accountKey,
+    required EncryptedPayload envelope,
+  }) async {
+    if (envelope.version != 1) {
+      throw const FormatException('UNSUPPORTED_ENCRYPTION_VERSION');
+    }
+    final packed = base64Decode(envelope.ciphertext);
+    if (packed.length <= 16) {
+      throw const FormatException('INVALID_ENCRYPTED_ENVELOPE');
+    }
+    final clear = await Xchacha20.poly1305Aead().decrypt(
+      SecretBox(
+        packed.sublist(0, packed.length - 16),
+        nonce: base64Decode(envelope.iv),
+        mac: Mac(packed.sublist(packed.length - 16)),
+      ),
+      secretKey: SecretKey(accountKey),
+    );
+    final decoded = jsonDecode(utf8.decode(clear));
+    if (decoded is! Map) {
+      throw const FormatException('Sync record was not an object.');
+    }
+    return Map<String, dynamic>.from(decoded);
+  }
 
   static Future<SealedSyncRecord> seal({
     required List<int> accountKey,
@@ -478,8 +552,8 @@ abstract final class RecordSync {
         SealedMediaChunk(
           blobId: '$blobPrefix-$index',
           index: index,
-          ciphertext: _pack(box),
-          nonce: base64Encode(box.nonce),
+          ciphertext: <int>[...box.cipherText, ...box.mac.bytes],
+          nonce: box.nonce,
         ),
       );
       index += 1;
@@ -494,11 +568,14 @@ abstract final class RecordSync {
     final ordered = [...chunks]..sort((a, b) => a.index.compareTo(b.index));
     final out = <int>[];
     for (final chunk in ordered) {
-      final packed = base64Decode(chunk.ciphertext);
+      final packed = chunk.ciphertext;
+      if (packed.length <= 16) {
+        throw const FormatException('Encrypted media chunk was truncated.');
+      }
       final clear = await Xchacha20.poly1305Aead().decrypt(
         SecretBox(
           packed.sublist(0, packed.length - 16),
-          nonce: base64Decode(chunk.nonce),
+          nonce: chunk.nonce,
           mac: Mac(packed.sublist(packed.length - 16)),
         ),
         secretKey: SecretKey(accountKey),
@@ -592,10 +669,81 @@ class _Picked {
   final String deviceId;
 }
 
-/// Keeps the account key for other iPhones on the same Apple ID.
+/// Keeps the wrapped account key on this device. iCloud Keychain sync is off.
 abstract final class AccountKeyKeychain {
   AccountKeyKeychain._();
 
   static const channelName = 'archive_me/account_keychain';
-  static const synchronizable = true;
+  static const synchronizable = false;
+}
+
+/// Pushes per-entry records after a short pause, and pulls on a foreground timer.
+class RecordSyncEngine {
+  RecordSyncEngine({
+    required this.push,
+    required this.pull,
+    this.debounce = RecordSyncSchedule.pushDebounce,
+    this.now = DateTime.now,
+  });
+
+  final Future<void> Function() push;
+  final Future<void> Function() pull;
+  final Duration debounce;
+  final DateTime Function() now;
+  DateTime? lastPull;
+  int attempt = 0;
+
+  Duration get retryAfter => RecordSyncSchedule.backoff(attempt);
+
+  bool get shouldPull => RecordSyncSchedule.pullDue(lastPull, now());
+
+  void noteSave(void Function(Duration delay) schedule) {
+    schedule(debounce);
+  }
+
+  Future<void> catchUp() async {
+    if (!shouldPull && attempt == 0) return;
+    try {
+      await pull();
+      await push();
+      lastPull = now().toUtc();
+      RecordSyncRuntime.lastSynced = lastPull;
+      attempt = 0;
+    } catch (_) {
+      attempt += 1;
+      rethrow;
+    }
+  }
+}
+
+/// Installed by startup. Launch and resume pull when one is due.
+abstract final class RecordSyncRuntime {
+  RecordSyncRuntime._();
+
+  static RecordSyncEngine? engine;
+  static DateTime? lastSynced;
+  static Timer? _foreground;
+
+  static String statusLabel(DateTime now) {
+    final at = lastSynced;
+    if (at == null) return 'Not synced yet';
+    final minutes = now.difference(at).inMinutes;
+    if (minutes < 1) return 'Synced just now';
+    if (minutes == 1) return 'Synced 1 minute ago';
+    return 'Synced $minutes minutes ago';
+  }
+
+  static void ensureForegroundTimer() {
+    if (_foreground != null) return;
+    _foreground = Timer.periodic(RecordSyncSchedule.foregroundPull, (_) {
+      unawaited(onLaunchOrResume());
+    });
+  }
+
+  static Future<void> onLaunchOrResume() async {
+    ensureForegroundTimer();
+    final current = engine;
+    if (current == null || !current.shouldPull) return;
+    await current.catchUp();
+  }
 }

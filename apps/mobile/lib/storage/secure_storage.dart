@@ -2,20 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archiveme_crypto/archiveme_crypto.dart';
+import 'package:archiveme_mobile/core/storage/secure_storage_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Encrypted storage for non-secret preferences and future session handles.
 /// Do not store API keys, Stripe secrets, or raw passwords here.
 class SecureStorageService implements KeyMaterialStore {
   SecureStorageService({FlutterSecureStorage? storage})
-    : _storage =
-          storage ??
-          const FlutterSecureStorage(
-            aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            iOptions: IOSOptions(
-              accessibility: KeychainAccessibility.first_unlock,
-            ),
-          );
+    : _storage = storage ?? accountKeySecureStorage;
 
   final FlutterSecureStorage _storage;
   static const _prefix = 'vm_flutter_';

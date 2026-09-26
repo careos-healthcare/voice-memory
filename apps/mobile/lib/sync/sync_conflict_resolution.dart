@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/core/execution/sync_execution_strategy.dart';
 import 'package:archiveme_mobile/core/network/api_failure.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/sync/sync_push_status.dart';
 
 export 'package:archiveme_mobile/core/execution/sync_execution_strategy.dart'
     show SyncConflictResolution;

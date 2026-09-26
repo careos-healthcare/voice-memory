@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
+import 'package:archiveme_mobile/core/storage/secure_storage_provider.dart';
 import 'package:archiveme_mobile/features/settings/views/e2ee_setup_view.dart';
-import 'package:archiveme_mobile/features/sync/services/crypto_vault.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:archiveme_mobile/features/sync/views/recovery_key_backup_view.dart';
 import 'package:archiveme_mobile/security/app_lock_service.dart';
@@ -15,7 +16,7 @@ class E2eeSyncSettings extends StatefulWidget {
     required this.readEnabled,
     required this.writeEnabled,
     required this.storePassphrase,
-    this.generatePassphrase = CryptoVault.generateRecoveryPhrase,
+    this.generatePassphrase = AccountSyncKey.recoveryPhrase,
     this.saveMasterKey,
   });
 
@@ -33,13 +34,13 @@ class E2eeSyncSettings extends StatefulWidget {
   )?
   saveMasterKey;
 
-  /// Writes the passphrase into the same secure store the vault uses.
+  /// Writes the passphrase into the same secure store as the wrapped account key.
   static Future<void> storeInVault(String passphrase) {
-    return SaltStore.secureStorage().write(passphraseKey, passphrase);
+    return accountKeySecureStorage.write(key: passphraseKey, value: passphrase);
   }
 
   static Future<String?> storedPassphrase() {
-    return SaltStore.secureStorage().read(passphraseKey);
+    return accountKeySecureStorage.read(key: passphraseKey);
   }
 
   @override
@@ -82,19 +83,16 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
         ),
       );
       if (scope == null || !mounted) return;
-      final salt = CryptoVault.randomSalt();
-      final master = await CryptoVault.deriveMasterKey(
+      final accountKey = AccountSyncKey.generate();
+      final bundle = await AccountSyncKey.wrap(
+        accountKey: accountKey,
         passphrase: stored,
-        salt: salt,
+        recoveryPhrase: stored,
       );
+      await AccountSyncKey.storeBundle(bundle);
       final save = widget.saveMasterKey;
       if (save != null) {
-        await save(master.bytes, master.salt, scope);
-      } else {
-        await DevicePairingService(scope: scope).saveMasterKey(
-          masterKey: master.bytes,
-          salt: master.salt,
-        );
+        await save(accountKey, base64Decode(bundle.wrappedByPassphrase.salt), scope);
       }
     }
     await widget.storePassphrase(stored);

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/features/export/services/zip_archiver_service.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 
 class ArchiveTransferEntry {
   const ArchiveTransferEntry({
@@ -74,25 +74,33 @@ abstract final class FullArchiveTransfer {
   static const schemaVersion = 1;
 
   static Future<Uint8List> exportZip({
-    required PassphraseVault vault,
+    required List<int> accountKey,
     required List<ArchiveTransferEntry> entries,
     Map<String, List<int>> audio = const {},
     Map<String, List<int>> photos = const {},
   }) async {
-    final journal = jsonEncode({
-      'entries': entries.map((entry) => entry.toJson()).toList(),
-    });
-    final encrypted = await vault.encrypt(utf8.encode(journal));
+    final sealed = await RecordSync.seal(
+      accountKey: accountKey,
+      recordId: 'archive',
+      kind: SyncRecordKind.entry,
+      version: 1,
+      updatedAt: DateTime.now().toUtc(),
+      deviceId: 'archive',
+      plaintext: {
+        'entries': [
+          for (final entry in entries) entry.toJson(),
+        ],
+      },
+    );
     final manifest = jsonEncode({
       'schemaVersion': schemaVersion,
-      'encryption': 'aes-256-gcm',
-      'salt': encrypted.salt,
-      'nonce': encrypted.nonce,
+      'encryption': 'xchacha20-poly1305',
+      'nonce': sealed.nonce,
     });
     return ZipArchiverService.encode(
       documents: {
         'manifest.json': utf8.encode(manifest),
-        'journal.json': base64Decode(encrypted.ciphertext),
+        'journal.json': base64Decode(sealed.ciphertext),
       },
       audio: audio,
       photos: photos,
@@ -100,7 +108,7 @@ abstract final class FullArchiveTransfer {
   }
 
   static Future<ArchiveBundle> importZip({
-    required PassphraseVault vault,
+    required List<int> accountKey,
     required List<int> bytes,
   }) async {
     final archive = ZipDecoder().decodeBytes(bytes);
@@ -115,16 +123,22 @@ abstract final class FullArchiveTransfer {
     if (version != schemaVersion) {
       throw FormatException('Unsupported archive schema $version.');
     }
-    final clear = await vault.decrypt(
-      CiphertextBlob(
+    final opened = await RecordSync.open(
+      accountKey: accountKey,
+      record: SealedSyncRecord(
+        recordId: 'archive',
+        kind: SyncRecordKind.entry,
+        version: 1,
+        updatedAt: DateTime.now().toUtc(),
+        deviceId: 'archive',
         ciphertext: base64Encode(journalFile.content as List<int>),
         nonce: manifest['nonce'] as String,
-        salt: manifest['salt'] as String,
+        keyVersion: RecordSync.keyVersion,
       ),
     );
-    final journal = jsonDecode(utf8.decode(clear)) as Map<String, Object?>;
+    final rawEntries = opened['entries'];
     final entries = [
-      for (final item in (journal['entries'] as List<Object?>? ?? const []))
+      for (final item in (rawEntries is List ? rawEntries : const []))
         if (item is Map)
           ArchiveTransferEntry.fromJson(Map<String, Object?>.from(item)),
     ];

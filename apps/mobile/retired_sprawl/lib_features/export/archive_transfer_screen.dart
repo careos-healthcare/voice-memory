@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/export/full_archive_transfer.dart';
 import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/export/services/archive_transfer_service.dart';
@@ -28,11 +28,23 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
     super.dispose();
   }
 
-  Future<PassphraseVault> _vault() {
-    return PassphraseVault.open(
-      passphrase: _passphrase.text,
-      store: SaltStore.secureStorage(),
+  Future<List<int>> _accountKey() async {
+    final passphrase = _passphrase.text;
+    final existing = await AccountSyncKey.readBundle();
+    if (existing != null) {
+      return AccountSyncKey.unwrap(
+        wrapped: existing.wrappedByPassphrase,
+        secret: passphrase,
+      );
+    }
+    final accountKey = AccountSyncKey.generate();
+    final bundle = await AccountSyncKey.wrap(
+      accountKey: accountKey,
+      passphrase: passphrase,
+      recoveryPhrase: passphrase,
     );
+    await AccountSyncKey.storeBundle(bundle);
+    return accountKey;
   }
 
   Future<void> _export() async {
@@ -41,7 +53,7 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
     try {
       final saved = await AppServices.instance.journal.loadAll();
       final bytes = await ArchiveTransferService.exportZip(
-        vault: await _vault(),
+        accountKey: await _accountKey(),
         entries: saved,
       );
       final dir = await getTemporaryDirectory();
@@ -62,7 +74,7 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
     setState(() => _busy = true);
     try {
       final bundle = await FullArchiveTransfer.importZip(
-        vault: await _vault(),
+        accountKey: await _accountKey(),
         bytes: bytes,
       );
       if (!mounted) return;

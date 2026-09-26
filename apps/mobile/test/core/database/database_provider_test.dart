@@ -78,7 +78,7 @@ void main() {
     },
   );
 
-  test('a deleted entry stays as a tombstone for 90 days', () async {
+  test('a deleted entry stays as a tombstone for 180 days', () async {
     final db = await openDatabase(inMemoryDatabasePath);
     addTearDown(db.close);
     final provider = DatabaseProvider(db);
@@ -90,7 +90,7 @@ void main() {
     );
     await provider.recordTombstone(
       'old',
-      deletedAt: now.subtract(const Duration(days: 91)),
+      deletedAt: now.subtract(const Duration(days: 181)),
     );
 
     final recent = await provider.tombstoneFor('recent');

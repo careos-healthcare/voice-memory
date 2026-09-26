@@ -1,4 +1,6 @@
-import 'package:archiveme_mobile/features/sync/services/crypto_vault.dart';
+import 'dart:math';
+
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/device_pairing_service.dart';
 import 'package:archiveme_mobile/features/sync/views/recovery_key_backup_view.dart';
 import 'package:cryptography/cryptography.dart';
@@ -8,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   setUp(() {
-    CryptoVault.debugKdf = Argon2id(
+    AccountSyncKey.debugKdf = Argon2id(
       parallelism: 1,
       memory: 32,
       iterations: 1,
@@ -16,30 +18,33 @@ void main() {
     );
   });
 
-  tearDown(() => CryptoVault.debugKdf = null);
+  tearDown(() => AccountSyncKey.debugKdf = null);
 
   test(
     'a 24-word phrase derives the same master key for the same salt',
     () async {
-      final phrase = CryptoVault.generateRecoveryPhrase();
-      expect(CryptoVault.verifyRecoveryPhrase(phrase), isTrue);
+      final phrase = AccountSyncKey.recoveryPhrase();
+      expect(AccountSyncKey.verifyRecoveryPhrase(phrase), isTrue);
       expect(phrase.split(' '), hasLength(24));
 
       final words = phrase.split(' ');
       words[words.length - 1] = words.last == 'abandon' ? 'ability' : 'abandon';
-      expect(CryptoVault.verifyRecoveryPhrase(words.join(' ')), isFalse);
+      expect(AccountSyncKey.verifyRecoveryPhrase(words.join(' ')), isFalse);
 
-      final salt = CryptoVault.randomSalt();
-      final first = await CryptoVault.deriveMasterKey(
-        passphrase: phrase,
+      final account = AccountSyncKey.generate(Random(1));
+      final salt = List<int>.filled(16, 3);
+      final first = await AccountSyncKey.wrapWithSecret(
+        accountKey: account,
+        secret: phrase,
         salt: salt,
       );
-      final second = await CryptoVault.deriveMasterKey(
-        passphrase: phrase,
-        salt: salt,
+      final second = await AccountSyncKey.unwrap(
+        wrapped: first,
+        secret: phrase,
       );
-      expect(first.bytes, second.bytes);
-      expect(first.bytes, hasLength(32));
+      expect(second, account);
+      expect(first.innerNonce, isNot(first.nonce));
+      expect(first.kdf.parallelism, 1);
     },
   );
 
@@ -95,7 +100,7 @@ void main() {
     (
       tester,
     ) async {
-      final phrase = CryptoVault.generateRecoveryPhrase();
+      final phrase = AccountSyncKey.recoveryPhrase();
       await tester.pumpWidget(
         MaterialApp(home: RecoveryKeyBackupView(phrase: phrase)),
       );

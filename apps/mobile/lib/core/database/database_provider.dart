@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/search/reflection_embedding_contract.d
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_deleted_entries.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// A past journal entry close to a newly saved transcript.
@@ -130,7 +131,7 @@ class DatabaseProvider {
   static const deletedEntriesTable = Migration021DeletedEntries.table;
 
   /// A deletion stays until other devices have had time to learn about it.
-  static const tombstoneRetention = Duration(days: 90);
+  static const tombstoneRetention = RecordSyncSchedule.tombstoneRetention;
 
   Future<void> recordTombstone(
     String id, {
@@ -159,7 +160,7 @@ class DatabaseProvider {
     return DeletedEntryTombstone.fromRow(rows.first);
   }
 
-  /// Drops tombstones only after [tombstoneRetention]. A shorter window is raised to 90 days.
+  /// Drops tombstones only after [tombstoneRetention]. A shorter window is raised to 180 days.
   Future<int> purgeExpiredTombstones({
     DateTime? now,
     Duration retention = tombstoneRetention,

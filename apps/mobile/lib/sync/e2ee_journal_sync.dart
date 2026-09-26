@@ -1,31 +1,13 @@
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:archiveme_mobile/api/models/sync_dto.dart';
-import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart' as e2ee;
-import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/sync/record_sync.dart';
 
-/// Legacy whole-journal snapshot. New sync seals one [SealedSyncRecord] per entry.
-/// [migrateSnapshot] turns a decrypted snapshot into those records.
+/// Legacy whole-journal snapshot helpers. New sync seals one [SealedSyncRecord]
+/// per entry. [migrateSnapshot] turns decrypted rows into those records.
 abstract final class E2eeJournalSync {
   E2eeJournalSync._();
 
   static const blobId = 'journal-e2ee';
   static const blobType = 'journal_snapshot';
-
-  static String generatePassphrase([Random? random]) {
-    final source = random ?? Random.secure();
-    final bytes = List<int>.generate(18, (_) => source.nextInt(256));
-    return base64UrlEncode(bytes);
-  }
-
-  static String serializeEntries(List<JournalEntry> entries) {
-    return jsonEncode({
-      'entries': [for (final entry in entries) entry.toJson()],
-    });
-  }
 
   /// Newer [JournalEntry.updatedAt] wins. A tie keeps the copy already on device.
   static JournalEntry lastWriteWins(JournalEntry local, JournalEntry incoming) {
@@ -40,79 +22,33 @@ abstract final class E2eeJournalSync {
     final byId = {for (final entry in local) entry.id: entry};
     for (final incoming in remote) {
       final current = byId[incoming.id];
-      byId[incoming.id] = current == null ? incoming : lastWriteWins(current, incoming);
+      byId[incoming.id] = current == null
+          ? incoming
+          : lastWriteWins(current, incoming);
     }
     return byId.values.toList();
   }
 
-  /// Decrypts a remote snapshot and keeps the row with the later `updatedAt`.
-  static Future<List<JournalEntry>> applyRemoteSnapshot({
-    required e2ee.E2EEncryptionService encryption,
-    required EncryptedPayloadDto envelope,
-    required String passphrase,
-    required List<JournalEntry> local,
-  }) async {
-    final remote = await decryptSnapshot(
-      encryption: encryption,
-      envelope: envelope,
-      passphrase: passphrase,
+  static EntryFieldState fieldsFor(JournalEntry entry, String deviceId) {
+    final when = entry.updatedAt;
+    return EntryFieldState(
+      transcript: entry.transcript,
+      baseTranscript: entry.transcript,
+      transcriptUpdatedAt: when,
+      transcriptDeviceId: deviceId,
+      title: entry.display.title ?? '',
+      titleUpdatedAt: when,
+      titleDeviceId: deviceId,
+      mood: entry.reflection.mood,
+      moodUpdatedAt: when,
+      moodDeviceId: deviceId,
+      place: entry.display.locationLabel ?? '',
+      placeUpdatedAt: when,
+      placeDeviceId: deviceId,
+      tags: const [],
+      tagsUpdatedAt: when,
+      tagsDeviceId: deviceId,
     );
-    return mergeByUpdatedAt(local: local, remote: remote);
-  }
-
-  static Future<SyncBlobPushDto> encryptSnapshot({
-    required e2ee.E2EEncryptionService encryption,
-    required Future<PassphraseVault> Function(String passphrase) openVault,
-    required List<JournalEntry> entries,
-    required String passphrase,
-  }) async {
-    await openVault(passphrase);
-    final plain = serializeEntries(entries);
-    final sealed = await encryption.encryptText(plain, passphrase);
-    final packed = base64Encode(
-      utf8.encode(
-        jsonEncode({
-          'ciphertext': sealed.ciphertext,
-          'nonce': sealed.nonce,
-          'mac': sealed.mac,
-          'salt': sealed.salt,
-        }),
-      ),
-    );
-    final newest = entries.fold<DateTime?>(null, (latest, entry) {
-      if (latest == null || entry.updatedAt.isAfter(latest)) return entry.updatedAt;
-      return latest;
-    });
-    return SyncBlobPushDto(
-      id: blobId,
-      type: blobType,
-      encrypted: EncryptedPayloadDto(ciphertext: packed, iv: sealed.nonce),
-      updatedAt: (newest ?? DateTime.now().toUtc()).toIso8601String(),
-      byteLength: packed.length,
-    );
-  }
-
-  static Future<List<JournalEntry>> decryptSnapshot({
-    required e2ee.E2EEncryptionService encryption,
-    required EncryptedPayloadDto envelope,
-    required String passphrase,
-  }) async {
-    final packed = jsonDecode(utf8.decode(base64Decode(envelope.ciphertext))) as Map<String, dynamic>;
-    final plain = await encryption.decryptText(
-      e2ee.EncryptedPayload(
-        ciphertext: packed['ciphertext'] as String,
-        nonce: packed['nonce'] as String,
-        mac: packed['mac'] as String,
-        salt: packed['salt'] as String,
-      ),
-      passphrase,
-    );
-    final decoded = jsonDecode(plain) as Map<String, dynamic>;
-    final rows = decoded['entries'] as List<dynamic>? ?? const [];
-    return [
-      for (final row in rows)
-        if (row is Map) JournalEntry.fromJson(Map<String, dynamic>.from(row)),
-    ];
   }
 
   /// Upgrades a decrypted snapshot into per-entry records on the next sync.
@@ -123,31 +59,13 @@ abstract final class E2eeJournalSync {
   }) async {
     final records = <SealedSyncRecord>[];
     for (final entry in entries) {
-      final when = entry.updatedAt;
       records.add(
         await RecordSync.sealEntry(
           accountKey: accountKey,
           recordId: entry.id,
           version: 1,
           deviceId: deviceId,
-          state: EntryFieldState(
-            transcript: entry.transcript,
-            baseTranscript: entry.transcript,
-            transcriptUpdatedAt: when,
-            transcriptDeviceId: deviceId,
-            title: entry.display.title ?? '',
-            titleUpdatedAt: when,
-            titleDeviceId: deviceId,
-            mood: entry.reflection.mood,
-            moodUpdatedAt: when,
-            moodDeviceId: deviceId,
-            place: entry.display.locationLabel ?? '',
-            placeUpdatedAt: when,
-            placeDeviceId: deviceId,
-            tags: const [],
-            tagsUpdatedAt: when,
-            tagsDeviceId: deviceId,
-          ),
+          state: fieldsFor(entry, deviceId),
         ),
       );
     }

@@ -14,7 +14,7 @@ import 'package:archiveme_mobile/features/objective/current_objective_widget_ref
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
 import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/archive_correction_bootstrap.dart';

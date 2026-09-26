@@ -2,16 +2,18 @@ import 'package:archiveme_mobile/api/models/sync_dto.dart';
 import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/encrypted_journal_snapshot.dart';
-import 'package:archiveme_mobile/features/encrypted_sync/sync_crypto.dart';
-import 'package:archiveme_mobile/features/encrypted_sync/sync_master_key_store.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
+import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_drainer.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
+import 'package:archiveme_mobile/sync/sync_push_status.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:archiveme_mobile/security/account_session_guard.dart';
 import 'package:archiveme_mobile/services/journal_ownership_guard.dart';
 import 'package:archiveme_mobile/storage/device_id.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
-import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 
 /// Encrypted journal sync via `/api/sync/*` — no plaintext journal fields leave
 /// the device. The server stores ciphertext envelopes only.
@@ -23,19 +25,21 @@ class EncryptedSyncService {
     required DeviceIdStore deviceIds,
     required SyncMasterKeyStore keyStore,
     SyncOutboxStore? outboxStore,
-    SyncEngine? syncEngine,
+    SyncOutboxDrainer? drainer,
+    SyncBackoffPolicy backoff = const SyncBackoffPolicy(),
     this._ownershipGuard = const JournalOwnershipGuard(),
   }) : _syncApi = syncApi,
        _journal = journal,
        _prefs = prefs,
        _deviceIds = deviceIds,
        _keyStore = keyStore,
-       _syncEngine =
-           syncEngine ??
-           SyncEngine(
+       _drainer =
+           drainer ??
+           SyncOutboxDrainer(
              syncApi: syncApi,
              journal: journal,
              outbox: outboxStore,
+             backoff: backoff,
            );
 
   final SyncApiClient _syncApi;
@@ -43,7 +47,7 @@ class EncryptedSyncService {
   final MobilePrefsStore _prefs;
   final DeviceIdStore _deviceIds;
   final SyncMasterKeyStore _keyStore;
-  final SyncEngine _syncEngine;
+  final SyncOutboxDrainer _drainer;
   final JournalOwnershipGuard _ownershipGuard;
 
   Future<({List<JournalEntry> eligible, int blocked})> _partitionByOwnership(
@@ -77,9 +81,8 @@ class EncryptedSyncService {
         await _prefs.readString(JournalOwnershipGuard.ownerKeyPrefsKey) ??
         'guest';
     final keyBytes = await _keyStore.ensureKey();
-    final crypto = SyncCrypto(keyBytes);
     final deviceId = await _deviceIds.getOrCreate();
-    final binding = SyncCrypto.envelopeBinding(
+    final binding = RecordSync.envelopeBinding(
       accountNamespace: accountNamespace,
       blobType: EncryptedSyncSchema.coreBlobType,
       blobId: EncryptedSyncSchema.coreBlobId,
@@ -97,7 +100,10 @@ class EncryptedSyncService {
       lastSyncedAt: _parseLastSync(await _prefs.lastSyncAt),
     );
 
-    final encrypted = await crypto.encryptJson(snapshot);
+    final encrypted = await RecordSync.sealJson(
+      accountKey: keyBytes,
+      plaintext: snapshot,
+    );
     final byteLength = encrypted.ciphertext.length + encrypted.iv.length;
     final updatedAt = DateTime.now().toUtc().toIso8601String();
 
@@ -113,9 +119,9 @@ class EncryptedSyncService {
     session.assertActive();
     late final Map<String, dynamic> pushBody;
     late final SyncPushStatusMatrix pushMatrix;
-    if (_syncEngine.hasOutbox) {
-      await _syncEngine.enqueueBlob(blob);
-      final pushResult = await _syncEngine.drainOutbox();
+    if (_drainer.hasOutbox) {
+      await _drainer.enqueueBlob(blob);
+      final pushResult = await _drainer.drainOutbox();
       switch (pushResult) {
         case ApiSuccess(:final value):
           pushBody = value.responseBody;
@@ -124,7 +130,7 @@ class EncryptedSyncService {
           return ApiFailureResult(failure);
       }
     } else {
-      final pushResult = await _syncEngine.pushBlobsWithRetry({
+      final pushResult = await _drainer.pushBlobsWithRetry({
         'blobs': [blob.toJson()],
       });
       switch (pushResult) {
@@ -156,7 +162,10 @@ class EncryptedSyncService {
       if (encJson is! Map<String, dynamic>) continue;
       session.assertActive();
       final payload = EncryptedPayload.fromJson(encJson);
-      final decrypted = await crypto.decryptJson(payload);
+      final decrypted = await RecordSync.openJson(
+        accountKey: keyBytes,
+        envelope: payload,
+      );
       final remoteEntries = journalEntriesFromSnapshot(decrypted);
       await _journal.mergeRemoteBatch(remoteEntries);
       pulled = remoteEntries.length;
@@ -164,7 +173,7 @@ class EncryptedSyncService {
 
     session.assertActive();
     await _journal.compactTombstonesBatch();
-    await _syncEngine.acknowledgeAppliedPush(
+    await _drainer.acknowledgeAppliedPush(
       matrix: pushMatrix,
       coreBlobId: EncryptedSyncSchema.coreBlobId,
       pushedEntryIds: partitioned.eligible.map((entry) => entry.id),
