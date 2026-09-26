@@ -8,7 +8,7 @@ class E2eeSetupView extends StatefulWidget {
   final String Function() generatePassphrase;
 
   static const warning =
-      'If you lose this passphrase, your synced data cannot be recovered. We cannot reset it for you. A lost passphrase means lost data.';
+      'If you lose this passphrase, your synced data cannot be recovered. We cannot reset it for you.';
 
   @override
   State<E2eeSetupView> createState() => _E2eeSetupViewState();
@@ -31,9 +31,10 @@ class _E2eeSetupViewState extends State<E2eeSetupView> {
   @override
   Widget build(BuildContext context) {
     final canContinue = _confirmed && _passphrase.isNotEmpty;
-    final warningStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+    final warningStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
       color: Theme.of(context).colorScheme.error,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w800,
+      height: 1.25,
     );
     return Scaffold(
       key: const Key('e2ee_setup_view'),
@@ -90,7 +91,7 @@ class _E2eeSetupViewState extends State<E2eeSetupView> {
             contentPadding: EdgeInsets.zero,
             value: _confirmed,
             onChanged: (value) => setState(() => _confirmed = value ?? false),
-            title: const Text('I have stored this passphrase'),
+            title: const Text('I have saved my passphrase securely.'),
             controlAffinity: ListTileControlAffinity.leading,
           ),
           const SizedBox(height: 12),
@@ -99,7 +100,7 @@ class _E2eeSetupViewState extends State<E2eeSetupView> {
             onPressed: canContinue
                 ? () => Navigator.of(context).pop(_passphrase)
                 : null,
-            child: const Text('Continue'),
+            child: const Text('Enable Sync'),
           ),
         ],
       ),

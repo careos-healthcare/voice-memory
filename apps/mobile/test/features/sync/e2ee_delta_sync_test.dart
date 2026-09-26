@@ -48,20 +48,18 @@ void main() {
         updatedAt: DateTime.utc(2026, 3, 8, 12),
         transcript: 'the river was high',
       );
-      final sealed = await cipher.encryptPayload(jsonEncode(row.toJson()));
+      final sealed = await cipher.encryptEntry(row);
 
       expect(sealed.ciphertext.contains('the river was high'), isFalse);
       expect(sealed.ciphertext.contains(passphrase), isFalse);
       expect(sealed.nonce, isNotEmpty);
 
-      final clear = await cipher.decryptPayload(
+      final restored = await cipher.decryptEntry(
         sealed.ciphertext,
         sealed.nonce,
       );
-      final restored = JournalEntry.fromJson(
-        jsonDecode(clear) as Map<String, dynamic>,
-      );
       expect(restored.transcript, 'the river was high');
+      expect(sealed.ciphertext.contains(passphrase), isFalse);
     },
   );
 
@@ -106,8 +104,8 @@ void main() {
             updatedAt: remoteNewer.updatedAt,
           ),
         ],
-        encrypt: cipher.encryptPayload,
-        decrypt: cipher.decryptPayload,
+        encryptEntry: cipher.encryptEntry,
+        decryptEntry: cipher.decryptEntry,
         saveLocal: (row) async => saved.add(row),
         push: (records) async => pushed.addAll(records),
       );
@@ -152,8 +150,13 @@ void main() {
         ),
       ],
       remote: const [],
-      encrypt: (_) async => const E2eeCipherPayload(ciphertext: '', nonce: ''),
-      decrypt: (_, _) async => '',
+      encryptEntry: (_) async =>
+          const E2eeCipherPayload(ciphertext: '', nonce: ''),
+      decryptEntry: (_, _) async => entry(
+        id: 'unused',
+        updatedAt: DateTime.utc(2026, 3, 8),
+        transcript: 'unused',
+      ),
       saveLocal: (_) async {},
       push: (_) async => pushed = true,
     );

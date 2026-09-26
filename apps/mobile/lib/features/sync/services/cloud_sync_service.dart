@@ -133,8 +133,8 @@ abstract final class E2eeSyncLifecycle {
         lastSyncTime: last,
         localEntries: local,
         remote: remote,
-        encrypt: cipher.encryptPayload,
-        decrypt: cipher.decryptPayload,
+        encryptEntry: cipher.encryptEntry,
+        decryptEntry: cipher.decryptEntry,
         saveLocal: (entry) => AppServices.instance.journalStore.save(entry),
         push: _push,
       );

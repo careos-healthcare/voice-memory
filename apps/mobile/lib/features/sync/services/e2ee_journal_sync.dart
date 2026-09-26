@@ -46,6 +46,19 @@ class E2eeJournalCipher {
     return passphrase;
   }
 
+  Future<E2eeCipherPayload> encryptEntry(JournalEntry entry) {
+    return encryptPayload(jsonEncode(entry.toJson()));
+  }
+
+  Future<JournalEntry> decryptEntry(String ciphertext, String nonce) async {
+    final clear = await decryptPayload(ciphertext, nonce);
+    final decoded = jsonDecode(clear);
+    if (decoded is! Map) {
+      throw const FormatException('Encrypted journal entry was not an object.');
+    }
+    return JournalEntry.fromJson(Map<String, dynamic>.from(decoded));
+  }
+
   Future<E2eeCipherPayload> encryptPayload(String jsonData) async {
     final sealed = await _vault.encrypt(utf8.encode(jsonData));
     return E2eeCipherPayload(
@@ -121,8 +134,9 @@ abstract final class E2eeDeltaSync {
     required DateTime? lastSyncTime,
     required List<JournalEntry> localEntries,
     required List<RemoteEncryptedEntry> remote,
-    required Future<E2eeCipherPayload> Function(String jsonData) encrypt,
-    required Future<String> Function(String ciphertext, String nonce) decrypt,
+    required Future<E2eeCipherPayload> Function(JournalEntry entry) encryptEntry,
+    required Future<JournalEntry> Function(String ciphertext, String nonce)
+    decryptEntry,
     required Future<void> Function(JournalEntry entry) saveLocal,
     required Future<void> Function(List<EncryptedJournalPush> records) push,
   }) async {
@@ -148,10 +162,7 @@ abstract final class E2eeDeltaSync {
         remoteUpdatedAt: record.updatedAt,
       );
       if (action == SyncConflictAction.keepRemote) {
-        final json = await decrypt(record.ciphertext, record.nonce);
-        final decoded = jsonDecode(json);
-        if (decoded is! Map) continue;
-        final entry = JournalEntry.fromJson(Map<String, dynamic>.from(decoded));
+        final entry = await decryptEntry(record.ciphertext, record.nonce);
         await saveLocal(entry);
         local[entry.id] = entry;
         tookFromServer.add(entry.id);
@@ -171,7 +182,7 @@ abstract final class E2eeDeltaSync {
 
     final encrypted = <EncryptedJournalPush>[];
     for (final entry in pushLocal) {
-      final payload = await encrypt(jsonEncode(entry.toJson()));
+      final payload = await encryptEntry(entry);
       encrypted.add(
         EncryptedJournalPush(
           id: entry.id,

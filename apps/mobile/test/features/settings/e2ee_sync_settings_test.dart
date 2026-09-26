@@ -29,6 +29,8 @@ void main() {
 
     expect(find.text('Sync passphrase'), findsOneWidget);
     expect(find.text(E2eeSetupView.warning), findsOneWidget);
+    expect(find.text('I have saved my passphrase securely.'), findsOneWidget);
+    expect(find.text('Enable Sync'), findsOneWidget);
     expect(find.text('store-me-safely'), findsOneWidget);
     expect(
       tester
