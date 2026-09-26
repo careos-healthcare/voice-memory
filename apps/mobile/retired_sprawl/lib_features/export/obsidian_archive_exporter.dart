@@ -57,16 +57,22 @@ abstract final class ObsidianArchiveExporter {
       start: start,
       end: end,
     );
-    final documents = <String, List<int>>{};
-    for (final entry in selected) {
-      final name = _noteName(entry);
-      documents['notes/$name'] = utf8.encode(_markdown(entry));
-    }
     return ZipArchiverService.encode(
-      documents: documents,
+      documents: markdownDocuments(entries: selected),
       audio: audioByFileName,
       photos: photosByFileName,
     );
+  }
+
+  /// One Obsidian note per entry. [directory] is the folder inside the zip.
+  static Map<String, List<int>> markdownDocuments({
+    required List<ArchiveBookEntry> entries,
+    String directory = 'notes',
+  }) {
+    return {
+      for (final entry in entries)
+        '$directory/${_noteName(entry)}': utf8.encode(_markdown(entry)),
+    };
   }
 
   static String _markdown(ArchiveBookEntry entry) {
