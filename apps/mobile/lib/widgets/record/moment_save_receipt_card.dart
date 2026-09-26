@@ -164,140 +164,153 @@ class _MomentSaveReceiptCardState extends State<MomentSaveReceiptCard> {
           context: context,
           background: Theme.of(context).colorScheme.surface,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (!_isDegraded && heardText.isNotEmpty) ...[
-              UserWordsQuote(
-                key: const Key('moment_save_receipt_transcript'),
-                text: heardText,
-                fontSize: 28,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                '${LocaleDateFormat.time(context, entry.createdAt)} · ${receiptDuration(entry)}',
-                key: const Key('moment_save_receipt_when'),
-                style: secondaryStyle,
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            Semantics(
-              header: true,
-              child: Text(
-                MomentSaveReceiptCopy.savedOnDeviceTitle,
-                key: const Key('moment_save_receipt_title'),
-                style: titleStyle,
-              ),
-            ),
-            if (_isDegraded) ...[
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                PendingTranscriptRecoveryCopy.postSaveBody,
-                key: const Key('moment_save_receipt_degraded_body'),
-                style: bodyStyle,
-              ),
-              if (onTypeWhatYouSaid != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                OutlinedButton(
-                  key: const Key('moment_save_receipt_type_what_you_said'),
-                  onPressed: onTypeWhatYouSaid,
-                  child: const Text(VoiceCaptureCopy.typeWhatYouSaid),
-                ),
-              ],
-            ] else if (heardText.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.xs),
-              if (onCorrectText != null &&
-                  TranscriptCorrectionGate.entryAllowsCorrection(entry)) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    key: const Key('moment_save_receipt_correct_text'),
-                    onPressed: onCorrectText,
-                    child: const Text(MomentSaveReceiptCopy.correctText),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final content = Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!_isDegraded && heardText.isNotEmpty) ...[
+                  UserWordsQuote(
+                    key: const Key('moment_save_receipt_transcript'),
+                    text: heardText,
+                    fontSize: 28,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    '${LocaleDateFormat.time(context, entry.createdAt)} · ${receiptDuration(entry)}',
+                    key: const Key('moment_save_receipt_when'),
+                    style: secondaryStyle,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+                Semantics(
+                  header: true,
+                  child: Text(
+                    MomentSaveReceiptCopy.savedOnDeviceTitle,
+                    key: const Key('moment_save_receipt_title'),
+                    style: titleStyle,
                   ),
                 ),
-              ],
-            ],
-            if (_relationshipLine case final line?) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                line,
-                key: const Key('moment_save_receipt_relationship'),
-                style: secondaryStyle,
-              ),
-              if (_relationshipEvidence case final evidence?) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  evidence,
-                  key: const Key('moment_save_receipt_relationship_evidence'),
-                  style: secondaryStyle,
-                ),
-              ],
-            ],
-            if (_similar.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                "You've talked about this before",
-                key: const Key('moment_save_receipt_similar'),
-                style: titleStyle,
-              ),
-              ViewEvidenceInlineLink(
-                entryIds: [for (final match in _similar) match.id],
-                surface: 'moment_save_receipt_similar',
-                claimContext: "You've talked about this before",
-              ),
-              for (final match in _similar) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  LocaleDateFormat.date(context, match.createdAt),
-                  key: Key('moment_save_receipt_similar_date_${match.id}'),
-                  style: secondaryStyle,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  shortVerbatimQuote(match.transcript),
-                  key: Key('moment_save_receipt_similar_quote_${match.id}'),
-                  style: bodyStyle,
-                ),
-                if (match.localAudioPath != null)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: _SimilarEntryPlayButton(
-                      entryId: match.id,
-                      audioPath: match.localAudioPath!,
+                if (_isDegraded) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    PendingTranscriptRecoveryCopy.postSaveBody,
+                    key: const Key('moment_save_receipt_degraded_body'),
+                    style: bodyStyle,
+                  ),
+                  if (onTypeWhatYouSaid != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    OutlinedButton(
+                      key: const Key('moment_save_receipt_type_what_you_said'),
+                      onPressed: onTypeWhatYouSaid,
+                      child: const Text(VoiceCaptureCopy.typeWhatYouSaid),
                     ),
+                  ],
+                ] else if (heardText.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  if (onCorrectText != null &&
+                      TranscriptCorrectionGate.entryAllowsCorrection(
+                        entry,
+                      )) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        key: const Key('moment_save_receipt_correct_text'),
+                        onPressed: onCorrectText,
+                        child: const Text(MomentSaveReceiptCopy.correctText),
+                      ),
+                    ),
+                  ],
+                ],
+                if (_relationshipLine case final line?) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    line,
+                    key: const Key('moment_save_receipt_relationship'),
+                    style: secondaryStyle,
                   ),
+                  if (_relationshipEvidence case final evidence?) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      evidence,
+                      key: const Key(
+                        'moment_save_receipt_relationship_evidence',
+                      ),
+                      style: secondaryStyle,
+                    ),
+                  ],
+                ],
+                if (_similar.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    "You've talked about this before",
+                    key: const Key('moment_save_receipt_similar'),
+                    style: titleStyle,
+                  ),
+                  ViewEvidenceInlineLink(
+                    entryIds: [for (final match in _similar) match.id],
+                    surface: 'moment_save_receipt_similar',
+                    claimContext: "You've talked about this before",
+                  ),
+                  for (final match in _similar) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      LocaleDateFormat.date(context, match.createdAt),
+                      key: Key('moment_save_receipt_similar_date_${match.id}'),
+                      style: secondaryStyle,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      shortVerbatimQuote(match.transcript),
+                      key: Key('moment_save_receipt_similar_quote_${match.id}'),
+                      style: bodyStyle,
+                    ),
+                    if (match.localAudioPath != null)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: _SimilarEntryPlayButton(
+                          entryId: match.id,
+                          audioPath: match.localAudioPath!,
+                        ),
+                      ),
+                  ],
+                ],
+                if (_buildRemoteStatus(context, secondaryStyle)
+                    case final status?) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  status,
+                ],
+                if (V1CapabilityRegistry.postSaveFollowUp &&
+                    !_isDegraded &&
+                    heardText.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  PostSaveFollowUp(entry: entry),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                FilledButton(
+                  key: const Key('moment_save_receipt_record_another'),
+                  onPressed: onRecordAnother,
+                  child: const Text(MomentSaveReceiptCopy.recordAnother),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                TextButton(
+                  key: const Key('moment_save_receipt_view_archive'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant,
+                  ),
+                  onPressed: onViewArchive,
+                  child: const Text(MomentSaveReceiptCopy.viewArchive),
+                ),
+                _ContinueExploringCta(entry: entry),
               ],
-            ],
-            if (_buildRemoteStatus(context, secondaryStyle)
-                case final status?) ...[
-              const SizedBox(height: AppSpacing.sm),
-              status,
-            ],
-            if (V1CapabilityRegistry.postSaveFollowUp &&
-                !_isDegraded &&
-                heardText.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              PostSaveFollowUp(entry: entry),
-            ],
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(
-              key: const Key('moment_save_receipt_record_another'),
-              onPressed: onRecordAnother,
-              child: const Text(MomentSaveReceiptCopy.recordAnother),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            TextButton(
-              key: const Key('moment_save_receipt_view_archive'),
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              onPressed: onViewArchive,
-              child: const Text(MomentSaveReceiptCopy.viewArchive),
-            ),
-            _ContinueExploringCta(entry: entry),
-          ],
+            );
+            if (!constraints.hasBoundedHeight) return content;
+            return SingleChildScrollView(child: content);
+          },
         ),
       ),
     );

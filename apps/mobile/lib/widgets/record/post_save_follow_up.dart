@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture/services/follow_up_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 /// One question after a save. Stops after three turns.
@@ -16,9 +19,17 @@ import 'package:uuid/uuid.dart';
 /// that was just saved. Hidden while [V1CapabilityRegistry.postSaveFollowUp]
 /// is off.
 class PostSaveFollowUp extends StatefulWidget {
-  const PostSaveFollowUp({required this.entry, super.key});
+  const PostSaveFollowUp({
+    required this.entry,
+    this.dictate,
+    super.key,
+  });
 
   final JournalEntry entry;
+
+  /// Fills the answer from speech. Tests pass a stand-in. The live path uses
+  /// the on-device recognizer and a language the person already confirmed.
+  final Future<void> Function(ValueChanged<String> onText)? dictate;
 
   static const maxTurns = 3;
 
@@ -120,7 +131,19 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
     await AppServices.instance.journalStore.save(note, captureKind: 'typed');
   }
 
+  void _writeAnswer(String text) {
+    if (!mounted || text.trim().isEmpty) return;
+    _answer.text = text.trim();
+    _answer.selection = TextSelection.collapsed(offset: _answer.text.length);
+    setState(() {});
+  }
+
   Future<void> _toggleMic() async {
+    final dictate = widget.dictate;
+    if (dictate != null) {
+      await dictate(_writeAnswer);
+      return;
+    }
     if (!LiveDraftTranscript.supportsOnDeviceStreaming) return;
     if (_listening) {
       await _partials?.cancel();
@@ -130,12 +153,19 @@ class _PostSaveFollowUpState extends State<PostSaveFollowUp> {
       return;
     }
     setState(() => _listening = true);
-    _partials = LiveDraftTranscript.partials().listen((text) {
-      if (!mounted || text.trim().isEmpty) return;
-      _answer.text = text;
-      _answer.selection = TextSelection.collapsed(offset: _answer.text.length);
-    });
-    await LiveDraftTranscript.start();
+    _partials = LiveDraftTranscript.partials().listen(_writeAnswer);
+    try {
+      await LiveDraftTranscript.start(locale: await _confirmedLocale());
+    } on PlatformException {
+      await _partials?.cancel();
+      _partials = null;
+      if (mounted) setState(() => _listening = false);
+    }
+  }
+
+  Future<ConfirmedSpeechLocale?> _confirmedLocale() async {
+    if (!AppServices.isInitialized) return null;
+    return SpeechLocaleStore(AppServices.instance.prefs).read();
   }
 
   @override

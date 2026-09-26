@@ -33,7 +33,7 @@ void main() {
       },
     );
 
-    final followUp = await service.forEntry(current());
+    final followUp = await service.forEntry(current(), enabled: false);
 
     expect(followUp, isNull);
     expect(lookedUp, isFalse);
@@ -111,5 +111,30 @@ void main() {
       find.byKey(const Key('post_save_follow_up_question')),
     );
     expect(citationTop.dy, lessThan(questionTop.dy));
+  });
+
+  testWidgets('the mic writes a spoken answer into the field', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PostSaveFollowUp(
+            entry: current(),
+            dictate: (onText) async {
+              onText('It sits more quietly now.');
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('post_save_follow_up_mic')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('post_save_follow_up_mic')));
+    await tester.pump();
+
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      'It sits more quietly now.',
+    );
   });
 }

@@ -91,21 +91,23 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: MomentSaveReceiptCard(
-              entry: _entry(),
-              entryCount: 4,
-              similarEntries: [
-                SimilarEntry(
-                  id: 'past-1',
-                  createdAt: past,
-                  transcript:
-                      'I said the same thing about the river last spring.',
-                  localAudioPath: '/tmp/past.m4a',
-                  cosineSimilarity: 0.9,
-                ),
-              ],
-              onRecordAnother: () {},
-              onViewArchive: () {},
+            body: SingleChildScrollView(
+              child: MomentSaveReceiptCard(
+                entry: _entry(),
+                entryCount: 4,
+                similarEntries: [
+                  SimilarEntry(
+                    id: 'past-1',
+                    createdAt: past,
+                    transcript:
+                        'I said the same thing about the river last spring.',
+                    localAudioPath: '/tmp/past.m4a',
+                    cosineSimilarity: 0.9,
+                  ),
+                ],
+                onRecordAnother: () {},
+                onViewArchive: () {},
+              ),
             ),
           ),
         ),
@@ -131,13 +133,15 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: MomentSaveReceiptCard(
-              entry: _entry(),
-              entryCount: 1,
-              remoteStatus: MomentSaveRemoteStatus.failedRetryable,
-              onRecordAnother: () {},
-              onViewArchive: () {},
-              onRetryRemote: () {},
+            body: SingleChildScrollView(
+              child: MomentSaveReceiptCard(
+                entry: _entry(),
+                entryCount: 1,
+                remoteStatus: MomentSaveRemoteStatus.failedRetryable,
+                onRecordAnother: () {},
+                onViewArchive: () {},
+                onRetryRemote: () {},
+              ),
             ),
           ),
         ),

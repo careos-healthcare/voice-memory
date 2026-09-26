@@ -15,9 +15,10 @@ abstract final class AppFlags {
     defaultValue: true,
   );
 
-  /// Cited questions after a save. Off until the saved answers are reviewed.
+  /// A short typed question after a save, with a mic for the answer.
   static const bool postSaveFollowUp = bool.fromEnvironment(
     'POST_SAVE_FOLLOW_UP',
+    defaultValue: true,
   );
 }
 
