@@ -33,7 +33,17 @@ final class ShareViewController: UIViewController {
       if let url {
         VoiceMemoShareStore.save(url)
       }
-      DispatchQueue.main.async { self.finish() }
+      DispatchQueue.main.async { self.openMainApp() }
+    }
+  }
+
+  private func openMainApp() {
+    guard let url = URL(string: "voicememory://voice-memo-import") else {
+      finish()
+      return
+    }
+    extensionContext?.open(url) { _ in
+      self.finish()
     }
   }
 
@@ -52,16 +62,22 @@ enum VoiceMemoShareStore {
       forSecurityApplicationGroupIdentifier: groupId
     ) else { return }
     let folder = root.appendingPathComponent(folderName, isDirectory: true)
+    let ext = url.pathExtension.lowercased()
+    guard ["m4a", "mp3", "wav"].contains(ext) else { return }
     guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
       return
     }
     do {
       try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-      let dest = folder.appendingPathComponent("\(UUID().uuidString).m4a")
+      let dest = folder.appendingPathComponent("\(UUID().uuidString).\(ext)")
       if FileManager.default.fileExists(atPath: dest.path) {
         try FileManager.default.removeItem(at: dest)
       }
       try FileManager.default.copyItem(at: url, to: dest)
+      var stamped = dest
+      var values = URLResourceValues()
+      values.creationDate = created
+      try? stamped.setResourceValues(values)
       let payload: [String: String] = [
         "path": dest.path,
         "createdAt": ISO8601DateFormatter().string(from: created),

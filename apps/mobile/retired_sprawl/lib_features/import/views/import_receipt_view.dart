@@ -1,8 +1,4 @@
-import 'dart:async';
-
 import 'package:archiveme_mobile/design/locale_date_format.dart';
-import 'package:archiveme_mobile/models/journal_entry.dart';
-import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:flutter/material.dart';
 
 /// Shown after a Voice Memo has been transcribed, before it is saved.
@@ -87,32 +83,4 @@ class _ImportReceiptViewState extends State<ImportReceiptView> {
       ),
     );
   }
-}
-
-/// Pushes the receipt on the root navigator after transcription.
-Future<void> presentVoiceMemoReceipt({
-  required JournalEntry entry,
-  required Future<void> Function(JournalEntry entry) save,
-  int attempt = 0,
-}) async {
-  final navigator = appRootNavigatorKey.currentState;
-  if (navigator == null) {
-    if (attempt >= 8) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(
-        presentVoiceMemoReceipt(entry: entry, save: save, attempt: attempt + 1),
-      );
-    });
-    return;
-  }
-  await navigator.push<void>(
-    MaterialPageRoute<void>(
-      fullscreenDialog: true,
-      builder: (_) => ImportReceiptView(
-        transcript: entry.transcript,
-        recordedAt: entry.createdAt,
-        onSave: () => save(entry),
-      ),
-    ),
-  );
 }

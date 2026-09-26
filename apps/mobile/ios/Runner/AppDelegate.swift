@@ -161,7 +161,8 @@ import workmanager_apple
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    if url.isFileURL, url.pathExtension.lowercased() == "m4a" {
+    let ext = url.pathExtension.lowercased()
+    if url.isFileURL, ["m4a", "mp3", "wav"].contains(ext) {
       VoiceMemoInbox.shared.remember(url)
     }
     return super.application(app, open: url, options: options)
@@ -181,11 +182,14 @@ import workmanager_apple
       binaryMessenger: controller.binaryMessenger
     )
     imports.setMethodCallHandler { call, result in
-      guard call.method == "takePending" else {
+      switch call.method {
+      case "takePending":
+        result(VoiceMemoInbox.shared.take())
+      case "creationDate":
+        result(VoiceMemoInbox.creationDate(call.arguments))
+      default:
         result(FlutterMethodNotImplemented)
-        return
       }
-      result(VoiceMemoInbox.shared.take())
     }
   }
 }
@@ -217,15 +221,33 @@ final class VoiceMemoInbox {
     let folder = base.appendingPathComponent("voice-memos", isDirectory: true)
     do {
       try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-      let dest = folder.appendingPathComponent("\(UUID().uuidString).m4a")
+      let ext = url.pathExtension.lowercased()
+      let suffix = ["m4a", "mp3", "wav"].contains(ext) ? ext : "m4a"
+      let dest = folder.appendingPathComponent("\(UUID().uuidString).\(suffix)")
       if FileManager.default.fileExists(atPath: dest.path) {
         try FileManager.default.removeItem(at: dest)
       }
       try FileManager.default.copyItem(at: url, to: dest)
+      if let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate {
+        var stamped = dest
+        var values = URLResourceValues()
+        values.creationDate = created
+        try? stamped.setResourceValues(values)
+      }
       return dest
     } catch {
       return nil
     }
+  }
+
+  static func creationDate(_ arguments: Any?) -> String? {
+    guard let args = arguments as? [String: Any],
+          let path = args["path"] as? String else { return nil }
+    let url = URL(fileURLWithPath: path)
+    guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
+      return nil
+    }
+    return ISO8601DateFormatter().string(from: created)
   }
 
   func take() -> [String: String]? {

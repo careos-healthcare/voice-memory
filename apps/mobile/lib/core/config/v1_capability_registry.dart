@@ -58,10 +58,10 @@ abstract final class V1CapabilityRegistry {
     defaultValue: false,
   );
 
-  /// Share-sheet and Open In import of Apple Voice Memos. Off until reviewed.
+  /// Share-sheet and Open In import of Apple Voice Memos.
   static const bool voiceMemosImport = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_VOICE_MEMOS_IMPORT',
-    defaultValue: false,
+    defaultValue: true,
   );
 
   /// Photo attachments and image evidence. Off until reviewed.
