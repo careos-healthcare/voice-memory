@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/memory/what_thoughtprint_remembers_screen.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
-import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -311,11 +311,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _setCloudSync(bool enabled) async {
     if (enabled) {
-      await enableCloudWithProgress(context);
-    } else {
-      await CloudConsent().disable();
+      final allowed = await const ConsentManager().requestCloudAiConsent(
+        context,
+      );
+      if (mounted) setState(() => _cloudSyncEnabled = allowed);
+      return;
     }
-    if (mounted) setState(() => _cloudSyncEnabled = enabled);
+    await CloudConsent().disable();
+    if (mounted) setState(() => _cloudSyncEnabled = false);
   }
 
   Future<bool> _deleteCloudCopy() {
@@ -461,18 +464,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: ArchiveMobileTypography.listSubtitle(context),
             ),
             const SizedBox(height: AppSpacing.md),
-            SwitchListTile(
-              key: const Key('settings_cloud_sync'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Cloud features',
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: Text(
-                'Off keeps imports and pattern exploration on this device. '
-                'On encrypts a backup and allows AI pattern exploration.',
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
+            CloudAiProcessingToggle(
               value: _cloudSyncEnabled,
               onChanged: (value) => unawaited(_onCloudSyncChanged(value)),
             ),

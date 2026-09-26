@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
-import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/backlog_import_service.dart';
@@ -92,7 +92,8 @@ class _OnboardingImportFirstStepState
             onPressed: progress.isActive
                 ? null
                 : () => notifier.pickAndImport(
-                    confirmCloudUpload: () => CloudConsentModal.ask(context),
+                    confirmCloudUpload: () =>
+                        const ConsentManager().requestCloudAiConsent(context),
                   ),
             child: const Text(BacklogImportCopy.pickCta),
           ),

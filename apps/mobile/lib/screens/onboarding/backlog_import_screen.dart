@@ -5,10 +5,10 @@ import 'package:archiveme_mobile/features/evidence_method/insight.dart';
 import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/import/import_consent_view.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
-import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/experiment_h_onboarding_coordinator.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -212,7 +212,8 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                               unawaited(
                                 notifier.pickAndImport(
                                   confirmCloudUpload: () =>
-                                      CloudConsentModal.ask(context),
+                                      const ConsentManager()
+                                          .requestCloudAiConsent(context),
                                 ),
                               );
                             },
@@ -230,7 +231,8 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                           ? null
                           : () => notifier.pickAndImport(
                               confirmCloudUpload: () =>
-                                  CloudConsentModal.ask(context),
+                                  const ConsentManager()
+                                      .requestCloudAiConsent(context),
                             ),
                       child: const Text(BacklogImportCopy.pickCta),
                     ),

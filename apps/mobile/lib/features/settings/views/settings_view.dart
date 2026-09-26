@@ -9,6 +9,38 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// Cloud AI processing control. Local memory stays on either way.
+class CloudAiProcessingToggle extends StatelessWidget {
+  const CloudAiProcessingToggle({
+    required this.value,
+    required this.onChanged,
+    super.key,
+  });
+
+  static const title = 'Cloud AI Processing';
+
+  static const subtitle =
+      'Sends encrypted or plain-text transcripts to cloud language models for pattern recognition and weekly summaries. Local memory remains active regardless.';
+
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      key: const Key('settings_cloud_sync'),
+      contentPadding: EdgeInsets.zero,
+      title: Text(title, style: ArchiveMobileTypography.listTitle(context)),
+      subtitle: Text(
+        subtitle,
+        style: ArchiveMobileTypography.listSubtitle(context),
+      ),
+      value: value,
+      onChanged: onChanged,
+    );
+  }
+}
+
 /// Weekly encrypted backup kept in the device's files.
 class AutomaticWeeklyBackupToggle extends StatefulWidget {
   const AutomaticWeeklyBackupToggle({

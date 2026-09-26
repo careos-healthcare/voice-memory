@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
-import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
 import 'package:archiveme_mobile/features/insights/recurring_themes_view.dart';
 import 'package:archiveme_mobile/features/insights/widgets/evidence_connection_graph_viewer.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -56,7 +57,10 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   }
 
   Future<void> _optInToCloud() async {
-    await CloudConsent().enable();
+    final allowed = await const ConsentManager().requestCloudAiConsent(
+      context,
+    );
+    if (!allowed) return;
     await _loadGate();
   }
 
