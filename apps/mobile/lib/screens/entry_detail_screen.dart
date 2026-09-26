@@ -12,9 +12,11 @@ import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
+import 'package:archiveme_mobile/features/sync/services/entry_conflict_resolver.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
@@ -147,6 +149,23 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     await _load();
   }
 
+  Future<void> _keepTranscript(JournalEntry entry, String transcript) async {
+    TranscriptConflictStore.clear(entry.id);
+    if (widget.previewEntry != null) {
+      if (mounted) {
+        setState(() => _entry = entry.copyWith(transcript: transcript));
+      }
+      return;
+    }
+    await _accountDeps.journalStore.save(
+      entry.copyWith(
+        transcript: transcript,
+        syncStatus: SyncStatus.pendingUpload,
+      ),
+    );
+    await _load();
+  }
+
   Future<void> _saveTitle(JournalEntry entry) async {
     if (widget.previewEntry != null) return;
     await saveEntryTitle(
@@ -274,6 +293,13 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                       ? (mood) => unawaited(_saveMood(e, mood))
                       : null,
                 ),
+                if (TranscriptConflictStore.read(e.id) case final split?) ...[
+                  const SizedBox(height: 12),
+                  TranscriptConflictPrompt(
+                    split: split,
+                    onKeep: (text) => unawaited(_keepTranscript(e, text)),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),
