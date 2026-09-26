@@ -53,10 +53,10 @@ abstract final class V1CapabilityRegistry {
   /// Settings control that reads Apple Health State of Mind.
   static const bool appleHealth = AppFlags.appleHealth;
 
-  /// Passphrase-sealed journal sync in Settings. Off until reviewed.
+  /// Passphrase-sealed journal sync in Settings.
   static const bool e2eeSync = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_E2EE_SYNC',
-    defaultValue: false,
+    defaultValue: LaunchProfile.E2EE_SYNC,
   );
 
   /// Share-sheet and Open In import of Apple Voice Memos.

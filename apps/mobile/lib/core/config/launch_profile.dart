@@ -6,4 +6,7 @@ abstract final class LaunchProfile {
   LaunchProfile._();
 
   static const bool APPLE_HEALTH = true;
+
+  /// Passphrase-sealed journal sync. On for this release.
+  static const bool E2EE_SYNC = true;
 }
