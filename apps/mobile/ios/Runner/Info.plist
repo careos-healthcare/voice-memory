@@ -71,7 +71,9 @@
 	<key>NSHealthShareUsageDescription</key>
 	<string>Thoughtprint reads the State of Mind you logged in Apple Health so it can show that mood beside the moment from the same day.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Thoughtprint requires photo access so you can attach images to your journal entries.</string>
+	<string>Thoughtprint requires access to your photos to attach them to your journal entries.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Thoughtprint requires camera access so you can take photos directly inside your journal.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>CFBundleDocumentTypes</key>

@@ -45,6 +45,7 @@ import workmanager_apple
       quickCaptureWidgetChannelHandler.attach(to: controller)
       setupNativeQuickCaptureChannel(controller: controller)
       setupHealthAndVoiceMemoChannels(controller: controller)
+      setupFileProtectionChannel(controller: controller)
       liveAudioLifecycleBridge.attach(to: controller)
     }
     WatchSessionBridge.shared.activate()
@@ -166,6 +167,44 @@ import workmanager_apple
       VoiceMemoInbox.shared.remember(url)
     }
     return super.application(app, open: url, options: options)
+  }
+
+  private func setupFileProtectionChannel(controller: FlutterViewController) {
+    let channel = FlutterMethodChannel(
+      name: "com.thoughtprint.app/file_protection",
+      binaryMessenger: controller.binaryMessenger
+    )
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "setFileProtectionComplete" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard let path = call.arguments as? String, !path.isEmpty else {
+        result(
+          FlutterError(
+            code: "bad_path",
+            message: "A file path is required.",
+            details: nil
+          )
+        )
+        return
+      }
+      do {
+        try FileManager.default.setAttributes(
+          [.protectionKey: FileProtectionType.complete],
+          ofItemAtPath: path
+        )
+        result(nil)
+      } catch {
+        result(
+          FlutterError(
+            code: "file_protection",
+            message: error.localizedDescription,
+            details: nil
+          )
+        )
+      }
+    }
   }
 
   private func setupHealthAndVoiceMemoChannels(controller: FlutterViewController) {

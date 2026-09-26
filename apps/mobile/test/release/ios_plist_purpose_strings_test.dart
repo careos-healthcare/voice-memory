@@ -34,9 +34,12 @@ void main() {
     if (_dependsOn(pubspec, 'image_picker')) {
       expect(
         purposes['NSPhotoLibraryUsageDescription'],
-        'Thoughtprint requires photo access so you can attach images to your journal entries.',
+        'Thoughtprint requires access to your photos to attach them to your journal entries.',
       );
-      expect(purposes.containsKey('NSCameraUsageDescription'), isFalse);
+      expect(
+        purposes['NSCameraUsageDescription'],
+        'Thoughtprint requires camera access so you can take photos directly inside your journal.',
+      );
     }
   });
 }
@@ -50,5 +53,8 @@ Map<String, String> _purposeStrings(String plist) {
     r'<key>([^<]+)</key>\s*<string>([^<]*)</string>',
     multiLine: true,
   );
-  return {for (final match in pairs.allMatches(plist)) match.group(1)!: match.group(2)!};
+  return {
+    for (final match in pairs.allMatches(plist))
+      match.group(1)!: match.group(2)!,
+  };
 }

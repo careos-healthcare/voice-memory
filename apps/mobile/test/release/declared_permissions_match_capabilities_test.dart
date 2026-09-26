@@ -21,7 +21,8 @@ const _declarationFlags = <String, bool>{
   'NSBluetoothAlwaysUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSBluetoothPeripheralUsageDescription': V1CapabilityRegistry.bluetooth,
   'NSLocalNetworkUsageDescription': V1CapabilityRegistry.localNetwork,
-  'NSCameraUsageDescription': V1CapabilityRegistry.cameraAndPhotos,
+  // Taking a photo inside a journal entry requires this purpose string.
+  'NSCameraUsageDescription': true,
   // image_picker stays linked for journal photos. App Store review requires
   // this purpose string even when the picker uses PHPicker.
   'NSPhotoLibraryUsageDescription': true,
@@ -35,7 +36,8 @@ const _declarationFlags = <String, bool>{
   'android.permission.ACCESS_NETWORK_STATE': V1CapabilityRegistry.internet,
   'android.permission.ACCESS_FINE_LOCATION': V1CapabilityRegistry.location,
   'android.permission.ACCESS_COARSE_LOCATION': V1CapabilityRegistry.location,
-  'android.permission.ACCESS_BACKGROUND_LOCATION': V1CapabilityRegistry.location,
+  'android.permission.ACCESS_BACKGROUND_LOCATION':
+      V1CapabilityRegistry.location,
   'android.permission.BLUETOOTH': V1CapabilityRegistry.bluetooth,
   'android.permission.BLUETOOTH_ADMIN': V1CapabilityRegistry.bluetooth,
   'android.permission.BLUETOOTH_SCAN': V1CapabilityRegistry.bluetooth,
