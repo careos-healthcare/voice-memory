@@ -18,61 +18,61 @@ import 'helpers/test_sync_service.dart';
 
 void main() {
   setUp(() {
-    ArchiveMeDemoState.resetForTest();
+    ThoughtprintDemoState.resetForTest();
     ProductAnalytics.demoSuppressedCount = 0;
   });
 
-  tearDown(ArchiveMeDemoState.resetForTest);
+  tearDown(ThoughtprintDemoState.resetForTest);
 
-  group('ArchiveMeDemoState', () {
+  group('ThoughtprintDemoState', () {
     test('is off by default in tests', () {
       expect(ScreenshotMode.enabled, isFalse);
       expect(ScreenshotMode.archiveMeDemoPreview, isFalse);
-      expect(ArchiveMeDemoState.isActive, isFalse);
+      expect(ThoughtprintDemoState.isActive, isFalse);
     });
 
     test('debug force flag activates demo', () {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
-      expect(ArchiveMeDemoState.isActive, isTrue);
+      ThoughtprintDemoState.debugForceEnabledForTest = true;
+      expect(ThoughtprintDemoState.isActive, isTrue);
     });
 
     test('debug session toggle only works in debug mode', () {
-      ArchiveMeDemoState.setDebugSessionEnabled(true);
-      expect(ArchiveMeDemoState.debugSessionEnabled, isTrue);
-      expect(ArchiveMeDemoState.isActive, isTrue);
-      ArchiveMeDemoState.resetDebugSession();
-      expect(ArchiveMeDemoState.isActive, isFalse);
+      ThoughtprintDemoState.setDebugSessionEnabled(true);
+      expect(ThoughtprintDemoState.debugSessionEnabled, isTrue);
+      expect(ThoughtprintDemoState.isActive, isTrue);
+      ThoughtprintDemoState.resetDebugSession();
+      expect(ThoughtprintDemoState.isActive, isFalse);
     });
   });
 
-  group('ArchiveMeDemoArchive', () {
+  group('ThoughtprintDemoArchive', () {
     test('provides three synthetic moments with demo ids', () {
-      final entries = ArchiveMeDemoArchive.journalEntries();
+      final entries = ThoughtprintDemoArchive.journalEntries();
       expect(entries, hasLength(3));
       expect(
-        entries.every((e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix)),
+        entries.every((e) => e.id.startsWith(ThoughtprintDemoState.entryIdPrefix)),
         isTrue,
       );
-      expect(entries[0].transcript, ArchiveMeDemoArchive.firstMomentBody);
-      expect(entries[1].transcript, ArchiveMeDemoArchive.repeatedMomentBody);
-      expect(entries[2].transcript, ArchiveMeDemoArchive.confirmedRepeatBody);
+      expect(entries[0].transcript, ThoughtprintDemoArchive.firstMomentBody);
+      expect(entries[1].transcript, ThoughtprintDemoArchive.repeatedMomentBody);
+      expect(entries[2].transcript, ThoughtprintDemoArchive.confirmedRepeatBody);
     });
 
     test('drives confirmed repeat, timeline, and belief proof engines', () {
-      expect(ArchiveMeDemoArchive.hasConfirmedRepeat, isTrue);
+      expect(ThoughtprintDemoArchive.hasConfirmedRepeat, isTrue);
       expect(
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-          ArchiveMeDemoArchive.journalEntries(),
+          ThoughtprintDemoArchive.journalEntries(),
         ),
         isTrue,
       );
-      expect(ArchiveMeDemoArchive.hasEvidenceTimeline, isTrue);
-      expect(ArchiveMeDemoArchive.hasBeliefProof, isTrue);
-      expect(ArchiveMeDemoArchive.hasBeliefHeadline, isTrue);
-      expect(ArchiveMeDemoArchive.enginesReady, isTrue);
+      expect(ThoughtprintDemoArchive.hasEvidenceTimeline, isTrue);
+      expect(ThoughtprintDemoArchive.hasBeliefProof, isTrue);
+      expect(ThoughtprintDemoArchive.hasBeliefHeadline, isTrue);
+      expect(ThoughtprintDemoArchive.enginesReady, isTrue);
 
       final surface = const ArchiveBeliefSurfaceSource().resolve(
-        ArchiveMeDemoArchive.journalEntries(),
+        ThoughtprintDemoArchive.journalEntries(),
       );
       expect(surface.shouldShow, isTrue);
       expect(surface.headline, ArchiveBeliefSurfaceCopy.headline);
@@ -83,7 +83,7 @@ void main() {
     test(
       'loadAll returns demo entries without reading poisoned disk',
       () async {
-        ArchiveMeDemoState.debugForceEnabledForTest = true;
+        ThoughtprintDemoState.debugForceEnabledForTest = true;
         final dir = Directory.systemTemp.createTempSync('archive_me_demo');
         addTearDown(() => dir.deleteSync(recursive: true));
         final file = File('${dir.path}/journal.json')
@@ -94,7 +94,7 @@ void main() {
         expect(loaded, hasLength(3));
         expect(
           loaded.every(
-            (e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix),
+            (e) => e.id.startsWith(ThoughtprintDemoState.entryIdPrefix),
           ),
           isTrue,
         );
@@ -102,7 +102,7 @@ void main() {
     );
 
     test('save is a no-op while demo is active', () async {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
+      ThoughtprintDemoState.debugForceEnabledForTest = true;
       final dir = Directory.systemTemp.createTempSync('archive_me_demo_save');
       addTearDown(() => dir.deleteSync(recursive: true));
       final store = await JournalStore.open(
@@ -134,7 +134,7 @@ void main() {
 
   group('Sync and analytics suppression', () {
     test('sync is blocked in demo mode', () async {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
+      ThoughtprintDemoState.debugForceEnabledForTest = true;
       final dir = Directory.systemTemp.createTempSync('archive_me_demo_sync');
       addTearDown(() => dir.deleteSync(recursive: true));
       final journal = JournalStore(
@@ -154,7 +154,7 @@ void main() {
     });
 
     test('analytics events are suppressed in demo mode', () async {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
+      ThoughtprintDemoState.debugForceEnabledForTest = true;
       await ProductAnalytics.track('demo_event');
       expect(ProductAnalytics.demoSuppressedCount, 1);
     });

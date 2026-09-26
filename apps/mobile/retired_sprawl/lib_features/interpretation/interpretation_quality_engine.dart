@@ -59,7 +59,7 @@ class InterpretationQualityEngine {
         needsClearerMoment: true,
         clearerMomentTitle: 'Transcript pending',
         clearerMomentPrompt:
-            'This moment is saved, but ArchiveMe needs words before suggesting a read.',
+            'This moment is saved, but Thoughtprint needs words before suggesting a read.',
       );
     }
 

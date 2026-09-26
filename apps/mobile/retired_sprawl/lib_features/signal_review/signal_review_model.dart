@@ -15,7 +15,7 @@ extension SignalReviewStatusIds on SignalReviewStatus {
   }
 }
 
-/// ArchiveMe review when a signal journey reaches enough supporting evidence.
+/// Thoughtprint review when a signal journey reaches enough supporting evidence.
 class SignalReview {
   const SignalReview({
     required this.id,

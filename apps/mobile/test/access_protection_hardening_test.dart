@@ -143,7 +143,7 @@ void main() {
 
   group('App lock — local protection', () {
     test('Protect this archive copy is exposed in settings surfaces', () {
-      expect(PrivacyCopyPolicy.lockArchiveMe, 'Protect this archive');
+      expect(PrivacyCopyPolicy.lockThoughtprint, 'Protect this archive');
       expect(AppLockCopy.settingsTitle, 'Protect this archive');
       expect(
         AppLockCopy.settingsBody.toLowerCase(),

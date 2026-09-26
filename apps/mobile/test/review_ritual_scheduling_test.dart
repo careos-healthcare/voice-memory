@@ -118,7 +118,7 @@ void main() {
       expect(result.primaryCtaLabel, ReviewRitualCopy.openWeeklyReviewCta);
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = ReviewRitualCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(ReviewRitualCopy.allVisibleStrings);

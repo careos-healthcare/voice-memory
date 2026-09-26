@@ -140,7 +140,7 @@ class LocalBackupRestoreService {
           shareBackupFile ??
           (path) => Share.shareXFiles([
             XFile(path, mimeType: 'application/json'),
-          ], subject: 'ArchiveMe backup');
+          ], subject: 'Thoughtprint backup');
       await share(file.path);
 
       LocalBackupAnalytics.exported(

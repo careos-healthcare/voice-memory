@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_display_gate.dart';
 import 'package:archiveme_mobile/features/proof_admission/verified_proof_view_model.dart' show VerifiedProofViewModel;
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -120,7 +121,9 @@ class PostSaveBeliefInsight extends StatelessWidget {
         child: Text(
           value,
           key: valueKey == null ? null : Key('post_save_evidence_$valueKey'),
-          style: VoiceMemoryTypography.bodyStyle(),
+          style: valueKey == 'quote'
+              ? ArchiveMobileTypography.userWordsQuote(context)
+              : VoiceMemoryTypography.bodyStyle(),
         ),
       ),
     ],

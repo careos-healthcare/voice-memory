@@ -210,7 +210,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.textSecondary.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -236,7 +236,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
         Text(
           _t('quickHelpSubtitle'),
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ).copyWith(fontSize: 14, height: 1.4),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -260,7 +260,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
             vertical: AppSpacing.sm + 2,
           ),
           side: BorderSide(
-            color: AppColors.accentPrimary.withValues(alpha: 0.35),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -269,7 +269,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
         child: Text(
           _intentLabel(intent),
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ).copyWith(fontSize: 15),
         ),
       ),
@@ -289,7 +289,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
         Text(
           response.body,
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ).copyWith(fontSize: 16, height: 1.45),
         ),
         if (response.example != null) ...[
@@ -297,7 +297,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
           Text(
             '${_t('example')}: ${response.example}',
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ).copyWith(fontSize: 14, fontStyle: FontStyle.italic, height: 1.4),
           ),
         ],
@@ -306,7 +306,7 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
           Text(
             '${_t('nextCheck')}: ${response.nextCheck}',
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
           ),
         ],

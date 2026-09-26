@@ -33,7 +33,7 @@ class MemoryRelevanceChip extends StatelessWidget {
       'This has enough evidence to compare with earlier entries.';
   static const String notRelatedLabel = 'Not related';
   static const String notRelatedConfirmation =
-      'Thanks — ArchiveMe will treat this as separate.';
+      'Thanks — Thoughtprint will treat this as separate.';
 
   final MemoryRelevanceAssessment assessment;
 

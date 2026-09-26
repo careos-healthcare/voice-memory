@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 const _packPath = 'APP_STORE_SUBMISSION_PACK.md';
-const _reviewNotesPath = 'docs/APP_REVIEW_NOTES.md';
-const _storeCopyPath = 'docs/APP_STORE_COPY.md';
-const _iosChecklistPath = 'docs/IOS_RELEASE_CHECKLIST.md';
+const _reviewNotesPath = 'docs/archive/2026-08/APP_REVIEW_NOTES.md';
+const _storeCopyPath = 'docs/archive/2026-08/APP_STORE_COPY.md';
+const _iosChecklistPath = 'docs/archive/2026-08/IOS_RELEASE_CHECKLIST.md';
 
 const _supportUrl = 'https://archiveme.app/contact';
 const _privacyUrl = 'https://archiveme.app/privacy';
@@ -30,7 +30,7 @@ void main() {
   group('APP_STORE_SUBMISSION_PACK.md', () {
     test('exists and states core release identity', () {
       expect(File(_packPath).existsSync(), isTrue);
-      expect(pack, contains('ArchiveMe'));
+      expect(pack, contains('Thoughtprint'));
       expect(pack, contains(_bundleId));
       expect(pack, contains(_supportUrl));
       expect(pack, contains('ios/Runner.xcworkspace'));
@@ -79,15 +79,15 @@ void main() {
   });
 
   group('Reviewer docs alignment', () {
-    test('APP_STORE_COPY uses ArchiveMe not VoiceMemory as public name', () {
-      expect(storeCopy, contains('ArchiveMe'));
+    test('APP_STORE_COPY uses Thoughtprint not VoiceMemory as public name', () {
+      expect(storeCopy, contains('Thoughtprint'));
       expect(storeCopy, isNot(contains('VoiceMemory')));
     });
 
     test(
       'APP_REVIEW_NOTES contains reviewer path, review code, and support URL',
       () {
-        expect(reviewNotes, contains('ArchiveMe'));
+        expect(reviewNotes, contains('Thoughtprint'));
         expect(reviewNotes, contains(_bundleId));
         expect(reviewNotes, contains(_supportUrl));
         expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));

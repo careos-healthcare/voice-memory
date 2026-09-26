@@ -1,6 +1,6 @@
-# ArchiveMe Mobile (Flutter)
+# Thoughtprint Mobile (Flutter)
 
-**This is the canonical ArchiveMe consumer product.** Native iOS/Android app —
+**This is the canonical Thoughtprint consumer product.** Native iOS/Android app —
 **record → transcribe → analyze → local journal → Archive Home**.
 
 > **Record a real moment, preserve the evidence, and safely see what changed
@@ -51,7 +51,7 @@ From repo root:
 
 ## Identifiers (brand vs store vs package)
 
-**Public app name:** ArchiveMe  
+**Public app name:** Thoughtprint  
 **Store IDs (iOS + Android):** `com.voicememory.mobile`  
 **Dart package:** `archiveme_mobile` (`pubspec.yaml`)
 

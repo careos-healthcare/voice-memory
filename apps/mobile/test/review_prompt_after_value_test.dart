@@ -57,14 +57,14 @@ void main() {
     test('copy is exact', () {
       expect(
         ReviewPromptAfterValue.title,
-        'Is ArchiveMe worth a quick rating?',
+        'Is Thoughtprint worth a quick rating?',
       );
       expect(
         ReviewPromptAfterValue.body,
         'If it helped you notice something useful, a rating would help '
         'others find it.',
       );
-      expect(ReviewPromptAfterValue.ctaLabel, 'Rate ArchiveMe');
+      expect(ReviewPromptAfterValue.ctaLabel, 'Rate Thoughtprint');
       expect(ReviewPromptAfterValue.dismissLabel, 'Not now');
     });
 

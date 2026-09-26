@@ -122,7 +122,7 @@ void main() {
 
   group('BetaFeedbackIntelligenceCopy', () {
     test('defines required strings', () {
-      expect(BetaFeedbackIntelligenceCopy.cardTitle, 'Help improve ArchiveMe');
+      expect(BetaFeedbackIntelligenceCopy.cardTitle, 'Help improve Thoughtprint');
       expect(BetaFeedbackIntelligenceCopy.sheetTitle, 'Beta feedback');
       expect(BetaFeedbackIntelligenceCopy.summaryTitle, 'Beta signal');
     });
@@ -148,7 +148,7 @@ void main() {
       expect(
         BetaFeedbackIntelligenceEngine.shouldShowCard(
           _context(
-            surface: BetaFeedbackIntelligenceSurface.testingArchiveMe,
+            surface: BetaFeedbackIntelligenceSurface.testingThoughtprint,
             isZeroEntryState: true,
           ),
         ),
@@ -265,7 +265,7 @@ void main() {
       final state = BetaFeedbackIntelligenceStore.cached;
       expect(state.hasSubmittedBetaFeedback, isTrue);
       expect(state.chatGptDifferenceAnswer, BetaChatGptDifferenceAnswer.yes);
-      expect(state.testerUnderstoodArchiveMe, isTrue);
+      expect(state.testerUnderstoodThoughtprint, isTrue);
       expect(state.testerWouldPay, BetaWouldPayAnswer.yes);
       expect(state.testerMainConfusion, BetaMainConfusionBucket.pro);
       expect(
@@ -350,7 +350,7 @@ void main() {
           theme: AppTheme.light(),
           home: const Scaffold(
             body: BetaFeedbackIntelligenceCard(
-              surface: BetaFeedbackIntelligenceSurface.testingArchiveMe,
+              surface: BetaFeedbackIntelligenceSurface.testingThoughtprint,
               entryCount: 3,
               reachedFirstProof: true,
             ),

@@ -10,7 +10,7 @@ const _docsPath = 'docs/physical_device_smoke_proof.md';
 
 PhysicalDeviceSmokeProofInput _input({
   bool? freshInstallOpens = true,
-  bool appNameArchiveMe = true,
+  bool appNameThoughtprint = true,
   bool? launchScreenOk = true,
   bool? micPermissionAcceptPath = true,
   bool? micPermissionDenyPath = true,
@@ -30,7 +30,7 @@ PhysicalDeviceSmokeProofInput _input({
   bool noPrivateTextLeakedInLogs = true,
 }) => PhysicalDeviceSmokeProofInput(
   freshInstallOpens: freshInstallOpens,
-  appNameArchiveMe: appNameArchiveMe,
+  appNameThoughtprint: appNameThoughtprint,
   launchScreenOk: launchScreenOk,
   micPermissionAcceptPath: micPermissionAcceptPath,
   micPermissionDenyPath: micPermissionDenyPath,
@@ -62,7 +62,7 @@ void main() {
       expect(result.checks.length, PhysicalDeviceSmokeProof.checkCount);
       expect(result.checks.map((check) => check.id).toList(), [
         PhysicalDeviceSmokeProofCheckId.freshInstallOpens,
-        PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
+        PhysicalDeviceSmokeProofCheckId.appNameThoughtprint,
         PhysicalDeviceSmokeProofCheckId.launchScreenOk,
         PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath,
         PhysicalDeviceSmokeProofCheckId.micPermissionDenyPath,
@@ -115,12 +115,12 @@ void main() {
 
     test('wrong app name -> blocked', () {
       final result = PhysicalDeviceSmokeProof.build(
-        _input(appNameArchiveMe: false),
+        _input(appNameThoughtprint: false),
       );
       expect(result.decision, PhysicalDeviceSmokeProofDecision.blocked);
       expect(
         result.earliestBlocker,
-        PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
+        PhysicalDeviceSmokeProofCheckId.appNameThoughtprint,
       );
     });
 
@@ -213,9 +213,9 @@ void main() {
       ).readAsStringSync();
     });
 
-    test('repo signals detect ArchiveMe name and trust routes', () {
+    test('repo signals detect Thoughtprint name and trust routes', () {
       expect(
-        PhysicalDeviceSmokeProof.detectAppNameArchiveMe(infoPlistSource),
+        PhysicalDeviceSmokeProof.detectAppNameThoughtprint(infoPlistSource),
         isTrue,
       );
       expect(
@@ -261,7 +261,7 @@ void main() {
       );
       expect(result.decision, PhysicalDeviceSmokeProofDecision.manualRequired);
       expect(
-        _check(result, PhysicalDeviceSmokeProofCheckId.appNameArchiveMe).status,
+        _check(result, PhysicalDeviceSmokeProofCheckId.appNameThoughtprint).status,
         PhysicalDeviceSmokeProofStatus.pass,
       );
       expect(

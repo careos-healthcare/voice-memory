@@ -104,7 +104,7 @@ void main() {
       expect(QuietSignalCopy.title, 'This has not shown up recently');
       expect(
         QuietSignalCopy.body,
-        'ArchiveMe was watching this thread, but your recent moments did not show it.',
+        'Thoughtprint was watching this thread, but your recent moments did not show it.',
       );
       expect(QuietSignalCopy.footer, 'That may matter too.');
       expect(QuietSignalCopy.ctaKeepWatching, 'Keep watching');

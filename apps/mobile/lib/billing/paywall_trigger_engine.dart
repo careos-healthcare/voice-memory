@@ -20,10 +20,7 @@ PaywallTriggerContext? buildPaywallTrigger({
   if (isPro || !firstLoopClosed) return null;
   if (magicMomentsCount < MagicMomentsCounter.paywallThreshold) return null;
 
-  final trigger = _triggerForFeature(
-    feature: feature,
-    momentCount: momentCount,
-  );
+  final trigger = _triggerForFeature(feature: feature);
   if (trigger == null) return null;
 
   final context = PaywallTriggerContext(
@@ -46,20 +43,15 @@ PaywallTriggerContext? buildPaywallTrigger({
 
 PaywallTrigger? _triggerForFeature({
   required ArchiveFeature feature,
-  required int momentCount,
 }) {
   switch (feature) {
     case ArchiveFeature.keyMomentsSearch:
+      return null;
     case ArchiveFeature.fullHistory:
-      if (momentCount <= ArchiveProFeatureMap.freeKeyMomentsLimit) {
-        return null;
-      }
-      return feature == ArchiveFeature.keyMomentsSearch
-          ? PaywallTrigger.keyMomentsLimit
-          : PaywallTrigger.fullHistory;
+      return PaywallTrigger.fullHistory;
     case ArchiveFeature.patternMap:
       return PaywallTrigger.patternMapFull;
-    case ArchiveFeature.whatArchiveMeRemembers:
+    case ArchiveFeature.whatThoughtprintRemembers:
       return PaywallTrigger.archiveMemoryFull;
     case ArchiveFeature.monthlyReview:
       return PaywallTrigger.monthlyReview;

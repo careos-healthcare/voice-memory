@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Shared max widths and page padding for ArchiveMe high-visibility screens.
+/// Shared max widths and page padding for Thoughtprint high-visibility screens.
 abstract class ArchiveResponsiveLayout {
   ArchiveResponsiveLayout._();
 

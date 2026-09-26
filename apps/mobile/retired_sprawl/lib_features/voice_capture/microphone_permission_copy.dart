@@ -37,6 +37,22 @@ abstract class MicrophonePermissionCopy {
   static const String typeInsteadBlockedHelper =
       'Save your first moment as text — no microphone needed.';
 
+  static const String savedOnDevice = 'Saved on this device.';
+
+  static const String backToVoiceCta = 'Back to voice';
+
+  static const String saveTypedCta = 'Save';
+
+  static const String startRecordingLabel = 'Start recording';
+
+  /// Heading, body, and [requestMicrophoneCta] stay hidden once the mic is granted.
+  static bool showsPermissionExplanation({
+    required bool granted,
+    required bool blocked,
+    required bool requiresSettings,
+  }) =>
+      !granted || blocked || requiresSettings;
+
   /// App Review 5.1.1 — pre-system-prompt CTAs must not mimic Apple dialogs.
   static const forbiddenPrePromptButtonWords = <String>[
     'Allow',

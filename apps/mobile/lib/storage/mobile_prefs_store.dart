@@ -149,6 +149,10 @@ class MobilePrefsStore {
     await _update((data) => data[key] = value);
   }
 
+  Future<void> remove(String key) async {
+    await _update((data) => data.remove(key));
+  }
+
   Future<String?> get lastSyncAt async =>
       (await _read())['lastSyncAt'] as String?;
 

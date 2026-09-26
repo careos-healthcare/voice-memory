@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/features/moments/key_moment_store.dart';
 import 'package:archiveme_mobile/features/pattern_map/pattern_map_engine.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_coordinator.dart';
 
-/// Builds and persists the latest "What ArchiveMe remembers" summary from
+/// Builds and persists the latest "What Thoughtprint remembers" summary from
 /// everything the archive already stores. Always fails softly so it can never
 /// block the Patterns tab from loading.
 abstract class ArchiveMemorySummaryCoordinator {

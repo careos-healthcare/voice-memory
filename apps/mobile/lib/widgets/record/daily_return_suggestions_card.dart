@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
@@ -43,7 +44,7 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: VoiceMemoryCards.flat(
-          background: AppColors.backgroundSecondary,
+          background: context.palette.backgroundSecondary,
         ),
         child: _PrimaryRecommendation(
           suggestion: recommended,
@@ -62,7 +63,7 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: VoiceMemoryCards.flat(
-        background: AppColors.backgroundSecondary,
+        background: context.palette.backgroundSecondary,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +78,7 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
           Text(
             DailyReturnSuggestionSet.subLabel,
             style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -95,7 +96,7 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
             Text(
               DailyReturnSuggestionSet.othersHeading,
               style: VoiceMemoryTypography.metadataStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ),
             ),
             for (final suggestion in others)
@@ -173,7 +174,7 @@ class _PrimaryRecommendation extends StatelessWidget {
                 suggestion.prompt,
                 style: VoiceMemoryTypography.bodyStyle().copyWith(
                   fontSize: 13,
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ),
               ),
               if (suggestion.evidenceSnippet != null) ...[
@@ -184,7 +185,7 @@ class _PrimaryRecommendation extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: VoiceMemoryTypography.metadataStyle(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                   ).copyWith(fontSize: 11, fontStyle: FontStyle.italic),
                 ),
               ],
@@ -193,7 +194,7 @@ class _PrimaryRecommendation extends StatelessWidget {
                 Text(
                   '${DailyReturnSuggestionSet.whyLabel}: $reason',
                   style: VoiceMemoryTypography.metadataStyle(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                   ).copyWith(fontSize: 11),
                 ),
               ],
@@ -234,7 +235,7 @@ class _SuggestionRow extends StatelessWidget {
             border: Border.all(
               color: selected
                   ? AppColors.accentPrimary
-                  : AppColors.borderSubtle,
+                  : context.palette.borderSubtle,
             ),
             color: selected ? AppColors.accentLight : Colors.white,
           ),
@@ -253,7 +254,7 @@ class _SuggestionRow extends StatelessWidget {
                 suggestion.prompt,
                 style: VoiceMemoryTypography.bodyStyle().copyWith(
                   fontSize: 12.5,
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ),
               ),
               if (suggestion.reason.isNotEmpty) ...[
@@ -261,7 +262,7 @@ class _SuggestionRow extends StatelessWidget {
                 Text(
                   suggestion.reason,
                   style: VoiceMemoryTypography.metadataStyle(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                   ).copyWith(fontSize: 11),
                 ),
               ],
@@ -273,7 +274,7 @@ class _SuggestionRow extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: VoiceMemoryTypography.metadataStyle(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                   ).copyWith(fontSize: 11, fontStyle: FontStyle.italic),
                 ),
               ],

@@ -67,7 +67,7 @@ What Changed: The repeat showed up around work again with similar wording.
       expect(parsed.connectionText, 'A repeating thread may be forming.');
       expect(
         parsed.whatChangedText,
-        'ArchiveMe needs more moments to be sure.',
+        'Thoughtprint needs more moments to be sure.',
       );
     });
   });

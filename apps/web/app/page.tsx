@@ -1,56 +1,125 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Roadmap } from "@/components/Roadmap";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
-import { APP_BRAND_NAME } from "@/lib/product/brand-copy";
-import { NOT_THERAPY_LINE } from "@/lib/trust-copy";
+import { MARKETING_SITE_URL } from "@/lib/site/marketing-site";
 import {
-  WEB_MARKETING_BODY,
-  WEB_MARKETING_LEAD,
-  WEB_MARKETING_MOBILE_NOTE,
-  WEB_MARKETING_PROMISE,
-} from "@/lib/site/web-marketing-copy";
+  CLOUD_AI_CONSENT_LINE,
+  CLOUD_AI_CONSENT_SUPPORT,
+  NOT_THERAPY_LINE,
+} from "@/lib/trust-copy";
+
+const title = "Thoughtprint — A private voice journal";
+const description =
+  "A private voice journal that remembers what you actually said. Core is free forever. Transcribed on your phone by default. Never metered.";
 
 export const metadata: Metadata = {
-  title: `${APP_BRAND_NAME} — ${WEB_MARKETING_PROMISE}`,
-  description: WEB_MARKETING_LEAD,
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: MARKETING_SITE_URL,
+    siteName: "Thoughtprint",
+    type: "website",
+  },
 };
+
+const promises = [
+  "We can't see your journal unless you turn on cloud features. Nothing is linked to your identity.",
+  "Private by design",
+  "No usage meters",
+  "Free tier stays free",
+];
+
+const features = [
+  "Add a mood or a place to any moment",
+  "Apple Voice Memos import",
+  "Live cross-device sync keeps each moment encrypted on your phone. The server stores the sealed copy, not the words you said.",
+];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#172033]">
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
-        <SiteHeader />
+        <SiteHeader tone="cream" />
         <PrimaryMain className="mt-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">{APP_BRAND_NAME}</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            {WEB_MARKETING_PROMISE}
+          <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-[#172033] sm:text-5xl">
+            A private voice journal that remembers what you actually said.
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-zinc-200">{WEB_MARKETING_LEAD}</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">{WEB_MARKETING_BODY}</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-500">{WEB_MARKETING_MOBILE_NOTE}</p>
-          <nav
-            aria-label="Get started"
-            className="mt-10 flex flex-wrap gap-4 text-sm font-medium"
-          >
-            <Link
-              href="/beta"
-              className="rounded-full bg-violet-600 px-5 py-2.5 text-white transition-colors hover:bg-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
-            >
-              Beta &amp; download
+          <WaitlistForm />
+          <p className="mt-3 text-sm leading-relaxed text-[#4B5568]">
+            Core is free forever. Pro (optional) is about $7/month.
+          </p>
+          <p className="mt-5 text-lg leading-relaxed text-[#3F4757]">
+            Transcribed on your phone by default. Never metered.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <img src="/record-screen.png" alt="Recording screen" className="w-full rounded-2xl" />
+            <img src="/receipt-quote.png" alt="Saved moment with the words you said" className="w-full rounded-2xl" />
+            <img src="/archive-screen.png" alt="Archive of saved moments" className="w-full rounded-2xl" />
+          </div>
+          <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-[#172033]">
+            {promises.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+          <section className="mt-12" aria-labelledby="privacy-security-heading">
+            <h2 id="privacy-security-heading" className="font-serif text-lg font-medium text-[#172033]">
+              Privacy and security
+            </h2>
+            <p className="mt-3 text-base font-semibold leading-relaxed text-[#172033]">
+              {CLOUD_AI_CONSENT_LINE}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[#4B5568]">
+              {CLOUD_AI_CONSENT_SUPPORT}
+            </p>
+          </section>
+          <ul className="mt-8 space-y-3 text-base leading-relaxed text-[#3F4757]">
+            {features.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+          <Roadmap />
+          <section className="mt-12" aria-labelledby="import-heading">
+            <h2 id="import-heading" className="font-serif text-lg font-medium text-[#172033]">
+              Coming from another journal?
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-[#4B5568]">
+              <a href="#import-day-one" className="text-[#2563EB] underline-offset-4 hover:underline">
+                Export from Day One
+              </a>
+              {" · "}
+              <a href="#import-apple-notes" className="text-[#2563EB] underline-offset-4 hover:underline">
+                Export from Apple Notes
+              </a>
+            </p>
+            <div id="import-day-one" className="mt-6 scroll-mt-6">
+              <h3 className="font-serif text-base font-medium text-[#172033]">Day One</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
+                In Day One, open Settings, then Import/Export, and export your journal as JSON.
+                Thoughtprint reads that file.
+              </p>
+            </div>
+            <div id="import-apple-notes" className="mt-4 scroll-mt-6">
+              <h3 className="font-serif text-base font-medium text-[#172033]">Apple Notes</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
+                Export as plain text or use a third-party exporter.
+              </p>
+            </div>
+          </section>
+          <p className="mt-10 text-sm">
+            <Link href="/privacy" className="text-[#2563EB] underline-offset-4 hover:underline">
+              Privacy
             </Link>
-            <Link
-              href="/contact"
-              className="rounded-full border border-white/15 px-5 py-2.5 text-zinc-200 transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
-            >
-              Contact support
-            </Link>
-          </nav>
-          <p className="mt-10 text-xs leading-relaxed text-zinc-600">{NOT_THERAPY_LINE}</p>
+          </p>
+          <p className="mt-6 text-xs leading-relaxed text-[#667085]">{NOT_THERAPY_LINE}</p>
         </PrimaryMain>
-        <SiteFooter className="mt-12" />
+        <SiteFooter tone="cream" className="mt-12" />
       </div>
     </div>
   );

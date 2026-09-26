@@ -79,7 +79,7 @@ void main() {
       );
       expect(
         FirstSaveLiftCopy.body,
-        'One sentence is enough. ArchiveMe needs one real moment before it can show what comes back.',
+        'One sentence is enough. Thoughtprint needs one real moment before it can show what comes back.',
       );
       expect(FirstSaveLiftCopy.primaryCta, 'Type one sentence');
       expect(FirstSaveLiftCopy.secondaryCta, 'Record instead');

@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Small bottom sheet explaining ArchiveMe vs chat — timeline from saved dates only.
+/// Small bottom sheet explaining Thoughtprint vs chat — timeline from saved dates only.
 class ChatDifferentiationSheet extends StatelessWidget {
   const ChatDifferentiationSheet({required this.timelineRows, super.key});
 

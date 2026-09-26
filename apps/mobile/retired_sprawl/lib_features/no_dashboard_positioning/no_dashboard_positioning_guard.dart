@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/no_dashboard_positioning/no_dashboard_positioning_guard_copy.dart';
 
-/// Copy guard — prevent ArchiveMe v1 from feeling like a life dashboard.
+/// Copy guard — prevent Thoughtprint v1 from feeling like a life dashboard.
 abstract final class NoDashboardPositioningGuard {
   NoDashboardPositioningGuard._();
 

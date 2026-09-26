@@ -17,7 +17,7 @@ class PressureReportBuilder {
     required PressureEvidenceConfidence confidence,
   }) {
     final buffer = StringBuffer()
-      ..writeln('ArchiveMe — Pressure report')
+      ..writeln('Thoughtprint — Pressure report')
       ..writeln()
       ..writeln('Confidence: ${confidence.label}')
       ..writeln(

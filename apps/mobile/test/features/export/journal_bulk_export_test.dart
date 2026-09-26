@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/export/journal_bulk_export_service.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
@@ -60,5 +61,43 @@ void main() {
         .toSet();
     expect(ids, {'keep-1', 'keep-2'});
     expect(ids.contains('deleted-1'), isFalse);
+  });
+
+  test('export uses relative media names and drops device paths', () {
+    final payload = JournalBulkExportPayload.fromEntries(
+      entries: [
+        JournalEntry(
+          id: 'with-media',
+          createdAt: DateTime.utc(2026, 3, 8),
+          transcript: 'by the river',
+          durationSeconds: 12,
+          localAudioPath: '/var/mobile/Containers/audio/note.m4a',
+          imageEvidence: ImageEvidence(
+            evidenceId: 'img',
+            caption: '',
+            mimeType: 'image/jpeg',
+            attachedAt: DateTime.utc(2026, 3, 8),
+            images: const [
+              '/var/mobile/Containers/photos/shot.jpg',
+              '/var/mobile/Containers/photos/shot_thumb.jpg',
+            ],
+          ),
+          reflection: const Reflection(
+            mood: 'calm',
+            emotionalIntensity: 2,
+            recurringThemes: ['focus'],
+            exactLanguagePattern: 'pattern',
+            concreteObservation: 'observation',
+            repeatedSignal: 'signal',
+          ),
+        ),
+      ],
+      insights: const [],
+    );
+    final row = (payload.entries['entries'] as List).single as Map;
+    expect(row.containsKey('localAudioPath'), isFalse);
+    expect(row['audio_file'], 'audio/note.m4a');
+    expect(row['images'], ['photos/shot.jpg']);
+    expect(payload.toJsonString().contains('/var/mobile'), isFalse);
   });
 }

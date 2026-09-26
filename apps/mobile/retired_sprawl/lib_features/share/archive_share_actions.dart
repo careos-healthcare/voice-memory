@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 /// Result of a copy or share attempt — no user text leaves this enum.
 enum ArchiveShareOutcome { copied, shared, fallbackCopied, failed, emptyText }
 
-/// Shared copy/share behavior for ArchiveMe cards and export actions.
+/// Shared copy/share behavior for Thoughtprint cards and export actions.
 abstract class ArchiveShareActions {
   ArchiveShareActions._();
 

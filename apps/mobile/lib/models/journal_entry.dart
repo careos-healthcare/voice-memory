@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/core/json/json_converters.dart';
 import 'package:archiveme_mobile/core/copy_with_unset.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:archiveme_mobile/models/app_spoken_question.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/features/journal/presentation/models/journal_display_presentation.dart';
 import 'package:archiveme_mobile/models/journal_display_metadata.dart';
@@ -177,7 +178,7 @@ abstract class JournalEntry with _$JournalEntry {
       );
     }
     final createdAt = parsedCreatedAt ?? DateTime.now().toUtc();
-    return JournalEntry.stored(
+    final stored = JournalEntry.stored(
       id: id,
       createdAt: createdAt,
       transcript: JsonConverters.stringOrEmpty(json['transcript']),
@@ -203,6 +204,27 @@ abstract class JournalEntry with _$JournalEntry {
       ),
       display: JournalDisplayMetadata.fromJson(json),
       proof: proof,
+    );
+    final images = JsonConverters.stringList(json['images']);
+    if (images.isEmpty) return stored;
+    final current = stored.imageEvidence;
+    return stored.copyWith(
+      imageEvidence: ImageEvidence(
+        evidenceId: current?.evidenceId.isNotEmpty == true
+            ? current!.evidenceId
+            : id,
+        caption: current?.caption ?? '',
+        mimeType: current?.mimeType ?? 'image/jpeg',
+        attachedAt: current?.attachedAt ?? createdAt,
+        filename: current?.filename,
+        byteLength: current?.byteLength,
+        width: current?.width,
+        height: current?.height,
+        contentHash: current?.contentHash,
+        source: current?.source,
+        localPath: current?.localPath ?? images.first,
+        images: images,
+      ),
     );
   }
 
@@ -234,11 +256,20 @@ abstract class JournalEntry with _$JournalEntry {
   String? get captureContextTag => display.captureContextTag;
   String? get captureSource => display.captureSource;
 
+  /// Questions the app spoke. Never part of [transcript].
+  List<AppSpokenQuestion> get aiQuestions => display.aiQuestions;
+
   /// UI-facing display state derived from persisted metadata.
   JournalDisplayPresentation get displayPresentation =>
       JournalDisplayPresentation.fromEntry(this);
 
   ImageEvidence? get imageEvidence => proof.imageEvidence;
+
+  /// Local file paths or URLs stored with this moment.
+  List<String> get images => imageEvidence?.images ?? const [];
+
+  /// Saved recording path used by playback.
+  String? get audioUrl => localAudioPath;
   CognitiveBiomarkers? get biomarkers => proof.biomarkers;
   String? get parentHookId => proof.parentHookId;
   bool get wasGrounded => proof.wasGrounded;
@@ -269,6 +300,7 @@ abstract class JournalEntry with _$JournalEntry {
     ...sync.toJson(),
     ...display.toJson(),
     ...proof.toJson(),
+    if (images.isNotEmpty) 'images': images,
   };
 
   /// Payload fields stored in SQLite `payload_json` — excludes indexed columns.

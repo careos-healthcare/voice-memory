@@ -1,5 +1,5 @@
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_bar_action.dart';
-import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +12,7 @@ class PushedScreenShell extends ConsumerWidget {
     this.showBottomDone = true,
     this.fallbackRoute = '/archive-belief',
     this.actions,
-    this.backgroundColor = AppTheme.background,
+    this.backgroundColor,
     this.onBack,
   });
 
@@ -22,7 +22,7 @@ class PushedScreenShell extends ConsumerWidget {
   final bool showBottomDone;
   final String fallbackRoute;
   final List<Widget>? actions;
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// Replaces the default back navigation when set (e.g. so a screen can run
   /// a lightweight exit step before leaving).
@@ -43,10 +43,11 @@ class PushedScreenShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final background = backgroundColor ?? context.palette.backgroundPrimary;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor: background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Back',

@@ -167,13 +167,13 @@ class AppConfig {
     _releaseApiWarningLogged = true;
     if (!isReleaseApiConfigured) {
       AppLogger.debug(
-        '*** ArchiveMe RELEASE BUILD: $apiBaseUrlDefineKey is not set — '
+        '*** Thoughtprint RELEASE BUILD: $apiBaseUrlDefineKey is not set — '
         'using $productionApiBaseUrl. Pass --dart-define=$apiBaseUrlDefineKey=... ***',
       );
     }
     if (_isLocalhostUrl(resolvedUrl)) {
       AppLogger.debug(
-        '*** ArchiveMe RELEASE BUILD: API base URL is localhost/emulator ($resolvedUrl) — '
+        '*** Thoughtprint RELEASE BUILD: API base URL is localhost/emulator ($resolvedUrl) — '
         'pass --dart-define=$apiBaseUrlDefineKey=https://your-production-host ***',
       );
     }

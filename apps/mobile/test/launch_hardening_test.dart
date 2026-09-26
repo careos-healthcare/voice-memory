@@ -167,7 +167,7 @@ void main() {
       ]);
     });
 
-    test('updated docs use ArchiveMe not VoiceMemory in user-facing prose', () {
+    test('updated docs use Thoughtprint not VoiceMemory in user-facing prose', () {
       for (final path in [
         'LAUNCH_VALIDATION.md',
         'REVENUECAT_LAUNCH_BLOCKERS.md',
@@ -175,7 +175,7 @@ void main() {
         'README.md',
       ]) {
         final doc = File(path).readAsStringSync();
-        expect(doc, contains('ArchiveMe'));
+        expect(doc, contains('Thoughtprint'));
         expect(doc, isNot(contains('VoiceMemory')));
       }
     });

@@ -244,11 +244,11 @@ void main() {
     });
 
     test(
-      'noMaintenanceLine says ArchiveMe builds the trail from saved moments',
+      'noMaintenanceLine says Thoughtprint builds the trail from saved moments',
       () {
         expect(
           LowEffortArchiveCaptureCopy.noMaintenanceLine,
-          contains('ArchiveMe builds the trail from saved moments'),
+          contains('Thoughtprint builds the trail from saved moments'),
         );
       },
     );
@@ -263,7 +263,7 @@ void main() {
     });
 
     test(
-      'chatDifferenceLine distinguishes ChatGPT now vs ArchiveMe proof over time',
+      'chatDifferenceLine distinguishes ChatGPT now vs Thoughtprint proof over time',
       () {
         expect(
           LowEffortArchiveCaptureCopy.chatDifferenceLine,
@@ -271,7 +271,7 @@ void main() {
         );
         expect(
           LowEffortArchiveCaptureCopy.chatDifferenceLine,
-          contains('ArchiveMe keeps proof of what keeps coming back'),
+          contains('Thoughtprint keeps proof of what keeps coming back'),
         );
       },
     );
@@ -300,7 +300,7 @@ void main() {
       );
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in [
         LowEffortArchiveCaptureCopy.headline,
         LowEffortArchiveCaptureCopy.oneSentenceLine,

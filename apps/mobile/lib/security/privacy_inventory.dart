@@ -12,7 +12,7 @@ abstract final class PrivacyInventory {
 
   static const Map<String, dynamic> document = {
     'schemaVersion': schemaVersion,
-    'product': 'ArchiveMe Flutter mobile (V1)',
+    'product': 'Thoughtprint Flutter mobile (V1)',
     'onDevice': {
       'journalEncryptedAtRest': true,
       'prefsEncryptedWhenEnabled': true,

@@ -616,6 +616,9 @@ abstract class ConsumerUiCopy {
       'Saving to your archive, plus search, export, correction, and deletion, '
       'are fully available in the beta without a subscription.';
 
+  static const String coreIsFreeForever =
+      'Core is free forever - no usage limits.';
+
   /// Legacy paid-limit copy — retained for billing re-entry tests only.
   static const String freeKeepsSevenKeyMoments =
       'Free keeps your first 7 key entries.';
@@ -644,7 +647,7 @@ abstract class ConsumerUiCopy {
       'Find recorded entries after you record a few real ones.';
   static const String needAnIdea = 'Need an idea?';
   static const String onboardingBeginCta = onboardingFinalCta;
-  static const String archiveMeNoticedHeading = 'ARCHIVEME NOTICED';
+  static const String archiveMeNoticedHeading = 'THOUGHTPRINT NOTICED';
   static const String archiveMeNoticedTitle = 'Today Thoughtprint noticed';
   @Deprecated('Use archiveMeNoticedHeading')
   static const String voiceMemoryNoticedHeading = archiveMeNoticedHeading;
@@ -657,10 +660,10 @@ abstract class ConsumerUiCopy {
   // ——— Tomorrow return loop ———
   static const String comeBackTomorrow = 'Come back tomorrow';
   static const String comeBackTomorrowLabel = 'COME BACK TOMORROW';
-  static const String whatArchiveMeChecksNext =
+  static const String whatThoughtprintChecksNext =
       'What Thoughtprint will pattern next';
   static const String todayItNoticed = 'Today it noticed…';
-  static const String todayArchiveMeNoticed = 'Today Thoughtprint noticed';
+  static const String todayThoughtprintNoticed = 'Today Thoughtprint noticed';
   static const String nextTimeWatchFor = 'Next time, watch for…';
   static const String tomorrowWatchForSection = 'What to watch for next time';
   static const String oneMoreReflectionMakesClearer =

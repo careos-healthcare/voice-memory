@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/backlog_import_service.dart';
@@ -65,6 +67,18 @@ class _OnboardingImportFirstStepState
           BacklogImportCopy.subtitle,
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          ImportGuides.dayOne,
+          key: Key('import_guide_day_one'),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          ImportGuides.dayOnePhotos,
+          key: Key('import_guide_day_one_photos'),
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: AppSpacing.md),
         if (progress.phase == BacklogImportPhase.complete)
           FilledButton(
@@ -75,7 +89,12 @@ class _OnboardingImportFirstStepState
         else
           FilledButton(
             key: const Key('onboarding_import_first_pick'),
-            onPressed: progress.isActive ? null : notifier.pickAndImport,
+            onPressed: progress.isActive
+                ? null
+                : () => notifier.pickAndImport(
+                    confirmCloudUpload: () =>
+                        const ConsentManager().requestCloudAiConsent(context),
+                  ),
             child: const Text(BacklogImportCopy.pickCta),
           ),
         TextButton(

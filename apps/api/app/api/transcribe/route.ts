@@ -55,6 +55,13 @@ export async function POST(request: Request) {
       return apiErrorResponse({ code: "DURATION_LIMIT", route: "transcribe" });
     }
 
+    const languageRaw = formData.get("language");
+    const language =
+      typeof languageRaw === "string" &&
+      ["en", "es", "fr", "de", "hi", "ja"].includes(languageRaw)
+        ? languageRaw
+        : "en";
+
     const guard = await guardOpenAiRoute(request, "transcribe", {
       durationSeconds: Number.isFinite(durationSeconds) ? durationSeconds : undefined,
       audioBytes: audio.size,
@@ -65,7 +72,7 @@ export async function POST(request: Request) {
     const transcription = await openai.audio.transcriptions.create({
       file: audio,
       model: "whisper-1",
-      language: "en",
+      language,
     });
 
     const transcript = transcription.text?.trim();

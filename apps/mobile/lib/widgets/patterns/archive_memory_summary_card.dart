@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/widgets/feedback/archive_feedback_chips.dart';
 import 'package:archiveme_mobile/widgets/patterns/memory_quality_chip.dart';
 import 'package:flutter/material.dart';
 
-/// "What ArchiveMe remembers" — one clear, plain-language summary of a pattern
+/// "What Thoughtprint remembers" — one clear, plain-language summary of a pattern
 /// the archive has been building over time.
 class ArchiveMemorySummaryCard extends StatefulWidget {
   const ArchiveMemorySummaryCard({
@@ -77,7 +77,7 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'What ArchiveMe remembers',
+            'What Thoughtprint remembers',
             style: VoiceMemoryTypography.metadataStyle(
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 12, fontWeight: FontWeight.w700),

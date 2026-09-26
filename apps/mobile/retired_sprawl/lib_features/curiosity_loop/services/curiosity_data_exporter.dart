@@ -28,7 +28,7 @@ class CuriosityDataExporter {
     final snapshot = await _loadSnapshot(start: start, end: end);
     final buffer = StringBuffer();
 
-    buffer.writeln('# ArchiveMe — Curiosity Loop Export');
+    buffer.writeln('# Thoughtprint — Curiosity Loop Export');
     buffer.writeln();
     buffer.writeln(
       '> **Window:** ${_formatDate(snapshot.windowStart)} → '

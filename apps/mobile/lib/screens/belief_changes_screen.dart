@@ -119,7 +119,7 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
       Text(
         ConsumerUiCopy.changesScreenLead,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ).copyWith(fontSize: 18),
       ),
       const SizedBox(height: AppSpacing.lg),
@@ -163,7 +163,7 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
     if (_showEmpty && isIntentionalEmptyArchive(_snapshot?.entries ?? const [])) {
       return _primarySurface(
         Scaffold(
-          backgroundColor: AppColors.backgroundPrimary,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           body: SafeArea(
             child: RefreshIndicator(
               onRefresh: _load,

@@ -88,6 +88,7 @@ class _VoiceMemoryCaptureApi implements VoiceMemoryCaptureApi {
   Future<TranscribeResponseDto> transcribe({
     required String durationSeconds,
     required File audio,
+    String? language,
     required String captureToken,
     String? idempotencyKey,
   }) async {
@@ -101,6 +102,9 @@ class _VoiceMemoryCaptureApi implements VoiceMemoryCaptureApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.fields.add(MapEntry('durationSeconds', durationSeconds));
+    if (language != null) {
+      _data.fields.add(MapEntry('language', language));
+    }
     _data.files.add(
       MapEntry(
         'audio',

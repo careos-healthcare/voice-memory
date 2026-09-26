@@ -55,9 +55,10 @@ class _EvidenceCitationCardState extends State<EvidenceCitationCard> {
   @override
   Widget build(BuildContext context) {
     final palette = EvidenceCitationPalette.of(context);
-    final quoteStyle = ArchiveMobileTypography.explanationBody(
+    final quoteStyle = ArchiveMobileTypography.userWordsQuote(
       context,
-    ).copyWith(color: palette.quoteText, height: 1.45);
+      color: palette.quoteText,
+    );
     final metaStyle = ArchiveMobileTypography.responsiveHelper(
       context,
       color: palette.quoteMeta,
@@ -199,18 +200,26 @@ class _ExpandableQuote extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              display,
-              key: EvidenceCitationCard.quoteTextKey,
-              style: style,
-              maxLines: expanded
-                  ? null
-                  : EvidenceCitationMetrics.collapsedQuoteLines,
-              // Ellipsis rather than a clip so a shortened quote never looks
-              // like the whole of what was said.
-              overflow: expanded
-                  ? TextOverflow.clip
-                  : TextOverflow.ellipsis,
+            DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: palette.quoteAccent, width: 2),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  display,
+                  key: EvidenceCitationCard.quoteTextKey,
+                  style: style,
+                  maxLines: expanded
+                      ? null
+                      : EvidenceCitationMetrics.collapsedQuoteLines,
+                  overflow: expanded
+                      ? TextOverflow.clip
+                      : TextOverflow.ellipsis,
+                ),
+              ),
             ),
             if (overflows)
               TextButton(

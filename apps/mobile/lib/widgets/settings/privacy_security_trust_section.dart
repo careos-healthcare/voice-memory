@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Surfaces the infrastructure guarantees already built in ArchiveMe.
+/// Surfaces the infrastructure guarantees already built in Thoughtprint.
 ///
 /// The caregiver guarantee and its link read
 /// `V1CapabilityRegistry.caregiverMonitoring` directly rather than taking a

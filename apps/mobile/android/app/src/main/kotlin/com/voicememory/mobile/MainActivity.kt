@@ -1,9 +1,13 @@
 package com.voicememory.mobile
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -13,7 +17,10 @@ class MainActivity : FlutterFragmentActivity() {
     private val legacyCleanupChannelName = "archive_me/excluded_capability_cleanup"
     private val compressorChannelName = "archive_me/capture_audio_compressor"
     private val nativeSpeechChannelName = "archive_me/native_speech_transcription"
+    private val nativeSpeechDraftChannelName =
+        "archive_me/native_speech_transcription_draft"
     private val hardwareMonitorChannelName = "archive_me/hardware_monitor"
+    private val voiceMemoChannelName = "archive_me/voice_memo_import"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -23,13 +30,28 @@ class MainActivity : FlutterFragmentActivity() {
             .setMethodCallHandler(::handleCompressorMethod)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, nativeSpeechChannelName)
             .setMethodCallHandler(::handleNativeSpeechMethod)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            nativeSpeechDraftChannelName,
+        ).setStreamHandler(NativeSpeechTranscriptionHandler)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, hardwareMonitorChannelName)
             .setMethodCallHandler(::handleHardwareMonitorMethod)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, voiceMemoChannelName)
+            .setMethodCallHandler { call, result ->
+                VoiceMemoShareIntake.handle(this, call, result)
+            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         clearLegacyWidgetSharedPreferences(this)
+        VoiceMemoShareIntake.capture(this, intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        VoiceMemoShareIntake.capture(this, intent)
     }
 
     private fun handleLegacyCleanupMethod(call: MethodCall, result: MethodChannel.Result) {

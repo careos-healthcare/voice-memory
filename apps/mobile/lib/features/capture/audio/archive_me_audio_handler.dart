@@ -11,8 +11,8 @@ import 'package:record/record.dart';
 import 'package:uuid/uuid.dart';
 
 /// Background [AudioHandler] that records via `record` while the device is locked.
-class ArchiveMeAudioHandler extends BaseAudioHandler {
-  ArchiveMeAudioHandler();
+class ThoughtprintAudioHandler extends BaseAudioHandler {
+  ThoughtprintAudioHandler();
 
   final AudioRecorder _recorder = AudioRecorder();
   final Uuid _uuid = const Uuid();
@@ -100,7 +100,7 @@ class ArchiveMeAudioHandler extends BaseAudioHandler {
       MediaItem(
         id: captureId,
         title: 'Recording reflection',
-        artist: 'ArchiveMe',
+        artist: 'Thoughtprint',
       ),
     );
     playbackState.add(

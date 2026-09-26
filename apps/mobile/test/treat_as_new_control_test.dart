@@ -407,13 +407,13 @@ void main() {
       expect(TreatAsNew.helper, 'Not everything needs to connect.');
       expect(
         TreatAsNew.expandedHelper,
-        'ArchiveMe will save this entry without using it to suggest a '
+        'Thoughtprint will save this entry without using it to suggest a '
         'connection right now.',
       );
       expect(TreatAsNew.postSaveTitle, 'Saved as a fresh entry.');
       expect(
         TreatAsNew.postSaveBody,
-        'ArchiveMe will not force this into an old pattern.',
+        'Thoughtprint will not force this into an old pattern.',
       );
     });
 

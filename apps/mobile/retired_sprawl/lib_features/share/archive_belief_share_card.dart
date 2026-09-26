@@ -20,9 +20,9 @@ import 'package:flutter/foundation.dart';
 abstract class ArchiveBeliefShareCard {
   ArchiveBeliefShareCard._();
 
-  static const String title = 'My ArchiveMe card';
+  static const String title = 'My Thoughtprint card';
   static const String pickerPrompt = 'Choose the line for your card.';
-  static const String footer = 'Recorded privately with ArchiveMe';
+  static const String footer = 'Recorded privately with Thoughtprint';
   static const String privacyLine = 'No recordings or notes are shared.';
   static const String copyCtaLabel = 'Copy card text';
   static const String shareCtaLabel = 'Share';

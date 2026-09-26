@@ -114,7 +114,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
               review.weekSummaryLine,
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             if (review.takeawayLine.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -122,7 +122,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
                 review.takeawayLine,
                 key: const Key('weekly_review_takeaway'),
                 style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -147,7 +147,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
                       lines[i],
                       style: ArchiveMobileTypography.body(
                         context,
-                      ).copyWith(color: AppColors.textPrimary),
+                      ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
                 ],
@@ -170,7 +170,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
                 WeeklyThreadReview.evidenceHeading,
                 style: ArchiveMobileTypography.responsiveHelper(context)
                     .copyWith(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -181,7 +181,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
                     '\u201C$snippet\u201D',
                     style: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.textPrimary),
+                    ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
             ],
@@ -191,7 +191,7 @@ class WeeklyThreadReviewCard extends StatelessWidget {
               key: const Key('weekly_review_next_week'),
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             if (_suggestsConnection)
               MemoryCardVisibilityControls(
@@ -212,15 +212,15 @@ class WeeklyThreadReviewCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
         label,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/billing/paywall_route_args.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -9,7 +10,6 @@ import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
 import 'package:archiveme_mobile/features/support/support_feedback_copy.dart';
 import 'package:archiveme_mobile/features/then_now/then_now_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
@@ -94,21 +94,23 @@ class SupportFeedbackScreen extends StatelessWidget {
                 child: const Text(ThenNowCopy.viewThenVsNowCta),
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_archive_calendar'),
-              title: ArchiveCalendarCopy.supportSectionTitle,
-              body: ArchiveCalendarCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_archive_calendar'),
-                onPressed: () => context.push(ArchiveCalendarCopy.route),
-                child: const Text(ArchiveCalendarCopy.openCalendarCta),
+            if (V1CapabilityRegistry.calendar) ...[
+              const SizedBox(height: AppSpacing.sm),
+              _section(
+                context,
+                key: const Key('support_feedback_archive_calendar'),
+                title: ArchiveCalendarCopy.supportSectionTitle,
+                body: ArchiveCalendarCopy.supportSectionBody,
               ),
-            ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  key: const Key('support_feedback_open_archive_calendar'),
+                  onPressed: () => context.push(ArchiveCalendarCopy.route),
+                  child: const Text(ArchiveCalendarCopy.openCalendarCta),
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             _section(
               context,
@@ -131,6 +133,7 @@ class SupportFeedbackScreen extends StatelessWidget {
               title: InsightFeedbackCopy.supportSectionTitle,
               body: InsightFeedbackCopy.supportSectionBody,
             ),
+            if (V1CapabilityRegistry.storeBilling) ...[
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               key: const Key('support_feedback_pro_interest_row'),
@@ -143,7 +146,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ConsumerUiCopy.paywallSubhead,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -155,6 +158,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ),
               ),
             ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             _bulletsSection(
               context,
@@ -216,7 +220,7 @@ class SupportFeedbackScreen extends StatelessWidget {
             body,
             style: ArchiveMobileTypography.explanationBody(
               context,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -248,7 +252,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                     '\u2022 ',
                     style: ArchiveMobileTypography.explanationBody(
                       context,
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Expanded(
@@ -256,7 +260,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                       bullet,
                       style: ArchiveMobileTypography.explanationBody(
                         context,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

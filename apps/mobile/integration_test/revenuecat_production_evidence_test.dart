@@ -73,7 +73,7 @@ void main() {
     );
     DeveloperSettingsGate.loadFromPrefs(true);
 
-    await tester.pumpWidget(const ArchiveMeApp());
+    await tester.pumpWidget(const ThoughtprintApp());
     await tester.pump(const Duration(seconds: 2));
 
     final rc = RevenueCatService.instance;

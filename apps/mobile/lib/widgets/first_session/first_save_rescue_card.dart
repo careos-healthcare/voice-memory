@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 /// First Save Rescue — a tiny, low-stakes helper for users with zero
 /// entries. One sentence to say, one CTA, and an explicit out ("You can
-/// delete it after."). It sits alongside "How ArchiveMe works" and never
+/// delete it after."). It sits alongside "How Thoughtprint works" and never
 /// replaces or blocks the normal recording path.
 class FirstSaveRescueCard extends StatelessWidget {
   const FirstSaveRescueCard({required this.onStart, super.key});

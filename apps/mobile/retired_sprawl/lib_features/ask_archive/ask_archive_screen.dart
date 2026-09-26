@@ -267,7 +267,7 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
     if (_results.isEmpty) {
       return [
         Text(
-          'Record a few moments and ArchiveMe will have more to find.',
+          'Record a few moments and Thoughtprint will have more to find.',
           style: VoiceMemoryTypography.bodyStyle(
             color: AppColors.textSecondary,
           ).copyWith(fontSize: 14, height: 1.5),

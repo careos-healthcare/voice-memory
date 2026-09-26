@@ -7,7 +7,6 @@ import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/auth_service.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -168,11 +167,11 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key('account_auth_screen'),
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -202,7 +201,7 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
           AccountAuthCopy.createBody,
           style: ArchiveMobileTypography.responsiveHelper(
             context,
-          ).copyWith(color: AppColors.textSecondary),
+          ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
       const SizedBox(height: AppSpacing.md),
@@ -250,7 +249,7 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
         AccountAuthCopy.codeBody,
         style: ArchiveMobileTypography.responsiveHelper(
           context,
-        ).copyWith(color: AppColors.textSecondary),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       const SizedBox(height: AppSpacing.md),
       TextField(
@@ -290,7 +289,7 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
         _status,
         key: const Key('account_auth_status'),
         style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: _statusIsError ? AppColors.error : AppColors.textSecondary,
+          color: _statusIsError ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     ];
@@ -303,7 +302,7 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
       textAlign: TextAlign.center,
       style: ArchiveMobileTypography.responsiveHelper(
         context,
-      ).copyWith(color: AppColors.textSecondary),
+      ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
     );
   }
 }

@@ -153,7 +153,7 @@ void main() {
       expect(DailyArchiveMemoryCopy.fallbackTitle, 'Your archive is ready');
       expect(
         DailyArchiveMemoryCopy.fallbackBody,
-        'Record one real moment from today. ArchiveMe will compare it with what came before.',
+        'Record one real moment from today. Thoughtprint will compare it with what came before.',
       );
     });
 

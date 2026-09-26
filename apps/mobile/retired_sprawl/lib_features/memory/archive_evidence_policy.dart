@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_r
 /// between raw entries, extracted facts, patterns, and generated
 /// interpretation.
 ///
-/// ArchiveMe must preserve exact evidence. Generated summaries are
+/// Thoughtprint must preserve exact evidence. Generated summaries are
 /// temporary views, not the source of truth:
 /// - Raw entries are never replaced or altered by any derived layer.
 /// - Interpretation-typed records can never support a memory claim.

@@ -34,7 +34,7 @@ class PatternMemoryLimitCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            ConsumerUiCopy.freeKeepsSevenKeyMoments,
+            ConsumerUiCopy.coreIsFreeForever,
             style: VoiceMemoryTypography.bodyStyle(
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 14, height: 1.45),

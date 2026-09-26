@@ -16,6 +16,9 @@ export const SUPPORT_EMAIL = "support@thoughtprint.xyz";
 /** Resend transactional sender for auth codes (domain must be verified in Resend). */
 export const AUTH_EMAIL_FROM = `ArchiveMe <noreply@${MARKETING_DOMAIN}>`;
 
+/** Waitlist confirmation sender. Production prefers EMAIL_FROM when it is set. */
+export const WAITLIST_EMAIL_FROM = `Thoughtprint <noreply@${MARKETING_DOMAIN}>`;
+
 export function marketingPath(path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${MARKETING_SITE_URL}${normalized}`;

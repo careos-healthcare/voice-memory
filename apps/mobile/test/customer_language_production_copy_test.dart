@@ -36,9 +36,9 @@ const _productionCopyFiles = [
 
 /// Reviewed literals allowed to contain otherwise-banned substrings.
 const _annotatedLiteralAllowlist = <String, String>{
-  'ArchiveMe is not therapy, medical advice, or emergency support.':
+  'Thoughtprint is not therapy, medical advice, or emergency support.':
       'Negative disclaimer — therapy/diagnosis in negation',
-  'ArchiveMe resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.':
+  'Thoughtprint resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.':
       'Web trust disclaimer',
   'Not a chat history. An evidence trail of what repeats.':
       'Evidence trail — not product "proof" claim',

@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/tomorrow_return/useful_result_takeaway
 import 'package:archiveme_mobile/features/trial/hook_rescue_decision_model.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class PatternsCheckInStatusCard extends StatelessWidget {
             Text(
               ConsumerUiCopy.patternsCheckInWaitingBody,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ).copyWith(height: 1.45),
             ),
             if (question != null && question!.isNotEmpty) ...[
@@ -81,7 +82,7 @@ class PatternsCheckInStatusCard extends StatelessWidget {
                 question!,
                 style:
                     VoiceMemoryTypography.bodyStyle(
-                      color: AppColors.textPrimary,
+                      color: context.palette.textPrimary,
                     ).copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -127,35 +128,35 @@ class PatternsCheckInStatusCard extends StatelessWidget {
           Text(
             checkIn.resultHeadline,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
+              color: context.palette.textPrimary,
             ).copyWith(fontSize: 16, fontWeight: FontWeight.w600, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             _takeaway(checkIn).headline,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
+              color: context.palette.textPrimary,
             ).copyWith(fontSize: 14, fontWeight: FontWeight.w700, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             _takeaway(checkIn).whyUseful,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
             ).copyWith(height: 1.45, fontSize: 14),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             ConsumerUiCopy.resultNextCheckTitle,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: context.palette.textSecondary,
             ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             _takeaway(checkIn).nextCheck,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
+              color: context.palette.textPrimary,
             ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.md),

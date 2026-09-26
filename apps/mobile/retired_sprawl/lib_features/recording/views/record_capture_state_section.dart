@@ -13,7 +13,13 @@ extension RecordCaptureStateSection on _RecordScreenState {
   ) {
     return [
       if (ctx.ui == RecordUiState.recording) ...[
-        _RecordingStatusCard(stageLabel: ctx.stageLabel),
+        _RecordingStatusCard(
+          stageLabel: ctx.stageLabel,
+          onStop: _stopAndProcess,
+          onPause: _toggleCapturePause,
+          paused: _capturePaused,
+          showResurfacing: _journalEntryCount > 0,
+        ),
         if (_selectedPromptLine != null) ...[
           const SizedBox(height: 12),
           Text(
@@ -28,6 +34,8 @@ extension RecordCaptureStateSection on _RecordScreenState {
           ),
         ],
       ] else ...[
+        if (ctx.ui == RecordUiState.ready && _journalEntryCount > 0)
+          const IdleResurfacingPrompt(),
         if (ctx.ui == RecordUiState.ready &&
             _showReadyToRecordStatus &&
             !ctx.showReturningWatchTargetFocusedUi) ...[

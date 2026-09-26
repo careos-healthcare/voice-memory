@@ -1,5 +1,3 @@
-import 'package:device_calendar/device_calendar.dart';
-
 /// Normalized calendar event returned by [fetchCalendarEvents].
 class McpCalendarEvent {
   const McpCalendarEvent({
@@ -68,72 +66,11 @@ abstract class CalendarDataGateway {
 }
 
 class DeviceCalendarGateway implements CalendarDataGateway {
-  DeviceCalendarGateway({DeviceCalendarPlugin? plugin})
-    : _plugin = plugin ?? DeviceCalendarPlugin();
-
-  final DeviceCalendarPlugin _plugin;
+  const DeviceCalendarGateway();
 
   @override
   Future<List<McpCalendarEvent>> fetchEvents(McpCalendarQuery query) async {
-    final permissionsResult = await _plugin.hasPermissions();
-    if (permissionsResult.isSuccess != true ||
-        permissionsResult.data != true) {
-      final requested = await _plugin.requestPermissions();
-      if (requested.isSuccess != true || requested.data != true) {
-        return const [];
-      }
-    }
-
-    final calendarsResult = await _plugin.retrieveCalendars();
-    if (calendarsResult.isSuccess != true || calendarsResult.data == null) {
-      return const [];
-    }
-
-    final calendars = calendarsResult.data!;
-    final selectedCalendars = query.calendarIds == null
-        ? calendars
-        : calendars
-              .where((calendar) => query.calendarIds!.contains(calendar.id))
-              .toList();
-
-    final events = <McpCalendarEvent>[];
-    for (final calendar in selectedCalendars) {
-      final calendarId = calendar.id;
-      if (calendarId == null) continue;
-
-      final eventsResult = await _plugin.retrieveEvents(
-        calendarId,
-        RetrieveEventsParams(
-          startDate: query.start.toLocal(),
-          endDate: query.end.toLocal(),
-        ),
-      );
-
-      if (eventsResult.isSuccess != true || eventsResult.data == null) {
-        continue;
-      }
-
-      for (final event in eventsResult.data!) {
-        final start = event.start;
-        final end = event.end;
-        if (start == null || end == null) continue;
-
-        events.add(
-          McpCalendarEvent(
-            id: event.eventId ?? '${calendarId}_${start.toIso8601String()}',
-            title: event.title ?? '(untitled)',
-            start: start.toUtc(),
-            end: end.toUtc(),
-            isAllDay: event.allDay ?? false,
-            location: event.location,
-            calendarName: calendar.name,
-          ),
-        );
-      }
-    }
-
-    events.sort((a, b) => a.start.compareTo(b.start));
-    return events;
+    return const [];
   }
 }
 

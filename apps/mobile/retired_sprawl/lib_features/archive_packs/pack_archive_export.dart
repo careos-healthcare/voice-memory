@@ -16,7 +16,7 @@ class PackArchiveExport {
     final local = now.toLocal();
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
-    return 'archiveme-pack-export-${local.year}-$month-$day.md';
+    return 'thoughtprint-pack-export-${local.year}-$month-$day.md';
   }
 
   String buildMarkdown({

@@ -1,6 +1,4 @@
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
-import 'package:archiveme_mobile/billing/paywall_trigger_model.dart';
-import 'package:archiveme_mobile/billing/pro_value_preview_engine.dart';
 import 'package:archiveme_mobile/features/moments/key_moment_model.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_research/screens/key_moments_screen.dart';
@@ -52,24 +50,12 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('memory-limit card appears when more than 7 moments', (
-    tester,
-  ) async {
+  testWidgets('every saved moment stays visible', (tester) async {
     await _pump(tester, moments: _manyMoments(8));
 
-    final preview = buildProValuePreview(
-      const PaywallTriggerContext(
-        trigger: PaywallTrigger.fullHistory,
-        sourceRoute: '/moments',
-        momentCount: 8,
-        previewTitle: '',
-        previewBody: '',
-        ctaLabel: '',
-      ),
-    );
-    expect(find.text(preview.title), findsOneWidget);
-    expect(find.text(preview.body), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.unlockFullMemoryCta), findsOneWidget);
+    expect(find.text('Your pattern memory is growing'), findsNothing);
+    expect(find.text('Moment 0'), findsOneWidget);
+    expect(find.text('Moment 7'), findsOneWidget);
   });
 
   testWidgets('Pro user sees all moments without limit card', (tester) async {
@@ -81,15 +67,10 @@ void main() {
     expect(find.text('Moment 7'), findsOneWidget);
   });
 
-  testWidgets('free user sees only 7 newest moments', (tester) async {
+  testWidgets('search stays available no matter how many moments exist', (
+    tester,
+  ) async {
     await _pump(tester, moments: _manyMoments(8));
-
-    expect(find.text('Moment 0'), findsOneWidget);
-    expect(find.text('Moment 7'), findsNothing);
-  });
-
-  testWidgets('search is not gated at 7 moments or fewer', (tester) async {
-    await _pump(tester, moments: _manyMoments(7));
 
     await tester.tap(find.text('Search'));
     await tester.pump();

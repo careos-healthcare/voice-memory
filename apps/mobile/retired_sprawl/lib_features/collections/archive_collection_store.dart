@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
 /// Local store for Collections, backed by the same on-device prefs file
-/// as other ArchiveMe local state — no backend dependency.
+/// as other Thoughtprint local state — no backend dependency.
 ///
 /// Organization only: this store holds group names and entry-id lists.
 /// It never reads or writes entries, memory records, or scope state, so

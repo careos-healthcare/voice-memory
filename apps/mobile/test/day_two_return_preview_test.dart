@@ -85,7 +85,7 @@ void main() {
       );
       expect(
         preview.body,
-        'ArchiveMe will check whether the work thread returned, faded, or '
+        'Thoughtprint will check whether the work thread returned, faded, or '
         'changed.',
       );
     });
@@ -160,12 +160,12 @@ void main() {
       expect(DayTwoReturnPreview.title, 'Tomorrow, check this');
       expect(
         DayTwoReturnPreview.multiContextBody,
-        'ArchiveMe will check whether this thread returned, faded, or '
+        'Thoughtprint will check whether this thread returned, faded, or '
         'changed.',
       );
       expect(
         DayTwoReturnPreview.genericBody,
-        'ArchiveMe will check whether this returned, faded, or changed.',
+        'Thoughtprint will check whether this returned, faded, or changed.',
       );
       expect(DayTwoReturnPreview.smallLine, 'One check is enough.');
     });

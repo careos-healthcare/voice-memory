@@ -235,7 +235,7 @@ void main() {
     test('question copy matches exactly', () {
       expect(
         CoreValueFeedbackCopy.question,
-        'Did ArchiveMe show something repeating in your own words that was worth tracking?',
+        'Did Thoughtprint show something repeating in your own words that was worth tracking?',
       );
       expect(CoreValueFeedbackCopy.title, 'Beta feedback');
       expect(

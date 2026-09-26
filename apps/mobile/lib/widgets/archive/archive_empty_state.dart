@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ArchiveEmptyState extends StatelessWidget {
   const ArchiveEmptyState({required this.onCapture, super.key});
@@ -14,13 +15,18 @@ class ArchiveEmptyState extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your first saved moment will appear here.',
-            style: Theme.of(context).textTheme.titleMedium,
+            'Your recordings and typed moments, in your words.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 8),
-          const Text('Record or type something real. You can edit it later.'),
           const SizedBox(height: 16),
-          FilledButton(onPressed: onCapture, child: const Text('Go to Record')),
+          FilledButton(onPressed: onCapture, child: const Text('Record')),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => context.push('/privacy-trust-centre'),
+            child: const Text('How it works'),
+          ),
         ],
       ),
     ),

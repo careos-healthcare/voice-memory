@@ -78,7 +78,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         key: const Key('delete_account_local_wipe_offer_dialog'),
         title: const Text('Server data deleted'),
         content: const Text(
-          'Your ArchiveMe account and synced data have been deleted from '
+          'Your Thoughtprint account and synced data have been deleted from '
           'our servers. This device may still have a local copy of this '
           "account's reflections — that is separate and not affected by "
           'the step you just completed. Delete the local copy too?',

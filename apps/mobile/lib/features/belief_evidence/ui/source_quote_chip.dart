@@ -43,10 +43,10 @@ class _SourceQuoteChipState extends State<SourceQuoteChip> {
     }
 
     final palette = EvidenceCitationPalette.of(context);
-    final quoteStyle = ArchiveMobileTypography.responsiveHelper(
+    final quoteStyle = ArchiveMobileTypography.userWordsQuote(
       context,
       color: palette.quoteText,
-    ).copyWith(height: 1.35);
+    );
     final metaStyle = ArchiveMobileTypography.responsiveHelper(
       context,
       color: palette.quoteMeta,
@@ -102,12 +102,11 @@ class _SourceQuoteChipState extends State<SourceQuoteChip> {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.6,
                   ),
-                  child: Text(
-                    '\u201C${widget.evidence.text}\u201D',
+                  child: UserWordsQuote(
                     key: SourceQuoteChip.chipTextKey,
-                    style: quoteStyle,
+                    text: '\u201C${widget.evidence.text}\u201D',
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    color: palette.quoteText,
                   ),
                 ),
                 if (recordedLabel.isNotEmpty)

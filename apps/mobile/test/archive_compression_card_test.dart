@@ -41,7 +41,7 @@ void main() {
     await _pump(tester);
 
     expect(find.text('Clean up your archive'), findsOneWidget);
-    expect(find.text('ArchiveMe found similar moments.'), findsOneWidget);
+    expect(find.text('Thoughtprint found similar moments.'), findsOneWidget);
     expect(
       find.text('Taking responsibility before asking for help'),
       findsOneWidget,

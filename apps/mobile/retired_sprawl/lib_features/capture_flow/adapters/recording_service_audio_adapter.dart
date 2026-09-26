@@ -60,11 +60,14 @@ class RecordingServiceAudioAdapter implements AudioRecorderAdapter {
   }
 
   @override
-  bool get supportsPause => false;
+  bool get supportsPause => true;
 
   @override
-  Future<void> pauseRecording() async {}
+  Future<void> pauseRecording() => _recording.pauseActiveRecording();
 
   @override
-  Future<void> resumeRecording() async {}
+  Future<void> resumeRecording() => _recording.resumeActiveRecording();
+
+  @override
+  Stream<double> watchAmplitude() => _recording.watchAmplitude();
 }

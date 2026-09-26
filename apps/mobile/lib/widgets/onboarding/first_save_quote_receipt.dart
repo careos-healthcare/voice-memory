@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_evidence_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_debug_actions.dart';
@@ -40,9 +41,9 @@ class FirstSaveQuoteReceipt extends StatelessWidget {
             ),
             for (var i = 0; i < quotes.length; i++) ...[
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                quotes[i].text,
+              UserWordsQuote(
                 key: Key('first_save_quote_span_$i'),
+                text: quotes[i].text,
               ),
               Text(
                 formatEvidenceTimestamp(quotes[i].recordedAt),

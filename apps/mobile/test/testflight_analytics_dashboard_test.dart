@@ -161,7 +161,7 @@ void main() {
       );
       expect(find.text('TestFlight beta metrics'), findsOneWidget);
       expect(
-        find.text('Track whether users reach the ArchiveMe proof moment.'),
+        find.text('Track whether users reach the Thoughtprint proof moment.'),
         findsOneWidget,
       );
       for (final label in TestFlightMetricsCopy.coreMetricLabels) {

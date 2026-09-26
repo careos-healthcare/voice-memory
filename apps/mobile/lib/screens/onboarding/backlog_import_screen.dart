@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
 import 'package:archiveme_mobile/features/evidence_method/insight.dart';
+import 'package:archiveme_mobile/features/export/import_guides.dart';
+import 'package:archiveme_mobile/features/import/import_consent_view.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/experiment_h_onboarding_coordinator.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -18,10 +21,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Optional onboarding step — import historical notes with upload progress.
-class BacklogImportScreen extends ConsumerWidget {
+class BacklogImportScreen extends ConsumerStatefulWidget {
   const BacklogImportScreen({super.key});
 
-  Future<void> _continueAfterImport(BuildContext context) async {
+  @override
+  ConsumerState<BacklogImportScreen> createState() =>
+      _BacklogImportScreenState();
+}
+
+class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
+  bool _consentAccepted = false;
+
+  Future<void> _continueAfterImport() async {
     final entries = await AppServices.instance.journal.loadAll();
     if (ExperimentHOnboardingCoordinator.shouldInsertProofStep(
       entryCount: entries.length,
@@ -41,13 +52,33 @@ class BacklogImportScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    if (!_consentAccepted) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              children: [
+                const Spacer(),
+                ImportConsentView(
+                  onContinue: () => setState(() => _consentAccepted = true),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final progress = ref.watch(backlogImportNotifierProvider);
     final notifier = ref.read(backlogImportNotifierProvider.notifier);
     final isBusy = progress.isActive;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Stack(
           children: [
@@ -69,6 +100,20 @@ class BacklogImportScreen extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: OnboardingTypography.body(context),
                   ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    ImportGuides.dayOne,
+                    key: const Key('import_guide_day_one'),
+                    textAlign: TextAlign.center,
+                    style: OnboardingTypography.body(context),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    ImportGuides.dayOnePhotos,
+                    key: const Key('import_guide_day_one_photos'),
+                    textAlign: TextAlign.center,
+                    style: OnboardingTypography.body(context),
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   if (progress.insight != null) ...[
                     EvidenceInsightCard(
@@ -76,12 +121,12 @@ class BacklogImportScreen extends ConsumerWidget {
                         id: progress.insight!.id,
                         insightText: progress.insight!.insightText,
                         kind:
-                            ArchiveInsightKind.values.asNameMap()[progress
-                                .insight!
-                                .kind] ??
+                            ArchiveInsightKind.values
+                                .asNameMap()[progress.insight!.kind] ??
                             ArchiveInsightKind.theme,
                         confidenceBand:
-                            PatternMatchConfidenceBand.values.asNameMap()[progress
+                            PatternMatchConfidenceBand.values
+                                .asNameMap()[progress
                                 .insight!
                                 .confidenceBand] ??
                             PatternMatchConfidenceBand.weak,
@@ -95,7 +140,7 @@ class BacklogImportScreen extends ConsumerWidget {
                     Text(
                       BacklogImportCopy.progressLabel,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
@@ -107,8 +152,10 @@ class BacklogImportScreen extends ConsumerWidget {
                             ? progress.fraction
                             : null,
                         minHeight: 8,
-                        backgroundColor: AppColors.surfaceAlt,
-                        color: AppColors.accentPrimary,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
@@ -118,7 +165,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       textAlign: TextAlign.center,
                       style: OnboardingTypography.body(context).copyWith(
                         fontSize: OnboardingTypography.bodySize(context) - 1,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     if (progress.phase == BacklogImportPhase.complete &&
@@ -145,16 +192,14 @@ class BacklogImportScreen extends ConsumerWidget {
                       BacklogImportCopy.idleHint,
                       textAlign: TextAlign.center,
                       style: OnboardingTypography.body(context).copyWith(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   const Spacer(),
                   if (progress.phase == BacklogImportPhase.complete)
                     FilledButton(
                       key: const Key('backlog_import_continue_button'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(context),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     )
                   else if (progress.phase == BacklogImportPhase.error) ...[
@@ -164,30 +209,38 @@ class BacklogImportScreen extends ConsumerWidget {
                           ? null
                           : () {
                               notifier.reset();
-                              unawaited(notifier.pickAndImport());
+                              unawaited(
+                                notifier.pickAndImport(
+                                  confirmCloudUpload: () =>
+                                      const ConsentManager()
+                                          .requestCloudAiConsent(context),
+                                ),
+                              );
                             },
                       child: const Text(BacklogImportCopy.retryCta),
                     ),
                     TextButton(
                       key: const Key('backlog_import_continue_after_error'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(context),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     ),
                   ] else
                     FilledButton(
                       key: const Key('backlog_import_pick_button'),
-                      onPressed: isBusy ? null : notifier.pickAndImport,
+                      onPressed: isBusy
+                          ? null
+                          : () => notifier.pickAndImport(
+                              confirmCloudUpload: () =>
+                                  const ConsentManager()
+                                      .requestCloudAiConsent(context),
+                            ),
                       child: const Text(BacklogImportCopy.pickCta),
                     ),
                   if (progress.phase == BacklogImportPhase.idle ||
                       progress.phase == BacklogImportPhase.picking)
                     TextButton(
                       key: const Key('backlog_import_skip_button'),
-                      onPressed: isBusy
-                          ? null
-                          : () => _continueAfterImport(context),
+                      onPressed: isBusy ? null : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.skipCta),
                     ),
                   const SizedBox(height: AppSpacing.sm),

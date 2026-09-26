@@ -430,7 +430,7 @@ void main() {
         );
         expect(
           ArchiveBeliefThreadCopy.whyPro,
-          'ArchiveMe becomes more useful as the evidence trail grows.',
+          'Thoughtprint becomes more useful as the evidence trail grows.',
         );
         expect(
           PrivateArchiveReportCopy.previewBody.toLowerCase(),

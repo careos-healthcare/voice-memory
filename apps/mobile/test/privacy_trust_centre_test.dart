@@ -163,10 +163,9 @@ void main() {
     testWidgets('names its processing providers where a reader can reach it', (
       tester,
     ) async {
-      // The one disclosure in this app that names OpenAI and Google against
-      // the calls that reach them. `/privacy` used to be the only screen that
-      // rendered it and `/privacy` is now a redirect, so if this case fails
-      // the disclosure exists in the source and on no screen at all.
+      // The disclosure names Google Gemini as the processor for cloud features.
+      // `/privacy` is a redirect, so if this case fails the sentence exists
+      // in the source and on no screen at all.
       await pumpCentre(tester);
 
       final tile = find.byKey(const Key('privacy_processing_providers'));
@@ -187,8 +186,8 @@ void main() {
       final body = tester.widget<Text>(
         find.text(PrivacyScreenCopy.processingProvidersBody),
       );
-      expect(body.data, contains('OpenAI'));
-      expect(body.data, contains('Google'));
+      expect(body.data, contains('Google Gemini'));
+      expect(body.data, isNot(contains('OpenAI')));
     });
 
     testWidgets('copy avoids unsupported encryption and cloud backup claims', (
@@ -315,10 +314,11 @@ void main() {
 
       await tester.pumpWidget(
         withAppProviderScope(
-          const MaterialApp(
+          MaterialApp(
+            theme: AppTheme.light(),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: SettingsScreen(),
+            home: const SettingsScreen(),
           ),
         ),
       );

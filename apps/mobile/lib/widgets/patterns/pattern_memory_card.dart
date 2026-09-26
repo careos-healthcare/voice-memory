@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Patterns surface: how ArchiveMe remembers one pattern across check-ins.
+/// Patterns surface: how Thoughtprint remembers one pattern across check-ins.
 class PatternMemoryCard extends StatelessWidget {
   const PatternMemoryCard({required this.memory, super.key});
 
@@ -19,7 +19,7 @@ class PatternMemoryCard extends StatelessWidget {
   static String statusLine(PatternMemoryStatus status) {
     switch (status) {
       case PatternMemoryStatus.forming:
-        return 'ArchiveMe is starting to remember this pattern.';
+        return 'Thoughtprint is starting to remember this pattern.';
       case PatternMemoryStatus.active:
         return 'This pattern keeps showing up.';
       case PatternMemoryStatus.easing:

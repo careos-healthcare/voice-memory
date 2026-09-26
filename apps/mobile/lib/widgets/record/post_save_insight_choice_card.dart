@@ -25,6 +25,7 @@ import 'package:archiveme_mobile/features/signal_journey/signal_journey_coordina
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/prove_enough/prove_enough_post_record_payoff.dart';
@@ -651,8 +652,8 @@ class _MomentsProgress extends StatelessWidget {
                 margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
                 decoration: BoxDecoration(
                   color: filled
-                      ? AppColors.accentPrimary
-                      : AppColors.backgroundSecondary,
+                      ? Theme.of(context).colorScheme.primary
+                      : context.palette.backgroundSecondary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -760,10 +761,10 @@ class _AbOptionCard extends StatelessWidget {
     final gap = ArchiveResponsiveLayout.gap(context);
     final decoration = accent
         ? VoiceMemoryCards.standard(
-            background: AppColors.accentPrimary.withValues(alpha: 0.08),
+            background: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
           ).copyWith(
             border: Border.all(
-              color: AppColors.accentPrimary.withValues(alpha: 0.35),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
             ),
           )
         : VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5));
@@ -810,7 +811,7 @@ class _StrengthSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.backgroundSecondary,
+              color: context.palette.backgroundSecondary,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -842,10 +843,10 @@ class _StrengthSection extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.accentPrimary.withValues(alpha: 0.08),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppColors.accentPrimary.withValues(alpha: 0.2),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
@@ -950,10 +951,10 @@ class _SignalCard extends StatelessWidget {
     final gap = ArchiveResponsiveLayout.gap(context);
     final decoration = accent
         ? VoiceMemoryCards.standard(
-            background: AppColors.accentPrimary.withValues(alpha: 0.08),
+            background: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
           ).copyWith(
             border: Border.all(
-              color: AppColors.accentPrimary.withValues(alpha: 0.35),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
             ),
           )
         : VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5));

@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/moments/moment_tag_model.dart';
 const int kMaxMomentTags = 5;
 
 /// Conservative keyword sets per tag. A tag is only applied when one of its
-/// plain keywords is present, so ArchiveMe never overclaims what a moment was
+/// plain keywords is present, so Thoughtprint never overclaims what a moment was
 /// about. Result-driven tags (lighter/heavier/changed) come from the check-in
 /// result, not the text.
 const Map<MomentTag, List<String>> _keywords = {

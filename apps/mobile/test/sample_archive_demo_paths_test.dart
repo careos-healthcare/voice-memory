@@ -47,7 +47,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Sample archive demo paths copy', () {
-    test('uses ArchiveMe-facing labels and example/sample wording', () {
+    test('uses Thoughtprint-facing labels and example/sample wording', () {
       const visible = [
         SampleArchiveCopy.demoPathsTitle,
         SampleArchiveCopy.demoPathsIntro,

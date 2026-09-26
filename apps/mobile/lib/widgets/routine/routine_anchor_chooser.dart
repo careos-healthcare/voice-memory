@@ -14,7 +14,7 @@ class RoutineAnchorChooser extends StatefulWidget {
   /// Fires with the chosen anchor.
   final void Function(RoutineAnchor anchor) onSelected;
 
-  static const String title = 'When should ArchiveMe ask this?';
+  static const String title = 'When should Thoughtprint ask this?';
   static const String subtitle =
       'Pick a moment in your day. This makes tomorrow\u2019s check easier to '
       'remember.';

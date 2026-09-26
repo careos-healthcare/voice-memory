@@ -47,7 +47,7 @@ class ArchiveValueProgress {
       case ArchiveValueStage.oneDataPoint:
         return 'One data point saved.';
       case ArchiveValueStage.possibleRepeat:
-        return 'ArchiveMe can now check for possible repeats.';
+        return 'Thoughtprint can now check for possible repeats.';
       case ArchiveValueStage.patternForming:
         return 'Patterns may be starting to form.';
       case ArchiveValueStage.theoryUnderReview:
@@ -61,7 +61,7 @@ class ArchiveValueProgress {
     if (count >= target) return 'Open your pattern review.';
     if (count >= 3) return '1 more reflection until your first pattern review.';
     if (count >= 1) {
-      return '1 more reflection until ArchiveMe can compare this properly.';
+      return '1 more reflection until Thoughtprint can compare this properly.';
     }
     return 'Record your first reflection.';
   }

@@ -109,7 +109,7 @@ void main() {
   const engine = ArchiveReturnChangesEngine();
 
   group('Archive return changes copy', () {
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       _expectNoBannedCopy(ArchiveReturnChangesCopy.allVisibleCopy());
       for (final text in ArchiveReturnChangesCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));

@@ -106,7 +106,7 @@ void main() {
       },
     );
 
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       _expectNoBannedCopy(ProInterestCopy.allVisibleCopy());
       for (final text in ProInterestCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
@@ -118,7 +118,7 @@ void main() {
             pricingIntentId: ProInterestPricingIntentId.lowMonthly,
           ),
         ),
-        contains('ArchiveMe'),
+        contains('Thoughtprint'),
       );
     });
 
@@ -409,7 +409,7 @@ void main() {
         entries: _entries(5),
       );
       expect(proof.shareText, isNot(contains(ProInterestCopy.screenTitle)));
-      expect(proof.shareText, isNot(contains('ArchiveMe Pro interest')));
+      expect(proof.shareText, isNot(contains('Thoughtprint Pro interest')));
     });
   });
 }

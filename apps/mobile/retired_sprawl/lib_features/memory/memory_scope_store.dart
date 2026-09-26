@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
 /// Persistent memory-scope setting, backed by the same on-device prefs
-/// file as other ArchiveMe local state.
+/// file as other Thoughtprint local state.
 ///
 /// The stored choice is the user's and only the user's: nothing in the
 /// app ever writes a scope the user did not pick, so "Memory off" can

@@ -1,5 +1,5 @@
 import 'package:archiveme_mobile/features/voice_capture/transcription/local_transcription_unavailable_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -31,9 +31,9 @@ class LocalTranscriptionUnavailableCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.backgroundPrimary,
+        color: context.palette.backgroundPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,7 +44,7 @@ class LocalTranscriptionUnavailableCard extends StatelessWidget {
               LocalTranscriptionUnavailableCopy.title,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: context.palette.textPrimary,
               ),
             ),
           ),
@@ -85,9 +85,9 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 13,
-        color: AppColors.textSecondary,
+        color: context.palette.textSecondary,
         height: 1.4,
       ),
     );

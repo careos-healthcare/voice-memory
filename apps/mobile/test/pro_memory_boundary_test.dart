@@ -168,7 +168,7 @@ void main() {
   tearDown(() => sandbox.dispose());
   group('ProMemoryBoundaryCopy', () {
     test('defines upgrade bridge and fallback copy', () {
-      expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'ArchiveMe Pro');
+      expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'Thoughtprint Pro');
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeBody,
         contains('longer proof trail'),
@@ -203,17 +203,20 @@ void main() {
       expect(moment, isNotNull);
     });
 
-    test('recent saved history keeps first-proof range for free users', () {
+    test('saved moments stay visible without a count cap', () {
       final moments = List.generate(5, (i) => 'moment_$i');
       final visible = ProMemoryBoundaryEngine.visibleRecentMoments(
         moments: moments,
         isPro: false,
       );
+      expect(visible, moments);
       expect(
-        visible,
-        hasLength(ProMemoryBoundaryEngine.freePatternDetailMomentLimit),
+        ProMemoryBoundaryEngine.gatedOlderMomentCount(
+          totalMomentCount: moments.length,
+          isPro: false,
+        ),
+        0,
       );
-      expect(visible, moments.take(3).toList());
     });
 
     test('Pro user sees all saved moments', () {
@@ -436,7 +439,7 @@ void main() {
 
   group('PatternDetailSheet pro boundary', () {
     testWidgets(
-      'free user sees first-proof moments and older evidence bridge',
+      'saved evidence stays visible without an older-moment cap',
       (tester) async {
         final detail = _detailWithMoments(5);
         await tester.pumpWidget(
@@ -458,24 +461,20 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.byKey(const Key('pattern_detail_moment_row_1')),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const Key('pattern_detail_moment_row_2')),
-          findsOneWidget,
-        );
-        expect(
           find.byKey(const Key('pattern_detail_moment_row_3')),
-          findsNothing,
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('pattern_detail_moment_row_4')),
+          findsOneWidget,
         );
         expect(
           find.text(ProMemoryBoundaryCopy.olderEvidenceTitle),
-          findsOneWidget,
+          findsNothing,
         );
         expect(
           find.byKey(const Key('pro_memory_upgrade_bridge_compact')),
-          findsOneWidget,
+          findsNothing,
         );
       },
     );

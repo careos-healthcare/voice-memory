@@ -50,7 +50,7 @@ class CapacityBetaSignalSnapshot {
     verdict: CapacityBetaSignalVerdict.weak,
     verdictLabel: 'Weak activation signal',
     exportSummary:
-        'ArchiveMe capacity beta signal: 0 yes moments, fit response not answered.',
+        'Thoughtprint capacity beta signal: 0 yes moments, fit response not answered.',
   );
 
   final bool hasCapacityEvidence;

@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/prove_enough/prove_enough_pattern_repo
 ///
 /// PDF generation is not wired yet — Markdown export is the supported path.
 /// When a PDF package is added, implement [exportToFile] with a light
-/// ArchiveMe-branded layout and no VoiceMemory consumer copy.
+/// Thoughtprint-branded layout and no VoiceMemory consumer copy.
 class ProveEnoughPatternReportPdfExporter {
   const ProveEnoughPatternReportPdfExporter();
 
@@ -14,7 +14,7 @@ class ProveEnoughPatternReportPdfExporter {
   /// Writes a PDF when supported; otherwise returns null.
   Future<String?> exportToFile(ProveEnoughPatternReport report) async {
     if (!isSupported) return null;
-    // TODO: generate light-theme ArchiveMe PDF with date range when pdf package is added.
+    // TODO: generate light-theme Thoughtprint PDF with date range when pdf package is added.
     return null;
   }
 }

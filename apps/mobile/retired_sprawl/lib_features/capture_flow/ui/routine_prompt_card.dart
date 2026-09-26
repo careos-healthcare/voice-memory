@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/capture_flow/routine/routine_prompt_copy.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +21,14 @@ class RoutinePromptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final helperStyle = ArchiveMobileTypography.responsiveHelper(context)
-        .copyWith(color: AppColors.textSecondary, height: 1.45);
+        .copyWith(color: context.palette.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('routine_prompt_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm + 4),
       decoration: VoiceMemoryCards.standard(
-        background: AppColors.backgroundSecondary.withValues(alpha: 0.6),
+        background: context.palette.backgroundSecondary.withValues(alpha: 0.6),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,7 +41,7 @@ class RoutinePromptCard extends StatelessWidget {
                   key: const Key('routine_prompt_eyebrow'),
                   style: helperStyle.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                   ),
                 ),
               ),

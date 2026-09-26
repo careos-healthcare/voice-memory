@@ -6,7 +6,8 @@ import 'package:flutter/services.dart';
 
 enum IosCaptureAudioMode {
   spokenAudio('spokenAudio'),
-  measurement('measurement');
+  measurement('measurement'),
+  voiceChat('voiceChat');
 
   const IosCaptureAudioMode(this.value);
   final String value;

@@ -4,7 +4,9 @@ import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/encrypted_journal_snapshot.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/legacy_plaintext_migration_service.dart';
-import 'package:archiveme_mobile/features/encrypted_sync/sync_crypto.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key.dart';
+import 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/device_id.dart';
@@ -103,9 +105,11 @@ class RecordingSyncApiClient implements SyncApiClient {
         final encJson = map['encrypted'];
         if (encJson is! Map) continue;
         final keyBytes = await _keyStore.ensureKey();
-        final crypto = SyncCrypto(keyBytes);
-        final decrypted = await crypto.decryptJson(
-          EncryptedPayload.fromJson(Map<String, dynamic>.from(encJson)),
+        final decrypted = await RecordSync.openJson(
+          accountKey: keyBytes,
+          envelope: EncryptedPayload.fromJson(
+            Map<String, dynamic>.from(encJson),
+          ),
         );
         pushedSnapshots.add(journalEntriesFromSnapshot(decrypted));
       }
@@ -136,21 +140,23 @@ class RecordingSyncApiClient implements SyncApiClient {
     List<JournalEntry> entries,
   ) async {
     final keyBytes = await _keyStore.ensureKey();
-    final crypto = SyncCrypto(keyBytes);
     final snapshot = buildEncryptedJournalSnapshot(
       deviceId: deviceId,
       accountNamespace: _accountNamespace,
       entries: entries,
       updatedAt: DateTime.now().toUtc(),
     );
-    final encrypted = await crypto.encryptJson(snapshot);
+    final encrypted = await RecordSync.sealJson(
+      accountKey: keyBytes,
+      plaintext: snapshot,
+    );
     return {
       'id': EncryptedSyncSchema.coreBlobId,
       'type': EncryptedSyncSchema.coreBlobType,
       'encrypted': encrypted.toJson(),
       'updatedAt': DateTime.now().toUtc().toIso8601String(),
       'byteLength': encrypted.ciphertext.length + encrypted.iv.length,
-      'binding': SyncCrypto.envelopeBinding(
+      'binding': RecordSync.envelopeBinding(
         accountNamespace: _accountNamespace,
         blobType: EncryptedSyncSchema.coreBlobType,
         blobId: EncryptedSyncSchema.coreBlobId,

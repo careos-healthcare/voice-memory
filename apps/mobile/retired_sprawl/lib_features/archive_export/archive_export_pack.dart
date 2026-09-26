@@ -52,7 +52,7 @@ class ArchiveExportPack {
   final String plainText;
 
   Map<String, dynamic> toJson() => {
-    'app': 'ArchiveMe',
+    'app': 'Thoughtprint',
     'exportedAt': exportedAt.toUtc().toIso8601String(),
     'savedMomentCount': savedMomentCount,
     'usableEvidenceCount': usableEvidenceCount,

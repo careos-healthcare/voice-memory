@@ -169,13 +169,13 @@ void main() {
         find.byKey(const Key('archive_tab_entry_state_empty')),
         findsOneWidget,
       );
-      expect(find.text('Go to Record'), findsOneWidget);
+      expect(find.text('Record'), findsOneWidget);
       expect(find.byKey(const Key('archive_search_field')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
     testWidgets(
-      'one saved entry renders as an original moment, no search bar',
+      'one saved entry renders as an original moment with search',
       (tester) async {
         await tester.runAsync(() async {
           await AppServices.instance.journalStore.save(_entry());
@@ -185,8 +185,7 @@ void main() {
 
         expect(find.text('Original moments'), findsOneWidget);
         expect(find.textContaining('A long enough transcript'), findsOneWidget);
-        // A single entry has nothing to search across yet.
-        expect(find.byKey(const Key('archive_search_field')), findsNothing);
+        expect(find.byKey(const Key('archive_search_field')), findsOneWidget);
       },
     );
 

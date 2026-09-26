@@ -496,7 +496,7 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders "Why ArchiveMe is showing this"', (tester) async {
+    testWidgets('renders "Why Thoughtprint is showing this"', (tester) async {
       await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.byKey(const Key('pattern_confidence_card')), findsOneWidget);

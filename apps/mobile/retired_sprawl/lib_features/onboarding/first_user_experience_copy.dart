@@ -2,13 +2,13 @@ import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
-/// Canonical first-run copy — one ArchiveMe explanation and one primary action.
+/// Canonical first-run copy — one Thoughtprint explanation and one primary action.
 abstract class FirstUserExperienceCopy {
   FirstUserExperienceCopy._();
 
   static const String introTitle = LandingAppContinuityCopy.hero;
   static const String introBody =
-      'Save small moments when something stands out. ArchiveMe turns them into '
+      'Save small moments when something stands out. Thoughtprint turns them into '
       'a private timeline in your own words. Start with one honest moment.';
   static const String primaryCta = ConsumerUiCopy.recordOneMomentCta;
 

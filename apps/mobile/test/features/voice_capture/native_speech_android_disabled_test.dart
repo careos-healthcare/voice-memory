@@ -137,11 +137,11 @@ void main() {
     final source = file.readAsStringSync();
 
     // Playing the recording out loud so the microphone recognizer can hear it
-    // exposes a private reflection to the room and (without an installed
-    // offline recognizer) streams it to Google. Never reintroduce either half.
+    // exposes a private reflection to the room. The cloud recognizer factory
+    // is also refused. Live draft may use the on-device factory only.
     expect(source, isNot(contains('MediaPlayer')));
-    expect(source, isNot(contains('startListening')));
-    expect(source, isNot(contains('createSpeechRecognizer')));
+    expect(source, isNot(contains('createSpeechRecognizer(')));
     expect(source, isNot(contains('EXTRA_PREFER_OFFLINE')));
+    expect(source, contains('createOnDeviceSpeechRecognizer'));
   });
 }

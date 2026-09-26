@@ -93,6 +93,23 @@ abstract class AppStoragePaths {
     }
   }
 
+  static Future<Directory> applicationSupportDirectory() async {
+    if (kReleaseMode) {
+      return getApplicationSupportDirectory();
+    }
+    if (_shouldUseSimulatorFallback()) {
+      return debugSimulatorSupportDirectorySync();
+    }
+    try {
+      return await getApplicationSupportDirectory();
+    } on Object catch (e) {
+      if (kDebugMode && Platform.isIOS) {
+        return debugSimulatorSupportDirectorySync(reason: e);
+      }
+      rethrow;
+    }
+  }
+
   static Future<Directory> temporaryDirectory() async {
     if (kReleaseMode) {
       return getTemporaryDirectory();
@@ -124,6 +141,26 @@ abstract class AppStoragePaths {
     }
     final base = systemTemp ?? Directory.systemTemp;
     final dir = Directory('${base.path}/archiveme_sim_docs');
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
+    return dir;
+  }
+
+  @visibleForTesting
+  static Directory debugSimulatorSupportDirectorySync({
+    Directory? systemTemp,
+    void Function(String message)? log,
+    Object? reason,
+  }) {
+    _simulatorFallbackUsed = true;
+    final logger = log ?? AppLogger.debug;
+    logger(simulatorFallbackLog);
+    if (reason != null) {
+      logger('ARCHIVEME_SIMULATOR_NATIVE_ASSETS: reason=$reason');
+    }
+    final base = systemTemp ?? Directory.systemTemp;
+    final dir = Directory('${base.path}/archiveme_sim_support');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }

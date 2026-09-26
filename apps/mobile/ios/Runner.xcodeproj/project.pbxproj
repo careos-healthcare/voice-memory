@@ -39,6 +39,8 @@
 		WCH003BLD000000000000001 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCH003REF000000000000001 /* WatchConnectivityManager.swift */; };
 		WCH004BLD000000000000001 /* ArchiveMeComplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCH004REF000000000000001 /* ArchiveMeComplication.swift */; };
 		WCH005BLD000000000000001 /* ThoughtprintWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = WCH007REF000000000000001 /* ThoughtprintWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		VMS001BLD000000000000001 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = VMS001REF000000000000001 /* ShareViewController.swift */; };
+		VMS004BLD000000000000001 /* VoiceMemoShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = VMS005REF000000000000001 /* VoiceMemoShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = WCHTGT000000000000000001;
 			remoteInfo = ThoughtprintWatch;
+		};
+		VMSPRX000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = VMSTGT000000000000000001;
+			remoteInfo = VoiceMemoShare;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -124,6 +133,10 @@
 		TPW003REF000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		TPW004REF000000000000001 /* ThoughtprintWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThoughtprintWidgets.entitlements; sourceTree = "<group>"; };
 		TPW005REF000000000000001 /* ThoughtprintWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ThoughtprintWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		VMS001REF000000000000001 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		VMS004REF000000000000001 /* VoiceMemoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoiceMemoShare.entitlements; sourceTree = "<group>"; };
+		VMS005REF000000000000001 /* VoiceMemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VoiceMemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		VMS006REF000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		WCH001REF000000000000001 /* WatchApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchApp.swift; sourceTree = "<group>"; };
 		WCH002REF000000000000001 /* QuickRecordView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickRecordView.swift; sourceTree = "<group>"; };
 		WCH003REF000000000000001 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
@@ -193,6 +206,7 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				TPWGRP000000000000000001 /* ThoughtprintWidgets */,
+				VMSGRP000000000000000001 /* VoiceMemoShare */,
 				WCHGRP000000000000000001 /* WatchApp */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -208,6 +222,7 @@
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
 				TPW005REF000000000000001 /* ThoughtprintWidgets.appex */,
+				VMS005REF000000000000001 /* VoiceMemoShare.appex */,
 				WCH007REF000000000000001 /* ThoughtprintWatch.app */,
 			);
 			name = Products;
@@ -260,6 +275,16 @@
 				TPW004REF000000000000001 /* ThoughtprintWidgets.entitlements */,
 			);
 			path = ThoughtprintWidgets;
+			sourceTree = "<group>";
+		};
+		VMSGRP000000000000000001 /* VoiceMemoShare */ = {
+			isa = PBXGroup;
+			children = (
+				VMS001REF000000000000001 /* ShareViewController.swift */,
+				VMS006REF000000000000001 /* Info.plist */,
+				VMS004REF000000000000001 /* VoiceMemoShare.entitlements */,
+			);
+			path = VoiceMemoShare;
 			sourceTree = "<group>";
 		};
 		WCHGRP000000000000000001 /* WatchApp */ = {
@@ -321,6 +346,7 @@
 			dependencies = (
 				TPWDEP000000000000000001 /* PBXTargetDependency */,
 				WCHDEP000000000000000001 /* PBXTargetDependency */,
+				VMSDEP000000000000000001 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -341,6 +367,21 @@
 			name = ThoughtprintWidgets;
 			productName = ThoughtprintWidgets;
 			productReference = TPW005REF000000000000001 /* ThoughtprintWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		VMSTGT000000000000000001 /* VoiceMemoShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = VMSCFG000000000000000001 /* Build configuration list for PBXNativeTarget "VoiceMemoShare" */;
+			buildPhases = (
+				VMSSRC000000000000000001 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VoiceMemoShare;
+			productName = VoiceMemoShare;
+			productReference = VMS005REF000000000000001 /* VoiceMemoShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		WCHTGT000000000000000001 /* ThoughtprintWatch */ = {
@@ -397,6 +438,7 @@
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
 				TPWTGT000000000000000001 /* ThoughtprintWidgets */,
+				VMSTGT000000000000000001 /* VoiceMemoShare */,
 				WCHTGT000000000000000001 /* ThoughtprintWatch */,
 			);
 		};
@@ -577,6 +619,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		VMSSRC000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				VMS001BLD000000000000001 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		WCHSRC000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -595,6 +645,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				TPW004BLD000000000000001 /* ThoughtprintWidgets.appex in Embed Foundation Extensions */,
+				VMS004BLD000000000000001 /* VoiceMemoShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -629,6 +680,11 @@
 			isa = PBXTargetDependency;
 			target = WCHTGT000000000000000001 /* ThoughtprintWatch */;
 			targetProxy = WCHPRX000000000000000001 /* PBXContainerItemProxy */;
+		};
+		VMSDEP000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = VMSTGT000000000000000001 /* VoiceMemoShare */;
+			targetProxy = VMSPRX000000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -996,6 +1052,60 @@
 			};
 			name = Profile;
 		};
+		VMSDBG000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VoiceMemoShare/VoiceMemoShare.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4D9MAHRDS3;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceMemoShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.VoiceMemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		VMSREL000000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VoiceMemoShare/VoiceMemoShare.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4D9MAHRDS3;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceMemoShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.VoiceMemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		VMSPRF000000000000000001 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VoiceMemoShare/VoiceMemoShare.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4D9MAHRDS3;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceMemoShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.VoiceMemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 		WCHDBG000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1056,6 +1166,16 @@
 				TPWDBG000000000000000001 /* Debug */,
 				TPWREL000000000000000001 /* Release */,
 				TPWPRF000000000000000001 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		VMSCFG000000000000000001 /* Build configuration list for PBXNativeTarget "VoiceMemoShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				VMSDBG000000000000000001 /* Debug */,
+				VMSREL000000000000000001 /* Release */,
+				VMSPRF000000000000000001 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

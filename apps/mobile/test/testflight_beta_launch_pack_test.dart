@@ -18,7 +18,7 @@ const _forbiddenPurchaseCtas = [
   'Buy now',
   'Subscribe now',
   'Pro is active',
-  'ArchiveMe knows',
+  'Thoughtprint knows',
 ];
 
 const _forbiddenClinicalTerms = [
@@ -135,7 +135,7 @@ void main() {
     });
 
     test('contains identity and payment pause checks', () {
-      expect(checklist, contains('ArchiveMe'));
+      expect(checklist, contains('Thoughtprint'));
       expect(checklist, contains('com.voicememory.mobile'));
       expect(checklist, contains('https://archiveme.app/contact'));
       expect(checklist.toLowerCase(), contains('revenuecat'));

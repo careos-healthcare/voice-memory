@@ -38,7 +38,7 @@ class ValueAccuracyFeedbackRow extends StatefulWidget {
   static const String yesLabel = 'Yes';
   static const String notQuiteLabel = 'Not quite';
   static const String yesThanksLine =
-      'Thanks — this helps ArchiveMe learn what is useful.';
+      'Thanks — this helps Thoughtprint learn what is useful.';
   static const String notQuiteThanksLine =
       'Thanks — we\u2019ll keep this light.';
 
@@ -50,7 +50,7 @@ class ValueAccuracyFeedbackRow extends StatefulWidget {
   static const String testimonialSaveLabel = 'Save feedback';
   static const String testimonialNotNowLabel = 'Not now';
   static const String testimonialThanksLine =
-      'Thanks — this helps us improve ArchiveMe.';
+      'Thanks — this helps us improve Thoughtprint.';
 
   @override
   State<ValueAccuracyFeedbackRow> createState() =>

@@ -136,7 +136,7 @@ class _PatternsThoughtMapPreviewCardState
         color: const Color(0xFFF5F9F4),
         borderRadius: BorderRadius.circular(VoiceMemoryCards.radius),
         border: Border.all(
-          color: AppColors.accentPrimary.withValues(alpha: 0.35),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
           width: 1.5,
         ),
         boxShadow: VoiceMemoryCards.standard().boxShadow,
@@ -149,7 +149,7 @@ class _PatternsThoughtMapPreviewCardState
             key: const Key('patterns_thought_map_preview_section_title'),
             style: ArchiveMobileTypography.cardLabel(
               context,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           if (preview.stageLabel case final stage?) ...[
@@ -158,7 +158,7 @@ class _PatternsThoughtMapPreviewCardState
               '${ArchiveThoughtMapCopy.stageLabelPrefix} $stage',
               key: const Key('patterns_thought_map_stage_label'),
               style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -279,7 +279,7 @@ class _PatternsThoughtMapPreviewCardState
               ArchiveThoughtMapCopy.connectorLabel(preview.connectors[i - 1]),
               key: Key('patterns_thought_map_connector_$i'),
               style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -290,7 +290,7 @@ class _PatternsThoughtMapPreviewCardState
       rows.add(
         Material(
           color: selected
-              ? AppColors.accentPrimary.withValues(alpha: 0.08)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
               : AppColors.transparent,
           borderRadius: BorderRadius.circular(8),
           child: InkWell(
@@ -357,9 +357,9 @@ class _EvidencePanel extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -408,7 +408,7 @@ class _EvidencePanel extends StatelessWidget {
                       ArchiveThoughtMapCopy.savedAtLabel(snippet.savedAt),
                       style: ArchiveMobileTypography.responsiveHelper(
                         context,
-                      ).copyWith(color: AppColors.textSecondary),
+                      ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

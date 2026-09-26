@@ -44,7 +44,7 @@ class BeliefClarityCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        // Not quoted: `statement` is a pattern ArchiveMe derived, not the
+        // Not quoted: `statement` is a pattern Thoughtprint derived, not the
         // user's words, so quotation marks would misattribute it.
         Text(
           belief.statement,

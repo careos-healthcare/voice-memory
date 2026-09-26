@@ -49,7 +49,7 @@ class TrialFirstMomentCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Record one ordinary moment from today. Tomorrow, ArchiveMe will ask if the pattern showed up again.',
+            'Record one ordinary moment from today. Tomorrow, Thoughtprint will ask if the pattern showed up again.',
             style: VoiceMemoryTypography.bodyStyle(
               color: AppColors.textSecondary,
             ).copyWith(height: 1.45, fontSize: 14),

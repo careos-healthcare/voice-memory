@@ -259,14 +259,14 @@ void main() {
   });
 
   group('Archive milestones copy', () {
-    test('uses ArchiveMe and avoids banned language', () {
+    test('uses Thoughtprint and avoids banned language', () {
       _expectNoBannedCopy(ArchiveMilestonesCopy.allVisibleCopy());
       for (final text in ArchiveMilestonesCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         ArchiveMilestonesCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 

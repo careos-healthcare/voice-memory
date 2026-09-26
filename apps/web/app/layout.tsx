@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 
 import "./globals.css";
 import { AppProviders } from "./providers";
@@ -11,6 +11,11 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
 });
 
@@ -30,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#09090b",
+  themeColor: "#FDFBF7",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -45,8 +50,14 @@ export default function RootLayout({
   return (
     <html lang="en" data-tone="deep-dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen-mobile bg-background antialiased text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} min-h-screen-mobile bg-background antialiased text-foreground`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())); }",
+          }}
+        />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

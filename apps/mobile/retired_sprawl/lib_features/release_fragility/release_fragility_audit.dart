@@ -13,7 +13,7 @@ abstract final class ReleaseFragilityAudit {
 
   static const riskCount = 17;
   static const canonicalBundleId = 'com.voicememory.mobile';
-  static const canonicalDisplayName = 'ArchiveMe';
+  static const canonicalDisplayName = 'Thoughtprint';
   static const canonicalDeploymentTarget = '13.0';
   static const canonicalProductId = 'archive_loop_pro_monthly';
 
@@ -148,7 +148,7 @@ abstract final class ReleaseFragilityAudit {
         appConfigSource: appConfigSource,
         pbxprojSource: pbxprojSource,
       ),
-      displayNameCanonical: PhysicalDeviceSmokeProof.detectAppNameArchiveMe(
+      displayNameCanonical: PhysicalDeviceSmokeProof.detectAppNameThoughtprint(
         infoPlistSource,
       ),
       iosDeploymentTargetAligned: detectIosDeploymentTargetAligned(

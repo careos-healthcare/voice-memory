@@ -11,7 +11,9 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_drainer.dart';
+import 'package:archiveme_mobile/sync/sync_push_status.dart';
+import 'package:archiveme_mobile/sync/ulid.dart';
 import 'package:archiveme_mobile/storage/drift/journal_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
@@ -28,7 +30,7 @@ Reflection _reflection() => const Reflection(
 );
 
 JournalEntry _offlineEntry({required String transcript}) => JournalEntry(
-  id: SyncEngine.newOfflineEntryId(),
+  id: generateUlid(),
   createdAt: DateTime.utc(2026, 8, 11),
   transcript: transcript,
   durationSeconds: 3,
@@ -100,15 +102,15 @@ void main() {
   tearDown(AppSqliteDatabase.resetForTest);
 
   test('offline entries use ULIDs', () {
-    final id = SyncEngine.newOfflineEntryId();
-    expect(SyncEngine.isOfflineEntryId(id), isTrue);
+    final id = generateUlid();
+    expect(isValidUlid(id), isTrue);
     expect(id.length, 26);
   });
 
   test('journal store keeps ULID ids assigned at creation time', () async {
     final dir = Directory.systemTemp.createTempSync('vm_sync_ulid_');
     final store = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
-    final ulid = SyncEngine.newOfflineEntryId();
+    final ulid = generateUlid();
     await store.save(
       JournalEntry(
         id: ulid,
@@ -120,7 +122,7 @@ void main() {
     );
     final saved = await store.getById(ulid);
     expect(saved?.id, ulid);
-    expect(SyncEngine.isOfflineEntryId(saved!.id), isTrue);
+    expect(isValidUlid(saved!.id), isTrue);
   });
 
   test('recovers after mid-payload disconnect via idempotent retry', () async {
@@ -129,7 +131,7 @@ void main() {
     final sqlite = await openTestAppSqliteDatabase();
     final outbox = SyncOutboxStore(AppDatabase.fromSqflite(sqlite.database));
     final client = _MidPayloadSyncApiClient();
-    final engine = SyncEngine(
+    final drainer = SyncOutboxDrainer(
       syncApi: client,
       journal: journal,
       outbox: outbox,
@@ -152,15 +154,15 @@ void main() {
       byteLength: 12,
     );
 
-    final pendingBefore = await engine.pendingQueue();
+    final pendingBefore = await drainer.pendingQueue();
     expect(pendingBefore, hasLength(1));
     expect(pendingBefore.single.syncStatus, isNot(SyncStatus.synced));
     expect(await outbox.pendingCount(), 0);
 
-    await engine.enqueueBlob(blob);
+    await drainer.enqueueBlob(blob);
     expect(await outbox.pendingCount(), 1);
 
-    final result = await engine.flushOfflineQueue(
+    final result = await drainer.flushOfflineQueue(
       blob: blob,
       coreBlobId: EncryptedSyncSchema.coreBlobId,
       pushedEntryIds: pendingBefore.map((e) => e.id),
@@ -172,7 +174,7 @@ void main() {
 
     final synced = await journal.getById(savedId);
     expect(synced?.syncStatus, SyncStatus.synced);
-    expect(await engine.pendingQueue(), isEmpty);
+    expect(await drainer.pendingQueue(), isEmpty);
   });
 
   test('status matrix marks existing blobs as applied without duplicate writes', () {

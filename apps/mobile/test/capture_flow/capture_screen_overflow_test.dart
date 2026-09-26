@@ -53,6 +53,9 @@ class _FakeAudio implements AudioRecorderAdapter {
   Future<void> resumeRecording() async {}
 
   @override
+  Stream<double> watchAmplitude() => const Stream.empty();
+
+  @override
   Stream<VadSegmentEvent>? get thoughtSegmentEvents => null;
 
   @override
@@ -91,12 +94,14 @@ class _FakeMoments implements LocalMomentRepository {
   @override
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
+    List<String> images = const [],
   }) async => Left(CapturePipelineFailure('unused'));
 
   @override
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
+    List<String> images = const [],
   }) async => Left(CapturePipelineFailure('unused'));
 }
 
@@ -172,6 +177,9 @@ class _FakeTranscriptionCapability implements TranscriptionCapabilityPort {
 
   @override
   Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale) async {}
+
+  @override
+  Future<ConfirmedSpeechLocale?> readSpeechLocale() async => null;
 }
 
 class _FakeTelemetry implements CaptureTelemetry {
@@ -214,6 +222,9 @@ class _FakeTelemetry implements CaptureTelemetry {
   @override
   void remoteProcessingStarted({required String kind}) {}
 }
+
+/// Shared with dark-mode goldens so Record idle and Recording use the same fakes.
+CaptureFlowDependencies captureFlowGoldenDependencies() => _deps();
 
 CaptureFlowDependencies _deps() {
   return CaptureFlowDependencies(

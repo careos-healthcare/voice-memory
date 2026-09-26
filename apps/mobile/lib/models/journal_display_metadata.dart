@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/copy_with_unset.dart';
 import 'package:archiveme_mobile/core/json/json_converters.dart';
+import 'package:archiveme_mobile/models/app_spoken_question.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'journal_display_metadata.freezed.dart';
@@ -28,6 +29,11 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     @Default(false) bool preserveOriginal,
     String? captureContextTag,
     String? captureSource,
+    String? title,
+    String? locationLabel,
+    double? latitude,
+    double? longitude,
+    @Default(const <AppSpokenQuestion>[]) List<AppSpokenQuestion> aiQuestions,
   }) = _JournalDisplayMetadata;
 
   factory JournalDisplayMetadata.fromJson(Map<String, dynamic> json) {
@@ -56,6 +62,11 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
       preserveOriginal: json['preserveOriginal'] == true,
       captureContextTag: JsonConverters.nullableString(json['captureContextTag']),
       captureSource: JsonConverters.nullableString(json['captureSource']),
+      title: JsonConverters.nullableString(json['title']),
+      locationLabel: JsonConverters.nullableString(json['locationLabel']),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      aiQuestions: AppSpokenQuestion.listFromJson(json['aiQuestions']),
     );
   }
 
@@ -75,6 +86,13 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     if (preserveOriginal) 'preserveOriginal': true,
     if (captureContextTag != null) 'captureContextTag': captureContextTag,
     if (captureSource != null) 'captureSource': captureSource,
+    if (title != null && title!.trim().isNotEmpty) 'title': title,
+    if (locationLabel != null && locationLabel!.trim().isNotEmpty)
+      'locationLabel': locationLabel,
+    if (latitude != null) 'latitude': latitude,
+    if (longitude != null) 'longitude': longitude,
+    if (aiQuestions.isNotEmpty)
+      'aiQuestions': [for (final question in aiQuestions) question.toJson()],
   };
 
   JournalDisplayMetadata copyWith({
@@ -93,6 +111,11 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     bool? preserveOriginal,
     Object? captureContextTag = copyWithUnset,
     Object? captureSource = copyWithUnset,
+    Object? title = copyWithUnset,
+    Object? locationLabel = copyWithUnset,
+    Object? latitude = copyWithUnset,
+    Object? longitude = copyWithUnset,
+    Object? aiQuestions = copyWithUnset,
   }) => JournalDisplayMetadata(
     treatAsNew: treatAsNew ?? this.treatAsNew,
     connectionApproved: connectionApproved ?? this.connectionApproved,
@@ -121,6 +144,21 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     captureSource: identical(captureSource, copyWithUnset)
         ? this.captureSource
         : captureSource as String?,
+    title: identical(title, copyWithUnset) ? this.title : title as String?,
+    locationLabel: identical(locationLabel, copyWithUnset)
+        ? this.locationLabel
+        : locationLabel as String?,
+    latitude: identical(latitude, copyWithUnset)
+        ? this.latitude
+        : latitude as double?,
+    longitude: identical(longitude, copyWithUnset)
+        ? this.longitude
+        : longitude as double?,
+    aiQuestions: identical(aiQuestions, copyWithUnset)
+        ? this.aiQuestions
+        : List<AppSpokenQuestion>.unmodifiable(
+            aiQuestions as List<AppSpokenQuestion>,
+          ),
   );
 
   @override
@@ -141,7 +179,12 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
           other.memorySurfacing == memorySurfacing &&
           other.preserveOriginal == preserveOriginal &&
           other.captureContextTag == captureContextTag &&
-          other.captureSource == captureSource;
+          other.captureSource == captureSource &&
+          other.title == title &&
+          other.locationLabel == locationLabel &&
+          other.latitude == latitude &&
+          other.longitude == longitude &&
+          _sameQuestions(other.aiQuestions, aiQuestions);
 
   @override
   int get hashCode => Object.hash(
@@ -160,5 +203,18 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
         preserveOriginal,
         captureContextTag,
         captureSource,
+        title,
+        locationLabel,
+        latitude,
+        longitude,
+        Object.hashAll(aiQuestions),
       );
+}
+
+bool _sameQuestions(List<AppSpokenQuestion> a, List<AppSpokenQuestion> b) {
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

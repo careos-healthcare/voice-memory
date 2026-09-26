@@ -5,8 +5,12 @@ import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
+import 'package:archiveme_mobile/features/insights/recurring_themes_view.dart';
 import 'package:archiveme_mobile/features/insights/widgets/evidence_connection_graph_viewer.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
@@ -24,8 +28,9 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
   static const Key composerFieldKey = Key('explore_patterns_composer_field');
   static const Key sendButtonKey = Key('explore_patterns_send_button');
   static const Key errorBannerKey = Key('explore_patterns_error_banner');
-  static const Key seeHowThisConnectsKey =
-      Key('explore_patterns_see_how_this_connects');
+  static const Key seeHowThisConnectsKey = Key(
+    'explore_patterns_see_how_this_connects',
+  );
 
   static const String screenTitle = 'Explore patterns';
   static const String composerHint = 'Ask about a pattern';
@@ -41,19 +46,42 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
 class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   final _composer = TextEditingController();
   final _scrollController = ScrollController();
+  List<JournalEntry> _journalEntries = const [];
+  List<String> _previewWords = const [];
+  bool _cloudOn = false;
 
   @override
   void initState() {
     super.initState();
-    // Same once-on-mount guard as CaregiverInvitationLinkListenerHost.bind():
-    // initState, not build(), so a seeded send cannot re-fire on rebuild.
+    unawaited(_loadGate());
+  }
+
+  Future<void> _optInToCloud() async {
+    final allowed = await const ConsentManager().requestCloudAiConsent(
+      context,
+    );
+    if (!allowed) return;
+    await _loadGate();
+  }
+
+  Future<void> _loadGate() async {
+    final enabled = await CloudConsent().isEnabled();
+    if (!mounted) return;
+    setState(() => _cloudOn = enabled);
+    if (!AppServices.isInitialized) return;
+    final rows = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(() {
+      _journalEntries = rows;
+      _previewWords = frequentLocalWords(rows);
+    });
+    if (!enabled) return;
     final seed = widget.seed;
-    if (seed != null) {
-      final notifier = ref.read(patternExplorationConversationProvider.notifier)
-        ..reset();
-      if (seed.transcript.trim().isNotEmpty) {
-        unawaited(notifier.sendMessage(seed.transcript));
-      }
+    if (seed == null) return;
+    final notifier = ref.read(patternExplorationConversationProvider.notifier)
+      ..reset();
+    if (seed.transcript.trim().isNotEmpty) {
+      await notifier.sendMessage(seed.transcript);
     }
   }
 
@@ -83,7 +111,9 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
     _composer.clear();
     setState(() {});
     unawaited(
-      ref.read(patternExplorationConversationProvider.notifier).sendMessage(text),
+      ref
+          .read(patternExplorationConversationProvider.notifier)
+          .sendMessage(text),
     );
   }
 
@@ -99,8 +129,52 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
       },
     );
 
-    final canSend =
-        !conversation.isSending && _composer.text.trim().isNotEmpty;
+    final canSend = !conversation.isSending && _composer.text.trim().isNotEmpty;
+
+    if (!_cloudOn) {
+      return Scaffold(
+        key: ExplorePatternsScreen.screenKey,
+        backgroundColor: AppColors.backgroundPrimary,
+        appBar: AppBar(
+          backgroundColor: AppColors.backgroundPrimary,
+          title: const Text(ExplorePatternsScreen.screenTitle),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_previewWords.length >= 2) ...[
+                  const Text(
+                    'Preview',
+                    key: Key('pattern_exploration_local_preview_label'),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    localPatternPreview(_previewWords),
+                    key: const Key('pattern_exploration_local_preview'),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                const Text(
+                  PatternExplorationConversationState.cloudLockedMessage,
+                  key: Key('pattern_exploration_cloud_locked'),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  key: const Key('pattern_exploration_cloud_opt_in'),
+                  onPressed: () => unawaited(_optInToCloud()),
+                  child: const Text('Opt in'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       key: ExplorePatternsScreen.screenKey,
@@ -112,6 +186,7 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
       ),
       body: Column(
         children: [
+          RecurringThemesView(entries: _journalEntries),
           Expanded(
             child: ListView.builder(
               key: ExplorePatternsScreen.messageListKey,
@@ -272,8 +347,9 @@ class _PatternExplorationErrorBanner extends StatelessWidget {
               child: Text(
                 key: ExplorePatternsScreen.errorBannerKey,
                 message,
-                style: ArchiveMobileTypography.responsiveHelper(context)
-                    .copyWith(color: AppColors.error),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.error),
               ),
             ),
             IconButton(
@@ -337,4 +413,68 @@ class ExploreCitationGraphAction extends ConsumerWidget {
       return null;
     }
   }
+}
+
+const _previewStopWords = {
+  'a',
+  'an',
+  'and',
+  'are',
+  'as',
+  'at',
+  'be',
+  'but',
+  'for',
+  'from',
+  'i',
+  'in',
+  'is',
+  'it',
+  'me',
+  'my',
+  'of',
+  'on',
+  'or',
+  'that',
+  'the',
+  'this',
+  'to',
+  'was',
+  'we',
+  'with',
+  'you',
+  'your',
+};
+
+/// The three words that show up most often in local journal text.
+List<String> frequentLocalWords(List<JournalEntry> entries) {
+  final counts = <String, int>{};
+  for (final entry in entries) {
+    for (final match in RegExp(r"[A-Za-z']+").allMatches(entry.transcript)) {
+      final word = match.group(0)!.toLowerCase();
+      if (word.length < 3 || _previewStopWords.contains(word)) continue;
+      counts[word] = (counts[word] ?? 0) + 1;
+    }
+  }
+  final ranked = counts.entries.toList()
+    ..sort((a, b) {
+      final byCount = b.value.compareTo(a.value);
+      if (byCount != 0) return byCount;
+      return a.key.compareTo(b.key);
+    });
+  return [
+    for (final entry in ranked.take(3))
+      '${entry.key[0].toUpperCase()}${entry.key.substring(1)}',
+  ];
+}
+
+/// Local preview shown before cloud pattern exploration is turned on.
+String localPatternPreview(List<String> words) {
+  final shown = words.take(3).toList();
+  if (shown.length < 2) return '';
+  final mention = shown.length == 2
+      ? '${shown[0]} and ${shown[1]}'
+      : '${shown[0]}, ${shown[1]}, and ${shown[2]}';
+  return 'Example: You frequently mention $mention. '
+      'Turn on Cloud Sync to unlock deep AI pattern analysis.';
 }

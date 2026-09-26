@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/features/export/private_recap_model.dart';
-import 'package:archiveme_mobile/features/export/private_recap_service.dart';
+import 'package:archiveme_mobile/widgets/export/private_recap_actions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

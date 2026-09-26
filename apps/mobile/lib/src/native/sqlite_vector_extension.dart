@@ -12,7 +12,7 @@ external int sqlite3_vector_init(
   Pointer<Void> pApi,
 );
 
-extension ArchiveMeSqliteVectorExtension on Sqlite3 {
+extension ThoughtprintSqliteVectorExtension on Sqlite3 {
   /// Loads the sqlite-vector extension bundled by [hook/build.dart].
   void loadSqliteVectorExtension() {
     ensureExtensionLoaded(

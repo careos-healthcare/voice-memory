@@ -19,7 +19,7 @@ PatternShareRecap _recap() => PatternShareRecap(
       'This pattern kept showing up this week.\n\n'
       '- You checked it 4 times and caught it more than once.\n'
       '- Next check: What happens right before it starts?\n\n'
-      'Made with ArchiveMe',
+      'Made with Thoughtprint',
 );
 
 void main() {

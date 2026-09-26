@@ -150,7 +150,7 @@ void main() {
 
     test('task management positioning blocked', () {
       final result = ActionItemsV1SecondaryGate.evaluateCopy(
-        'ArchiveMe is your task manager for life.',
+        'Thoughtprint is your task manager for life.',
       );
       expect(result.action, ActionItemsV1SecondaryGateCopyAction.block);
       expect(
@@ -420,7 +420,7 @@ void main() {
     test('no dashboard positioning guard regressions unchanged', () {
       expect(
         NoDashboardPositioningGuard.evaluate(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).action,
         NoDashboardPositioningGuardAction.allowed,
       );

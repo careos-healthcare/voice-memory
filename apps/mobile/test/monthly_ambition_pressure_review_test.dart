@@ -126,7 +126,7 @@ void main() {
       );
 
       expect(review.direction, AmbitionPressureDirection.unclear);
-      expect(review.direction.copy, contains('ArchiveMe needs more moments'));
+      expect(review.direction.copy, contains('Thoughtprint needs more moments'));
     });
 
     test('evidence excerpts are not invented', () {

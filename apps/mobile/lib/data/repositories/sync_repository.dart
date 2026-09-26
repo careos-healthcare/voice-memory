@@ -19,7 +19,7 @@ class SyncRepository {
   final MobilePrefsStore _prefs;
 
   Future<ApiResult<SyncResult>> syncNow() async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) {
       return const ApiSuccess(
         SyncResult(
           cloudSyncSucceeded: false,

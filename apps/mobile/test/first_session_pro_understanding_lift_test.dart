@@ -123,7 +123,7 @@ void main() {
       expect(FirstSessionLiftCopy.secondaryCta, 'Use voice instead');
       expect(
         FirstSessionLiftCopy.microcopy,
-        'ArchiveMe only needs a real first moment. You can come back later if it repeats.',
+        'Thoughtprint only needs a real first moment. You can come back later if it repeats.',
       );
     });
   });

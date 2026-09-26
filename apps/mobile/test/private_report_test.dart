@@ -127,7 +127,7 @@ void main() {
 
   group('PrivateReportCopy', () {
     test('v1 copy is stable', () {
-      expect(PrivateReportCopy.title, 'My ArchiveMe report');
+      expect(PrivateReportCopy.title, 'My Thoughtprint report');
       expect(PrivateReportCopy.whatHelpedHeading, 'What seemed to help');
       expect(PrivateReportCopy.evidenceHeading, 'Evidence from saved moments');
       expect(PrivateReportCopy.copyReportCta, 'Copy report');
@@ -135,7 +135,7 @@ void main() {
       expect(PrivateReportCopy.closeCta, 'Close');
       expect(
         PrivateReportCopy.insufficientEvidence,
-        'ArchiveMe needs more evidence before creating a private report.',
+        'Thoughtprint needs more evidence before creating a private report.',
       );
       expect(PrivateReportCopy.footer, contains('not advice or a diagnosis'));
     });

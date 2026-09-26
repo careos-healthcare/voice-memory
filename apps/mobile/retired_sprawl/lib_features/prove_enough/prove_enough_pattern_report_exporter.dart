@@ -13,7 +13,7 @@ class ProveEnoughPatternReportExporter {
       ..writeln('# ${ProveEnoughPatternReport.reportTitle}')
       ..writeln()
       ..writeln('**Generated:** ${formatUserFacingDate(report.generatedAt)}')
-      ..writeln('**From:** ArchiveMe');
+      ..writeln('**From:** Thoughtprint');
 
     final rangeLine = _dateRangeLine(report);
     if (rangeLine != null) {
@@ -143,7 +143,7 @@ class ProveEnoughPatternReportExporter {
 
   String _directionBody(MonthlyAmbitionPressureReview? monthly) {
     if (monthly == null || !monthly.hasEnoughData) {
-      return '_ArchiveMe needs more moments before calling a direction._';
+      return '_Thoughtprint needs more moments before calling a direction._';
     }
 
     final lines = <String>[monthly.direction.copy];

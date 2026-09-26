@@ -59,7 +59,7 @@ class _ArchiveTimelineTruthFeedbackCardState
   Widget build(BuildContext context) {
     if (_saved) {
       return Text(
-        'Thanks — that helps ArchiveMe stay closer to your experience.',
+        'Thanks — that helps Thoughtprint stay closer to your experience.',
         key: const Key('archive_timeline_truth_feedback_thanks'),
         style: ArchiveMobileTypography.responsiveHelper(context),
       );

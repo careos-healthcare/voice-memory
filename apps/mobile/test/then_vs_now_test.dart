@@ -166,7 +166,7 @@ void main() {
       expect(result.evidenceCountLabel, isNot(contains(privateText)));
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = ThenNowCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(ThenNowCopy.allVisibleStrings);

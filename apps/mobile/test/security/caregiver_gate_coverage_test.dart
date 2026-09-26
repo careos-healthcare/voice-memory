@@ -20,6 +20,8 @@ const _gatedEntryPoints = <String, List<String>>{
   'lib/services/account_data_portability_service.dart': ['buildZipExport'],
   'lib/security/private_data_service.dart': ['buildSanitizedExport'],
   'lib/features/export/journal_bulk_export_service.dart': ['buildExport'],
+  'lib/features/export/services/universal_export_service.dart': ['buildZip'],
+  'lib/features/export/services/day_one_export_service.dart': ['buildZip'],
   'lib/services/journal_service.dart': ['exportJson'],
   'lib/sync/cloud_backup_service.dart': ['exportBackup'],
   // Strips `localAudioPath` but writes every transcript to a shared file.

@@ -25,7 +25,7 @@ extension CoreArchiveJourneyStepCopy on CoreArchiveJourneyStep {
   };
 }
 
-/// Central ArchiveMe product journey — archive over voice assistant.
+/// Central Thoughtprint product journey — archive over voice assistant.
 abstract final class CoreArchiveJourney {
   CoreArchiveJourney._();
 

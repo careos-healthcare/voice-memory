@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/features/insights/explore_patterns_screen.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
@@ -24,10 +25,12 @@ Finder get _actionFinder =>
 void main() {
   setUp(() {
     PatternExplorationFeatureFlags.debugOverride = true;
+    UserPreferences.debugCloudSyncOverride = true;
   });
 
   tearDown(() {
     PatternExplorationFeatureFlags.debugOverride = null;
+    UserPreferences.debugCloudSyncOverride = null;
   });
 
   Future<void> pumpAction(

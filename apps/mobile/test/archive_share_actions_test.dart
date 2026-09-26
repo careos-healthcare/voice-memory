@@ -12,7 +12,7 @@ const MethodChannel _shareChannel = MethodChannel(
 
 void main() {
   const sampleText =
-      'My archive noticed something.\n\nRecorded with ArchiveMe.';
+      'My archive noticed something.\n\nRecorded with Thoughtprint.';
 
   group('ArchiveShareText', () {
     test('normalizes whitespace', () {
@@ -24,9 +24,9 @@ void main() {
       expect(ArchiveShareText.isShareable('   '), isFalse);
     });
 
-    test('pro trust template includes ArchiveMe and no banned copy', () {
+    test('pro trust template includes Thoughtprint and no banned copy', () {
       expect(
-        ArchiveShareText.includesArchiveMe(ProTrustCopy.shareTextTemplate),
+        ArchiveShareText.includesThoughtprint(ProTrustCopy.shareTextTemplate),
         isTrue,
       );
       expect(

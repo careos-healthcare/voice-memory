@@ -42,7 +42,8 @@ export SOURCE_COMMIT_SHA="$(git -C ../.. rev-parse HEAD)"
 flutter build ipa \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app \
   --dart-define=SOURCE_COMMIT_SHA="$SOURCE_COMMIT_SHA" \
-  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true
+  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true \
+  --dart-define-from-file=config/launch_profile.json
 ```
 
 Or archive via Xcode after:
@@ -51,7 +52,8 @@ Or archive via Xcode after:
 flutter build ios --release \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app \
   --dart-define=SOURCE_COMMIT_SHA="$SOURCE_COMMIT_SHA" \
-  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true
+  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true \
+  --dart-define-from-file=config/launch_profile.json
 ```
 
 Do **not** pass `ARCHIVEME_TRIAL_MODE=true` or `VOICE_MEMORY_SCREENSHOT_MODE=true`.

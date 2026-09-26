@@ -54,14 +54,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Pro value preview copy', () {
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       _expectNoBannedCopy(ProValuePreviewCopy.allVisibleCopy());
       for (final text in ProValuePreviewCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         ProValuePreviewCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 
@@ -183,7 +183,7 @@ void main() {
 
     tearDown(() => sandbox.dispose());
 
-    testWidgets('settings shows ArchiveMe Pro row', (tester) async {
+    testWidgets('settings shows Thoughtprint Pro row', (tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(path: '/', builder: (_, _) => const SettingsScreen()),

@@ -175,7 +175,7 @@ abstract final class BetaDecisionEngine {
     required int askedUtilityCount,
   }) => switch (recommendation) {
     BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
-      '$count of $testerCount tester(s) misunderstood the promise or positioned ArchiveMe as journal/chat/therapy.',
+      '$count of $testerCount tester(s) misunderstood the promise or positioned Thoughtprint as journal/chat/therapy.',
     BetaNextBuildRecommendation.fixCaptureFriction =>
       '$count of $testerCount tester(s) understood the promise but did not capture a first moment.',
     BetaNextBuildRecommendation.addReturnReason =>

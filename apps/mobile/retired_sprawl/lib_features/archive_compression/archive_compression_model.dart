@@ -1,4 +1,4 @@
-/// What ArchiveMe suggests the user do with a group of similar moments.
+/// What Thoughtprint suggests the user do with a group of similar moments.
 enum ArchiveCompressionSuggestedAction { keepTogether, split, review }
 
 extension ArchiveCompressionSuggestedActionIds

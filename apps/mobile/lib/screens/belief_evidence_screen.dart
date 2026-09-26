@@ -96,7 +96,7 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
     final trail = _trail ?? BeliefEvidenceTrail.insufficient();
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _load,

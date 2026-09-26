@@ -96,7 +96,7 @@ class _ArchiveCompressionCardState extends State<ArchiveCompressionCard> {
           ),
           const SizedBox(height: 2),
           Text(
-            'ArchiveMe found similar moments.',
+            'Thoughtprint found similar moments.',
             style: VoiceMemoryTypography.bodyStyle(
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 14, height: 1.4),

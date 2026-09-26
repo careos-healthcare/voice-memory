@@ -123,12 +123,12 @@ void main() {
   });
 
   group('App identity and launch surfaces', () {
-    test('app display name remains ArchiveMe', () {
-      expect(AppConfig.appName, 'ArchiveMe');
+    test('app display name remains Thoughtprint', () {
+      expect(AppConfig.appName, 'Thoughtprint');
 
       final plist = File('ios/Runner/Info.plist').readAsStringSync();
       expect(plist, contains('<key>CFBundleDisplayName</key>'));
-      expect(plist, contains('<string>ArchiveMe</string>'));
+      expect(plist, contains('<string>Thoughtprint</string>'));
     });
 
     test('bundle identifier is aligned across Flutter and iOS', () {
@@ -172,13 +172,13 @@ void main() {
   });
 
   group('Legal, privacy, and support copy', () {
-    test('privacy and terms surfaces use ArchiveMe product voice', () {
+    test('privacy and terms surfaces use Thoughtprint product voice', () {
       _expectNoVoiceMemoryBranding(PrivacyScreenCopy.all);
       _expectNoVoiceMemoryBranding(TermsScreenCopy.all);
-      expect(PrivacyScreenCopy.intro, contains('ArchiveMe'));
+      expect(PrivacyScreenCopy.intro, contains('Thoughtprint'));
     });
 
-    test('support URL references remain ArchiveMe-facing', () {
+    test('support URL references remain Thoughtprint-facing', () {
       expect(AppConfig.privacyUrl, contains('archiveme'));
       expect(AppConfig.privacyUrl, startsWith('https://'));
       expect(AppConfig.supportUrl, contains('archiveme-support'));

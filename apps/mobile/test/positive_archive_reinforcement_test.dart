@@ -204,7 +204,7 @@ void main() {
     });
 
     test(
-      'chatDifferenceLine distinguishes ChatGPT now vs ArchiveMe evidence later',
+      'chatDifferenceLine distinguishes ChatGPT now vs Thoughtprint evidence later',
       () {
         expect(
           PositiveArchiveReinforcementCopy.chatDifferenceLine,
@@ -212,7 +212,7 @@ void main() {
         );
         expect(
           PositiveArchiveReinforcementCopy.chatDifferenceLine,
-          contains('ArchiveMe shows what you already said before'),
+          contains('Thoughtprint shows what you already said before'),
         );
       },
     );
@@ -237,7 +237,7 @@ void main() {
       },
     );
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in [
         PositiveArchiveReinforcementCopy.headline,
         PositiveArchiveReinforcementCopy.body,

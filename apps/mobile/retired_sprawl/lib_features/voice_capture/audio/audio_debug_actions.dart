@@ -56,7 +56,7 @@ abstract class AudioDebugActions {
         mimeType: AudioCaptureDiagnostics.guessMimeFromPath(trimmed),
         name: file.uri.pathSegments.last,
       ),
-    ], subject: 'ArchiveMe capture debug');
+    ], subject: 'Thoughtprint capture debug');
   }
 
   static Future<void> dispose() async {

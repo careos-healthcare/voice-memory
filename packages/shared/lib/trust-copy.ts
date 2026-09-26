@@ -8,6 +8,12 @@ export { CONTACT_EMAIL };
 export const PRIVATE_BY_DEFAULT_LINE =
   "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
+export const CLOUD_AI_CONSENT_LINE =
+  "Cloud AI is off until you turn it on, and you can delete your cloud copy anytime.";
+
+export const CLOUD_AI_CONSENT_SUPPORT =
+  "You decide before journal text is sent for pattern analysis, and you can remove the server copy from Settings.";
+
 export const NOT_THERAPY_LINE =
   "Thoughtprint resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 
@@ -18,7 +24,7 @@ export const LOCAL_FIRST_SUMMARY =
   "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). Thoughtprint does not operate a cloud journal database for your entries.";
 
 export const AI_TRANSCRIPTION_ANALYSIS_SUMMARY =
-  "When you record, Thoughtprint may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive.";
+  "When you record, Thoughtprint may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive. Google Gemini is the AI processor used for cloud features.";
 
 export const PROCESSING_PROVIDERS_SUMMARY =
   "Thoughtprint may use trusted processing providers for transcription, analysis, account, billing, or crash diagnostics. Provider names may appear in the full privacy policy where required.";
@@ -81,6 +87,18 @@ export const PRIVACY_SECTIONS = [
   {
     title: "What stays on your device",
     body: "Your archive entries, saved details, action items, surfacing choices, memory controls, packs, pins, and collections are stored locally by default.",
+  },
+  {
+    title: "Location",
+    body: "Map tiles are loaded from Apple Maps (iPhone) or OpenStreetMap (Android), which can see the area you're viewing, not your entries.",
+  },
+  {
+    title: "Printed books",
+    body: "A printed book sends the PDF of the dates you choose to Lulu. Lulu deletes that file after printing where their API allows. Thoughtprint keeps only the order id, its status, and when the order was placed.",
+  },
+  {
+    title: "Apple Health",
+    body: "On iPhone, turning on Apple Health shows the State of Mind you logged that day beside the moment. Turning on saving moods writes the mood you pick to Apple Health. Deleting that mood removes the sample Thoughtprint wrote. Android does not use Apple Health.",
   },
   {
     title: "Local-first storage",

@@ -1,8 +1,8 @@
-/// Central RevenueCat / ArchiveMe loop-map Pro entitlement identifiers.
+/// Central RevenueCat / Thoughtprint loop-map Pro entitlement identifiers.
 abstract class ArchiveLoopEntitlementIds {
   ArchiveLoopEntitlementIds._();
 
-  /// Primary entitlement id for ArchiveMe loop-map Pro in RevenueCat.
+  /// Primary entitlement id for Thoughtprint loop-map Pro in RevenueCat.
   static const archiveLoopPro = 'archive_loop_pro';
 
   /// Legacy RevenueCat entitlement id still honored for existing subscribers.

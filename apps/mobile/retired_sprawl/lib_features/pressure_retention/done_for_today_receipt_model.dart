@@ -49,7 +49,7 @@ class DoneForTodayReceipt {
   /// What was added to the archive (thread-specific when a thread exists).
   final String archiveLine;
 
-  /// One concrete return reason: what ArchiveMe can check tomorrow.
+  /// One concrete return reason: what Thoughtprint can check tomorrow.
   final String tomorrowLine;
 
   final String restLine;

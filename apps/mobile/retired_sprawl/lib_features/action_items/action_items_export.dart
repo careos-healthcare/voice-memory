@@ -12,7 +12,7 @@ class ActionItemsExport {
     final local = now.toLocal();
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
-    return 'archiveme-action-items-${local.year}-$month-$day.md';
+    return 'thoughtprint-action-items-${local.year}-$month-$day.md';
   }
 
   String buildMarkdown({
@@ -21,7 +21,7 @@ class ActionItemsExport {
   }) {
     final clock = now ?? DateTime.now();
     final buffer = StringBuffer()
-      ..writeln('# ArchiveMe action items')
+      ..writeln('# Thoughtprint action items')
       ..writeln()
       ..writeln('Export date: ${formatUserFacingDate(clock)}')
       ..writeln('Items: ${items.length}');

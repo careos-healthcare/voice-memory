@@ -37,7 +37,7 @@ abstract class PaywallRejectionPromptCopy {
   PaywallRejectionPromptCopy._();
 
   static const String title = 'What held you back?';
-  static const String subtitle = 'One tap helps us make ArchiveMe clearer.';
+  static const String subtitle = 'One tap helps us make Thoughtprint clearer.';
   static const String skipLabel = 'Skip';
   static const String thanksLine =
       'Thanks \u2014 we\u2019ll keep improving this.';

@@ -9,7 +9,7 @@ abstract final class InsightShareCardBuilder {
   InsightShareCardBuilder._();
 
   static const headline = 'Your week in reflection';
-  static const footer = 'ArchiveMe';
+  static const footer = 'Thoughtprint';
   static const referralSource = 'weekly_review';
 
   static InsightShareCardModel? build({required WeeklyArchiveStory? story}) {

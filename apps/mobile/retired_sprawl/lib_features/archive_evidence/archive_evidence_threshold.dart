@@ -62,7 +62,7 @@ class ArchiveEvidenceThresholdResult {
   );
 }
 
-/// Local thresholds before ArchiveMe names a belief or shows repeat claims.
+/// Local thresholds before Thoughtprint names a belief or shows repeat claims.
 abstract final class ArchiveEvidenceThreshold {
   ArchiveEvidenceThreshold._();
 
@@ -73,7 +73,7 @@ abstract final class ArchiveEvidenceThreshold {
 
   static const formingTitle = 'Your mind map is still forming';
   static const formingBody =
-      'ArchiveMe needs more usable moments before it can name this thread.';
+      'Thoughtprint needs more usable moments before it can name this thread.';
 
   static const _heuristics = ArchiveEvidenceHeuristics();
 

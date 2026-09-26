@@ -1,6 +1,6 @@
-import 'package:archiveme_mobile/sync/sync_crypto.dart';
+import 'package:archiveme_mobile/core/crypto/account_sync_key_store.dart';
 
-export 'package:archiveme_mobile/sync/sync_crypto.dart'
+export 'package:archiveme_mobile/core/crypto/account_sync_key_store.dart'
     show
         InMemorySyncCryptoKeyStore,
         SecureSyncCryptoKeyStore,

@@ -181,7 +181,7 @@ void main() {
     test('thought map uses watching framing not advice labels', () {
       expect(
         ArchiveThoughtMapCopy.alternativeLabel,
-        'What ArchiveMe is watching next',
+        'What Thoughtprint is watching next',
       );
       expect(
         ArchiveThoughtMapCopy.alternativeLabel.toLowerCase(),

@@ -100,7 +100,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Record a few moments and ArchiveMe will have more to find.'),
+      find.text('Record a few moments and Thoughtprint will have more to find.'),
       findsOneWidget,
     );
   });

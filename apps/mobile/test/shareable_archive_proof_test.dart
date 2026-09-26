@@ -138,7 +138,7 @@ void _expectPrivacySafe(String text, {Iterable<String> forbidden = const []}) {
   expect(text, contains('No private entries shared.'));
   expect(
     text,
-    contains('ArchiveMe — your private evidence-based life archive.'),
+    contains('Thoughtprint — your private evidence-based life archive.'),
   );
   for (final term in forbidden) {
     expect(
@@ -262,12 +262,12 @@ void main() {
       );
     });
 
-    test('share copy includes ArchiveMe and never VoiceMemory', () {
+    test('share copy includes Thoughtprint and never VoiceMemory', () {
       for (final proof in [
         engine.buildFromJournal(entries: _journalEntries(3)),
         engine.build(_sensitiveThread3(), now: _base),
       ]) {
-        expect(proof.shareText, contains('ArchiveMe'));
+        expect(proof.shareText, contains('Thoughtprint'));
         expect(proof.shareText, isNot(contains('VoiceMemory')));
       }
     });
@@ -278,7 +278,7 @@ void main() {
       expect(proof.shareText, isNot(contains('archiveWatchlistItems')));
       expect(
         proof.shareText,
-        isNot(contains('What should ArchiveMe watch for?')),
+        isNot(contains('What should Thoughtprint watch for?')),
       );
     });
 
@@ -296,7 +296,7 @@ void main() {
       final proof = engine.buildFromJournal(entries: _journalEntries(5));
       expect(
         proof.shareText,
-        isNot(contains('Did ArchiveMe show you something useful?')),
+        isNot(contains('Did Thoughtprint show you something useful?')),
       );
       expect(proof.shareText, isNot(contains('Beta feedback')));
     });
@@ -304,13 +304,13 @@ void main() {
     test('share-safe proof excludes beta outcomes data', () {
       final proof = engine.buildFromJournal(entries: _journalEntries(5));
       expect(proof.shareText, isNot(contains('Beta outcomes')));
-      expect(proof.shareText, isNot(contains('ArchiveMe beta summary')));
+      expect(proof.shareText, isNot(contains('Thoughtprint beta summary')));
     });
 
     test('share-safe proof excludes Pro interest data', () {
       final proof = engine.buildFromJournal(entries: _journalEntries(5));
       expect(proof.shareText, isNot(contains('Pro interest')));
-      expect(proof.shareText, isNot(contains('ArchiveMe Pro interest')));
+      expect(proof.shareText, isNot(contains('Thoughtprint Pro interest')));
     });
 
     test('share-safe proof excludes beta invite data', () {
@@ -348,7 +348,7 @@ void main() {
       expect(find.text(ShareableArchiveProof.variantC), findsOneWidget);
       expect(find.text('No private entries shared.'), findsOneWidget);
       expect(
-        find.text('ArchiveMe — your private evidence-based life archive.'),
+        find.text('Thoughtprint — your private evidence-based life archive.'),
         findsOneWidget,
       );
       expect(

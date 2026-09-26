@@ -35,7 +35,7 @@ class TwoDayActivationPath {
   static const int hiddenEntryCount = 3;
 
   // Day 1 — first session, before anything is saved.
-  static const String dayOneTitle = 'Try ArchiveMe for 2 days';
+  static const String dayOneTitle = 'Try Thoughtprint for 2 days';
   static const List<String> dayOneLines = [
     'Today: record one small thing.',
     'Tomorrow: check whether it returned, faded, or changed.',
@@ -45,7 +45,7 @@ class TwoDayActivationPath {
   // Day 1 — right after the first save.
   static const String dayOneCompleteTitle = 'Day 1 complete';
   static const String dayOneCompleteLine =
-      'Tomorrow, ArchiveMe can compare this with what shows up next.';
+      'Tomorrow, Thoughtprint can compare this with what shows up next.';
 
   /// Concrete reason to return — makes tomorrow's check feel small and
   /// specific before the user leaves day 1. Never a streak or obligation.

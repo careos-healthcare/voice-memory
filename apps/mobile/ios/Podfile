@@ -26,6 +26,13 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+# Documents only. Photos use image_picker. This keeps DKImagePickerController
+# out of the CocoaPods graph. The podspec checks both the Pod constant and
+# the bare constant.
+Pod::PICKER_MEDIA = false
+Object.const_set(:PICKER_MEDIA, false) unless Object.const_defined?(:PICKER_MEDIA)
+require_relative 'strip_file_picker_media'
+
 target 'Runner' do
   use_frameworks!
 
@@ -35,7 +42,12 @@ target 'Runner' do
   end
 end
 
+pre_install do |_installer|
+  FilePickerMedia.strip(File.dirname(__FILE__))
+end
+
 post_install do |installer|
+  FilePickerMedia.strip(File.dirname(__FILE__))
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 

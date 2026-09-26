@@ -182,7 +182,7 @@ void main() {
       }
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = FirstWeekPathCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(FirstWeekPathCopy.allVisibleStrings);

@@ -11,6 +11,7 @@ import {
   summarizeBlobs,
 } from "@/lib/server/sync-route-log";
 import { readEncryptedBlobs } from "@/lib/server/sync-store";
+import { syncRecordLedger } from "@/lib/server/sync-records";
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,12 @@ export async function GET(request: Request) {
       ...summary,
     });
 
-    return syncApiSuccess({ blobs });
+    const page = syncRecordLedger(session.userId).pull(0);
+    return syncApiSuccess({
+      blobs,
+      records: page.records,
+      cursor: page.cursor,
+    });
   } catch (error) {
     log({
       ok: false,

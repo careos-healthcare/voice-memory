@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/billing/core_access.dart';
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
 import 'package:archiveme_mobile/billing/archive_paywall_plans.dart';
 import 'package:archiveme_mobile/billing/paywall_attribution_event.dart';
@@ -63,7 +64,7 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
+/// Production RevenueCat paywall — Thoughtprint Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({
     super.key,
@@ -199,7 +200,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget _freeVsProComparisonSection() {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: ArchiveMeProValueSection(
+      child: ThoughtprintProValueSection(
         key: const Key('paywall_free_vs_pro_comparison'),
         packaging: _packaging,
         showTitle: false,
@@ -983,6 +984,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
             textAlign: TextAlign.center,
           ),
           if (includeTrustLine) ...[
+            const SizedBox(height: 8),
+            Text(
+              CoreAccess.statement,
+              key: const Key('paywall_core_is_free'),
+              style: ArchiveMobileTypography.responsiveHelper(context),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 8),
             Text(
               context.l10n.paywallTrust,

@@ -171,7 +171,7 @@ abstract class RecordReturnProCopy {
   // D. Change can begin.
   static const String changeTitle = 'Now change can begin to show';
   static const String changeBody =
-      'With more than one entry, ArchiveMe can start comparing what feels '
+      'With more than one entry, Thoughtprint can start comparing what feels '
       'new, repeated, or quieter.';
   static const String changeViewArchive = 'View archive';
   static const String changeSearchArchive = 'Search archive';

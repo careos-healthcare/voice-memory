@@ -205,7 +205,7 @@ void main() {
       expect(result.body, contains('Example only'));
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = ArchiveClarityCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(ArchiveClarityCopy.allVisibleStrings);

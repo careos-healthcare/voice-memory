@@ -55,7 +55,10 @@ class _LowEffortPromptsState extends State<LowEffortPrompts> {
           children: [
             TextButton.icon(
               onPressed: () => setState(() => _refreshIndex += 1),
-              icon: const Icon(Icons.refresh, size: 16),
+              icon: const Tooltip(
+                message: 'New prompts',
+                child: Icon(Icons.refresh, size: 16),
+              ),
               label: const Text('New prompts'),
             ),
             TextButton(

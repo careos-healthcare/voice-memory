@@ -224,7 +224,7 @@ void main() {
       );
     });
 
-    test('copy does not position ArchiveMe as storage', () {
+    test('copy does not position Thoughtprint as storage', () {
       for (final text in ContextTrailClarityCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('storage app'), isFalse, reason: text);
@@ -233,7 +233,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as chat', () {
+    test('copy does not position Thoughtprint as chat', () {
       for (final text in ContextTrailClarityCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);

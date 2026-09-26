@@ -1,4 +1,6 @@
 import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
+import 'package:archiveme_mobile/billing/core_access.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -37,7 +39,11 @@ void main() {
     }
   });
 
-  test('free key moments limit is 7', () {
-    expect(ArchiveProFeatureMap.freeKeyMomentsLimit, 7);
+  test('saved moments are not capped by a usage count', () {
+    expect(CoreAccess.canRecord, isTrue);
+    expect(CoreAccess.canTranscribeLocally, isTrue);
+    expect(CoreAccess.canPlayBack, isTrue);
+    expect(CoreAccess.canSaveText, isTrue);
+    expect(CoreAccess.statement, ConsumerUiCopy.coreIsFreeForever);
   });
 }

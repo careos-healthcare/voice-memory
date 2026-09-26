@@ -109,7 +109,7 @@ abstract class MemoryPriorityCopy {
 
   static const String notImportantLabel = 'Not important';
   static const String notImportantThanks =
-      'Thanks — ArchiveMe will give this less weight.';
+      'Thanks — Thoughtprint will give this less weight.';
   static const String moreActionsLabel = 'More';
 
   static const String explainSameThread =

@@ -123,7 +123,7 @@ void main() {
     expect(md, contains('## Key moments'));
     expect(md, contains('## Pattern map'));
     expect(md, contains('## Feedback'));
-    expect(md, contains('## What ArchiveMe remembers'));
+    expect(md, contains('## What Thoughtprint remembers'));
     expect(md, contains('## Pattern timeline'));
     expect(md, contains('## Positioning comprehension'));
     expect(md, contains('- Understood archive memory:'));

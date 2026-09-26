@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/archive_reactivity/archive_copy_normalizer.dart';
 
-/// Shared ArchiveMe log hygiene rules for CI tools and tests.
+/// Shared Thoughtprint log hygiene rules for CI tools and tests.
 abstract class ArchiveLogHygiene {
   ArchiveLogHygiene._();
 
@@ -52,13 +52,13 @@ abstract class ArchiveLogHygiene {
     caseSensitive: false,
   );
 
-  static bool isRelevantArchiveMeLog(String line) =>
+  static bool isRelevantThoughtprintLog(String line) =>
       line.contains(archiveMePrefix);
 
   static List<String> scanLines(Iterable<String> lines) {
     final violations = <String>[];
     for (final line in lines) {
-      if (!isRelevantArchiveMeLog(line)) continue;
+      if (!isRelevantThoughtprintLog(line)) continue;
       violations.addAll(scanLine(line));
     }
     return violations;

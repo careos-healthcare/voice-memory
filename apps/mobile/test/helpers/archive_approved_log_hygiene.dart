@@ -28,13 +28,13 @@ void assertNoMalformedApprovedArchiveLogs(List<String> logs) {
   }
 }
 
-/// Hard audit for all relevant ArchiveMe logs.
-void assertNoMalformedArchiveMeLogs(List<String> logs) {
+/// Hard audit for all relevant Thoughtprint logs.
+void assertNoMalformedThoughtprintLogs(List<String> logs) {
   final violations = ArchiveLogHygiene.scanLines(logs);
   expect(
     violations,
     isEmpty,
-    reason: 'malformed ArchiveMe logs:\n${violations.join('\n')}',
+    reason: 'malformed Thoughtprint logs:\n${violations.join('\n')}',
   );
 }
 

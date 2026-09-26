@@ -17,7 +17,7 @@ void main() {
   group('ProductLanguageConsistencyGuard.evaluate', () {
     test('proof trail language preferred', () {
       const copy =
-          'Save one repeat. One sentence is enough. ArchiveMe compares later.';
+          'Save one repeat. One sentence is enough. Thoughtprint compares later.';
       final result = ProductLanguageConsistencyGuard.evaluate(copy);
       expect(result.action, ProductLanguageConsistencyAction.preferredAligned);
       expect(
@@ -48,7 +48,7 @@ void main() {
 
     test('longer story blocked', () {
       final result = ProductLanguageConsistencyGuard.evaluate(
-        'ArchiveMe tells your longer story over time.',
+        'Thoughtprint tells your longer story over time.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
       expect(
@@ -59,7 +59,7 @@ void main() {
 
     test('dashboard positioning blocked', () {
       final result = ProductLanguageConsistencyGuard.evaluate(
-        'ArchiveMe is your life dashboard.',
+        'Thoughtprint is your life dashboard.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
       expect(result.reason, ProductLanguageConsistencyReason.blockedDashboard);
@@ -67,7 +67,7 @@ void main() {
 
     test('second brain blocked', () {
       final result = ProductLanguageConsistencyGuard.evaluate(
-        'Build your second brain inside ArchiveMe.',
+        'Build your second brain inside Thoughtprint.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
       expect(
@@ -246,7 +246,7 @@ void main() {
     test('no dashboard positioning guard regressions unchanged', () {
       expect(
         NoDashboardPositioningGuard.evaluate(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).action,
         NoDashboardPositioningGuardAction.allowed,
       );

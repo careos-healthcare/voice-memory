@@ -5,14 +5,14 @@ import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-/// Renders a sanitized [ArchiveExportPayload] as a light ArchiveMe PDF.
+/// Renders a sanitized [ArchiveExportPayload] as a light Thoughtprint PDF.
 ///
 /// Uses only the user-owned fields already present on the /export payload —
 /// no audio paths, entry ids, or sync metadata. PDF generation is pure Dart.
 abstract final class ExportPdfRenderer {
   ExportPdfRenderer._();
 
-  static const fileName = 'archiveme_export.pdf';
+  static const fileName = 'thoughtprint_export.pdf';
 
   static const _ink = PdfColor.fromInt(0xFF172033);
   static const _muted = PdfColor.fromInt(0xFF667085);
@@ -21,9 +21,9 @@ abstract final class ExportPdfRenderer {
   /// Builds PDF bytes for the share sheet.
   static Future<Uint8List> render(ArchiveExportPayload payload) async {
     final document = pw.Document(
-      title: 'ArchiveMe journal export',
-      author: 'ArchiveMe',
-      creator: 'ArchiveMe',
+      title: 'Thoughtprint journal export',
+      author: 'Thoughtprint',
+      creator: 'Thoughtprint',
     );
 
     document.addPage(
@@ -65,7 +65,7 @@ abstract final class ExportPdfRenderer {
       return pw.Padding(
         padding: const pw.EdgeInsets.only(bottom: 16),
         child: pw.Text(
-          'ArchiveMe - journal export',
+          'Thoughtprint - journal export',
           style: const pw.TextStyle(color: _muted, fontSize: 9),
         ),
       );
@@ -88,7 +88,7 @@ abstract final class ExportPdfRenderer {
     final countLabel = count == 1 ? '1 reflection' : '$count reflections';
     return [
       pw.Text(
-        'ArchiveMe',
+        'Thoughtprint',
         style: pw.TextStyle(
           color: _ink,
           fontSize: 22,

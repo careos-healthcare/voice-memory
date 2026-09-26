@@ -118,7 +118,7 @@ void main() {
     test('early repeat copy is cautious', () {
       expect(
         FirstThreeSessionCopy.session2StartingToNoticeTitle,
-        'ArchiveMe has two moments to compare.',
+        'Thoughtprint has two moments to compare.',
       );
       expect(
         FirstThreeSessionCopy.session2StartingToNoticeBody,
@@ -257,7 +257,7 @@ void main() {
       expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('Done for today'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
-      expect(find.text('ArchiveMe found a possible repeat'), findsNothing);
+      expect(find.text('Thoughtprint found a possible repeat'), findsNothing);
     });
   });
 
@@ -297,7 +297,7 @@ void main() {
       ]);
 
       expect(comparison.hasEnoughData, isTrue);
-      expect(comparison.title, 'ArchiveMe found a possible repeat');
+      expect(comparison.title, 'Thoughtprint found a possible repeat');
       expect(comparison.possibleRepeat, isTrue);
     });
 
@@ -332,10 +332,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('ArchiveMe found a possible repeat'), findsOneWidget);
+      expect(find.text('Thoughtprint found a possible repeat'), findsOneWidget);
       expect(find.text('What repeated'), findsOneWidget);
       expect(find.text('What changed'), findsWidgets);
-      expect(find.text('What ArchiveMe is watching next'), findsOneWidget);
+      expect(find.text('What Thoughtprint is watching next'), findsOneWidget);
     });
   });
 
@@ -389,7 +389,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('ArchiveMe found a possible repeat'), findsOneWidget);
+      expect(find.text('Thoughtprint found a possible repeat'), findsOneWidget);
       expect(find.text("Here's what keeps coming back."), findsOneWidget);
       expect(find.text("Here's what changed since last time."), findsOneWidget);
     });
@@ -475,7 +475,7 @@ void main() {
       'two entries shows comparison payoff, not possible repeat headline',
       () {
         final model = engine.build(reflectionCount: 2);
-        expect(model.title, 'ArchiveMe has two moments to compare.');
+        expect(model.title, 'Thoughtprint has two moments to compare.');
         expect(model.title, isNot(FirstThreeSessionCopy.session2RepeatTitle));
         expect(model.journeyStepIndex, 1);
         expect(model.progressLabel, FirstThreeSessionCopy.journeyStep2);

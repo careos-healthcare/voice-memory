@@ -1,10 +1,10 @@
-/// Memory Scope — explicit, persistent control over when ArchiveMe uses
+/// Memory Scope — explicit, persistent control over when Thoughtprint uses
 /// memory. Memory should be evidence, not gravity: the archive can connect
 /// entries when there is enough evidence, and it can also leave entries
 /// alone — permanently, if that is what the user chose.
 library;
 
-/// When ArchiveMe may use saved entries to suggest connections.
+/// When Thoughtprint may use saved entries to suggest connections.
 /// Stable ids only — safe for analytics and local storage.
 enum MemoryScope {
   /// Connect entries when there is enough evidence (default).
@@ -62,21 +62,21 @@ abstract class MemoryScopeCopy {
   // Mode labels + helpers.
   static const String automaticLabel = 'Automatic when useful';
   static const String automaticHelper =
-      'ArchiveMe can connect entries when there is enough evidence.';
+      'Thoughtprint can connect entries when there is enough evidence.';
   static const String askLabel = 'Ask before connecting';
   static const String askHelper =
-      'ArchiveMe will ask before using a new entry to suggest a connection.';
+      'Thoughtprint will ask before using a new entry to suggest a connection.';
   static const String threadOnlyLabel = 'Only within chosen threads';
   static const String threadOnlyHelper =
-      'ArchiveMe will not connect unrelated entries automatically.';
+      'Thoughtprint will not connect unrelated entries automatically.';
   static const String offLabel = 'Memory off';
   static const String offHelper =
-      'ArchiveMe will save entries without using them to suggest '
+      'Thoughtprint will save entries without using them to suggest '
       'connections.';
 
   // Settings section.
   static const String settingsTitle = 'Memory';
-  static const String settingsBody = 'Choose when ArchiveMe connects entries.';
+  static const String settingsBody = 'Choose when Thoughtprint connects entries.';
 
   // Recording-screen control.
   static const String entryControlTitle = 'Memory for this entry';
@@ -92,12 +92,12 @@ abstract class MemoryScopeCopy {
   static const String connectLabel = 'Connect';
   static const String treatAsNewLabel = 'Treat as new';
   static const String connectConfirmed =
-      'ArchiveMe can use this entry to suggest connections.';
+      'Thoughtprint can use this entry to suggest connections.';
 
   // Memory-off notice on insight surfaces.
   static const String offNoticeTitle = 'Memory is off.';
   static const String offNoticeBody =
-      'Your entries are saved, but ArchiveMe is not connecting them '
+      'Your entries are saved, but Thoughtprint is not connecting them '
       'right now.';
   static const String offNoticeCta = 'Change memory setting';
 }

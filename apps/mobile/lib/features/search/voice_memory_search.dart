@@ -61,7 +61,7 @@ Future<VoiceMemorySearchIndex> buildVoiceMemorySearchIndex({
   );
 }
 
-List<SearchResult> searchArchiveMe(
+List<SearchResult> searchThoughtprint(
   VoiceMemorySearchIndex index,
   String rawQuery,
 ) {

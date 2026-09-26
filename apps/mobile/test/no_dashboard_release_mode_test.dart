@@ -134,23 +134,23 @@ void main() {
     test('copy blocks dashboard second brain and life OS', () {
       expect(
         NoDashboardReleaseMode.passesReleaseCopy(
-          'ArchiveMe is your life dashboard.',
+          'Thoughtprint is your life dashboard.',
         ),
         isFalse,
       );
       expect(
         NoDashboardReleaseMode.passesReleaseCopy(
-          'ArchiveMe is your second brain.',
+          'Thoughtprint is your second brain.',
         ),
         isFalse,
       );
       expect(
-        NoDashboardReleaseMode.passesReleaseCopy('ArchiveMe is your life OS.'),
+        NoDashboardReleaseMode.passesReleaseCopy('Thoughtprint is your life OS.'),
         isFalse,
       );
       expect(
         NoDashboardReleaseMode.passesReleaseCopy(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ),
         isTrue,
       );

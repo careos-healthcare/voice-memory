@@ -1,4 +1,4 @@
-/// Preview of what ArchiveMe would track — not a grounded belief yet.
+/// Preview of what Thoughtprint would track — not a grounded belief yet.
 class ArchiveDemoPreview {
   const ArchiveDemoPreview({
     required this.shouldShow,

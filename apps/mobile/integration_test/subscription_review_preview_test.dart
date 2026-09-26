@@ -38,14 +38,14 @@ void main() {
     await tester.binding.setSurfaceSize(logicalSize);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(const ArchiveMeApp());
+    await tester.pumpWidget(const ThoughtprintApp());
     await tester.pump(const Duration(seconds: 1));
 
     appRouter.go('/subscription-review-preview');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.text('ArchiveMe'), findsOneWidget);
+    expect(find.text('Thoughtprint'), findsOneWidget);
     expect(find.text('Unlimited Voice Memories'), findsOneWidget);
     expect(find.text('AI Archive Insights'), findsOneWidget);
     expect(find.text('Search Across Memories'), findsOneWidget);

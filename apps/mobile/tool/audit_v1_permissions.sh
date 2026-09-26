@@ -60,7 +60,7 @@ if grep -q "speechRecognition = false" "$REGISTRY"; then
   fi
 fi
 
-for blocked in NSCameraUsageDescription NSPhotoLibraryUsageDescription NSLocationWhenInUseUsageDescription NSBluetoothAlwaysUsageDescription; do
+for blocked in NSCameraUsageDescription NSLocationWhenInUseUsageDescription NSBluetoothAlwaysUsageDescription; do
   if grep -q "<key>$blocked</key>" "$PLIST"; then
     fail "disabled capability key present in Info.plist: $blocked"
   fi

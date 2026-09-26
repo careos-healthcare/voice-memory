@@ -61,7 +61,7 @@ class PaywallSourceCopy {
   static const askArchive = PaywallSourceCopy(
     headline: 'Ask your archive what keeps repeating',
     subheadline:
-        'ArchiveMe uses your saved moments to show patterns with '
+        'Thoughtprint uses your saved moments to show patterns with '
         'evidence, not generic advice.',
     bullets: [
       'Ask where this pressure repeats',
@@ -188,7 +188,7 @@ abstract class PaywallPlanSelectionConfidence {
 
   static const String monthlyHelper = 'Monthly keeps it flexible.';
   static const String yearlyHelper =
-      'Yearly is for people who want ArchiveMe to keep connecting patterns '
+      'Yearly is for people who want Thoughtprint to keep connecting patterns '
       'over time.';
 
   /// Selected-plan reassurance — always visible with the helper.

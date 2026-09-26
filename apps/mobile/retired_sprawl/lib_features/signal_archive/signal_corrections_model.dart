@@ -1,4 +1,4 @@
-/// User corrections ArchiveMe should respect.
+/// User corrections Thoughtprint should respect.
 class SignalCorrectionView {
   const SignalCorrectionView({
     required this.rejectedTitles,

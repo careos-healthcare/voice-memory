@@ -140,10 +140,10 @@ void main() {
       );
     });
 
-    test('body says ArchiveMe is not where you store everything', () {
+    test('body says Thoughtprint is not where you store everything', () {
       expect(
         ProofTrailPositioningCopy.body,
-        contains('ArchiveMe is not where you store everything'),
+        contains('Thoughtprint is not where you store everything'),
       );
     });
 
@@ -161,14 +161,14 @@ void main() {
       );
     });
 
-    test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
+    test('notChatLine distinguishes ChatGPT from Thoughtprint evidence trail', () {
       expect(
         ProofTrailPositioningCopy.notChatLine,
         contains('ChatGPT can suggest what to do'),
       );
       expect(
         ProofTrailPositioningCopy.notChatLine,
-        contains('ArchiveMe shows what you already said before'),
+        contains('Thoughtprint shows what you already said before'),
       );
     });
 
@@ -179,10 +179,10 @@ void main() {
       );
     });
 
-    test('notStorageLine says ArchiveMe checks what returns', () {
+    test('notStorageLine says Thoughtprint checks what returns', () {
       expect(
         ProofTrailPositioningCopy.notStorageLine,
-        contains('ArchiveMe checks what returns'),
+        contains('Thoughtprint checks what returns'),
       );
     });
 
@@ -228,10 +228,10 @@ void main() {
       expect(line, contains('more ai'));
     });
 
-    test('saveRepeatLine says use ArchiveMe when something repeats', () {
+    test('saveRepeatLine says use Thoughtprint when something repeats', () {
       expect(
         ProofTrailPositioningCopy.saveRepeatLine,
-        contains('Use ArchiveMe when something repeats'),
+        contains('Use Thoughtprint when something repeats'),
       );
     });
 
@@ -298,7 +298,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in ProofTrailPositioningCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);

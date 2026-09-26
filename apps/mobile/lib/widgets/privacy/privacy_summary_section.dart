@@ -10,14 +10,14 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// The privacy disclosure ArchiveMe owes a reader, as one embeddable block.
+/// The privacy disclosure Thoughtprint owes a reader, as one embeddable block.
 ///
 /// This was the body of `PrivacyScreen`. It moved here because `/privacy` now
 /// redirects to `/privacy-trust-centre`, and the disclosure had to arrive at
 /// the trust centre before the redirect landed — the processing-providers tile
-/// below is the only place in this app that names OpenAI and Google against
-/// the specific calls that reach them, and a disclosure that renders on no
-/// reachable screen is worse than an absent one.
+/// below is the disclosure that names Google Gemini as the processor for
+/// cloud features, and a disclosure that renders on no reachable screen is
+/// worse than an absent one.
 ///
 /// A widget rather than copied copy: both surfaces read the same
 /// [PrivacyScreenCopy] constants, so a correction lands once.

@@ -6,6 +6,7 @@ sealed class ApiResult<T> {
 
   bool get isSuccess => this is ApiSuccess<T>;
   bool get isFailure => this is ApiFailureResult<T>;
+  bool get isError => isFailure;
 
   T? get valueOrNull => switch (this) {
     ApiSuccess<T>(:final value) => value,

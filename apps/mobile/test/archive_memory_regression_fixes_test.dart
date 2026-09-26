@@ -359,7 +359,7 @@ void main() {
       expect(find.text('Keep exact details'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe will keep this as evidence, not fold it into a '
+          'Thoughtprint will keep this as evidence, not fold it into a '
           'general pattern.',
         ),
         findsOneWidget,

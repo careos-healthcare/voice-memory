@@ -103,7 +103,7 @@ void main() {
       expect(ReferralInviteAfterValue.dismissLabel, 'Not now');
       expect(
         ReferralInviteAfterValue.inviteText,
-        'I\u2019m testing ArchiveMe \u2014 it helps you record one small '
+        'I\u2019m testing Thoughtprint \u2014 it helps you record one small '
         'thing and notice what keeps returning, fading, or changing over '
         'time. It does not share your archive. Want to try it?',
       );
@@ -112,31 +112,31 @@ void main() {
     test('source-specific invite variants are exact', () {
       expect(
         ReferralInviteAfterValue.weeklyReviewInviteText,
-        'I\u2019m testing ArchiveMe. It helped me notice what returned, '
+        'I\u2019m testing Thoughtprint. It helped me notice what returned, '
         'faded, or changed this week \u2014 without sharing my archive. '
         'Want to try it?',
       );
       expect(
         ReferralInviteAfterValue.threadReturnInviteText,
-        'I\u2019m testing ArchiveMe. It helps you notice when the same '
+        'I\u2019m testing Thoughtprint. It helps you notice when the same '
         'thread keeps coming back \u2014 without sharing your archive. '
         'Want to try it?',
       );
       expect(
         ReferralInviteAfterValue.beliefDistanceInviteText,
-        'I\u2019m testing ArchiveMe. It helps you notice belief-like '
+        'I\u2019m testing Thoughtprint. It helps you notice belief-like '
         'phrases that keep showing up \u2014 without sharing your archive. '
         'Want to try it?',
       );
       expect(
         ReferralInviteAfterValue.proofCounterInviteText,
-        'I\u2019m testing ArchiveMe. It helps you see when separate '
+        'I\u2019m testing Thoughtprint. It helps you see when separate '
         'recordings start connecting \u2014 without sharing your archive. '
         'Want to try it?',
       );
       expect(
         ReferralInviteAfterValue.proRetentionInviteText,
-        'I\u2019m testing ArchiveMe. It helps keep an archive of what '
+        'I\u2019m testing Thoughtprint. It helps keep an archive of what '
         'returns, fades, and changes over time \u2014 without sharing '
         'anything private. Want to try it?',
       );
@@ -180,7 +180,7 @@ void main() {
     test('proof lines are exact, by source', () {
       expect(
         ReferralInviteAfterValue.defaultProofLine,
-        'ArchiveMe has started showing value.',
+        'Thoughtprint has started showing value.',
       );
       expect(
         ReferralInviteAfterValue.weeklyReviewProofLine,
@@ -188,11 +188,11 @@ void main() {
       );
       expect(
         ReferralInviteAfterValue.threadReturnProofLine,
-        'ArchiveMe noticed a thread coming back.',
+        'Thoughtprint noticed a thread coming back.',
       );
       expect(
         ReferralInviteAfterValue.beliefDistanceProofLine,
-        'ArchiveMe noticed a phrase pattern showing up again.',
+        'Thoughtprint noticed a phrase pattern showing up again.',
       );
       expect(
         ReferralInviteAfterValue.proofCounterProofLine,

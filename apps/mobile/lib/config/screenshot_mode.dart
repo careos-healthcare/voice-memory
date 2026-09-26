@@ -351,7 +351,7 @@ abstract class ScreenshotMode {
 
   /// Archive memory preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_MEMORY=true`. Shows the
-  /// "What ArchiveMe remembers" summary card on Patterns.
+  /// "What Thoughtprint remembers" summary card on Patterns.
   static const bool archiveMemoryRaw = bool.fromEnvironment(
     'VOICE_MEMORY_SCREENSHOT_ARCHIVE_MEMORY',
   );

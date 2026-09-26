@@ -42,7 +42,7 @@ void main() {
       expect(PurchaseConfidenceCopy.cardTitle, 'Private by default');
       expect(
         PurchaseConfidenceCopy.body,
-        'Your saved moments stay yours. You can delete entries, correct ArchiveMe, and restore purchases if needed.',
+        'Your saved moments stay yours. You can delete entries, correct Thoughtprint, and restore purchases if needed.',
       );
       expect(PurchaseConfidenceCopy.trustBullets, hasLength(5));
       expect(
@@ -81,7 +81,7 @@ void main() {
       expect(find.text('Private by default'), findsOneWidget);
       expect(
         find.text(
-          'Your saved moments stay yours. You can delete entries, correct ArchiveMe, and restore purchases if needed.',
+          'Your saved moments stay yours. You can delete entries, correct Thoughtprint, and restore purchases if needed.',
         ),
         findsOneWidget,
       );

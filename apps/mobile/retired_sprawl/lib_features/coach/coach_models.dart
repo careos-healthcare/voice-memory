@@ -321,7 +321,7 @@ String coachClientAffirmationSentence({
   required CoachSharingPermissions permissions,
 }) {
   final kinds = permissions.insightKinds.map(_insightKindWire).join(',');
-  return 'I authorize $coachLabel to view my ArchiveMe coach dashboard scopes: '
+  return 'I authorize $coachLabel to view my Thoughtprint coach dashboard scopes: '
       'factLedger=${permissions.factLedger}, '
       'confidenceInsights=${permissions.confidenceBandedInsights}, '
       'kinds=[$kinds]. I can revoke this access anytime.';

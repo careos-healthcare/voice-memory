@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 /// One quiet row of feedback chips under a major result.
 ///
-/// "ArchiveMe gets sharper when you correct it." Tapping a chip saves the
+/// "Thoughtprint gets sharper when you correct it." Tapping a chip saves the
 /// feedback locally and swaps the row for a short "Got it." — there is never
 /// more than one of these per result screen.
 class ArchiveFeedbackChips extends StatefulWidget {

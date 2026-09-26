@@ -95,10 +95,10 @@ abstract class ArchiveCopyNormalizer {
     if (normalized.isEmpty) return '';
 
     const literalReplacements = <String, String>{
-      'ArchiveMeshould': 'Thoughtprint should',
-      'ArchiveMeis': 'Thoughtprint is',
-      'ArchiveMewill': 'Thoughtprint will',
-      'ArchiveMenoticed': 'Thoughtprint noticed',
+      'Thoughtprintshould': 'Thoughtprint should',
+      'Thoughtprintis': 'Thoughtprint is',
+      'Thoughtprintwill': 'Thoughtprint will',
+      'Thoughtprintnoticed': 'Thoughtprint noticed',
       'onemore': 'one more',
       'maysit': 'may sit',
       'mayalso': 'may also',
@@ -233,11 +233,11 @@ abstract class ArchiveCopyNormalizer {
 
     if (RegExp(r',[^\s]').hasMatch(normalized)) return true;
 
-    final withoutArchiveMe = normalized.replaceAll(
+    final withoutThoughtprint = normalized.replaceAll(
       RegExp('Thoughtprint', caseSensitive: false),
       '',
     );
-    if (RegExp('[a-z][A-Z]').hasMatch(withoutArchiveMe)) return true;
+    if (RegExp('[a-z][A-Z]').hasMatch(withoutThoughtprint)) return true;
 
     return false;
   }

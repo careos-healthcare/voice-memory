@@ -54,8 +54,8 @@ import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_thought
 import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_why_matters_store.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
 import 'package:archiveme_mobile/storage/drift/journal_database.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_background_service.dart';
+import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/background_task_account_registry.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/sync/cloud_backup.dart';
@@ -105,11 +105,15 @@ import 'package:archiveme_mobile/services/sync/background_sync_queue_gateway.dar
 import 'package:archiveme_mobile/services/sync/background_sync_queue_worker.dart';
 import 'package:archiveme_mobile/services/sync/deferred_proof_admission_reconciler.dart';
 import 'package:archiveme_mobile/features/journal/infrastructure/journal_fact_ledger_citation_interceptor.dart';
+import 'package:archiveme_mobile/features/sync/journal_cloud_ledger_interceptor.dart';
+import 'package:archiveme_mobile/features/sync/services/cloud_backfill_service.dart';
+import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
 import 'package:archiveme_mobile/services/sync/journal_save_sync_enqueue_interceptor.dart';
 import 'package:archiveme_mobile/features/coach/local_rag/local_coach_conversation_service.dart';
 import 'package:archiveme_mobile/features/insights/rag/local_routine_rag_engine.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_report_store.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
+import 'package:archiveme_mobile/features/memory/entry_embedding_store.dart';
 import 'package:archiveme_mobile/features/search/journal_reflection_embedding_interceptor.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
 import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
@@ -699,7 +703,7 @@ class AppServices {
     await TempRecordingCleanup.purgeStaleOnStartup(
       journalStore: s.journalStore,
     );
-    await ArchiveMeDemoState.hydrateFromPrefs(s.prefs);
+    await ThoughtprintDemoState.hydrateFromPrefs(s.prefs);
     await ExcludedNativeCapabilityCleanup.runIfNeeded(s.prefs);
 
     if (resumedSession != null) {
@@ -1212,7 +1216,7 @@ class AppServices {
       AppDatabase.fromSqflite(s.sqliteDatabase.database),
     );
     final outboxBackgroundService = SyncOutboxBackgroundService(
-      syncEngine: SyncEngine(
+      drainer: SyncOutboxDrainer(
         syncApi: HttpSyncApiClient(s.httpTransport),
         journal: s.journalStore,
         outbox: outboxStore,
@@ -1634,7 +1638,7 @@ class AppServices {
     await TesterMissionStore.resetPersistedState();
     await ConfirmedRepeatWhyMattersStore.resetPersistedState();
     await ConfirmedRepeatThoughtMapStore.resetPersistedState();
-    ArchiveMeDemoState.resetPersistedState();
+    ThoughtprintDemoState.resetPersistedState();
     await RepeatReturnCheckStore.resetPersistedState();
     await ComeBackTomorrowV2Store.resetPersistedState(s.prefs);
     await FirstProofTruthStore.resetPersistedState(s.prefs);
@@ -1736,6 +1740,10 @@ class AppServices {
       leading.add(JournalSaveSyncEnqueueInterceptor(worker));
     }
     leading.add(const JournalFactLedgerCitationInterceptor());
+    leading.add(const JournalSyncDirtyInterceptor());
+    leading.add(const JournalCloudLedgerInterceptor());
+    leading.add(const JournalSyncScheduleInterceptor());
+    leading.add(const EntryEmbeddingSaveInterceptor());
     final reflectionWorker = services._reflectionEmbeddingIndexWorker;
     if (reflectionWorker != null) {
       leading.add(JournalReflectionEmbeddingInterceptor(reflectionWorker));

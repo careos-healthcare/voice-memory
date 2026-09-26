@@ -63,7 +63,7 @@ class ArchiveLoopPaywallProductState {
   }
 }
 
-/// Loads ArchiveMe loop paywall products and handles purchase/restore.
+/// Loads Thoughtprint loop paywall products and handles purchase/restore.
 class RevenueCatArchiveLoopBilling {
   RevenueCatArchiveLoopBilling({
     RevenueCatService? revenueCat,

@@ -43,6 +43,12 @@ class PatternExplorationConversationState {
     this.errorMessage,
   });
 
+  static const cloudLockedMessage =
+      'Pattern exploration sends the question you type to the Thoughtprint '
+      'app backend. The backend uses that question to read matching entries '
+      'from your server-side fact ledger. Turn on Cloud Features to opt in '
+      'before that request is sent.';
+
   final List<PatternExplorationMessage> messages;
   final bool isSending;
   final String? errorMessage;

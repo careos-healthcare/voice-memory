@@ -35,7 +35,7 @@ void main() {
       expect(PatternReviewInboxCopy.cardTitle, 'Review your archive');
       expect(
         PatternReviewInboxCopy.sheetSubtitle,
-        'Things ArchiveMe needs your judgement on.',
+        'Things Thoughtprint needs your judgement on.',
       );
       expect(
         PatternReviewInboxCopy.emptyTitle,

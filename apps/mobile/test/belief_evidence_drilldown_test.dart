@@ -136,7 +136,7 @@ void main() {
       );
       expect(
         trail.sourceLine,
-        'ArchiveMe is using your saved words, not guessing.',
+        'Thoughtprint is using your saved words, not guessing.',
       );
       expect(trail.currentBelief, isNotEmpty);
       expect(trail.whatChangedLine, isNotEmpty);
@@ -227,7 +227,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('ArchiveMe is using your saved words, not guessing.'),
+        find.text('Thoughtprint is using your saved words, not guessing.'),
         findsOneWidget,
       );
       expect(

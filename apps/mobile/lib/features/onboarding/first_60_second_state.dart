@@ -147,7 +147,7 @@ abstract class First60Copy {
   static const String valueBody =
       'This is now evidence you can return to later.';
   static const String valueSecondLine =
-      'When patterns appear, ArchiveMe can show what returned, faded, or '
+      'When patterns appear, Thoughtprint can show what returned, faded, or '
       'changed.';
   static const String valueCta = 'View my archive';
   static const String valueSecondary = 'Record another';

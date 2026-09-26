@@ -185,10 +185,10 @@ void main() {
     });
 
     test('card frame copy is exact', () {
-      expect(ArchiveBeliefShareCard.title, 'My ArchiveMe card');
+      expect(ArchiveBeliefShareCard.title, 'My Thoughtprint card');
       expect(
         ArchiveBeliefShareCard.footer,
-        'Recorded privately with ArchiveMe',
+        'Recorded privately with Thoughtprint',
       );
       expect(
         ArchiveBeliefShareCard.privacyLine,
@@ -203,7 +203,7 @@ void main() {
       expect(
         ArchiveBeliefShareCard.copiedTextFor('returning_to'),
         'My archive noticed something I keep returning to.  '
-        'Recorded privately with ArchiveMe. '
+        'Recorded privately with Thoughtprint. '
         'No recordings or notes are shared.',
       );
     });
@@ -553,7 +553,7 @@ void main() {
       expect(
         clipboardCalls.single.arguments['text'],
         'My archive noticed something I keep returning to.  '
-        'Recorded privately with ArchiveMe. '
+        'Recorded privately with Thoughtprint. '
         'No recordings or notes are shared.',
       );
       expect(

@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Post-save card: what ArchiveMe noticed today and early pattern hints.
+/// Post-save card: what Thoughtprint noticed today and early pattern hints.
 class PotentialSignalsCard extends StatelessWidget {
   const PotentialSignalsCard({
     required this.signals, super.key,
@@ -37,7 +37,7 @@ class PotentialSignalsCard extends StatelessWidget {
         children: [
           if (noticed.isNotEmpty) ...[
             Text(
-              ConsumerUiCopy.todayArchiveMeNoticed,
+              ConsumerUiCopy.todayThoughtprintNoticed,
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.sm),

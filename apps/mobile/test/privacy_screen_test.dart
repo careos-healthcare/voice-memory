@@ -70,9 +70,9 @@ void main() {
   }
 
   group('Privacy screen copy', () {
-    testWidgets('contains ArchiveMe', (tester) async {
+    testWidgets('contains Thoughtprint', (tester) async {
       await pumpPrivacy(tester);
-      expect(find.textContaining('ArchiveMe'), findsWidgets);
+      expect(find.textContaining('Thoughtprint'), findsWidgets);
     });
 
     testWidgets('where-words-go callout sits above the existing sections', (
@@ -236,6 +236,9 @@ void main() {
     });
 
     testWidgets('settings opens in-app privacy route', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       final router = GoRouter(
         routes: [
           GoRoute(

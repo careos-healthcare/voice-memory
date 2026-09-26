@@ -143,7 +143,7 @@ void main() {
       expect(pack.plainText, isEmpty);
     });
 
-    test('non-empty export includes ArchiveMe and export date', () {
+    test('non-empty export includes Thoughtprint and export date', () {
       final pack = ArchiveExportPackEngine.build(
         entries: [
           _entry(id: 'e1', transcript: 'A saved private moment about work.'),
@@ -152,7 +152,7 @@ void main() {
       );
 
       expect(pack.isEmpty, isFalse);
-      expect(pack.plainText, contains('ArchiveMe'));
+      expect(pack.plainText, contains('Thoughtprint'));
       expect(pack.plainText, contains('2026-06-15'));
       expect(pack.plainText.toLowerCase(), isNot(contains('voicememory')));
     });
@@ -277,7 +277,7 @@ void main() {
       expect(pack.plainText, isNot(contains('archiveWatchlistItems')));
       expect(
         pack.plainText,
-        isNot(contains('What should ArchiveMe watch for?')),
+        isNot(contains('What should Thoughtprint watch for?')),
       );
     });
 
@@ -304,7 +304,7 @@ void main() {
       );
       expect(
         pack.plainText,
-        isNot(contains('Did ArchiveMe show you something useful?')),
+        isNot(contains('Did Thoughtprint show you something useful?')),
       );
       expect(pack.plainText, isNot(contains('archiveBetaFeedback')));
     });
@@ -315,7 +315,7 @@ void main() {
         exportedAt: DateTime.utc(2026, 6, 15),
       );
       expect(pack.plainText, isNot(contains('Beta outcomes')));
-      expect(pack.plainText, isNot(contains('ArchiveMe beta summary')));
+      expect(pack.plainText, isNot(contains('Thoughtprint beta summary')));
     });
 
     test('export pack excludes Pro interest data', () {
@@ -324,7 +324,7 @@ void main() {
         exportedAt: DateTime.utc(2026, 6, 15),
       );
       expect(pack.plainText, isNot(contains('Pro interest')));
-      expect(pack.plainText, isNot(contains('ArchiveMe Pro interest')));
+      expect(pack.plainText, isNot(contains('Thoughtprint Pro interest')));
     });
 
     test('export pack excludes beta invite data', () {

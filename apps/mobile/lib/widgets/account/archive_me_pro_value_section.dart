@@ -6,8 +6,8 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
 /// Free vs Pro value split for Account and paywall surfaces.
-class ArchiveMeProValueSection extends StatelessWidget {
-  const ArchiveMeProValueSection({
+class ThoughtprintProValueSection extends StatelessWidget {
+  const ThoughtprintProValueSection({
     required this.packaging, super.key,
     this.showTitle = true,
     this.compact = false,

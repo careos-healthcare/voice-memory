@@ -228,10 +228,10 @@ const _consumerCopyFiles = [
 
 /// Fails if consumer copy still uses the old VoiceMemory brand name.
 void main() {
-  test('consumer_ui_copy uses ArchiveMe brand in string literals', () {
+  test('consumer_ui_copy uses Thoughtprint brand in string literals', () {
     final source = File('lib/product/consumer_ui_copy.dart').readAsStringSync();
     expect(source, isNot(contains("'VoiceMemory")));
-    expect(source, contains('ArchiveMe'));
+    expect(source, contains('Thoughtprint'));
   });
 
   for (final path in _consumerCopyFiles) {
@@ -328,7 +328,7 @@ bool _evidenceAllowed(String value) {
 }
 
 bool _archiveAllowed(String value) {
-  if (value.contains('ArchiveMe')) return true;
+  if (value.contains('Thoughtprint')) return true;
   final lower = value.toLowerCase();
   if (lower.contains('archive timeline')) return true;
   if (lower.contains('archive review')) return true;

@@ -20,7 +20,7 @@ class PressureReturnTrigger {
   const PressureReturnTrigger({required this.status});
 
   static const triggerCopy =
-      'Next time this pressure shows up, open ArchiveMe before you push '
+      'Next time this pressure shows up, open Thoughtprint before you push '
       'through.';
 
   static const supportCopy =

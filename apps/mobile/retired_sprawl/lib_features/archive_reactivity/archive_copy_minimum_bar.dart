@@ -282,11 +282,11 @@ abstract class ArchiveCopyMinimumBar {
       return 'malformed_comma';
     }
 
-    final withoutArchiveMe = normalized.replaceAll(
+    final withoutThoughtprint = normalized.replaceAll(
       RegExp('Thoughtprint', caseSensitive: false),
       '',
     );
-    if (RegExp('[a-z][A-Z]').hasMatch(withoutArchiveMe)) {
+    if (RegExp('[a-z][A-Z]').hasMatch(withoutThoughtprint)) {
       return 'malformed_casing';
     }
 

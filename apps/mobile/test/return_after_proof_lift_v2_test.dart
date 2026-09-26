@@ -88,7 +88,7 @@ void main() {
       );
       expect(
         ReturnAfterProofLiftV2Copy.body,
-        'The next save is what tells ArchiveMe whether this is getting louder, softer, or fading.',
+        'The next save is what tells Thoughtprint whether this is getting louder, softer, or fading.',
       );
       expect(ReturnAfterProofLiftV2Copy.primaryCta, 'Save the next return');
       expect(

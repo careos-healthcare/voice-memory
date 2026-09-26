@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Explains how ArchiveMe weights recent vs older evidence — no monetisation CTA.
+/// Explains how Thoughtprint weights recent vs older evidence — no monetisation CTA.
 class EvidenceWeightingCard extends StatefulWidget {
   const EvidenceWeightingCard({
     required this.result, required this.source, super.key,

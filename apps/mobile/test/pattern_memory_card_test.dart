@@ -61,7 +61,7 @@ void main() {
   testWidgets('forming status copy', (tester) async {
     await _pump(tester, _memory(status: PatternMemoryStatus.forming));
     expect(
-      find.text('ArchiveMe is starting to remember this pattern.'),
+      find.text('Thoughtprint is starting to remember this pattern.'),
       findsOneWidget,
     );
   });

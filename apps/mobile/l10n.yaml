@@ -4,3 +4,7 @@ output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 output-dir: lib/l10n/generated
 nullable-getter: false
+# English is the only locale a release build advertises. Other ARB files
+# stay in this directory for translators; see archiveSupportedLocales.
+preferred-supported-locales:
+  - en

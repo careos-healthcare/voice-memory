@@ -1,9 +1,26 @@
+import 'package:archiveme_mobile/core/config/launch_profile.dart';
 import 'package:archiveme_mobile/core/config/v1_launch_product_contract.dart';
 import 'package:archiveme_mobile/core/config/watch_companion_feature_flags.dart';
 import 'package:archiveme_mobile/features/belief_evidence/provenance_recovery_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_feature_flags.dart';
+
+/// Launch-profile switches. Apple Health is the single health switch.
+abstract final class AppFlags {
+  AppFlags._();
+
+  static const bool appleHealth = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_APPLE_HEALTH',
+    defaultValue: LaunchProfile.APPLE_HEALTH,
+  );
+
+  /// A short typed question after a save, with a mic for the answer.
+  static const bool postSaveFollowUp = bool.fromEnvironment(
+    'POST_SAVE_FOLLOW_UP',
+    defaultValue: true,
+  );
+}
 
 /// Compile-time native capability allowlist for the focused V1 release.
 ///
@@ -25,13 +42,49 @@ abstract final class V1CapabilityRegistry {
   static const bool internet = true;
   static const bool storeBilling = false;
 
-  static const bool notifications = false;
+  static const bool notifications = true;
   static const bool backgroundProcessing = false;
-  static const bool health = false;
+
+  /// Apple Health State of Mind. Off until [AppFlags.appleHealth] is turned on.
+  static const bool health = AppFlags.appleHealth;
+
+  /// The one HealthKit switch. Settings, the share string, and the
+  /// entitlement all follow it.
+  static const bool appleHealth = AppFlags.appleHealth;
+
+  /// Passphrase-sealed journal sync in Settings.
+  static const bool e2eeSync = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_E2EE_SYNC',
+    defaultValue: LaunchProfile.E2EE_SYNC,
+  );
+
+  /// Plain-text copies for AI processing. Off unless this build turns it on.
+  static const bool isLedgerOptInEnabled = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LEDGER_OPT_IN',
+    defaultValue: LaunchProfile.LEDGER_OPT_IN,
+  );
+
+  /// Share-sheet and Open In import of Apple Voice Memos.
+  static const bool voiceMemosImport = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_VOICE_MEMOS_IMPORT',
+    defaultValue: true,
+  );
+
+  /// Photo attachments and image evidence on a moment.
+  static const bool photoAttachments = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_PHOTO_ATTACHMENTS',
+    defaultValue: true,
+  );
   static const bool bluetooth = false;
   static const bool localNetwork = false;
   static const bool nearbyWifi = false;
-  static const bool location = false;
+
+  /// When-in-use place lookup. Beta builds turn this on from
+  /// `config/launch_profile.json` (`VOICEMEMORY_ENABLE_LOCATION`).
+  static const bool location = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LOCATION',
+    defaultValue: true,
+  );
   static const bool calendar = false;
   static const bool cameraAndPhotos = false;
   static const bool activityRecognition = false;
@@ -68,24 +121,76 @@ abstract final class V1CapabilityRegistry {
 
   /// Second onboarding screen offers the existing notes importer.
   /// Left off until reviewed.
-  static const bool onboardingImportFirst = false;
+  static const bool onboardingImportFirst = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_ONBOARDING_IMPORT_FIRST',
+    defaultValue: false,
+  );
 
   /// After the first save, quote the recording back with no interpretation.
   /// Left off until reviewed.
-  static const bool firstSaveQuoteBack = false;
+  static const bool firstSaveQuoteBack = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_FIRST_SAVE_QUOTE_BACK',
+    defaultValue: false,
+  );
 
-  /// Widget, Siri, Control Center, Live Activity, and Watch capture.
-  /// Left off until reviewed.
-  static const bool nativeQuickCapture = false;
+  /// Home Screen widget, Lock Screen widget, Siri shortcut, Control Center,
+  /// Action Button, and Live Activity. The Watch companion is
+  /// [watchCompanion], which stays off. The older Today extension is
+  /// [nativeExtensions], which stays off.
+  static const bool nativeQuickCapture = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_NATIVE_QUICK_CAPTURE',
+    defaultValue: false,
+  );
 
   /// Passphrase-sealed archive backup to iCloud or a user-picked drive file.
   /// Left off until reviewed.
-  static const bool encryptedBackup = false;
+  static const bool encryptedBackup = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_ENCRYPTED_BACKUP',
+    defaultValue: false,
+  );
+
+  /// Optional local reminders: daily nudge, on this day, and check back.
+  /// Left off until reviewed. No server push.
+  static const bool gentleReminders = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_GENTLE_REMINDERS',
+    defaultValue: false,
+  );
+
+  /// On-device partial transcript while recording. Display only.
+  /// The saved transcript still comes from the final pipeline.
+  /// Left off until reviewed.
+  static const bool liveDraftTranscript = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LIVE_DRAFT_TRANSCRIPT',
+    defaultValue: false,
+  );
+
+  /// Cited questions after a save. Off until the saved answers are reviewed.
+  static const bool postSaveFollowUp = AppFlags.postSaveFollowUp;
+
+  /// Sunday through Tuesday archive recap, on for beta 1.
+  static const bool weeklyRecapBanner = bool.fromEnvironment(
+    'WEEKLY_RECAP_BANNER',
+    defaultValue: true,
+  );
+
+  /// On This Day, calendar, map, and printable journal on the Archive tab.
+  static const bool enableHistoryViews = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_HISTORY_VIEWS',
+    defaultValue: true,
+  );
+
+  /// Lulu printed books. Stays off until a sandbox order completes.
+  static const bool printedBooks = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_PRINTED_BOOKS',
+    defaultValue: false,
+  );
 
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',
     'android.permission.USE_BIOMETRIC',
+    'android.permission.POST_NOTIFICATIONS',
+    'android.permission.RECEIVE_BOOT_COMPLETED',
   };
 
   static const Set<String> iosUsageDescriptionAllowlist = {

@@ -53,7 +53,7 @@ abstract final class BetaAnalyticsTracker {
     String eventName, {
     Map<String, Object>? parameters,
   }) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) {
       return false;
     }
 

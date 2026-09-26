@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/config/creator_demo_mode.dart';
 import 'package:archiveme_mobile/features/activation/capture_context_tags.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/services/cognitive_analyzer.dart';
@@ -130,7 +131,7 @@ class JournalStore {
   }
 
   Future<void> clearAll() async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
     if (_encrypted != null) {
       await _encrypted.writeJson([]);
@@ -144,7 +145,7 @@ class JournalStore {
     String first25Source = 'journal_save',
     String captureKind = 'typed',
   }) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) return;
     // Must include tombstones here: this list is used to rebuild the
     // entire on-disk file below, and using the tombstone-filtered
     // `loadAll()` would silently erase every other pending tombstone on
@@ -224,8 +225,8 @@ class JournalStore {
   /// deletions) and by [compactTombstones]. Normal UI code must not call
   /// this directly — use [loadAll].
   Future<List<JournalEntry>> loadAllIncludingTombstones() async {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
+    if (ThoughtprintDemoState.isActive) {
+      return ThoughtprintDemoArchive.journalEntries();
     }
     if (CreatorDemoMode.isActive) {
       return CreatorDemoMode.demoJournalEntries();
@@ -238,8 +239,8 @@ class JournalStore {
   }
 
   List<JournalEntry> loadAllIncludingTombstonesSync() {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
+    if (ThoughtprintDemoState.isActive) {
+      return ThoughtprintDemoArchive.journalEntries();
     }
     if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
     if (_cache != null) {
@@ -393,6 +394,7 @@ class JournalStore {
     final entry = await getByIdIncludingTombstones(id);
     if (entry == null || entry.isDeleted) return;
     await save(entry.markDeleted());
+    await JournalTombstones.remember(id);
   }
 
   Future<JournalEntry?> getById(String id) async {
@@ -471,14 +473,14 @@ class JournalStore {
 
   /// Replaces the on-device journal — local backup restore only.
   Future<void> replaceAll(List<JournalEntry> entries) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) return;
     final next = List<JournalEntry>.from(entries)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     await _writeAll(next);
   }
 
   Future<void> _writeAll(List<JournalEntry> entries) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);
     JournalStoreWriteInstrumentation.persistCount++;
     final encoded = entries.map((e) => e.toJson()).toList();
@@ -493,7 +495,7 @@ class JournalStore {
     bool Function(List<JournalEntry> entries) mutate, {
     bool enrichNonTombstones = false,
   }) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    if (ThoughtprintDemoState.isActive || CreatorDemoMode.isActive) return;
     final all = await loadAllIncludingTombstones();
     final working = List<JournalEntry>.from(all);
     final changed = mutate(working);

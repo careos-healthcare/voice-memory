@@ -144,7 +144,7 @@ void main() {
       expect(ProEvidenceValueCopy.secondary, 'Not now');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+        'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.',
       );
       expect(
         ProEvidenceValueCopy.evidenceLine,
@@ -152,7 +152,7 @@ void main() {
       );
       expect(
         ProEvidenceValueCopy.sheetFooter,
-        'ArchiveMe compares what you saved over time. It is not a chatbot.',
+        'Thoughtprint compares what you saved over time. It is not a chatbot.',
       );
     });
 

@@ -96,7 +96,7 @@ bool _mentionsLiveFocusPhrase(String blob, String phrase) {
 void main() {
   group('V1 scope guard', () {
     test(
-      'launch copy does not position ArchiveMe as broad journal or assistant',
+      'launch copy does not position Thoughtprint as broad journal or assistant',
       () {
         for (final relativePath in V1ScopeGuardCopy.launchCopyFilePaths) {
           final file = File(relativePath);

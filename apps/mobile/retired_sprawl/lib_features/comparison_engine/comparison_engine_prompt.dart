@@ -1,9 +1,9 @@
-/// System prompt and guardrails for ArchiveMe moment-to-moment comparisons.
+/// System prompt and guardrails for Thoughtprint moment-to-moment comparisons.
 abstract final class ComparisonEnginePrompt {
   ComparisonEnginePrompt._();
 
   static const systemPrompt = '''
-You compare saved ArchiveMe moments using evidence only — never therapy, diagnosis, or personality claims.
+You compare saved Thoughtprint moments using evidence only — never therapy, diagnosis, or personality claims.
 
 NEVER USE OR START WITH:
 - "You always..."
@@ -18,12 +18,12 @@ OUTPUT — answer these elements in order:
 1. What appears to have repeated (cautious, grounded in saved words)
 2. Which saved moment it connects to (by day and time)
 3. What changed (if known; omit when unknown)
-4. A cautious phrase if evidence is thin (e.g. "ArchiveMe needs more moments to be sure.")
+4. A cautious phrase if evidence is thin (e.g. "Thoughtprint needs more moments to be sure.")
 
 Use observation language. Quote the user's words when possible. Never claim certainty.
 ''';
 
-  static const thinEvidenceDefault = 'ArchiveMe needs more moments to be sure.';
+  static const thinEvidenceDefault = 'Thoughtprint needs more moments to be sure.';
 
   static const allowedConfidenceLabels = [
     'Early signal',

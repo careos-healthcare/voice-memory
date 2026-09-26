@@ -57,6 +57,7 @@ abstract final class EncryptedArchiveBackupCodec {
     required File databaseFile,
     required Directory audioDirectory,
     required String passphrase,
+    Directory? photosDirectory,
     ArchiveBackupKdfProfile profile = ArchiveBackupKdfProfile.production,
   }) async {
     _requirePassphrase(passphrase);
@@ -66,6 +67,7 @@ abstract final class EncryptedArchiveBackupCodec {
     final zip = _pack(
       databaseBytes: await databaseFile.readAsBytes(),
       audioDirectory: audioDirectory,
+      photosDirectory: photosDirectory,
     );
     final salt = _randomBytes(_saltLength);
     final key = await _deriveKey(
@@ -92,6 +94,7 @@ abstract final class EncryptedArchiveBackupCodec {
     required String passphrase,
     required File databaseFile,
     required Directory audioDirectory,
+    Directory? photosDirectory,
   }) async {
     final opened = await open(sealed: sealed, passphrase: passphrase);
     await databaseFile.parent.create(recursive: true);
@@ -107,9 +110,26 @@ abstract final class EncryptedArchiveBackupCodec {
       await target.parent.create(recursive: true);
       await target.writeAsBytes(entry.value, flush: true);
     }
+    if (opened.photoFiles.isNotEmpty) {
+      final photosOut =
+          photosDirectory ??
+          Directory('${audioDirectory.parent.path}/photos');
+      await photosOut.create(recursive: true);
+      for (final entry in opened.photoFiles.entries) {
+        final target = File('${photosOut.path}/${entry.key}');
+        await target.parent.create(recursive: true);
+        await target.writeAsBytes(entry.value, flush: true);
+      }
+    }
   }
 
-  static Future<({Uint8List databaseBytes, Map<String, Uint8List> audioFiles})>
+  static Future<
+    ({
+      Uint8List databaseBytes,
+      Map<String, Uint8List> audioFiles,
+      Map<String, Uint8List> photoFiles,
+    })
+  >
   open({
     required Uint8List sealed,
     required String passphrase,
@@ -164,19 +184,25 @@ abstract final class EncryptedArchiveBackupCodec {
   static Uint8List _pack({
     required Uint8List databaseBytes,
     required Directory audioDirectory,
+    Directory? photosDirectory,
   }) {
     final archive = Archive()
       ..addFile(
         ArchiveFile('archive.db', databaseBytes.length, databaseBytes),
       );
-    if (audioDirectory.existsSync()) {
-      for (final entity in audioDirectory.listSync()) {
-        if (entity is! File) continue;
-        final name = entity.uri.pathSegments.last;
-        if (name.startsWith('.')) continue;
-        final bytes = entity.readAsBytesSync();
-        archive.addFile(ArchiveFile('audio/$name', bytes.length, bytes));
-      }
+    _addDirectoryFiles(
+      archive,
+      directory: audioDirectory,
+      folder: 'audio',
+      allow: (name) => true,
+    );
+    if (photosDirectory != null) {
+      _addDirectoryFiles(
+        archive,
+        directory: photosDirectory,
+        folder: 'photos',
+        allow: _isFullSizePhoto,
+      );
     }
     final encoded = ZipEncoder().encode(archive);
     if (encoded.isEmpty) {
@@ -185,9 +211,35 @@ abstract final class EncryptedArchiveBackupCodec {
     return Uint8List.fromList(encoded);
   }
 
-  static ({Uint8List databaseBytes, Map<String, Uint8List> audioFiles}) _unpack(
-    Uint8List zipBytes,
-  ) {
+  static bool _isFullSizePhoto(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('_thumb.')) return false;
+    return lower.endsWith('.jpg') || lower.endsWith('.jpeg');
+  }
+
+  static void _addDirectoryFiles(
+    Archive archive, {
+    required Directory directory,
+    required String folder,
+    required bool Function(String name) allow,
+  }) {
+    if (!directory.existsSync()) return;
+    for (final entity in directory.listSync()) {
+      if (entity is! File) continue;
+      final name = entity.uri.pathSegments.last;
+      if (name.startsWith('.') || name.contains('..')) continue;
+      if (!allow(name)) continue;
+      final bytes = entity.readAsBytesSync();
+      archive.addFile(ArchiveFile('$folder/$name', bytes.length, bytes));
+    }
+  }
+
+  static ({
+    Uint8List databaseBytes,
+    Map<String, Uint8List> audioFiles,
+    Map<String, Uint8List> photoFiles,
+  })
+  _unpack(Uint8List zipBytes) {
     Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(zipBytes);
@@ -196,23 +248,34 @@ abstract final class EncryptedArchiveBackupCodec {
     }
     Uint8List? databaseBytes;
     final audio = <String, Uint8List>{};
+    final photos = <String, Uint8List>{};
     for (final file in archive.files) {
       if (!file.isFile) continue;
       final bytes = Uint8List.fromList(file.content as List<int>);
       if (file.name == 'archive.db') {
         databaseBytes = bytes;
       } else if (file.name.startsWith('audio/')) {
-        final name = file.name.substring('audio/'.length);
-        if (name.isEmpty || name.contains('..') || name.contains('/')) {
-          throw EncryptedArchiveBackupException('CORRUPT_ARCHIVE');
-        }
-        audio[name] = bytes;
+        audio[_mediaName(file.name, 'audio/')] = bytes;
+      } else if (file.name.startsWith('photos/')) {
+        photos[_mediaName(file.name, 'photos/')] = bytes;
       }
     }
     if (databaseBytes == null || databaseBytes.isEmpty) {
       throw EncryptedArchiveBackupException('CORRUPT_ARCHIVE');
     }
-    return (databaseBytes: databaseBytes, audioFiles: audio);
+    return (
+      databaseBytes: databaseBytes,
+      audioFiles: audio,
+      photoFiles: photos,
+    );
+  }
+
+  static String _mediaName(String archiveName, String prefix) {
+    final name = archiveName.substring(prefix.length);
+    if (name.isEmpty || name.contains('..') || name.contains('/')) {
+      throw EncryptedArchiveBackupException('CORRUPT_ARCHIVE');
+    }
+    return name;
   }
 
   static Uint8List _encode({

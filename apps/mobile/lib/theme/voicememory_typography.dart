@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 class VoiceMemoryTypography {
   VoiceMemoryTypography._();
 
+  static const String fontFamily = 'Inter';
+
   static const double headline = 32;
   static const double sectionTitle = 22;
   static const double body = 16;
@@ -16,6 +18,7 @@ class VoiceMemoryTypography {
   static const double secondary = caption;
 
   static TextStyle headlineStyle({Color? color}) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: headline,
     fontWeight: FontWeight.w700,
     height: 1.35,
@@ -24,6 +27,7 @@ class VoiceMemoryTypography {
   );
 
   static TextStyle sectionTitleStyle({Color? color}) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: sectionTitle,
     fontWeight: FontWeight.w600,
     height: 1.4,
@@ -34,6 +38,7 @@ class VoiceMemoryTypography {
       headlineStyle(color: color);
 
   static TextStyle cardTitleStyle({Color? color}) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: cardTitle,
     fontWeight: FontWeight.w600,
     height: 1.4,
@@ -41,6 +46,7 @@ class VoiceMemoryTypography {
   );
 
   static TextStyle bodyStyle({Color? color}) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: body,
     fontWeight: FontWeight.w400,
     height: 1.5,
@@ -48,6 +54,7 @@ class VoiceMemoryTypography {
   );
 
   static TextStyle metadataStyle({Color? color}) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: caption,
     fontWeight: FontWeight.w400,
     height: 1.45,
@@ -60,6 +67,7 @@ class VoiceMemoryTypography {
   static TextStyle sectionLabelStyle({
     Color accent = VoiceMemoryColors.primaryIndigo,
   }) => TextStyle(
+    fontFamily: fontFamily,
     fontSize: caption,
     fontWeight: FontWeight.w500,
     height: 1.4,

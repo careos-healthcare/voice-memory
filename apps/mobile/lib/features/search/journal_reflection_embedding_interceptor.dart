@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/features/journal/domain/interceptors/journal_sa
 import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 
-/// Queues reflection embedding work after a journal entry is durably saved.
+/// Stores a local embedding after a journal entry is durably saved.
 class JournalReflectionEmbeddingInterceptor implements JournalSaveInterceptor {
   JournalReflectionEmbeddingInterceptor(this._worker);
 
@@ -10,6 +10,10 @@ class JournalReflectionEmbeddingInterceptor implements JournalSaveInterceptor {
 
   @override
   Future<void> onEntrySaved(JournalEntry entry) async {
-    _worker.enqueue(entry);
+    try {
+      await _worker.indexSpokenTranscript(entry);
+    } on Object {
+      _worker.enqueue(entry);
+    }
   }
 }

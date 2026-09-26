@@ -1,4 +1,4 @@
-/// What ArchiveMe remembers about one recurring pattern, in plain language.
+/// What Thoughtprint remembers about one recurring pattern, in plain language.
 ///
 /// This is a faithful, conservative summary built from what is already stored —
 /// pattern memory, the pattern map, key moments, progress, and weekly recaps.

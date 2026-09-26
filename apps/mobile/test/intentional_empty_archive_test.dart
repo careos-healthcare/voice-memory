@@ -52,7 +52,7 @@ void main() {
     expect(label, isNot(contains('VoiceMemory')));
   });
 
-  test('intentional empty extended copy is ArchiveMe-safe', () {
+  test('intentional empty extended copy is Thoughtprint-safe', () {
     expect(EmptyArchiveCopy.intentionalEmptyLongTermRecord, isNotEmpty);
     expect(EmptyArchiveCopy.intentionalEmptyPatternsOverTime, isNotEmpty);
     expect(EmptyArchiveCopy.intentionalEmptyFutureIntro, isNotEmpty);

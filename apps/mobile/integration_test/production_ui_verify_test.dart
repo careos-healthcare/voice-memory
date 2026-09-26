@@ -115,7 +115,7 @@ void main() {
     );
     DeveloperSettingsGate.loadFromPrefs(false);
 
-    await tester.pumpWidget(const ArchiveMeApp());
+    await tester.pumpWidget(const ThoughtprintApp());
     await tester.pump(const Duration(seconds: 1));
 
     // 1. Account shell + Settings — production only

@@ -15,7 +15,7 @@ class FirstLoopReadyCard extends StatelessWidget {
   final VoidCallback? onRecordAnother;
 
   static const String title = 'Tomorrow\u2019s check is set';
-  static const String body = 'Come back tomorrow and ArchiveMe will ask:';
+  static const String body = 'Come back tomorrow and Thoughtprint will ask:';
   static const String doneCta = 'Done for today';
   static const String recordAnotherCta = 'Record another moment';
 

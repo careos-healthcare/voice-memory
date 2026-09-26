@@ -43,7 +43,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Support feedback copy', () {
-    test('uses ArchiveMe branding and support URL', () {
+    test('uses Thoughtprint branding and support URL', () {
       const visible = [
         SupportFeedbackCopy.screenTitle,
         SupportFeedbackCopy.settingsTitle,
@@ -60,7 +60,7 @@ void main() {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(SupportFeedbackCopy.sectionNeedHelpBody, contains('ArchiveMe'));
+      expect(SupportFeedbackCopy.sectionNeedHelpBody, contains('Thoughtprint'));
       expect(SupportFeedbackCopy.supportUrl, AppConfig.supportUrl);
       expect(SupportFeedbackCopy.supportUrl, contains('archiveme-support'));
       expect(

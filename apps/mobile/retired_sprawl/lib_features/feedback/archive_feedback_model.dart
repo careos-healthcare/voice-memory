@@ -1,4 +1,4 @@
-/// What the user said about one piece of ArchiveMe output.
+/// What the user said about one piece of Thoughtprint output.
 enum ArchiveFeedbackType {
   useful,
   tooGeneric,

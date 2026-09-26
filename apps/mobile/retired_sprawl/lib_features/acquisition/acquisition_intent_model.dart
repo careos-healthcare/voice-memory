@@ -1,4 +1,4 @@
-/// Why the user opened ArchiveMe — analytics only.
+/// Why the user opened Thoughtprint — analytics only.
 enum AcquisitionIntent {
   workPressure,
   relationships,

@@ -83,7 +83,7 @@ abstract final class V1ProductionAllowlist {
     'PatternMapScreen',
     'DeveloperDiagnosticsScreen',
     'WeeklyArchiveReviewScreen',
-    'TestingArchiveMeScreen',
+    'TestingThoughtprintScreen',
     'YesterdaysSnapshotScreen',
     'ArchiveAnalystScreen',
     'MomentsScreen',

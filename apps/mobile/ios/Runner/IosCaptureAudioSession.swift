@@ -40,7 +40,16 @@ enum IosCaptureAudioSession {
 
   static func configure(mode: String) throws -> [String: Any] {
     let session = AVAudioSession.sharedInstance()
-    let avMode: AVAudioSession.Mode = mode == "measurement" ? .measurement : .spokenAudio
+    let avMode: AVAudioSession.Mode
+    switch mode {
+    case "measurement":
+      avMode = .measurement
+    case "voiceChat":
+      // Voice chat enables echo cancellation so playback is not transcribed.
+      avMode = .voiceChat
+    default:
+      avMode = .spokenAudio
+    }
 
     var options: AVAudioSession.CategoryOptions = [
       .defaultToSpeaker,

@@ -43,7 +43,7 @@ void main() {
   setUp(SampleArchiveTour.resetForTest);
 
   group('Sample archive tour copy', () {
-    test('uses ArchiveMe and no banned language', () {
+    test('uses Thoughtprint and no banned language', () {
       const visible = [
         SampleArchiveCopy.tourLabel,
         SampleArchiveCopy.tourTitle,
@@ -66,7 +66,7 @@ void main() {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(SampleArchiveCopy.tourStep1Body, contains('ArchiveMe'));
+      expect(SampleArchiveCopy.tourStep1Body, contains('Thoughtprint'));
     });
   });
 

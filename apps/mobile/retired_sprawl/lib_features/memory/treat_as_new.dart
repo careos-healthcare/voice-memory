@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 /// "Treat this as new" — a clear, lightweight way to keep one entry
 /// separate from previous archive patterns. Memory should be evidence,
-/// not gravity: ArchiveMe can connect entries when useful, and it can
+/// not gravity: Thoughtprint can connect entries when useful, and it can
 /// also leave an entry alone.
 ///
 /// What the flag does:
@@ -24,11 +24,11 @@ abstract class TreatAsNew {
   static const String controlLabel = 'Treat this as new';
   static const String helper = 'Not everything needs to connect.';
   static const String expandedHelper =
-      'ArchiveMe will save this entry without using it to suggest a '
+      'Thoughtprint will save this entry without using it to suggest a '
       'connection right now.';
   static const String postSaveTitle = 'Saved as a fresh entry.';
   static const String postSaveBody =
-      'ArchiveMe will not force this into an old pattern.';
+      'Thoughtprint will not force this into an old pattern.';
 
   // --- Session state ---
 

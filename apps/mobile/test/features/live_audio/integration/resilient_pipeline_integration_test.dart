@@ -55,7 +55,7 @@ IsolateAudioPipeline _inlineIsolatePipeline(PipelineConfig config) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('ArchiveMe Complete End-to-End Resiliency Suite', () {
+  group('Thoughtprint Complete End-to-End Resiliency Suite', () {
     late Directory vaultDirectory;
     late Directory pathProviderRoot;
     late InMemoryPrivateDataEncryptionKeyStore vaultKeyStore;

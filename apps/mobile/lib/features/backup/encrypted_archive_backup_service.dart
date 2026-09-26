@@ -12,6 +12,7 @@ class EncryptedArchiveBackupService {
     required this.databaseFile,
     required this.audioDirectory,
     required this.destination,
+    this.photosDirectory,
     this.secureStorage,
     this.kdfProfile = ArchiveBackupKdfProfile.production,
     this.weeklyEnabled = false,
@@ -22,6 +23,7 @@ class EncryptedArchiveBackupService {
 
   final File databaseFile;
   final Directory audioDirectory;
+  final Directory? photosDirectory;
   final EncryptedArchiveBackupDestination destination;
   final SecureStorageService? secureStorage;
   final ArchiveBackupKdfProfile kdfProfile;
@@ -32,6 +34,7 @@ class EncryptedArchiveBackupService {
     final sealed = await EncryptedArchiveBackupCodec.seal(
       databaseFile: databaseFile,
       audioDirectory: audioDirectory,
+      photosDirectory: photosDirectory,
       passphrase: passphrase,
       profile: kdfProfile,
     );
@@ -47,6 +50,7 @@ class EncryptedArchiveBackupService {
       passphrase: passphrase,
       databaseFile: databaseFile,
       audioDirectory: audioDirectory,
+      photosDirectory: photosDirectory,
     );
   }
 

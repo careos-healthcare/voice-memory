@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-/// Unified logging for ArchiveMe — wraps [developer.log] for debug output.
+/// Unified logging for Thoughtprint — wraps [developer.log] for debug output.
 abstract final class AppLogger {
   AppLogger._();
 
@@ -12,7 +12,7 @@ abstract final class AppLogger {
   }) {
     developer.log(
       message,
-      name: name ?? 'ArchiveMe',
+      name: name ?? 'Thoughtprint',
       level: 500,
       error: error,
       stackTrace: stackTrace,
@@ -27,7 +27,7 @@ abstract final class AppLogger {
   }) {
     developer.log(
       message,
-      name: name ?? 'ArchiveMe',
+      name: name ?? 'Thoughtprint',
       level: 1000,
       error: error,
       stackTrace: stackTrace,

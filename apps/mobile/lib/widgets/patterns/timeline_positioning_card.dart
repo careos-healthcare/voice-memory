@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Positions ArchiveMe as a timeline, not a chat — no subscription CTA.
+/// Positions Thoughtprint as a timeline, not a chat — no subscription CTA.
 class TimelinePositioningCard extends StatefulWidget {
   const TimelinePositioningCard({
     required this.result, required this.source, super.key,

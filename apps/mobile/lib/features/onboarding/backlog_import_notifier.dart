@@ -1,8 +1,11 @@
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/core/user/life_stage_lens.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/core/user/user_settings.dart';
 import 'package:archiveme_mobile/features/import/external_import_service.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/backlog_import_service.dart';
 import 'package:file_picker/file_picker.dart';
@@ -23,7 +26,9 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
 
   BacklogImportService get _service => ref.read(backlogImportServiceProvider);
 
-  Future<void> pickAndImport() async {
+  Future<void> pickAndImport({
+    Future<bool> Function()? confirmCloudUpload,
+  }) async {
     if (state.isActive) return;
 
     state = state.copyWith(
@@ -40,10 +45,16 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
       return;
     }
 
-    await importFromFiles(files);
+    await importFromFiles(
+      files,
+      confirmCloudUpload: confirmCloudUpload,
+    );
   }
 
-  Future<void> importFromFiles(List<PlatformFile> files) async {
+  Future<void> importFromFiles(
+    List<PlatformFile> files, {
+    Future<bool> Function()? confirmCloudUpload,
+  }) async {
     if (state.isActive) return;
 
     state = state.copyWith(
@@ -62,10 +73,26 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
       );
 
       // Mirror historical notes into local journal for cold-start browsing.
-      final localCoordinator = ExternalImportCoordinator(
-        V1AccountDependencies.fromAppServices().journalStore,
-      );
-      await localCoordinator.importFiles(files);
+      // Cloud upload is a separate choice and stays off unless that setting is on.
+      var preferences = AppServices.isInitialized
+          ? await UserPreferences.load(AppServices.instance.prefs)
+          : const UserPreferences();
+      if (!preferences.isCloudSyncEnabled && confirmCloudUpload != null) {
+        final allowed = await confirmCloudUpload();
+        if (allowed && AppServices.isInitialized) {
+          await UserPreferences.setCloudSyncEnabled(
+            AppServices.instance.prefs,
+            true,
+          );
+          preferences = await UserPreferences.load(AppServices.instance.prefs);
+        }
+      }
+      if (preferences.isCloudSyncEnabled) {
+        final localCoordinator = ExternalImportCoordinator(
+          V1AccountDependencies.fromAppServices().journalStore,
+        );
+        await localCoordinator.importFiles(files);
+      }
 
       final settings = AppServices.isInitialized
           ? await AppServices.instance.userSettings.load()
@@ -76,6 +103,38 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
 
       await _service.uploadQueue(
         chunks,
+        cloudSyncEnabled: preferences.isCloudSyncEnabled,
+        saveLocally: (chunk) async {
+          if (!AppServices.isInitialized) {
+            throw StateError('journal unavailable');
+          }
+          final store = V1AccountDependencies.fromAppServices().journalStore;
+          final recordedAt = (chunk.createdAt ?? DateTime.now()).toUtc();
+          await store.save(
+            JournalEntry(
+              id: chunk.entryId,
+              createdAt: recordedAt,
+              updatedAt: recordedAt,
+              transcript: chunk.rawText?.trim() ?? '',
+              durationSeconds: chunk.kind == BacklogImportChunkKind.audio
+                  ? 1
+                  : 0,
+              localAudioPath: chunk.audioPath,
+              captureSource: 'import',
+              reflection: const Reflection(
+                mood: '',
+                emotionalIntensity: 0,
+                recurringThemes: [],
+                exactLanguagePattern: '',
+                concreteObservation: '',
+                repeatedSignal: '',
+              ),
+            ),
+            captureKind: chunk.kind == BacklogImportChunkKind.audio
+                ? 'voice'
+                : 'typed',
+          );
+        },
         onProgress: (progress) => state = progress,
         activeLens: activeLens,
       );

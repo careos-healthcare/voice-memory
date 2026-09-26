@@ -169,6 +169,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
   Future<void> _stopAndProcess({bool reachedDurationLimit = false}) async {
     if (_stopAndProcessInFlight || _ui != RecordUiState.recording) return;
     _stopAndProcessInFlight = true;
+    _capturePaused = false;
     if (TrialMode.enabled) {
       await ActivationTracker.trackTrialSaveStarted();
     }

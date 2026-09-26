@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.
 import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/result_next_check_model.dart';
 
-/// Builds a single, plain-language summary of what ArchiveMe remembers about a
+/// Builds a single, plain-language summary of what Thoughtprint remembers about a
 /// pattern — pulling only from what is already stored.
 ///
 /// Everything is conservative: lines are omitted when their source is unknown,

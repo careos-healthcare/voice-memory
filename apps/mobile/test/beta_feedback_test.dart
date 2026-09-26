@@ -245,14 +245,14 @@ void main() {
   });
 
   group('Beta feedback copy', () {
-    test('uses ArchiveMe branding and safe language', () {
+    test('uses Thoughtprint branding and safe language', () {
       _expectNoBannedCopy(BetaFeedbackCopy.allVisibleCopy());
       for (final text in BetaFeedbackCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         BetaFeedbackCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 
@@ -269,13 +269,13 @@ void main() {
         ),
       ];
       for (final text in templates) {
-        expect(text, contains('ArchiveMe'));
+        expect(text, contains('Thoughtprint'));
         expect(text.toLowerCase(), isNot(contains('private')));
         expect(text.toLowerCase(), isNot(contains('transcript')));
       }
       expect(
         BetaFeedbackCopy.testimonialDefault,
-        'ArchiveMe helped me notice a pattern across my own saved moments.',
+        'Thoughtprint helped me notice a pattern across my own saved moments.',
       );
     });
 

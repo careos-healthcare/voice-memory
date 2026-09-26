@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/user_facing_date.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
@@ -31,7 +32,7 @@ class InlineEvidenceDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = VoiceMemoryTypography.bodyStyle().copyWith(height: 1.45);
+    final baseStyle = ArchiveMobileTypography.userWordsQuote(context);
     final highlightStyle = baseStyle.copyWith(
       color: VoiceMemoryColors.primaryIndigo,
       fontWeight: FontWeight.w700,
@@ -133,12 +134,26 @@ class _QuoteTile extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        RichText(
-          text: EvidenceKeywordHighlighter.buildHighlightedSpan(
-            quote: quote.verbatimText,
-            highlightTerms: highlightTerms,
-            baseStyle: baseStyle,
-            highlightStyle: highlightStyle,
+        DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: baseStyle.color?.withValues(alpha: 0.45) ??
+                    VoiceMemoryColors.textPrimary.withValues(alpha: 0.45),
+                width: 2,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: RichText(
+              text: EvidenceKeywordHighlighter.buildHighlightedSpan(
+                quote: quote.verbatimText,
+                highlightTerms: highlightTerms,
+                baseStyle: baseStyle,
+                highlightStyle: highlightStyle,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 6),

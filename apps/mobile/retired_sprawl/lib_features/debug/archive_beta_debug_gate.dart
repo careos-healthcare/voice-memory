@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/config/app_config.dart' show AppConfig;
 import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppConfig;
 import 'package:flutter/foundation.dart';
 
-/// Gates ArchiveMe loop-map beta debug controls from profile/release builds.
+/// Gates Thoughtprint loop-map beta debug controls from profile/release builds.
 ///
 /// Uses [kDebugMode] only — not [AppConfig.isDebugBuild], so `VM_DEBUG_TOOLS`
 /// cannot surface scripted saves, CSV export, or force-return hooks in the field.

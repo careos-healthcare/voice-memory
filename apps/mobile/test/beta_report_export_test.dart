@@ -139,7 +139,7 @@ void main() {
       final text = BetaReportExportEngine.build(
         betaCounts: _loopCounts(),
       ).formattedText;
-      expect(text.startsWith('ArchiveMe Beta Report\n'), isTrue);
+      expect(text.startsWith('Thoughtprint Beta Report\n'), isTrue);
       expect(text, contains('\n\nTester loop:\n'));
       expect(text, contains('\n\nCore value:\n'));
       expect(text, contains('\n\nProof of value:\n'));

@@ -49,7 +49,7 @@ class ProveEnoughPostRecordModel {
   /// 0–35 mostly choice; 36–65 mixed; 66–100 pressure looks high.
   String get enoughnessLabel {
     if (transcriptWeak) {
-      return 'ArchiveMe needs a clearer moment to score this well.';
+      return 'Thoughtprint needs a clearer moment to score this well.';
     }
     if (enoughnessScore <= 35) return 'Mostly choice';
     if (enoughnessScore <= 65) return 'Mixed choice and pressure';

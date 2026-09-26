@@ -162,7 +162,7 @@ class AccountDataPortabilityService {
     required DateTime exportedAt,
   }) {
     return '''
-# ArchiveMe Account Export
+# Thoughtprint Account Export
 
 Exported: ${exportedAt.toUtc().toIso8601String()}
 Entries: $entryCount
@@ -175,7 +175,7 @@ $trustFooter
 - `archive.json` — structured JSON (entries, export pack, evidence trails)
 - `archive.md` — human-readable Markdown reflections
 
-Store this ZIP where you trust. ArchiveMe does not upload exports to any server.
+Store this ZIP where you trust. Thoughtprint does not upload exports to any server.
 ''';
   }
 
@@ -185,7 +185,7 @@ Store this ZIP where you trust. ArchiveMe does not upload exports to any server.
     required DateTime exportedAt,
   }) {
     final buffer = StringBuffer()
-      ..writeln('# ArchiveMe Archive')
+      ..writeln('# Thoughtprint Archive')
       ..writeln()
       ..writeln('Exported: ${exportedAt.toUtc().toIso8601String()}')
       ..writeln('Reflections: ${entries.length}')

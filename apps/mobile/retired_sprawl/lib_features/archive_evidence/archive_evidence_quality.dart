@@ -61,11 +61,11 @@ abstract final class ArchiveEvidenceQualityCopy {
 
   static const savedTitle = 'Your moment is saved.';
   static const needsClearerWordsBody =
-      'ArchiveMe needs clearer words before it can compare this.';
+      'Thoughtprint needs clearer words before it can compare this.';
 
   static const patternsStillFormingTitle = 'Patterns are still forming';
   static const patternsNeedClearerMomentsBody =
-      'ArchiveMe needs clearer real moments before it can compare what repeats.';
+      'Thoughtprint needs clearer real moments before it can compare what repeats.';
 
   static const List<String> all = [
     savedTitle,

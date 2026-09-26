@@ -56,6 +56,9 @@ class _FakeAudio implements AudioRecorderAdapter {
   Future<void> resumeRecording() async {}
 
   @override
+  Stream<double> watchAmplitude() => const Stream.empty();
+
+  @override
   Stream<VadSegmentEvent>? get thoughtSegmentEvents => null;
 
   @override
@@ -112,6 +115,7 @@ class _FakeMoments implements LocalMomentRepository {
   @override
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
+    List<String> images = const [],
   }) async {
     if (typedResult != null) return Right(typedResult!);
     return Left(CapturePipelineFailure('typed failed'));
@@ -121,6 +125,7 @@ class _FakeMoments implements LocalMomentRepository {
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
+    List<String> images = const [],
   }) async {
     if (voiceError != null) throw voiceError!;
     if (voiceResult != null) return Right(voiceResult!);
@@ -232,6 +237,10 @@ class _FakeTranscriptionCapability implements TranscriptionCapabilityPort {
     if (recordLocaleShouldThrow) throw StateError('locale store failed');
     recordedLocales.add(locale);
   }
+
+  @override
+  Future<ConfirmedSpeechLocale?> readSpeechLocale() async =>
+      recordedLocales.isEmpty ? null : recordedLocales.last;
 }
 
 class _FakeTelemetry implements CaptureTelemetry {

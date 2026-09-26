@@ -194,17 +194,17 @@ void main() {
   });
 
   group('ReleaseCandidateComprehensionCopy', () {
-    test('copy headline says ArchiveMe is the proof trail', () {
+    test('copy headline says Thoughtprint is the proof trail', () {
       expect(
         ReleaseCandidateComprehensionCopy.headline,
-        'ArchiveMe is the proof trail',
+        'Thoughtprint is the proof trail',
       );
     });
 
     test('copy says public promise and not diary/chat/homework', () {
       expect(
         ReleaseCandidateComprehensionCopy.publicPromise,
-        'When something repeats, save one real moment. ArchiveMe compares it later.',
+        'When something repeats, save one real moment. Thoughtprint compares it later.',
       );
       expect(ReleaseCandidateComprehensionCopy.body, contains('Not a diary'));
       expect(ReleaseCandidateComprehensionCopy.body, contains('Not ChatGPT'));
@@ -360,7 +360,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as a voice assistant', () {
+    test('copy does not position Thoughtprint as a voice assistant', () {
       for (final text in [
         ReleaseCandidateComprehensionCopy.headline,
         ReleaseCandidateComprehensionCopy.firstProofLine,
@@ -378,7 +378,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as transcription', () {
+    test('copy does not position Thoughtprint as transcription', () {
       for (final text in [
         ReleaseCandidateComprehensionCopy.headline,
         ReleaseCandidateComprehensionCopy.firstProofLine,

@@ -1,9 +1,9 @@
-import 'package:archiveme_mobile/push/firebase_bootstrap.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-
-/// Background FCM handler — must be top-level.
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await FirebaseBootstrap.tryInitialize();
-  // Delivery recorded when app resumes; deep link handled on open.
+/// Background push entry point.
+///
+/// firebase_messaging is not linked while notifications are off, so there is
+/// no native background message to handle.
+Future<void> firebaseMessagingBackgroundHandler(
+  Map<String, dynamic> message,
+) async {
+  if (message.isEmpty) return;
 }

@@ -73,7 +73,7 @@ void main() {
     expect(enriched.length, greaterThan(png.length));
     expect(
       String.fromCharCodes(enriched),
-      contains('ArchiveMeReferral'),
+      contains('ThoughtprintReferral'),
     );
   });
 

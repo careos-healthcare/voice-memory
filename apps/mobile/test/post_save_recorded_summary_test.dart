@@ -228,7 +228,7 @@ void main() {
     });
 
     testWidgets(
-      'usable transcript after typed fallback shows What ArchiveMe heard',
+      'usable transcript after typed fallback shows What Thoughtprint heard',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -262,7 +262,7 @@ void main() {
       },
     );
 
-    testWidgets('non-empty transcript shows What ArchiveMe heard', (
+    testWidgets('non-empty transcript shows What Thoughtprint heard', (
       tester,
     ) async {
       await tester.pumpWidget(

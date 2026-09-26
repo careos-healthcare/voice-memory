@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
@@ -52,6 +53,7 @@ class AppTheme {
 
     final base = ThemeData(
       useMaterial3: true,
+      fontFamily: VoiceMemoryTypography.fontFamily,
       brightness: Brightness.light,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.backgroundPrimary,
@@ -81,7 +83,10 @@ class AppTheme {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
       ),
-      cardTheme: VoiceMemoryCards.cardTheme(),
+      cardTheme: VoiceMemoryCards.cardTheme(
+        surface: scheme.surface,
+        border: scheme.outline,
+      ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.backgroundSecondary,
         indicatorColor: AppColors.accentPrimary.withValues(alpha: 0.12),
@@ -198,6 +203,7 @@ class AppTheme {
           side: const BorderSide(color: AppColors.borderSubtle),
         ),
       ),
+      extensions: const [AppPalette.light],
     );
   }
 
@@ -225,6 +231,7 @@ class AppTheme {
 
     final base = ThemeData(
       useMaterial3: true,
+      fontFamily: VoiceMemoryTypography.fontFamily,
       brightness: Brightness.dark,
       colorScheme: scheme,
       scaffoldBackgroundColor: _darkBackgroundPrimary,
@@ -396,6 +403,7 @@ class AppTheme {
           side: const BorderSide(color: _darkBorderSubtle),
         ),
       ),
+      extensions: const [AppPalette.dark],
     );
   }
 }

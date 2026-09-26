@@ -90,7 +90,7 @@ class ReturnReasonCoordinator {
         leadLine: 'Keep recording.',
         bodyLines: const [
           'Your reflections pull in different directions.',
-          'ArchiveMe cannot yet determine whether:',
+          'Thoughtprint cannot yet determine whether:',
         ],
         beliefQuote: saved.beliefFocus,
         state: saved,
@@ -117,7 +117,7 @@ class ReturnReasonCoordinator {
         kind: ReturnReasonKind.uncertainPatterns,
         leadLine: 'Keep recording.',
         bodyLines: [
-          'ArchiveMe is still uncertain about:',
+          'Thoughtprint is still uncertain about:',
           ...saved.unresolvedPatterns.map((p) => '• $p'),
           '$needed more reflections may reveal a stronger pattern.',
         ],
@@ -133,8 +133,8 @@ class ReturnReasonCoordinator {
         kind: ReturnReasonKind.keepRecording,
         leadLine: 'Keep recording.',
         bodyLines: [
-          'ArchiveMe is still forming its first clear patterns.',
-          'ArchiveMe is still uncertain about:',
+          'Thoughtprint is still forming its first clear patterns.',
+          'Thoughtprint is still uncertain about:',
           ...saved.unresolvedPatterns.take(2).map((p) => '• $p'),
           '$needed more reflections may reveal a stronger pattern.',
         ],
@@ -148,7 +148,7 @@ class ReturnReasonCoordinator {
         kind: ReturnReasonKind.uncertainPatterns,
         leadLine: 'Keep recording.',
         bodyLines: [
-          'ArchiveMe has open questions it cannot answer yet.',
+          'Thoughtprint has open questions it cannot answer yet.',
           ...saved.pendingQuestions.take(2).map((q) => '• $q'),
           'Continue recording.',
         ],

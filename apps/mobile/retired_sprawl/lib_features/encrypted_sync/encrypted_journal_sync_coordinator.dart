@@ -7,12 +7,11 @@ import 'package:archiveme_mobile/features/encrypted_sync/sync_master_key_store.d
 import 'package:archiveme_mobile/storage/device_id.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/sync/sync_backoff_policy.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_store.dart';
 
 export 'encrypted_sync_service.dart';
 export 'legacy_plaintext_migration_service.dart';
-export 'sync_crypto.dart';
 export 'sync_master_key_store.dart';
 
 /// Orchestrates encrypted journal sync and optional legacy plaintext migration.
@@ -28,7 +27,7 @@ class EncryptedJournalSyncCoordinator {
     required DeviceIdStore deviceIds,
     required SyncMasterKeyStore keyStore,
     SyncOutboxStore? outboxStore,
-    SyncEngine? syncEngine,
+    SyncBackoffPolicy backoff = const SyncBackoffPolicy(),
   }) : _encrypted = EncryptedSyncService(
          syncApi: syncApi,
          journal: journal,
@@ -36,7 +35,7 @@ class EncryptedJournalSyncCoordinator {
          deviceIds: deviceIds,
          keyStore: keyStore,
          outboxStore: outboxStore,
-         syncEngine: syncEngine,
+         backoff: backoff,
        ),
        _legacyMigration = LegacyPlaintextMigrationService(
          syncApi: syncApi,

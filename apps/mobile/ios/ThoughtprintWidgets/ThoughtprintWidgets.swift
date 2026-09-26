@@ -79,5 +79,8 @@ struct ThoughtprintWidgetsBundle: WidgetBundle {
     if #available(iOS 16.1, *) {
       RecordingLiveActivityWidget()
     }
+    if #available(iOS 18, *) {
+      StartRecordingControl()
+    }
   }
 }

@@ -201,7 +201,7 @@ void main() {
         _sampleReport(),
       );
       expect(markdown, contains(ProveEnoughPatternReport.reportTitle));
-      expect(markdown, contains('ArchiveMe'));
+      expect(markdown, contains('Thoughtprint'));
     });
   });
 

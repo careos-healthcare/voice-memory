@@ -6,7 +6,7 @@ abstract final class FirstSessionOnboardingCopy {
 
   static const body =
       'Not a diary. Not ChatGPT. Not homework. Save one real moment when you '
-      'notice something coming back — ArchiveMe compares it later.';
+      'notice something coming back — Thoughtprint compares it later.';
 
   static const step1Title = 'Save one real moment';
   static const step1Body =
@@ -14,9 +14,9 @@ abstract final class FirstSessionOnboardingCopy {
 
   static const step2Title = 'Come back when it repeats';
   static const step2Body =
-      'Save the repeat here because ArchiveMe compares it later.';
+      'Save the repeat here because Thoughtprint compares it later.';
 
-  static const step3Title = 'See what ArchiveMe compares';
+  static const step3Title = 'See what Thoughtprint compares';
   static const step3Body =
       'After enough real moments, the first useful proof can appear.';
 
@@ -24,7 +24,7 @@ abstract final class FirstSessionOnboardingCopy {
   static const exploreCta = "I'll explore first";
 
   static const notChatFootnote =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const steps = <({String title, String body})>[
     (title: step1Title, body: step1Body),

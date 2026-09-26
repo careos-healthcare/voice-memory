@@ -13,11 +13,13 @@ import {
   summarizeBlobs,
 } from "@/lib/server/sync-route-log";
 import { upsertEncryptedBlobs } from "@/lib/server/sync-store";
+import { syncRecordLedger, type SyncRecordInput } from "@/lib/server/sync-records";
 import type { EncryptedPayload, SyncBlobType } from "@/types/sync";
 
 export const runtime = "nodejs";
 
 interface PushBody {
+  records?: SyncRecordInput[];
   blobs?: Array<{
     id: string;
     type: SyncBlobType;
@@ -31,6 +33,13 @@ interface PushBody {
 const MAX_SYNC_PUSH_BLOBS = 32;
 const MAX_SYNC_PUSH_BODY_BYTES = 8 * 1024 * 1024;
 const MAX_SYNC_BLOB_BYTES = 2 * 1024 * 1024;
+
+const plaintextKeys = ["text", "transcript", "audio", "plaintext"] as const;
+
+function carriesPlaintext(blob: object): boolean {
+  const record = blob as Record<string, unknown>;
+  return plaintextKeys.some((key) => record[key] != null);
+}
 
 function isValidIsoTimestamp(value: string | undefined): boolean {
   if (!value?.trim()) return false;
@@ -78,6 +87,22 @@ export async function POST(request: Request) {
     return syncApiFailure("SYNC_PUSH_TOO_LARGE", { status: 413, requestId });
   }
 
+  const records = body.records ?? [];
+  if (records.length > 0) {
+    const report = syncRecordLedger(session.userId).push(records);
+    if (!report.ok) {
+      return syncApiFailure(
+        report.status === 413
+          ? "SYNC_PUSH_TOO_LARGE"
+          : report.status === 429
+            ? "SYNC_PUSH_TOO_MANY_BLOBS"
+            : "PLAINTEXT_NOT_ACCEPTED",
+        { status: report.status, requestId },
+      );
+    }
+    return syncApiSuccess({ cursor: report.cursor, records: report.records });
+  }
+
   const blobs = body.blobs ?? [];
   if (blobs.length > MAX_SYNC_PUSH_BLOBS) {
     log({
@@ -103,6 +128,14 @@ export async function POST(request: Request) {
   log(summary);
 
   for (const blob of blobs) {
+    if (carriesPlaintext(blob)) {
+      log({
+        ok: false,
+        errorCode: "PLAINTEXT_NOT_ACCEPTED",
+        responseShape: "plaintext_blob",
+      });
+      return syncApiFailure("PLAINTEXT_NOT_ACCEPTED", { status: 400, requestId });
+    }
     if (!blob.id || !blob.type || !blob.encrypted?.ciphertext || !blob.encrypted?.iv) {
       log({
         ok: false,

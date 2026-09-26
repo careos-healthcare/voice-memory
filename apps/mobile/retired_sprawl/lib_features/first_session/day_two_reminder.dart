@@ -24,7 +24,7 @@ abstract class DayTwoReminder {
   // Prompt copy.
   static const String promptTitle = 'Check this tomorrow?';
   static const String promptBody =
-      'ArchiveMe can remind you once to check whether this returned, faded, '
+      'Thoughtprint can remind you once to check whether this returned, faded, '
       'or changed.';
   static const String acceptLabel = 'Remind me tomorrow';
   static const String declineLabel = 'Not now';

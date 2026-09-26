@@ -26,6 +26,7 @@ abstract class VoiceMemoryCaptureApi {
   Future<TranscribeResponseDto> transcribe({
     @Part(name: 'durationSeconds') required String durationSeconds,
     @Part(name: 'audio') required File audio,
+    @Part(name: 'language') String? language,
     @Header('x-vm-capture-token') required String captureToken,
     @Header('x-vm-idempotency-key') String? idempotencyKey,
   });

@@ -115,7 +115,7 @@ void main() {
       expect(payoff, isNotNull);
       expect(
         payoff!.body,
-        'ArchiveMe needs one more moment before it can compare clearly.',
+        'Thoughtprint needs one more moment before it can compare clearly.',
       );
       expect(payoff.secondaryCta, 'View archive');
     });
@@ -270,7 +270,7 @@ void main() {
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
       expect(
         find.textContaining(
-          'ArchiveMe needs one more moment before it can compare clearly',
+          'Thoughtprint needs one more moment before it can compare clearly',
         ),
         findsOneWidget,
       );

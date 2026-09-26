@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/storage/isolate/local_database_worker_protocol.
 import 'package:archiveme_mobile/storage/sqlite/isolate_safe_sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_bulk_sync.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_graph_backfill.dart';
-import 'package:archiveme_mobile/sync/sync_crypto.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Top-level entry for the persistent local database worker isolate.
@@ -131,7 +131,7 @@ final class _LocalDatabaseWorkerRuntime {
   Future<List<Map<String, dynamic>>> _encryptJsonBatch(
     Map<String, dynamic> payload,
   ) async {
-    final crypto = SyncCrypto(_readMasterKeyBytes(payload));
+    final key = _readMasterKeyBytes(payload);
     final items = payload['payloadMaps'];
     if (items is! List) {
       return const [];
@@ -142,7 +142,10 @@ final class _LocalDatabaseWorkerRuntime {
       if (item is! Map) {
         continue;
       }
-      final envelope = await crypto.encryptJson(Map<String, dynamic>.from(item));
+      final envelope = await RecordSync.sealJson(
+        accountKey: key,
+        plaintext: Map<String, dynamic>.from(item),
+      );
       encrypted.add(envelope.toJson());
     }
     return encrypted;
@@ -151,7 +154,7 @@ final class _LocalDatabaseWorkerRuntime {
   Future<List<Map<String, dynamic>>> _decryptJsonBatch(
     Map<String, dynamic> payload,
   ) async {
-    final crypto = SyncCrypto(_readMasterKeyBytes(payload));
+    final key = _readMasterKeyBytes(payload);
     final items = payload['encryptedPayloadMaps'];
     if (items is! List) {
       return const [];
@@ -163,7 +166,9 @@ final class _LocalDatabaseWorkerRuntime {
         continue;
       }
       final envelope = EncryptedPayload.fromJson(Map<String, dynamic>.from(item));
-      decrypted.add(await crypto.decryptJson(envelope));
+      decrypted.add(
+        await RecordSync.openJson(accountKey: key, envelope: envelope),
+      );
     }
     return decrypted;
   }

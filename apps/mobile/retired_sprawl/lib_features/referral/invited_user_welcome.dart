@@ -14,39 +14,39 @@ import 'package:flutter/foundation.dart';
 abstract class InvitedUserWelcome {
   InvitedUserWelcome._();
 
-  static const String defaultTitle = 'You were invited to try ArchiveMe';
+  static const String defaultTitle = 'You were invited to try Thoughtprint';
   static const String defaultBody =
-      'Start with one small recording. ArchiveMe helps notice what keeps '
+      'Start with one small recording. Thoughtprint helps notice what keeps '
       'returning, fading, or changing.';
 
   static const String weeklyReviewTitle =
       'You were invited after a weekly review';
   static const String weeklyReviewBody =
-      'Start with one small recording. Later, ArchiveMe can compare what '
+      'Start with one small recording. Later, Thoughtprint can compare what '
       'returned, faded, or changed.';
 
   static const String threadReturnTitle =
       'You were invited because a thread came back';
   static const String threadReturnBody =
-      'Start with one small recording. ArchiveMe can help notice what keeps '
+      'Start with one small recording. Thoughtprint can help notice what keeps '
       'returning.';
 
   static const String beliefDistanceTitle =
       'You were invited because something kept showing up';
   static const String beliefDistanceBody =
-      'Start with one small recording. ArchiveMe can help notice repeated '
+      'Start with one small recording. Thoughtprint can help notice repeated '
       'phrases over time.';
 
   static const String proofCounterTitle =
       'You were invited after recordings started connecting';
   static const String proofCounterBody =
-      'Start with one small recording. ArchiveMe can help connect evidence '
+      'Start with one small recording. Thoughtprint can help connect evidence '
       'over time.';
 
   static const String proRetentionTitle =
-      'You were invited by someone using ArchiveMe';
+      'You were invited by someone using Thoughtprint';
   static const String proRetentionBody =
-      'Start with one small recording. ArchiveMe helps keep track of what '
+      'Start with one small recording. Thoughtprint helps keep track of what '
       'returns, fades, or changes.';
 
   static const String ctaLabel = 'Record one small thing';

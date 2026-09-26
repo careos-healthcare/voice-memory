@@ -10,11 +10,15 @@ class EntryReadAloudButton extends StatefulWidget {
     required this.text,
     this.offlineTts,
     this.resolveOfflineTts,
+    this.registerToggle,
+    this.visible = true,
     super.key,
   });
 
   final String text;
   final OfflineTtsService? offlineTts;
+  final void Function(Future<void> Function() toggle)? registerToggle;
+  final bool visible;
 
   /// When null and [offlineTts] is null, the control stays hidden.
   final Future<OfflineTtsService?> Function()? resolveOfflineTts;
@@ -33,6 +37,7 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
   void initState() {
     super.initState();
     _service = widget.offlineTts;
+    widget.registerToggle?.call(_toggle);
     if (_service == null && widget.resolveOfflineTts != null) {
       unawaited(_resolveService());
     }
@@ -123,7 +128,7 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
   @override
   Widget build(BuildContext context) {
     final trimmed = widget.text.trim();
-    if (trimmed.isEmpty) {
+    if (!widget.visible || trimmed.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -140,19 +145,25 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
         : EntryReadAloudCopy.listen;
     final icon = _speaking ? Icons.stop_circle_outlined : Icons.volume_up_outlined;
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: TextButton.icon(
-        key: const Key('entry_read_aloud_button'),
-        onPressed: (service == null && _resolving) || _preparing ? null : _toggle,
-        icon: _preparing
-            ? const SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : Icon(icon, size: 18),
-        label: Text(label),
+    return Semantics(
+      button: true,
+      label: _speaking ? 'Stop' : 'Play',
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          key: const Key('entry_read_aloud_button'),
+          onPressed: (service == null && _resolving) || _preparing
+              ? null
+              : _toggle,
+          icon: _preparing
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(icon, size: 18),
+          label: Text(label),
+        ),
       ),
     );
   }

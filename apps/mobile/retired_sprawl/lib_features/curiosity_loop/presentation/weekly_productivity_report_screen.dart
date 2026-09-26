@@ -150,7 +150,7 @@ class _WeeklyProductivityReportScreenState
       final outcome = await ArchiveShareActions.shareShareText(
         context,
         text: encoded,
-        subject: 'ArchiveMe curiosity loop backup',
+        subject: 'Thoughtprint curiosity loop backup',
       );
       if (!mounted) return;
       if (outcome == ArchiveShareOutcome.shared ||

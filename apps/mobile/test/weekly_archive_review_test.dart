@@ -175,7 +175,7 @@ void main() {
       );
       expect(
         review.sourceLine,
-        'ArchiveMe is using your saved words, not guessing.',
+        'Thoughtprint is using your saved words, not guessing.',
       );
       _expectNoBannedCopy([
         review.title,

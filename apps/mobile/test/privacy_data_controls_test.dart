@@ -158,7 +158,7 @@ void main() {
   });
 
   group('Privacy explanation copy', () {
-    test('uses ArchiveMe and not VoiceMemory in user-facing copy', () {
+    test('uses Thoughtprint and not VoiceMemory in user-facing copy', () {
       _expectNoBannedCopy([
         PrivacyDataControlsCopy.dataStaysOnDeviceTitle,
         PrivacyDataControlsCopy.dataStaysOnDeviceBody,
@@ -167,7 +167,7 @@ void main() {
       ]);
       expect(
         PrivacyDataControlsCopy.dataStaysOnDeviceBody,
-        contains('ArchiveMe'),
+        contains('Thoughtprint'),
       );
       expect(
         PrivacyDataControlsCopy.dataStaysOnDeviceBody,
@@ -175,7 +175,7 @@ void main() {
       );
     });
 
-    testWidgets('privacy explanation sheet renders ArchiveMe copy', (
+    testWidgets('privacy explanation sheet renders Thoughtprint copy', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -195,7 +195,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('privacy_data_stays_body')), findsOneWidget);
-      expect(find.textContaining('ArchiveMe'), findsOneWidget);
+      expect(find.textContaining('Thoughtprint'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
   });

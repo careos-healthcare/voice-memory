@@ -25,7 +25,7 @@ class ArchiveProofCounter {
   /// Shown once a thread genuinely repeated — there is now something real to
   /// compare against tomorrow. An observation, never an assignment.
   static const String enoughEvidenceLine =
-      'ArchiveMe now has enough evidence to compare tomorrow.';
+      'Thoughtprint now has enough evidence to compare tomorrow.';
 
   /// Post-save acknowledgement: one more piece of evidence exists. No streak,
   /// no demand to continue.

@@ -96,13 +96,19 @@ class OneSmallRecordingCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           if (showRecordCta) ...[
-            SizedBox(
-              width: double.infinity,
-              height: 44,
-              child: FilledButton(
-                key: const Key('one_small_recording_record_cta'),
-                onPressed: () => onRecordThis(recording.prompt),
-                child: Text(ctaLabel, overflow: TextOverflow.ellipsis),
+            Semantics(
+              button: true,
+              label: 'Record',
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  key: const Key('one_small_recording_record_cta'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                  onPressed: () => onRecordThis(recording.prompt),
+                  child: Text(ctaLabel),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),

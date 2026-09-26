@@ -242,7 +242,7 @@ void main() {
   });
 
   group('Copy consistency', () {
-    test('key surfaces use ArchiveMe and calm sticky-loop language', () {
+    test('key surfaces use Thoughtprint and calm sticky-loop language', () {
       _expectNoBannedCopy([
         ...ArchiveHomePriorityCopy.allVisibleCopy(),
         ...TodaysQuestionCopy.allVisibleStrings,

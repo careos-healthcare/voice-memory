@@ -209,7 +209,7 @@ void main() {
         (d) => d.type == ArchiveDiscoveryShareCardType.contradiction,
       );
       expect(card.introLine, 'My archive noticed:');
-      expect(card.footer, 'ArchiveMe');
+      expect(card.footer, 'Thoughtprint');
       expect(card.insight, contains('balance'));
       expect(card.evidenceRecordingCount, 1);
     });

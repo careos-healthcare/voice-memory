@@ -273,8 +273,8 @@ void main() {
       expect(ProTrustCopy.shareBody.contains(_privateNote), isFalse);
     });
 
-    test('share proof includes ArchiveMe branding', () {
-      expect(ProTrustCopy.shareTextTemplate, contains('ArchiveMe'));
+    test('share proof includes Thoughtprint branding', () {
+      expect(ProTrustCopy.shareTextTemplate, contains('Thoughtprint'));
       expect(ProTrustCopy.shareTextTemplate, isNot(contains('VoiceMemory')));
       expect(
         ProTrustCopy.shareTextTemplate.toLowerCase(),

@@ -353,7 +353,7 @@ void main() {
       },
     );
 
-    test('copy uses ArchiveMe branding and calm tone', () {
+    test('copy uses Thoughtprint branding and calm tone', () {
       final copy = ArchiveHomePriorityCopy.allVisibleCopy()
           .join(' ')
           .toLowerCase();

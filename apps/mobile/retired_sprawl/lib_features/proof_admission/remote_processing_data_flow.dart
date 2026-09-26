@@ -11,7 +11,7 @@ abstract final class RemoteProcessingDataFlow {
       sendsAudio: true,
       sendsText: false,
       summary:
-          'Recorded audio is sent to ArchiveMe servers for transcription when '
+          'Recorded audio is sent to Thoughtprint servers for transcription when '
           'this purpose is enabled.',
     ),
     RemoteProcessingPurpose.remoteReflection: RemoteProcessingPurposeFlow(
@@ -19,7 +19,7 @@ abstract final class RemoteProcessingDataFlow {
       sendsAudio: false,
       sendsText: true,
       summary:
-          'Transcript text is sent to ArchiveMe servers for reflection and '
+          'Transcript text is sent to Thoughtprint servers for reflection and '
           'comparison when this purpose is enabled.',
     ),
   };

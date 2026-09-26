@@ -132,7 +132,7 @@ abstract class ActivePatternThreadCoordinator {
 
   static String recordStatusLine(ActivePatternThread thread) {
     if (thread.needsOneMoreMoment) {
-      return 'ArchiveMe needs one more moment on this pattern.';
+      return 'Thoughtprint needs one more moment on this pattern.';
     }
     switch (thread.status) {
       case ActivePatternThreadStatus.active:

@@ -53,7 +53,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('Sample archive copy', () {
-    test('uses ArchiveMe-facing labels and no banned language', () {
+    test('uses Thoughtprint-facing labels and no banned language', () {
       const visible = [
         SampleArchiveCopy.emptyStateTitle,
         SampleArchiveCopy.emptyStateSubtitle,

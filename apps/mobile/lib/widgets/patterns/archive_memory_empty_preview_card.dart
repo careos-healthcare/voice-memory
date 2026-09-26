@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 
-/// Day-zero preview of what ArchiveMe will remember once enough moments exist.
+/// Day-zero preview of what Thoughtprint will remember once enough moments exist.
 class ArchiveMemoryEmptyPreviewCard extends StatefulWidget {
   const ArchiveMemoryEmptyPreviewCard({required this.onRecord, super.key});
 

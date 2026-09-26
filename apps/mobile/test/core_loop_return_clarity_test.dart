@@ -145,7 +145,7 @@ void main() {
     test('patterns one-entry body avoids generic add-more framing', () {
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        'Record one more clear moment and ArchiveMe can compare what repeats.',
+        'Record one more clear moment and Thoughtprint can compare what repeats.',
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedCta,

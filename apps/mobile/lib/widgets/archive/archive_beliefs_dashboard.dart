@@ -95,7 +95,7 @@ class _StoryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          // Not quoted: `statement` is a theme ArchiveMe derived, not the
+          // Not quoted: `statement` is a theme Thoughtprint derived, not the
           // user's words, so quotation marks would misattribute it.
           Text(item.statement, style: VoiceMemoryTypography.bodyStyle()),
           const SizedBox(height: AppSpacing.xs),

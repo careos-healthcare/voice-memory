@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:archiveme_mobile/core/config/live_conversation_feature_flags.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -16,10 +20,11 @@ import 'package:archiveme_mobile/features/transcript_correction/transcript_corre
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_gate.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/record/correct_transcript_sheet.dart';
 import 'package:archiveme_mobile/widgets/record/moment_save_receipt_card.dart';
 import 'package:archiveme_mobile/widgets/record/pending_transcript_recovery_sheet.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,6 +41,7 @@ class CaptureScreen extends StatefulWidget {
     this.dependencies,
     this.allowBackgroundRecording = false,
     this.adoptBackgroundCapture = false,
+    this.autoRecord = false,
     this.stopBackgroundCapture,
   });
 
@@ -49,6 +55,7 @@ class CaptureScreen extends StatefulWidget {
   final CaptureFlowDependencies? dependencies;
   final bool allowBackgroundRecording;
   final bool adoptBackgroundCapture;
+  final bool autoRecord;
   final Future<void> Function()? stopBackgroundCapture;
 
   @override
@@ -59,6 +66,7 @@ class _CaptureScreenState extends State<CaptureScreen>
     with WidgetsBindingObserver {
   late final CaptureFlowController _controller;
   late final TextEditingController _typedController;
+  var _reflect = false;
 
   V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -68,21 +76,47 @@ class _CaptureScreenState extends State<CaptureScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _controller = CaptureFlowController(
-      widget.dependencies ??
-          CaptureFlowDependencies.fromAccount(_accountDeps),
+      widget.dependencies ?? CaptureFlowDependencies.fromAccount(_accountDeps),
       attachToEntryId: widget.attachToEntryId,
       routineKindOverride:
           widget.routineKindOverride ??
           CaptureRoutineLaunchController.takePendingRoutine(),
       stopBackgroundCapture: widget.stopBackgroundCapture,
     );
-    _typedController = TextEditingController(text: widget.initialTypedText ?? '');
+    _typedController = TextEditingController(
+      text: widget.initialTypedText ?? '',
+    );
     _controller.addListener(_syncNavigationActivity);
     _controller.setInputMode(widget.initialInputMode);
-    unawaited(_controller.initialize().then((_) {
-      if (!mounted || !widget.adoptBackgroundCapture) return;
-      _controller.showBackgroundRecordingUi();
-    }));
+    unawaited(_loadReflectChoice());
+    unawaited(
+      _controller.initialize().then((_) {
+        if (!mounted) return;
+        if (widget.adoptBackgroundCapture) {
+          _controller.showBackgroundRecordingUi();
+        } else if (widget.autoRecord) {
+          unawaited(_controller.startVoiceCapture());
+        }
+      }),
+    );
+  }
+
+  Future<void> _loadReflectChoice() async {
+    if (!LiveConversationFeatureFlags.enabled) return;
+    final stored = AppServices.isInitialized
+        ? await AppServices.instance.prefs.readBool('reflect_with_me')
+        : null;
+    if (!mounted) return;
+    final enabled = stored ?? false;
+    _controller.setReflectWithMe(enabled);
+    setState(() => _reflect = enabled);
+  }
+
+  Future<void> _setReflect(bool value) async {
+    _controller.setReflectWithMe(value);
+    setState(() => _reflect = value);
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeBool('reflect_with_me', value);
   }
 
   @override
@@ -116,8 +150,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       CaptureFlowPhase.recording => RecordNavigationActivity.recording,
       CaptureFlowPhase.stopping ||
       CaptureFlowPhase.savingLocal ||
-      CaptureFlowPhase.processingRemote =>
-        RecordNavigationActivity.processing,
+      CaptureFlowPhase.processingRemote => RecordNavigationActivity.processing,
       _ => RecordNavigationActivity.idle,
     };
     nav.update(activity);
@@ -130,7 +163,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       builder: (context, _) {
         final snapshot = _controller.snapshot;
         return ColoredBox(
-          color: AppColors.backgroundPrimary,
+          color: context.palette.backgroundPrimary,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -147,48 +180,75 @@ class _CaptureScreenState extends State<CaptureScreen>
       return _buildReceipt(context, snapshot);
     }
 
-    return SingleChildScrollView(
-      child: switch (snapshot.phase) {
-        CaptureFlowPhase.ready => CaptureReadyPanel(
-          inputMode: snapshot.inputMode,
-          attachMode: snapshot.isAttachMode,
-          onStartVoice: _controller.startVoiceCapture,
-          onSaveTyped: _controller.saveTypedCapture,
-          onSwitchMode: _controller.setInputMode,
-          permissionBlocked: snapshot.permissionBlocked,
-          permissionRequiresSettings: snapshot.permissionRequiresSettings,
-          errorMessage: snapshot.errorMessage,
-          typedController: _typedController,
-          saving: false,
-          routinePrompt: snapshot.showsRoutinePrompt
-              ? snapshot.routinePrompt
-              : null,
-          routinePromptLoading: snapshot.routinePromptLoading,
-          onSelectRoutinePrompt: _handleRoutinePromptSelected,
-          onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
-        ),
-        CaptureFlowPhase.requestingPermission ||
-        CaptureFlowPhase.stopping ||
-        CaptureFlowPhase.savingLocal ||
-        CaptureFlowPhase.processingRemote => CaptureBusyPanel(
-          label: snapshot.stageLabel,
-        ),
-        CaptureFlowPhase.recording => CaptureRecordingPanel(
-          duration: snapshot.recordingDuration,
-          onStop: _controller.stopVoiceCapture,
-          onCancel: _controller.cancelVoiceCapture,
-        ),
-        CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
-          message: snapshot.errorMessage ?? 'Something went wrong.',
-          hasLocalSave: snapshot.hasLocalSave,
-          onRetry: snapshot.hasLocalSave
-              ? _controller.retryRemoteProcessing
-              : null,
-          onDismiss: _controller.resetToReady,
-        ),
-        CaptureFlowPhase.savedLocal ||
-        CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
-      },
+    return switch (snapshot.phase) {
+      CaptureFlowPhase.ready => CaptureReadyPanel(
+        inputMode: snapshot.inputMode,
+        attachMode: snapshot.isAttachMode,
+        onStartVoice: _controller.startVoiceCapture,
+        onSaveTyped: _controller.saveTypedCapture,
+        onSwitchMode: _controller.setInputMode,
+        permissionBlocked: snapshot.permissionBlocked,
+        permissionRequiresSettings: snapshot.permissionRequiresSettings,
+        microphoneGranted: snapshot.microphoneGranted,
+        onPromptContext: _handlePromptContext,
+        errorMessage: snapshot.errorMessage,
+        typedController: _typedController,
+        saving: false,
+        routinePrompt: snapshot.showsRoutinePrompt
+            ? snapshot.routinePrompt
+            : null,
+        routinePromptLoading: snapshot.routinePromptLoading,
+        onSelectRoutinePrompt: _handleRoutinePromptSelected,
+        onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
+        onAddPhoto: _addPhoto,
+        imageCount: snapshot.attachedImages.length,
+        leading: _reflectToggle(),
+      ),
+      CaptureFlowPhase.requestingPermission ||
+      CaptureFlowPhase.stopping ||
+      CaptureFlowPhase.savingLocal ||
+      CaptureFlowPhase.processingRemote => CaptureBusyPanel(
+        label: snapshot.stageLabel,
+        savedOnDevice: snapshot.deviceSaveVisible,
+        transcript: snapshot.savedEntry?.transcript,
+      ),
+      CaptureFlowPhase.recording => CaptureRecordingPanel(
+        duration: snapshot.recordingDuration,
+        levels: snapshot.amplitudeBars,
+        paused: snapshot.recordingPaused,
+        draftText: snapshot.draftTranscript,
+        turns: snapshot.conversationTurns,
+        chatLines: snapshot.chatLines,
+        onStop: _controller.stopVoiceCapture,
+        onPause: _controller.pauseVoiceCapture,
+        onResume: _controller.resumeVoiceCapture,
+        onCancel: _controller.cancelVoiceCapture,
+        onTakePhoto: () => _addPhoto(ImageSource.camera),
+        onChoosePhoto: () => _addPhoto(ImageSource.gallery),
+        imagePaths: snapshot.attachedImages,
+        onThatsAll: _reflect ? () => unawaited(_controller.endReflect()) : null,
+      ),
+      CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
+        message: snapshot.errorMessage ?? 'Something went wrong.',
+        hasLocalSave: snapshot.hasLocalSave,
+        onRetry: snapshot.hasLocalSave
+            ? _controller.retryRemoteProcessing
+            : null,
+        onDismiss: _controller.resetToReady,
+      ),
+      CaptureFlowPhase.savedLocal ||
+      CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
+    };
+  }
+
+  Widget? _reflectToggle() {
+    if (!LiveConversationFeatureFlags.enabled) return null;
+    return SwitchListTile(
+      key: const Key('reflect_with_me_toggle'),
+      contentPadding: EdgeInsets.zero,
+      title: const Text('Reflect with me'),
+      value: _reflect,
+      onChanged: (value) => unawaited(_setReflect(value)),
     );
   }
 
@@ -227,7 +287,8 @@ class _CaptureScreenState extends State<CaptureScreen>
             onRecordAnother: _controller.resetToReady,
             onViewArchive: () => context.go('/archive-belief'),
             onChooseWhatLeaves: () => context.push('/privacy-trust-centre'),
-            onRetryRemote: remoteStatus == MomentSaveRemoteStatus.failedRetryable
+            onRetryRemote:
+                remoteStatus == MomentSaveRemoteStatus.failedRetryable
                 ? _controller.retryRemoteProcessing
                 : null,
             onCorrectText: TranscriptCorrectionGate.entryAllowsCorrection(entry)
@@ -237,9 +298,35 @@ class _CaptureScreenState extends State<CaptureScreen>
                 ? () => unawaited(_openPendingTranscriptRecovery(entry))
                 : null,
           ),
+          if (V1CapabilityRegistry.photoAttachments)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: const Key('receipt_add_photo'),
+                onPressed: () => unawaited(_addPhoto()),
+                icon: const Icon(Icons.photo_outlined),
+                label: const Text('Add a photo'),
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  String? _promptContext;
+
+  Future<void> _addPhoto([ImageSource source = ImageSource.gallery]) async {
+    final saved = _controller.snapshot.savedEntry;
+    final paths = await pickEntryImages(source: source, entryId: saved?.id);
+    if (saved == null) {
+      _controller.addPhotos(paths);
+      return;
+    }
+    await _controller.attachPhotosToSavedEntry(paths);
+  }
+
+  void _handlePromptContext(String line) {
+    _promptContext = line.trim();
   }
 
   void _handleRoutinePromptSelected(String line) {

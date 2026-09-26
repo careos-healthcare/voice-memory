@@ -44,7 +44,7 @@ Never output generic career-coaching platitudes without citing a specific workpl
 
   static const coldStartTitle = 'Capture your career transition';
   static const coldStartSubtitle =
-      'Start with the tipping point — names, teams, and dates help ArchiveMe '
+      'Start with the tipping point — names, teams, and dates help Thoughtprint '
       'build your fact ledger.';
 
   static bool get isCareerTransitionLens => true;

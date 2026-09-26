@@ -97,7 +97,7 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
       await _pumpFrames(tester);
 
-      expect(find.text('ArchiveMe'), findsOneWidget);
+      expect(find.text('Thoughtprint'), findsOneWidget);
       expect(
         find.text(ConsumerUiCopy.onboardingPositioningHeadline),
         findsOneWidget,

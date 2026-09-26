@@ -43,7 +43,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('App Store submission copy', () {
-    test('uses ArchiveMe branding, not VoiceMemory', () {
+    test('uses Thoughtprint branding, not VoiceMemory', () {
       final visible = [
         ...AppStoreSubmissionCopy.screenshotCaptions,
         ...AppStoreSubmissionCopy.reviewerNotes,
@@ -58,7 +58,7 @@ void main() {
       }
       expect(
         AppStoreSubmissionCopy.reviewerNoteTypeInstead,
-        contains('ArchiveMe'),
+        contains('Thoughtprint'),
       );
     });
 

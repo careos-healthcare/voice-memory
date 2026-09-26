@@ -6,6 +6,10 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Thoughtprint</string>
 	<key>CFBundleExecutable</key>
@@ -41,14 +45,16 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 	</dict>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Thoughtprint reads calendar events you choose so a moment can remember when it happened.</string>
+	<key>ExcludedFromBackup</key>
+	<array>
+		<string>archiveme.db</string>
+		<string>archiveme.db-wal</string>
+		<string>archiveme.db-shm</string>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Thoughtprint uses Face ID to unlock the app on this device.</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Thoughtprint reads the health details you choose to keep with a moment, and stores them on this device.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Thoughtprint writes health details only when you choose to save them with a moment.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Thoughtprint uses your location to name the place on a moment you save.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Thoughtprint uses the microphone so you can record a voice note on this device.</string>
 	<key>UIBackgroundModes</key>
@@ -62,6 +68,36 @@
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Thoughtprint turns a recording into text on this device when you ask it to.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Thoughtprint reads the State of Mind you logged in Apple Health so it can show that mood beside the moment from the same day.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Thoughtprint saves the mood you choose to Apple Health, only if you turn this on.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Thoughtprint lets you attach photos you choose to a moment. Photos stay on your device unless you turn on sync.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Thoughtprint lets you take a photo to attach to a moment.</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Voice Memo</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.mpeg-4-audio</string>
+				<string>com.apple.m4a-audio</string>
+				<string>public.mp3</string>
+				<string>public.wav</string>
+				<string>com.microsoft.waveform-audio</string>
+				<string>org.xiph.ogg-audio</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

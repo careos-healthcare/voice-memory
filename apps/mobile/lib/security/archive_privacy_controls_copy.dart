@@ -9,7 +9,7 @@ abstract class ArchivePrivacyControlsCopy {
 
   static const String cardTitle = PrivacyClaimCatalogue.archiveIsPrivateTitle;
 
-  static const String lockTitle = PrivacyCopyPolicy.lockArchiveMe;
+  static const String lockTitle = PrivacyCopyPolicy.lockThoughtprint;
   static const String lockSubtitle =
       'Require Face ID, Touch ID, or a PIN before opening your archive on this device.';
 

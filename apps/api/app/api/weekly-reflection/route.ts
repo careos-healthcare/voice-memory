@@ -8,7 +8,10 @@ import {
 import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
-import type { WeeklyReflectionPayload } from "@/types/weekly";
+import {
+  parseWeeklyReflectionBody,
+  synthesizeWeeklyRecap,
+} from "../../../src/routes/weekly-reflection";
 
 export const runtime = "nodejs";
 
@@ -34,9 +37,23 @@ function parseSummary(raw: string): string {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as WeeklyReflectionPayload;
+    const parsed = parseWeeklyReflectionBody(await request.json());
+    if (typeof parsed === "string") {
+      return apiErrorResponse({
+        code: "WEEKLY_REFLECTION_NO_ENTRIES",
+        message: parsed,
+        status: 400,
+        route: "weekly-reflection",
+      });
+    }
 
-    if (!body.weekEndingKey || body.entryCount === 0) {
+    if (parsed.kind === "entries") {
+      const recap = await synthesizeWeeklyRecap(parsed.entries);
+      return NextResponse.json(recap);
+    }
+
+    const aggregate = parsed.aggregate;
+    if (aggregate.entryCount === 0) {
       return apiErrorResponse({ code: "WEEKLY_REFLECTION_NO_ENTRIES", route: "weekly-reflection" });
     }
 
@@ -47,19 +64,19 @@ export async function POST(request: Request) {
 
     const userContent = `Weekly intelligence aggregates (last 7 days vs prior 7 days):
 
-This week (${body.weekEndingKey} window):
-- Entries: ${body.entryCount}
-- Dominant emotions: ${body.dominantEmotions.join(", ") || "none"}
-- Recurring themes: ${body.recurringThemes.join(", ") || "none"}
-- Repeated threads: ${body.repeatedConcerns.join("; ") || "none"}
-- People/entities mentioned: ${body.repeatedEntities.join(", ") || "none"}
-- Average emotional intensity: ${body.avgIntensityThisWeek ?? "n/a"}/10
-- Emotional shift vs last week: ${body.emotionalShiftLabel}
-- Pattern observations: ${body.observationHighlights.join(" | ") || "none"}
+This week (${aggregate.weekEndingKey} window):
+- Entries: ${aggregate.entryCount}
+- Dominant emotions: ${aggregate.dominantEmotions.join(", ") || "none"}
+- Recurring themes: ${aggregate.recurringThemes.join(", ") || "none"}
+- Repeated threads: ${aggregate.repeatedConcerns.join("; ") || "none"}
+- People/entities mentioned: ${aggregate.repeatedEntities.join(", ") || "none"}
+- Average emotional intensity: ${aggregate.avgIntensityThisWeek ?? "n/a"}/10
+- Emotional shift vs last week: ${aggregate.emotionalShiftLabel}
+- Pattern observations: ${aggregate.observationHighlights.join(" | ") || "none"}
 
 Last week:
-- Entries: ${body.lastWeekEntryCount}
-- Average intensity: ${body.avgIntensityLastWeek ?? "n/a"}/10
+- Entries: ${aggregate.lastWeekEntryCount}
+- Average intensity: ${aggregate.avgIntensityLastWeek ?? "n/a"}/10
 
 Write the weekly pattern observation summary.`;
 

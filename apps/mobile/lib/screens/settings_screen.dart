@@ -1,16 +1,35 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/memory/what_thoughtprint_remembers_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
+import 'package:archiveme_mobile/features/settings/services/consent_manager.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/core/notifications/journal_reminder_settings_section.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
+import 'package:archiveme_mobile/features/settings/services/cloud_data_service.dart';
+import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
+import 'package:archiveme_mobile/features/settings/views/sync_status_view.dart';
+import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
+import 'package:archiveme_mobile/features/settings/services/sync_management_service.dart';
+import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
+import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
+import 'package:archiveme_mobile/features/settings/views/debug_menu_view.dart';
+import 'package:archiveme_mobile/features/settings/views/settings_view.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
+import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
+import 'package:archiveme_mobile/features/export/archive_transfer_screen.dart';
+import 'package:archiveme_mobile/features/export/services/auto_backup_service.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
@@ -19,6 +38,12 @@ import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/health/apple_health_platform.dart';
+import 'package:archiveme_mobile/features/health/apple_health_prompt.dart';
+import 'package:archiveme_mobile/features/health/apple_health_settings_section.dart';
+import 'package:archiveme_mobile/features/health/health_factory.dart';
+import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
+import 'package:archiveme_mobile/features/insights/views/knowledge_manager_view.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_copy.dart';
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
@@ -38,6 +63,7 @@ import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
 import 'package:archiveme_mobile/widgets/beta/beta_conversion_diagnosis_card.dart';
@@ -67,6 +93,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _remindersBusy = false;
   bool _onDeviceProcessing = OnDeviceProcessingStore.defaultEnabled;
   bool _onDeviceBusy = false;
+  bool _cloudSyncEnabled = false;
+  bool _healthMoodSyncEnabled = false;
+  bool _healthMoodWriteEnabled = false;
+  bool _healthRevoked = false;
+  bool _downloadMediaOnWifi = false;
   List<JournalEntry> _journalEntries = const [];
   final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
@@ -74,6 +105,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
+    unawaited(_loadCloudSync());
+    unawaited(_loadDownloadOnWifi());
     unawaited(
       PackageInfo.fromPlatform().then((info) {
         if (mounted) setState(() => _packageInfo = info);
@@ -93,6 +126,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       }),
     );
+    syncStatusNotifier.addListener(_onSyncStatus);
+  }
+
+  void _onSyncStatus() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    syncStatusNotifier.removeListener(_onSyncStatus);
+    super.dispose();
+  }
+
+  Future<void> _loadDownloadOnWifi() async {
+    if (!AppServices.isInitialized) return;
+    final value = await AppServices.instance.prefs.readBool(
+      'e2ee_download_on_wifi',
+    );
+    if (mounted && value != null) {
+      setState(() => _downloadMediaOnWifi = value);
+    }
+  }
+
+  Future<void> _showRecoveryKey() async {
+    final allowed = await RecoveryKeyReveal.confirm();
+    if (!allowed || !mounted) return;
+    final phrase = await E2eeSyncSettings.storedPassphrase();
+    if (!mounted || phrase == null || phrase.isEmpty) return;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recovery key'),
+        content: Text(phrase),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _turnOffSync() async {
+    final purged = await const SyncManagementService().turnOffSyncAndDeleteServerCopy();
+    if (!purged || !mounted) return;
+    setState(() => _cloudSyncEnabled = false);
   }
 
   String get _reminderStateLabel {
@@ -133,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _openTestingArchiveMeGuide() {
+  void _openTestingThoughtprintGuide() {
     if (!ArchiveBetaMissionGate.isEnabled) return;
     unawaited(context.push('/testing-archiveme'));
   }
@@ -159,6 +239,182 @@ class _SettingsScreenState extends State<SettingsScreen> {
         alignment: 0.1,
       ),
     );
+  }
+
+  Future<void> _setHealthRead(bool value) async {
+    if (!AppServices.isInitialized) return;
+    if (!value) {
+      await UserPreferences.setHealthMoodSyncEnabled(
+        AppServices.instance.prefs,
+        false,
+      );
+      if (mounted) setState(() => _healthMoodSyncEnabled = false);
+      return;
+    }
+    final granted = await confirmThenRequestAppleHealthRead(context);
+    if (!granted || !mounted) return;
+    await UserPreferences.setHealthMoodSyncEnabled(
+      AppServices.instance.prefs,
+      true,
+    );
+    await StateOfMindReader.forDay(DateTime.now());
+    if (mounted) {
+      setState(() {
+        _healthMoodSyncEnabled = true;
+        _healthRevoked = false;
+      });
+    }
+  }
+
+  Future<void> _setHealthWrite(bool value) async {
+    if (!AppServices.isInitialized) return;
+    if (!value) {
+      await UserPreferences.setHealthMoodWriteEnabled(
+        AppServices.instance.prefs,
+        false,
+      );
+      if (mounted) setState(() => _healthMoodWriteEnabled = false);
+      return;
+    }
+    final granted = await confirmThenRequestAppleHealthWrite(context);
+    if (!granted || !mounted) return;
+    await UserPreferences.setHealthMoodWriteEnabled(
+      AppServices.instance.prefs,
+      true,
+    );
+    if (mounted) {
+      setState(() {
+        _healthMoodWriteEnabled = true;
+        _healthRevoked = false;
+      });
+    }
+  }
+
+  Future<void> _loadCloudSync() async {
+    if (!AppServices.isInitialized) return;
+    final preferences = await UserPreferences.load(AppServices.instance.prefs);
+    if (!mounted) return;
+    var revoked = false;
+    if (preferences.isHealthMoodSyncEnabled &&
+        AppleHealthPlatform.supportsStateOfMind) {
+      final status = await HealthFactory.authorizationStatus();
+      revoked = status == 'denied';
+    }
+    if (!mounted) return;
+    setState(() {
+      _cloudSyncEnabled = preferences.isCloudSyncEnabled;
+      _healthMoodSyncEnabled = preferences.isHealthMoodSyncEnabled;
+      _healthMoodWriteEnabled = preferences.isHealthMoodWriteEnabled;
+      _healthRevoked = revoked;
+    });
+  }
+
+  Future<void> _setCloudSync(bool enabled) async {
+    if (enabled) {
+      final allowed = await const ConsentManager().requestCloudAiConsent(
+        context,
+      );
+      if (mounted) setState(() => _cloudSyncEnabled = allowed);
+      return;
+    }
+    await CloudConsent().disable();
+    if (mounted) setState(() => _cloudSyncEnabled = false);
+  }
+
+  Future<bool> _deleteCloudCopy() {
+    return const CloudDataService().deleteCloudCopy();
+  }
+
+  void _showCloudDeleteResult(bool deleted) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          deleted
+              ? 'Your cloud copy has been deleted.'
+              : 'The cloud copy could not be deleted. Try again.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteCloudCopy() async {
+    if (!AppServices.isInitialized) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          key: const Key('settings_delete_cloud_copy_confirm'),
+          title: const Text('Delete my cloud copy?'),
+          content: const Text(
+            "This deletes the copy of your journal on Thoughtprint's servers. Your journal on this phone is not affected.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              key: const Key('settings_delete_cloud_copy_confirm_accept'),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete cloud copy'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) return;
+    final deleted = await _deleteCloudCopy();
+    if (deleted) {
+      await _setCloudSync(false);
+    }
+    _showCloudDeleteResult(deleted);
+  }
+
+  Future<void> _onCloudSyncChanged(bool enabled) async {
+    if (!AppServices.isInitialized) return;
+    if (enabled) {
+      await _setCloudSync(true);
+      return;
+    }
+
+    final deleteCloudData = await showModalBottomSheet<bool>(
+      context: context,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
+                child: Text(
+                  'Disable only, or Disable & Delete Cloud Data?',
+                  key: Key('settings_cloud_off_prompt'),
+                ),
+              ),
+              ListTile(
+                key: const Key('settings_cloud_disable_only'),
+                title: const Text('Disable only'),
+                onTap: () => Navigator.of(sheetContext).pop(false),
+              ),
+              ListTile(
+                key: const Key('settings_cloud_disable_and_delete'),
+                title: const Text('Disable & Delete Cloud Data'),
+                onTap: () => Navigator.of(sheetContext).pop(true),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (deleteCloudData == null || !mounted) return;
+    if (deleteCloudData) {
+      final deleted = await _deleteCloudCopy();
+      _showCloudDeleteResult(deleted);
+      if (!deleted) return;
+    }
+    await _setCloudSync(false);
   }
 
   Future<void> _loadJournalEntries() async {
@@ -202,6 +458,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            Text(
+              ConsumerUiCopy.coreIsFreeForever,
+              key: const Key('settings_core_is_free'),
+              style: ArchiveMobileTypography.listSubtitle(context),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            CloudAiProcessingToggle(
+              value: _cloudSyncEnabled,
+              onChanged: (value) => unawaited(_onCloudSyncChanged(value)),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('settings_delete_cloud_copy'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.destructive,
+                ),
+                onPressed: () => unawaited(_confirmDeleteCloudCopy()),
+                child: const Text('Delete my cloud copy'),
+              ),
+            ),
+            ListTile(
+              key: const Key('settings_what_i_know'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                KnowledgeManagerView.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'People, places, and themes from your journal.',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const KnowledgeManagerView(),
+                  ),
+                );
+              },
+            ),
+            if (V1CapabilityRegistry.appleHealth)
+              AppleHealthSettingsSection(
+                readEnabled: _healthMoodSyncEnabled,
+                writeEnabled: _healthMoodWriteEnabled,
+                revoked: _healthRevoked,
+                onRead: (value) => unawaited(_setHealthRead(value)),
+                onWrite: (value) => unawaited(_setHealthWrite(value)),
+              ),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(
@@ -246,7 +551,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: ArchiveMobileTypography.listSubtitle(context),
                 ),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: _openTestingArchiveMeGuide,
+                onTap: _openTestingThoughtprintGuide,
               ),
             if (showSettingsBetaFeedbackCard) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -321,7 +626,133 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => context.push('/privacy-security'),
             ),
             const EncryptedArchiveBackupSettingsTile(),
+            AutomaticWeeklyBackupToggle(
+              onEnabled: AutoBackupService.runScheduled,
+            ),
+            SpeechLanguagePreferences(
+              readLanguage: () async {
+                if (!AppServices.isInitialized) return null;
+                return AppServices.instance.prefs.readString(
+                  SpeechLanguagePreferences.preferenceKey,
+                );
+              },
+              writeLanguage: (identifier) async {
+                if (!AppServices.isInitialized) return;
+                await AppServices.instance.prefs.writeString(
+                  SpeechLanguagePreferences.preferenceKey,
+                  identifier,
+                );
+                final locale = ConfirmedSpeechLocale.confirmed(identifier);
+                if (locale != null) {
+                  await SpeechLocaleStore(AppServices.instance.prefs).confirm(
+                    locale,
+                  );
+                }
+              },
+            ),
+            if (V1CapabilityRegistry.e2eeSync)
+              E2eeSyncSettings(
+                readEnabled: () async {
+                  if (!AppServices.isInitialized) return false;
+                  return await AppServices.instance.prefs.readBool(
+                        E2eeSyncSettings.preferenceKey,
+                      ) ??
+                      false;
+                },
+                writeEnabled: (enabled) async {
+                  if (!AppServices.isInitialized) return;
+                  await AppServices.instance.prefs.writeBool(
+                    E2eeSyncSettings.preferenceKey,
+                    enabled,
+                  );
+                },
+                storePassphrase: E2eeSyncSettings.storeInVault,
+              ),
+            if (V1CapabilityRegistry.e2eeSync)
+              E2eeSyncStatusPanel(
+                status: syncStatusNotifier.value.label(DateTime.now()),
+                devices: const [],
+                downloadOnWifi: _downloadMediaOnWifi,
+                onDownloadOnWifi: (value) {
+                  setState(() => _downloadMediaOnWifi = value);
+                  if (!AppServices.isInitialized) return;
+                  unawaited(
+                    AppServices.instance.prefs.writeBool(
+                      'e2ee_download_on_wifi',
+                      value,
+                    ),
+                  );
+                },
+                onRemoveDevice: (_) {},
+                onChangePassphrase: () {},
+                onShowRecoveryKey: () => unawaited(_showRecoveryKey()),
+                onTurnOff: () => unawaited(_turnOffSync()),
+              ),
+            if (V1CapabilityRegistry.e2eeSync)
+              SyncStatusView(
+                embedded: true,
+                syncedAt: syncStatusNotifier.value.syncedAt,
+                devices: const [],
+                loadDevices: SyncDeviceDirectory.fetch,
+                removeDevice: SyncDeviceDirectory.remove,
+                changePassphrase: SyncPassphraseRotation.rotate,
+              ),
+            JournalReminderPreferences(
+              readEnabled: (key) async {
+                if (!AppServices.isInitialized) return false;
+                return await AppServices.instance.prefs.readBool(key) ?? false;
+              },
+              writeEnabled: (key, value) async {
+                if (!AppServices.isInitialized) return;
+                await AppServices.instance.prefs.writeBool(key, value);
+                final daily = key == JournalReminderPreferences.dailyKey
+                    ? value
+                    : await AppServices.instance.prefs.readBool(
+                            JournalReminderPreferences.dailyKey,
+                          ) ??
+                          false;
+                final weekly = key == JournalReminderPreferences.weeklyKey
+                    ? value
+                    : await AppServices.instance.prefs.readBool(
+                            JournalReminderPreferences.weeklyKey,
+                          ) ??
+                          false;
+                JournalReminderPlan.scheduled =
+                    JournalReminderPlan.fromSettings(
+                      now: DateTime.now(),
+                      dailyEnabled: daily,
+                      weeklyEnabled: weekly,
+                    );
+                if (weekly) {
+                  unawaited(
+                    WeeklyRecapNotificationService.schedule(
+                      now: DateTime.now(),
+                    ),
+                  );
+                }
+              },
+            ),
             const PrivacyDataControlsSection(),
+            ListTile(
+              key: const Key('settings_what_thoughtprint_remembers'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                WhatThoughtprintRemembersScreen.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'People, places, and themes remembered on this phone.',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const WhatThoughtprintRemembersScreen(),
+                  ),
+                );
+              },
+            ),
             if (V1CapabilityRegistry.localAiPrivacyControls)
               KeyedSubtree(
                 key: const Key('settings_on_device_processing_toggle'),
@@ -369,6 +800,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => context.push('/consent-audit'),
             ),
             ListTile(
+              key: const Key('settings_export_import'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Export / Import'),
+              subtitle: Text(
+                'Day One, Apple Notes, and a passphrase-sealed archive',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                unawaited(
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const ArchiveTransferScreen(),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
               key: const Key('settings_journal_export_tile'),
               contentPadding: EdgeInsets.zero,
               title: const Text('Export my journal'),
@@ -396,7 +846,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: _remindersEnabled,
                 onChanged: _remindersBusy ? null : _toggleReminders,
               ),
-            // Memory: when ArchiveMe may connect entries. Persistent and
+            // Memory: when Thoughtprint may connect entries. Persistent and
             // user-only — "Memory off" stays off until changed here.
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
@@ -512,17 +962,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
               destructive: true,
             ),
             const SizedBox(height: AppSpacing.md),
+            if (NotificationDebugAccess.debugMode)
+              _tile(
+                'Notification debug',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DebugMenuView(),
+                  ),
+                ),
+              ),
             Text(
               ConsumerUiCopy.appVersion,
               style: ArchiveMobileTypography.cardLabel(
                 context,
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              versionLabel,
-              style: ArchiveMobileTypography.explanationBody(context),
+            GestureDetector(
+              key: const Key('settings_app_version'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                if (!NotificationDebugAccess.registerTap()) return;
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DebugMenuView(),
+                  ),
+                );
+              },
+              child: Text(
+                versionLabel,
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             const TrustStatusFooter(),
@@ -562,7 +1033,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: Text(
         title,
         style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
+          color: destructive
+              ? context.palette.error
+              : context.palette.textPrimary,
         ),
       ),
       trailing: trailing ?? const Icon(Icons.chevron_right),

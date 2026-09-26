@@ -1,19 +1,36 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/archive/widgets/transcript_conflict_badge.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
+import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.dart';
+import 'package:archiveme_mobile/features/capture/views/voice_chat_view.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
+import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
+import 'package:archiveme_mobile/features/memory/related_moments_section.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
+import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
+import 'package:archiveme_mobile/features/sync/services/entry_conflict_resolver.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_photos.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/entry_context_placeholders.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
 import 'package:archiveme_mobile/widgets/memory/entry_aboutness_editor.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_surfacing_editor.dart';
@@ -22,17 +39,28 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
 
 class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({
-    required this.entryId, super.key,
+    required this.entryId,
+    super.key,
     this.accountDependencies,
+    this.previewEntry,
+    this.startAt = Duration.zero,
   });
 
   final String entryId;
+  final Duration startAt;
 
   final V1AccountDependencies? accountDependencies;
+
+  /// Skips journal loading so a golden can paint the screen without AppServices.
+  @visibleForTesting
+  final JournalEntry? previewEntry;
+
+  /// When set, Edit date and time writes this instant instead of opening pickers.
+  @visibleForTesting
+  static DateTime? debugCreatedAtOverride;
 
   @override
   State<EntryDetailScreen> createState() => _EntryDetailScreenState();
@@ -41,13 +69,22 @@ class EntryDetailScreen extends StatefulWidget {
 class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
   bool _advancedExpanded = false;
+  Future<void> Function()? _readAloud;
+  late final TextEditingController _titleController;
 
-  late final V1AccountDependencies _accountDeps =
+  V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   @override
   void initState() {
     super.initState();
+    _titleController = TextEditingController();
+    final preview = widget.previewEntry;
+    if (preview != null) {
+      _entry = preview;
+      _titleController.text = preview.display.title ?? '';
+      return;
+    }
     unawaited(_load());
   }
 
@@ -63,7 +100,13 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           break;
         }
       }
-      if (mounted) setState(() => _entry = loaded);
+      if (mounted) {
+        setState(() => _entry = loaded);
+        _titleController.text = loaded?.display.title ?? '';
+      }
+      if (loaded != null) {
+        unawaited(AttachmentSyncService.restoreIfConfigured(loaded));
+      }
       return;
     }
 
@@ -77,7 +120,134 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         );
       }
     }
-    if (mounted) setState(() => _entry = e);
+    if (mounted) {
+      setState(() => _entry = e);
+      _titleController.text = e?.display.title ?? '';
+    }
+    if (e != null) {
+      unawaited(AttachmentSyncService.restoreIfConfigured(e));
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _savePlace(JournalEntry entry, String place) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryPlace(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      place: place,
+    );
+    await _load();
+  }
+
+  Future<void> _addPhoto(JournalEntry entry) async {
+    final paths = await pickEntryImages(entryId: entry.id);
+    if (paths.isEmpty || !mounted) return;
+    await _saveImages(entry, [...entry.images, ...paths]);
+  }
+
+  Future<void> _deletePhoto(JournalEntry entry, String path) async {
+    final file = File(path);
+    if (file.existsSync()) await file.delete();
+    final thumb = File(ImageProcessorService.thumbnailPathFor(path));
+    if (thumb.existsSync()) await thumb.delete();
+    final next = [
+      for (final item in entry.images)
+        if (item != path) item,
+    ];
+    await _saveImages(entry, next);
+  }
+
+  Future<void> _saveImages(JournalEntry entry, List<String> images) async {
+    final current = entry.imageEvidence;
+    final evidence = images.isEmpty
+        ? null
+        : ImageEvidence(
+            evidenceId: current?.evidenceId.isNotEmpty == true
+                ? current!.evidenceId
+                : entry.id,
+            caption: current?.caption ?? '',
+            mimeType: current?.mimeType ?? 'image/jpeg',
+            attachedAt: current?.attachedAt ?? DateTime.now().toUtc(),
+            localPath: images.first,
+            images: images,
+          );
+    final updated = entry.copyWith(imageEvidence: evidence);
+    if (widget.previewEntry != null) {
+      if (mounted) setState(() => _entry = updated);
+      return;
+    }
+    await _accountDeps.journalStore.save(updated);
+    await _load();
+  }
+
+  Future<void> _saveMood(JournalEntry entry, String mood) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryMood(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      mood: mood,
+    );
+    await _load();
+  }
+
+  Future<void> _keepTranscript(JournalEntry entry, String transcript) async {
+    TranscriptConflictStore.clear(entry.id);
+    if (widget.previewEntry != null) {
+      if (mounted) {
+        setState(() => _entry = entry.copyWith(transcript: transcript));
+      }
+      return;
+    }
+    await _accountDeps.journalStore.save(
+      entry.copyWith(
+        transcript: transcript,
+        syncStatus: SyncStatus.pendingUpload,
+      ),
+    );
+    await _load();
+  }
+
+  Future<void> _saveTitle(JournalEntry entry) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryTitle(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      title: _titleController.text,
+    );
+    await _load();
+  }
+
+  Future<void> _editDate(JournalEntry entry) async {
+    if (widget.previewEntry != null) return;
+    final override = EntryDetailScreen.debugCreatedAtOverride;
+    DateTime? next = override;
+    if (next == null) {
+      final date = await showDatePicker(
+        context: context,
+        initialDate: entry.createdAt,
+        firstDate: DateTime(1970),
+        lastDate: DateTime.now().add(const Duration(days: 1)),
+      );
+      if (date == null || !mounted) return;
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(entry.createdAt),
+      );
+      if (time == null || !mounted) return;
+      next = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    }
+    await saveEntryCreatedAt(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      createdAt: next,
+    );
+    await _load();
   }
 
   Future<void> _confirmDelete(JournalEntry entry) async {
@@ -115,66 +285,89 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   Widget build(BuildContext context) {
     final e = _entry;
     return PushedScreenShell(
-      title: EntryDetailCopy.title,
+      title: e == null
+          ? EntryDetailCopy.title
+          : LocaleDateFormat.dateTime(context, e.createdAt),
       showBottomDone: false,
+      actions: e == null
+          ? null
+          : [
+              PopupMenuButton<String>(
+                key: const Key('entry_detail_overflow'),
+                tooltip: 'More',
+                onSelected: (value) {
+                  if (value == 'date') unawaited(_editDate(e));
+                  if (value == 'read') unawaited(_readAloud?.call());
+                  if (value == 'delete') unawaited(_confirmDelete(e));
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'date',
+                    child: Text(EntryDetailCopy.editDateTime),
+                  ),
+                  if (_readAloud != null)
+                    const PopupMenuItem(
+                      value: 'read',
+                      child: Text(EntryDetailCopy.readAloud),
+                    ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Text(EntryDetailCopy.delete),
+                  ),
+                ],
+              ),
+            ],
       body: e == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                ArchiveEntryCardMeta(entry: e),
+                Text(
+                  _quietMeta(context, e),
+                  key: const Key('entry_detail_meta'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 EntryProcessingTrustChip(entry: e),
+                const SizedBox(height: 12),
+                EntryContextPlaceholders(
+                  entry: e,
+                  onPlace: widget.previewEntry == null
+                      ? (place) => unawaited(_savePlace(e, place))
+                      : null,
+                  onMood: widget.previewEntry == null
+                      ? (mood) => unawaited(_saveMood(e, mood))
+                      : null,
+                ),
+                if (e.hasConflict)
+                  if (TranscriptConflictStore.read(e.id) case final split?) ...[
+                    const SizedBox(height: 12),
+                    TranscriptConflictBadge(
+                      deviceA: split.localText,
+                      deviceB: split.remoteText,
+                      onResolved: (text) =>
+                          unawaited(_keepTranscript(e, text)),
+                    ),
+                  ],
                 const SizedBox(height: 16),
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),
                   child: Material(
-                    color: AppTheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    clipBehavior: Clip.antiAlias,
-                    child: _sectionCard(
-                      label: EntryDetailCopy.whatYouRecorded,
-                      child: _recordedBody(e),
-                    ),
+                    color: Colors.transparent,
+                    child: _recordedBody(e),
                   ),
                 ),
                 const SizedBox(height: 16),
-                _sectionCard(
-                  label: EntryDetailCopy.archiveNoteLabel,
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        EntryDetailCopy.archiveNoteBody,
-                        style: TextStyle(height: 1.45),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        EntryDetailCopy.archiveNoteHelper,
-                        style: TextStyle(color: AppTheme.muted, height: 1.45),
-                      ),
-                    ],
+                if (widget.accountDependencies != null)
+                  EntryContextTagEditor(
+                    entry: e,
+                    journalStore: _accountDeps.journalStore,
+                    onChanged: _load,
                   ),
-                ),
-                const SizedBox(height: 16),
-                EntryContextTagEditor(
-                  entry: e,
-                  journalStore: _accountDeps.journalStore,
-                  onChanged: _load,
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: OutlinedButton.icon(
-                    key: const Key('entry_detail_delete_button'),
-                    onPressed: () => _confirmDelete(e),
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    label: const Text(EntryDetailCopy.delete),
-                  ),
-                ),
                 const SizedBox(height: 16),
                 Material(
-                  color: AppTheme.surface,
+                  color: context.palette.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   child: ExpansionTile(
                     key: const Key('entry_detail_advanced_section'),
@@ -202,6 +395,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                     ],
                   ),
                 ),
+                RelatedMomentsSection(entry: e),
               ],
             ),
     );
@@ -213,26 +407,98 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          view.primary,
-          key: const Key('entry_detail_recorded_body'),
-          style: const TextStyle(height: 1.45),
+        TextField(
+          key: const Key('entry_detail_title'),
+          controller: _titleController,
+          style: ArchiveMobileTypography.userWords(context).copyWith(
+            fontSize: 32,
+            height: 1.2,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Add a title',
+            hintStyle: ArchiveMobileTypography.userWords(context).copyWith(
+              fontSize: 32,
+              height: 1.2,
+              color: Theme.of(context).colorScheme.onSurface.withValues(
+                alpha: 0.38,
+              ),
+            ),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            filled: false,
+            isCollapsed: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => unawaited(_saveTitle(entry)),
         ),
-        if (speakableText != null) ...[
-          const SizedBox(height: 8),
-          EntryReadAloudButton(
-            text: speakableText,
-            offlineTts: _accountDeps.offlineTts,
-            resolveOfflineTts: _isFlutterWidgetTest
-                ? null
-                : () => AppServices.instance.resolveOfflineTts(),
+        const SizedBox(height: 8),
+        EntryAudioPlayer(
+          audioPath: entry.localAudioPath,
+          durationSeconds: entry.durationSeconds,
+          startAt: widget.startAt,
+        ),
+        const SizedBox(height: 8),
+        if (entry.aiQuestions.isEmpty)
+          Text(
+            view.primary,
+            key: const Key('entry_detail_recorded_body'),
+            style: ArchiveMobileTypography.userWords(context).copyWith(
+              height: 1.55,
+            ),
+          )
+        else
+          VoiceChatView(
+            key: const Key('entry_detail_recorded_body'),
+            lines: savedConversationLines(
+              transcript: entry.transcript,
+              questions: entry.aiQuestions,
+            ),
+          ),
+        if (V1CapabilityRegistry.photoAttachments) ...[
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              key: const Key('entry_detail_add_photo'),
+              onPressed: () => unawaited(_addPhoto(entry)),
+              icon: const Icon(Icons.photo_outlined),
+              label: const Text('Add a photo'),
+            ),
           ),
         ],
+        if (entry.images.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          EntryPhotoStrip(
+            entryId: entry.id,
+            paths: entry.images,
+            onDelete: (path) => _deletePhoto(entry, path),
+          ),
+        ],
+        if (speakableText != null && widget.accountDependencies != null)
+          Offstage(
+            child: EntryReadAloudButton(
+              text: speakableText,
+              visible: false,
+              offlineTts: _accountDeps.offlineTts,
+              registerToggle: (toggle) {
+                _readAloud = toggle;
+                if (mounted) setState(() {});
+              },
+              resolveOfflineTts: _isFlutterWidgetTest
+                  ? null
+                  : () => AppServices.instance.resolveOfflineTts(),
+            ),
+          ),
         if (view.secondary != null) ...[
           const SizedBox(height: 8),
           Text(
             view.secondary!,
-            style: const TextStyle(color: AppTheme.muted, height: 1.45),
+            style: ArchiveMobileTypography.uiHelper(
+              context,
+              color: context.palette.textSecondary,
+            ),
           ),
         ],
         if (view.isDegradedTranscription) ...[
@@ -251,31 +517,22 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     );
   }
 
-  Widget _sectionCard({required String label, required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.accent),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppTheme.muted,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          child,
-        ],
-      ),
-    );
+  String _quietMeta(BuildContext context, JournalEntry entry) {
+    final minutes = entry.durationSeconds ~/ 60;
+    final seconds = entry.durationSeconds % 60;
+    final duration = '$minutes:${seconds.toString().padLeft(2, '0')}';
+    return '$duration · ${_languageName(context)}';
+  }
+
+  String _languageName(BuildContext context) {
+    final code = Localizations.maybeLocaleOf(context)?.languageCode ?? 'en';
+    return switch (code) {
+      'es' => 'Spanish',
+      'hi' => 'Hindi',
+      'ms' => 'Malay',
+      'ta' => 'Tamil',
+      'zh' => 'Chinese',
+      _ => 'English',
+    };
   }
 }

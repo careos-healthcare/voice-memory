@@ -311,7 +311,7 @@ void main() {
       );
       expect(
         snapshot.exportSummary,
-        'ArchiveMe capacity beta signal: 3 yes moments, fit response partly, '
+        'Thoughtprint capacity beta signal: 3 yes moments, fit response partly, '
         '2 outcomes, 1 later costs, boundary response selected.',
       );
     });

@@ -2,9 +2,9 @@
 #   • Dart package `name:` → archiveme_mobile (developer/build identity).
 #   • Legacy identifiers kept: bundle ID (com.voicememory.mobile), storage keys,
 #     deep links, and backend migration paths — do not rename without IDENTIFIERS.md migration plan.
-#   • User-facing branding everywhere else → ArchiveMe.
+#   • User-facing branding everywhere else → Thoughtprint.
 name: archiveme_mobile
-description: ArchiveMe native iOS/Android — MVP core loop (record, transcribe, analyze, local journal).
+description: Thoughtprint native iOS/Android — MVP core loop (record, transcribe, analyze, local journal).
 publish_to: "none"
 version: 0.2.0+48
 
@@ -21,6 +21,8 @@ dependencies:
   http: ^1.2.2
   flutter_secure_storage: ^10.3.1
   permission_handler: ^11.4.0
+  flutter_local_notifications: ^19.4.0
+  timezone: ^0.10.1
   path_provider: ^2.1.6
   sqflite: ^2.4.3
   path: ^1.9.1
@@ -29,13 +31,12 @@ dependencies:
   share_plus: ^10.1.4
   pdf: ^3.11.1
   file_picker: ^8.1.7
+  image_picker: ^1.2.0
   url_launcher: ^6.3.1
   uuid: ^4.5.1
   crypto: ^3.0.7
   cryptography: ^2.7.0
-  firebase_core: ^3.8.1
-  firebase_analytics: ^11.3.6
-  firebase_messaging: ^15.1.6
+  qr: ^3.0.2
   device_info_plus: ^11.3.3
   package_info_plus: ^8.3.0
   purchases_flutter: ^8.1.0
@@ -55,8 +56,6 @@ dependencies:
   freezed_annotation: ^3.0.0
   fpdart: ^1.1.0
   drift: ^2.28.1
-  device_calendar: ^4.3.3
-  health: ^12.0.1
   connectivity_plus: ^6.1.4
   hooks: ^2.0.0
   code_assets: ^1.0.0
@@ -80,6 +79,13 @@ dependencies:
   icloud_storage: ^2.2.0
   workmanager: ^0.10.9
   app_links: ^7.2.1
+  flutter_timezone: ^5.1.0
+  geolocator: ^13.0.4
+  geocoding: ^3.0.0
+  flutter_map: ^8.3.2
+  latlong2: ^0.9.1
+  apple_maps_flutter: ^1.4.0
+  printing: ^5.14.3
 
 dev_dependencies:
   flutter_test:
@@ -114,6 +120,17 @@ flutter:
   uses-material-design: true
   assets:
     - config/backend_url.txt
+    - assets/models/all-MiniLM-L6-v2.onnx
+    - assets/models/vocab.txt
+  fonts:
+    - family: Newsreader
+      fonts:
+        - asset: assets/fonts/Newsreader-Regular.ttf
+        - asset: assets/fonts/Newsreader-Italic.ttf
+          style: italic
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
 
 dependency_overrides:
   pointycastle: ^3.7.4

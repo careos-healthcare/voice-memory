@@ -51,7 +51,7 @@ class GuidedThreadPlanCard extends StatelessWidget {
             plan.basedOnLine,
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.sm),
           _sectionHeading(context, GuidedThreadPlan.alreadyCoveredHeading),
@@ -64,7 +64,7 @@ class GuidedThreadPlanCard extends StatelessWidget {
                 '\u201C$snippet\u201D',
                 style: ArchiveMobileTypography.responsiveHelper(
                   context,
-                ).copyWith(color: AppColors.textSecondary),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ),
           const SizedBox(height: AppSpacing.sm),
@@ -81,13 +81,13 @@ class GuidedThreadPlanCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderSubtle),
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
               ),
               child: Text(
                 plan.nextPrompt,
                 style: ArchiveMobileTypography.body(
                   context,
-                ).copyWith(color: AppColors.textPrimary),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
@@ -96,7 +96,7 @@ class GuidedThreadPlanCard extends StatelessWidget {
             plan.encouragementLine,
             style: ArchiveMobileTypography.responsiveHelper(
               context,
-            ).copyWith(color: AppColors.textSecondary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
@@ -121,7 +121,7 @@ class GuidedThreadPlanCard extends StatelessWidget {
       heading,
       style: ArchiveMobileTypography.responsiveHelper(
         context,
-      ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+      ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
     );
   }
 
@@ -131,14 +131,14 @@ class GuidedThreadPlanCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: AppColors.textSecondary),
+          Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: AppSpacing.xs),
           Expanded(
             child: Text(
               line,
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textPrimary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ],

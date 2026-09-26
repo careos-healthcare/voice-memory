@@ -12,13 +12,13 @@ class FactLedgerExport {
     final local = now.toLocal();
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
-    return 'archiveme-details-${local.year}-$month-$day.md';
+    return 'thoughtprint-details-${local.year}-$month-$day.md';
   }
 
   String buildMarkdown({required List<ArchiveFact> facts, DateTime? now}) {
     final clock = now ?? DateTime.now();
     final buffer = StringBuffer()
-      ..writeln('# ArchiveMe details')
+      ..writeln('# Thoughtprint details')
       ..writeln()
       ..writeln('Export date: ${formatUserFacingDate(clock)}')
       ..writeln('Details: ${facts.length}');

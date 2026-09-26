@@ -283,7 +283,7 @@ void main() {
     });
 
     testWidgets(
-      'renders A second moment gives ArchiveMe something to compare',
+      'renders A second moment gives Thoughtprint something to compare',
       (tester) async {
         await pumpCard(
           tester,
@@ -293,7 +293,7 @@ void main() {
         );
         expect(
           find.textContaining(
-            'A second similar moment gives ArchiveMe something to compare',
+            'A second similar moment gives Thoughtprint something to compare',
           ),
           findsOneWidget,
         );

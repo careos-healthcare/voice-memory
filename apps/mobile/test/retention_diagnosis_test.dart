@@ -180,7 +180,7 @@ void main() {
         prompt:
             'Today I said yes to everything at work and felt completely drained after the meeting ended.',
       );
-      expect(plan.body, contains('ArchiveMe is watching'));
+      expect(plan.body, contains('Thoughtprint is watching'));
       expect(plan.body, isNot(contains('felt drained after')));
       expect(plan.title, ConsumerUiCopy.nextEvidenceReminderTitle);
     });

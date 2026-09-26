@@ -219,7 +219,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('ArchiveMe has two moments to compare.'),
+        find.text('Thoughtprint has two moments to compare.'),
         findsOneWidget,
       );
       expect(find.textContaining('No clear repeat yet'), findsOneWidget);

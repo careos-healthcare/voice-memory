@@ -437,9 +437,9 @@ void main() {
         expect(
           allowed.contains(text) ||
               text.startsWith('Used because') ||
-              text.startsWith('ArchiveMe found') ||
-              text.startsWith('ArchiveMe is comparing') ||
-              text.startsWith('ArchiveMe noticed'),
+              text.startsWith('Thoughtprint found') ||
+              text.startsWith('Thoughtprint is comparing') ||
+              text.startsWith('Thoughtprint noticed'),
           isTrue,
           reason: 'unexpected sheet text: $text',
         );
@@ -621,22 +621,22 @@ void main() {
       expect(MemoryControlCopy.notRelatedLabel, 'Not related');
       expect(
         MemoryControlCopy.notRelatedThanks,
-        'Thanks — ArchiveMe will treat this as separate.',
+        'Thanks — Thoughtprint will treat this as separate.',
       );
       expect(MemoryControlCopy.whyTitle, 'Why this appeared');
       expect(
         MemoryControlCopy.whyBodyThreadReturn,
-        'ArchiveMe found enough evidence to compare this with earlier '
+        'Thoughtprint found enough evidence to compare this with earlier '
         'entries.',
       );
       expect(
         MemoryControlCopy.whyBodyWeeklyReview,
-        'ArchiveMe is comparing entries from this week with earlier '
+        'Thoughtprint is comparing entries from this week with earlier '
         'evidence.',
       );
       expect(
         MemoryControlCopy.whyBodyBeliefDistance,
-        'ArchiveMe noticed that a belief-like phrase may be changing over '
+        'Thoughtprint noticed that a belief-like phrase may be changing over '
         'time.',
       );
       expect(

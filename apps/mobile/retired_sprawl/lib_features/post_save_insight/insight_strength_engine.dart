@@ -63,7 +63,7 @@ class InsightStrengthEngine {
         ? signal.explanation.trim()
         : pattern.whyNoticed.trim();
     if (why.isNotEmpty) return why;
-    return 'ArchiveMe noticed a possible theme in how you described this moment.';
+    return 'Thoughtprint noticed a possible theme in how you described this moment.';
   }
 
   InsightStrengthLabel _labelFor({

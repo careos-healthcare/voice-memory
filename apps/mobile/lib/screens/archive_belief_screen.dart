@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/router/archive_changes_deep_link.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -138,7 +138,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         Uri(path: RouteCatalog.archiveHome);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: context.palette.backgroundPrimary,
       appBar: AppBar(title: const Text('Archive')),
       body: SafeArea(
         child: ArchiveDashboardScrollView(

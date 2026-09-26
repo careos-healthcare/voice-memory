@@ -473,7 +473,7 @@ void main() {
       expect(MemoryRelevanceChip.notRelatedLabel, 'Not related');
       expect(
         MemoryRelevanceChip.notRelatedConfirmation,
-        'Thanks — ArchiveMe will treat this as separate.',
+        'Thanks — Thoughtprint will treat this as separate.',
       );
     });
 

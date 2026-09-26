@@ -1,6 +1,6 @@
 /// Memory Controls — shared model and copy.
 ///
-/// Memory should be evidence, not gravity: ArchiveMe only connects entries
+/// Memory should be evidence, not gravity: Thoughtprint only connects entries
 /// when there is enough evidence, the user can keep an entry separate,
 /// reject a suggested connection, and see why memory appeared. Nothing
 /// here deletes or alters raw entries, and memory is never globally
@@ -35,19 +35,19 @@ abstract class MemoryControlCopy {
   // Not related.
   static const String notRelatedLabel = 'Not related';
   static const String notRelatedThanks =
-      'Thanks — ArchiveMe will treat this as separate.';
+      'Thanks — Thoughtprint will treat this as separate.';
 
   // Why this appeared.
   static const String whyLabel = 'Why this appeared';
   static const String whyTitle = 'Why this appeared';
   static const String whyBodyThreadReturn =
-      'ArchiveMe found enough evidence to compare this with earlier '
+      'Thoughtprint found enough evidence to compare this with earlier '
       'entries.';
   static const String whyBodyWeeklyReview =
-      'ArchiveMe is comparing entries from this week with earlier '
+      'Thoughtprint is comparing entries from this week with earlier '
       'evidence.';
   static const String whyBodyBeliefDistance =
-      'ArchiveMe noticed that a belief-like phrase may be changing over '
+      'Thoughtprint noticed that a belief-like phrase may be changing over '
       'time.';
   static const String whyFooter = MemoryControlCopy.whyCorrectionFooter;
 
@@ -60,7 +60,7 @@ abstract class MemoryControlCopy {
 
   // Why this appeared — safe high-level copy only.
   static const String whyBodyShared =
-      'ArchiveMe compared this entry with eligible archive evidence.';
+      'Thoughtprint compared this entry with eligible archive evidence.';
   static const String whyCorrectionFooter =
       'You can correct this connection if it does not fit.';
 
@@ -69,7 +69,7 @@ abstract class MemoryControlCopy {
   static const String wrongThreadLabel = 'Wrong thread';
   static const String futureFreshLabel = 'Treat future entries as new';
   static const String keepConnectedThanks =
-      'Marked as connected. ArchiveMe will treat this as user-confirmed '
+      'Marked as connected. Thoughtprint will treat this as user-confirmed '
       'evidence.';
   static const String futureFreshThanks =
       'Future entries here start as new. You can keep a connection later '
@@ -78,11 +78,11 @@ abstract class MemoryControlCopy {
   // Wrong thread flow.
   static const String wrongThreadTitle = 'Wrong thread?';
   static const String wrongThreadBody =
-      'ArchiveMe may have connected this to the wrong thread.';
+      'Thoughtprint may have connected this to the wrong thread.';
   static const String keepSeparateLabel = 'Keep separate';
   static const String chooseAnotherThreadLabel = 'Choose another thread';
   static const String wrongThreadKeepSeparateThanks =
-      'Thanks — ArchiveMe will keep these separate.';
+      'Thanks — Thoughtprint will keep these separate.';
 
   // Cross-thread confirmation.
   static const String crossThreadTitle = 'Connect across threads?';

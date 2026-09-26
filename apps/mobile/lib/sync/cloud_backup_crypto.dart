@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
 import 'package:archiveme_mobile/sync/cloud_backup_models.dart';
-import 'package:archiveme_mobile/sync/sync_crypto.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:cryptography/cryptography.dart';
-
-export 'package:archiveme_mobile/sync/sync_crypto.dart'
-    show EncryptedPayload, SyncCrypto, SyncCryptoException;
 
 /// Derives backup encryption keys from a user passphrase — never persisted.
 abstract final class CloudBackupPassphraseKdf {
@@ -59,11 +57,11 @@ abstract final class CloudBackupPassphraseKdf {
   }
 }
 
-/// Encrypts/decrypts drift snapshots using [SyncCrypto] + passphrase-derived keys.
+/// Encrypts/decrypts drift snapshots with [RecordSync] and a passphrase-derived key.
 class CloudBackupCrypto {
-  CloudBackupCrypto(List<int> keyBytes) : _crypto = SyncCrypto(keyBytes);
+  CloudBackupCrypto(this._keyBytes);
 
-  final SyncCrypto _crypto;
+  final List<int> _keyBytes;
 
   static Future<CloudBackupCrypto> fromPassphrase({
     required String passphrase,
@@ -81,14 +79,20 @@ class CloudBackupCrypto {
   ) async {
     final payload = snapshot.toJson();
     payload['database_bytes'] = base64Encode(snapshot.databaseBytes);
-    return (await _crypto.encryptJson(payload)).toJson();
+    return (await RecordSync.sealJson(
+      accountKey: _keyBytes,
+      plaintext: payload,
+    )).toJson();
   }
 
   Future<CloudBackupDriftSnapshot> decryptSnapshot(
     Map<String, dynamic> encryptedPayload,
   ) async {
     final envelope = EncryptedPayload.fromJson(encryptedPayload);
-    final decoded = await _crypto.decryptJson(envelope);
+    final decoded = await RecordSync.openJson(
+      accountKey: _keyBytes,
+      envelope: envelope,
+    );
     final bytesBase64 = decoded['database_bytes'];
     if (bytesBase64 is! String || bytesBase64.isEmpty) {
       throw CloudBackupException('INVALID_ENCRYPTED_PAYLOAD');

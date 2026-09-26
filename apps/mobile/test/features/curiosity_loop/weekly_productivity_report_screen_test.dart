@@ -29,7 +29,7 @@ class _SpyCuriosityDataExporter extends CuriosityDataExporter {
     markdownCalls++;
     lastMarkdownStart = start;
     lastMarkdownEnd = end;
-    return '# ArchiveMe — Curiosity Loop Export\n\n**Anchor:** said yes again';
+    return '# Thoughtprint — Curiosity Loop Export\n\n**Anchor:** said yes again';
   }
 
   @override
@@ -304,7 +304,7 @@ void main() {
       expect(exporter.markdownCalls, 1);
       expect(exporter.lastMarkdownStart, isNotNull);
       expect(exporter.lastMarkdownEnd, isNotNull);
-      expect(copiedMarkdown, contains('ArchiveMe — Curiosity Loop Export'));
+      expect(copiedMarkdown, contains('Thoughtprint — Curiosity Loop Export'));
       expect(copiedMarkdown, contains('said yes again'));
       expect(
         find.text(WeeklyProductivityReportCopy.markdownCopiedToast),

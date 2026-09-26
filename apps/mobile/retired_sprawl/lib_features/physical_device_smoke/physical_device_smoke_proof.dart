@@ -33,9 +33,9 @@ abstract final class PhysicalDeviceSmokeProof {
     result: result,
   );
 
-  static bool detectAppNameArchiveMe(String infoPlistSource) =>
+  static bool detectAppNameThoughtprint(String infoPlistSource) =>
       infoPlistSource.contains('<key>CFBundleDisplayName</key>') &&
-      infoPlistSource.contains('<string>ArchiveMe</string>');
+      infoPlistSource.contains('<string>Thoughtprint</string>');
 
   static bool detectLaunchScreenPresent(String launchScreenStoryboardSource) =>
       launchScreenStoryboardSource.contains('launchScreen="YES"') ||
@@ -130,7 +130,7 @@ abstract final class PhysicalDeviceSmokeProof {
     bool? noCrash,
   }) => PhysicalDeviceSmokeProofInput(
     freshInstallOpens: freshInstallOpens,
-    appNameArchiveMe: detectAppNameArchiveMe(infoPlistSource),
+    appNameThoughtprint: detectAppNameThoughtprint(infoPlistSource),
     launchScreenOk:
         launchScreenOk ??
         detectLaunchScreenPresent(launchScreenStoryboardSource),
@@ -203,7 +203,7 @@ abstract final class PhysicalDeviceSmokeProof {
         : PhysicalDeviceSmokeProofStatus.fail;
 
     final installOk = input.freshInstallOpens != false;
-    final nameOk = installOk && input.appNameArchiveMe;
+    final nameOk = installOk && input.appNameThoughtprint;
     final launchOk = nameOk && input.launchScreenOk != false;
     final micDenyOk = launchOk && input.micPermissionDenyPath != false;
     final typedOk = micDenyOk && input.typedSave != false;
@@ -227,13 +227,13 @@ abstract final class PhysicalDeviceSmokeProof {
         detailLabel: _detailFor(triState(input.freshInstallOpens)),
       ),
       _check(
-        id: PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
+        id: PhysicalDeviceSmokeProofCheckId.appNameThoughtprint,
         status: gatedTriState(
           prerequisite: installOk,
-          value: input.appNameArchiveMe,
+          value: input.appNameThoughtprint,
         ),
         detailLabel: _detailFor(
-          gatedTriState(prerequisite: installOk, value: input.appNameArchiveMe),
+          gatedTriState(prerequisite: installOk, value: input.appNameThoughtprint),
         ),
       ),
       _check(
@@ -476,7 +476,7 @@ abstract final class PhysicalDeviceSmokeProof {
 class PhysicalDeviceSmokeProofInput {
   const PhysicalDeviceSmokeProofInput({
     this.freshInstallOpens,
-    this.appNameArchiveMe = false,
+    this.appNameThoughtprint = false,
     this.launchScreenOk,
     this.micPermissionAcceptPath,
     this.micPermissionDenyPath,
@@ -497,7 +497,7 @@ class PhysicalDeviceSmokeProofInput {
   });
 
   final bool? freshInstallOpens;
-  final bool appNameArchiveMe;
+  final bool appNameThoughtprint;
   final bool? launchScreenOk;
   final bool? micPermissionAcceptPath;
   final bool? micPermissionDenyPath;

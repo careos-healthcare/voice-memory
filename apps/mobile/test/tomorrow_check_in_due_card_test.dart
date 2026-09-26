@@ -175,7 +175,7 @@ void main() {
     expect(find.text(ConsumerUiCopy.tomorrowCheckInRecordCta), findsOneWidget);
     expect(find.text('Short is fine. One sentence is enough.'), findsOneWidget);
     expect(
-      find.textContaining('ArchiveMe can compare today with yesterday'),
+      find.textContaining('Thoughtprint can compare today with yesterday'),
       findsOneWidget,
     );
   });

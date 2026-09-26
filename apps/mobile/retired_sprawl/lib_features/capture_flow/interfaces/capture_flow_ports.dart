@@ -23,6 +23,10 @@ abstract interface class AudioRecorderAdapter {
   Future<void> pauseRecording();
   Future<void> resumeRecording();
 
+  /// Current microphone level in dBFS, about every 60 ms. Empty when the
+  /// recorder cannot report amplitude.
+  Stream<double> watchAmplitude();
+
   /// Thought chunks emitted while recording (VAD sidecar). Null when unsupported.
   Stream<VadSegmentEvent>? get thoughtSegmentEvents;
 }
@@ -48,10 +52,12 @@ abstract interface class LocalMomentRepository {
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
+    List<String> images = const [],
   });
 
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
+    List<String> images = const [],
   });
 
   Future<CapturePipelineOutcome> retryRemoteForEntry({
@@ -112,6 +118,9 @@ abstract interface class TranscriptionCapabilityPort {
   /// this path can hand over a value it read off the device instead of off a
   /// person.
   Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale);
+
+  /// The language chosen in Speech language settings, when one has been saved.
+  Future<ConfirmedSpeechLocale?> readSpeechLocale();
 }
 
 /// Tracks interrupted captures so recovery can resume safely.

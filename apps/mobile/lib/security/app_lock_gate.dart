@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
 import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/security/app_lock_screen.dart';
@@ -33,6 +34,7 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _service.addListener(_refresh);
     unawaited(_refresh());
+    unawaited(E2eeSyncLifecycle.syncIfEnabled());
   }
 
   @override
@@ -56,6 +58,7 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
         _service.onAppBackgrounded();
       case AppLifecycleState.resumed:
         unawaited(_service.onAppResumed().then((_) => _refresh()));
+        unawaited(E2eeSyncLifecycle.syncIfEnabled());
       case AppLifecycleState.inactive:
       case AppLifecycleState.detached:
         break;

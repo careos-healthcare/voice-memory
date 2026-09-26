@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// User-facing copy when transcription succeeded but backend analysis failed.
 abstract final class AnalysisFallbackPayoffCopy {
-  static const title = 'ArchiveMe saved what you said.';
+  static const title = 'Thoughtprint saved what you said.';
 
   static const bodyOneEntry =
       'Analysis is not available right now, but this moment is still in your '
@@ -23,7 +23,7 @@ abstract final class AnalysisFallbackPayoffCopy {
   static const evidenceOneEntry =
       'One piece of evidence saved from your own words.';
 
-  static const evidenceTwoEntries = 'ArchiveMe has two moments to compare.';
+  static const evidenceTwoEntries = 'Thoughtprint has two moments to compare.';
 
   static const evidenceTwoEntriesOverlap =
       'Some of your own words appear in both moments.';

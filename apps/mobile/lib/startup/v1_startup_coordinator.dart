@@ -3,21 +3,27 @@ import 'dart:async';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/trial_mode.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/core/config/v1_production_allowlist.dart' show V1ProductionAllowlist;
+import 'package:archiveme_mobile/core/config/v1_production_allowlist.dart'
+    show V1ProductionAllowlist;
 import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
 import 'package:archiveme_mobile/features/beta/beta_activation_loop_tracker.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_startup_provider.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
 import 'package:archiveme_mobile/features/objective/current_objective_widget_refresh_service.dart';
+import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
-import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
+import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
+import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
+import 'package:archiveme_mobile/features/memory/services/vector_backfill_service.dart';
+import 'package:archiveme_mobile/router/app_router.dart';
+import 'package:archiveme_mobile/sync/record_sync.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/archive_correction_bootstrap.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import 'package:archiveme_mobile/features/watch/watch_session_coordinator.dart';
-import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/security/private_storage_audit.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -68,6 +74,7 @@ abstract final class V1StartupCoordinator {
       await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
     }
     if (V1CapabilityRegistry.nativeQuickCapture && AppServices.isInitialized) {
+      QuickCaptureService.auditQuickCaptureCapabilities();
       final service = AppServices.instance.quickCaptureWidgetService;
       final route = await service?.capturePendingLaunchRoute();
       if (route != null && route.startsWith('/record')) {
@@ -89,6 +96,10 @@ abstract final class V1StartupCoordinator {
       await CuriosityNotificationLaunchController.ensureInitialized();
     }
     unawaited(BetaActivationLoopTracker.trackAppOpened());
+    unawaited(_importPendingVoiceMemo());
+    unawaited(RecordSyncRuntime.onLaunchOrResume());
+    SyncScheduler.instance.startForeground();
+    VectorBackfillService.startOnBoot();
     PrivateStorageAudit.logAuditReport();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -101,5 +112,17 @@ abstract final class V1StartupCoordinator {
       DeveloperSettingsGate.prefsUnlockKey,
     );
     DeveloperSettingsGate.loadFromPrefs(unlocked);
+  }
+
+  static Future<void> _importPendingVoiceMemo() async {
+    if (!V1CapabilityRegistry.voiceMemosImport) return;
+    if (!AppServices.isInitialized) return;
+    await VoiceMemoImportInbox.importQueue(
+      readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),
+      save: (row) => AppServices.instance.journalStore.save(
+        row,
+        captureKind: 'voice',
+      ),
+    );
   }
 }

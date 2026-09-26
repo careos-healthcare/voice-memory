@@ -31,6 +31,34 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   PRIMARY KEY (user_id, blob_type, blob_id)
 )`,
   `CREATE INDEX IF NOT EXISTS sync_blobs_user_updated_idx ON sync_blobs (user_id, updated_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS sync_keys (
+  user_id text PRIMARY KEY,
+  wrapped_by_passphrase jsonb NOT NULL,
+  wrapped_by_recovery jsonb NOT NULL,
+  kdf_params jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE TABLE IF NOT EXISTS sync_records (
+  user_id text NOT NULL,
+  record_id text NOT NULL,
+  kind text NOT NULL,
+  version integer NOT NULL,
+  updated_at timestamptz NOT NULL,
+  device_id text NOT NULL,
+  ciphertext bytea NOT NULL,
+  nonce text NOT NULL,
+  key_version integer NOT NULL,
+  cursor bigint NOT NULL,
+  PRIMARY KEY (user_id, record_id)
+)`,
+  `CREATE INDEX IF NOT EXISTS sync_records_user_cursor_idx ON sync_records (user_id, cursor)`,
+  `CREATE TABLE IF NOT EXISTS sync_pair_relays (
+  id text PRIMARY KEY,
+  user_id text NOT NULL,
+  ciphertext text NOT NULL,
+  nonce text NOT NULL,
+  expires_at timestamptz NOT NULL
+)`,
   `CREATE TABLE IF NOT EXISTS api_usage (
   subject_key text NOT NULL,
   day_key text NOT NULL,
@@ -182,6 +210,31 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_link_idx ON caregiver_redemption_codes (link_token_hash)`,
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_manual_idx ON caregiver_redemption_codes (manual_code_hash)`,
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_token_idx ON caregiver_redemption_codes (token_id)`,
+  `CREATE TABLE IF NOT EXISTS waitlist_signups (
+  email text PRIMARY KEY,
+  unsubscribe_token text NOT NULL UNIQUE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  unsubscribed_at timestamptz
+)`,
+  `CREATE INDEX IF NOT EXISTS waitlist_signups_created_at_idx ON waitlist_signups (created_at)`,
+  `CREATE TABLE IF NOT EXISTS rate_limits (
+  subject_key text NOT NULL,
+  window_start timestamptz NOT NULL,
+  request_count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (subject_key, window_start)
+)`,
+  `CREATE TABLE IF NOT EXISTS book_orders (
+  id text PRIMARY KEY,
+  status text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE INDEX IF NOT EXISTS book_orders_created_at_idx ON book_orders (created_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS product_event_counts (
+  event_name text NOT NULL,
+  day_key text NOT NULL,
+  event_count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (event_name, day_key)
+)`,
   ...EVIDENCE_METHOD_SCHEMA_STATEMENTS,
 ] as const;
 

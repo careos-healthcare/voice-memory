@@ -181,6 +181,7 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
   String _detectedLanguageCode = ScreenshotMode.languageCode;
 
   late final RecordingService _recording;
+  bool _capturePaused = false;
   LiveVoiceCaptureService? _liveVoice;
   late final MicrophonePermissionGateway _microphonePermissionGateway;
   late final OnboardingMicStateStore _onboardingMicStateStore;
@@ -584,8 +585,8 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
   }
 
   void _applyScreenshotRecordPreview() {
-    if (ArchiveMeDemoState.isActive) {
-      final entries = ArchiveMeDemoArchive.journalEntries();
+    if (ThoughtprintDemoState.isActive) {
+      final entries = ThoughtprintDemoArchive.journalEntries();
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
@@ -1056,7 +1057,7 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
       _betaFeedbackCaptured = betaFeedbackCaptured;
       _lastReflectionAt = all.isEmpty ? null : all.last.createdAt;
       _entryDates = all.map((e) => e.createdAt).toList();
-      if (ArchiveMeDemoState.isActive) {
+      if (ThoughtprintDemoState.isActive) {
         _earlyEvidenceTriggerCaptured = true;
         _earlyEvidenceHelpfulCaptured = true;
       }

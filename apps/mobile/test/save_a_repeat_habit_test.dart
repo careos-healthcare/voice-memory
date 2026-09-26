@@ -133,10 +133,10 @@ void main() {
       expect(SaveARepeatHabitCopy.body, contains('save one real moment'));
     });
 
-    test('body says ArchiveMe compares it later', () {
+    test('body says Thoughtprint compares it later', () {
       expect(
         SaveARepeatHabitCopy.body,
-        contains('ArchiveMe compares it later'),
+        contains('Thoughtprint compares it later'),
       );
     });
 
@@ -169,15 +169,15 @@ void main() {
       );
     });
 
-    test('whyItMattersLine says ArchiveMe evidence to compare later', () {
+    test('whyItMattersLine says Thoughtprint evidence to compare later', () {
       expect(
         SaveARepeatHabitCopy.whyItMattersLine,
-        contains('ArchiveMe evidence to compare later'),
+        contains('Thoughtprint evidence to compare later'),
       );
     });
 
     test(
-      'chatDifferenceLine distinguishes ChatGPT from ArchiveMe evidence trail',
+      'chatDifferenceLine distinguishes ChatGPT from Thoughtprint evidence trail',
       () {
         expect(
           SaveARepeatHabitCopy.chatDifferenceLine,
@@ -185,13 +185,13 @@ void main() {
         );
         expect(
           SaveARepeatHabitCopy.chatDifferenceLine,
-          contains('ArchiveMe shows what you already said before'),
+          contains('Thoughtprint shows what you already said before'),
         );
       },
     );
 
     test(
-      'notesDifferenceLine distinguishes notes storage from ArchiveMe comparing',
+      'notesDifferenceLine distinguishes notes storage from Thoughtprint comparing',
       () {
         expect(
           SaveARepeatHabitCopy.notesDifferenceLine,
@@ -199,7 +199,7 @@ void main() {
         );
         expect(
           SaveARepeatHabitCopy.notesDifferenceLine,
-          contains('ArchiveMe checks what returns'),
+          contains('Thoughtprint checks what returns'),
         );
       },
     );
@@ -242,7 +242,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in SaveARepeatHabitCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);

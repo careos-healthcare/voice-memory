@@ -318,7 +318,7 @@ void main() {
     test('existing interpretation modules behaviour unchanged', () {
       expect(
         TrailLanguageGuard.isAllowedCopy(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).isAllowed,
         isTrue,
       );

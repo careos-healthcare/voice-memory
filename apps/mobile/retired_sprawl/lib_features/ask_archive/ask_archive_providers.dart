@@ -8,7 +8,7 @@ final askArchiveMomentsProvider = FutureProvider<List<KeyMoment>>((ref) async {
   return KeyMomentStore.instance().loadAll();
 });
 
-/// Whether the active account has ArchiveMe Pro (RevenueCat-backed).
+/// Whether the active account has Thoughtprint Pro (RevenueCat-backed).
 final askArchiveIsProProvider = FutureProvider<bool>((ref) async {
   return ArchiveEntitlementReader.forAccessCheck().isPro;
 });

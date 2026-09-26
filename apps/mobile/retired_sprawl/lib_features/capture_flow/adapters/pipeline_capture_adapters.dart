@@ -9,10 +9,13 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/local_tran
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
+import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
+import 'package:archiveme_mobile/models/image_evidence.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
+import 'package:fpdart/fpdart.dart';
 
 /// Local-first persistence via the existing capture pipeline.
 class PipelineLocalMomentRepository implements LocalMomentRepository {
@@ -32,15 +35,72 @@ class PipelineLocalMomentRepository implements LocalMomentRepository {
   Future<CapturePipelineOutcome> saveVoiceCapture({
     required File audioFile,
     required int durationSeconds,
-  }) => _pipeline.run(
-    audioFile: audioFile,
-    durationSeconds: durationSeconds,
-  );
+    List<String> images = const [],
+  }) async {
+    final outcome = await _pipeline.run(
+      audioFile: audioFile,
+      durationSeconds: durationSeconds,
+    );
+    return _stampImages(outcome, images);
+  }
 
   @override
   Future<CapturePipelineOutcome> saveTypedCapture({
     required String transcript,
-  }) => _pipeline.saveTextThought(transcript: transcript);
+    List<String> images = const [],
+  }) async {
+    final outcome = await _pipeline.saveTextThought(transcript: transcript);
+    return _stampImages(outcome, images);
+  }
+
+  Future<CapturePipelineOutcome> _stampImages(
+    CapturePipelineOutcome outcome,
+    List<String> images,
+  ) async {
+    if (images.isEmpty) return outcome;
+    return outcome.match(
+      (failure) => Future.value(Left(failure)),
+      (success) async {
+        final current = success.entry.imageEvidence;
+        final placed = <String>[];
+        for (final path in images) {
+          placed.add(
+            await ImageProcessorService.adoptIntoEntry(path, success.entry.id),
+          );
+        }
+        final updated = success.entry.copyWith(
+          imageEvidence: ImageEvidence(
+            evidenceId: current?.evidenceId.isNotEmpty == true
+                ? current!.evidenceId
+                : success.entry.id,
+            caption: current?.caption ?? '',
+            mimeType: current?.mimeType ?? 'image/jpeg',
+            attachedAt: current?.attachedAt ?? DateTime.now().toUtc(),
+            filename: current?.filename,
+            byteLength: current?.byteLength,
+            width: current?.width,
+            height: current?.height,
+            contentHash: current?.contentHash,
+            source: current?.source ?? 'picker',
+            localPath: current?.localPath ?? placed.first,
+            images: placed,
+          ),
+        );
+        await _journalStore.save(updated);
+        return Right(
+          CapturePipelineResult(
+            entry: updated,
+            localSaved: success.localSaved,
+            syncSucceeded: success.syncSucceeded,
+            analysisSucceeded: success.analysisSucceeded,
+            syncNote: success.syncNote,
+            attachedTypedTextToVoiceEntry: success.attachedTypedTextToVoiceEntry,
+            lowQualityTranscript: success.lowQualityTranscript,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Future<CapturePipelineOutcome> retryRemoteForEntry({
@@ -167,4 +227,8 @@ class StoreTranscriptionCapabilityPolicy implements TranscriptionCapabilityPort 
   @override
   Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale) =>
       _speechLocaleStore.confirm(locale);
+
+  @override
+  Future<ConfirmedSpeechLocale?> readSpeechLocale() =>
+      _speechLocaleStore.read();
 }

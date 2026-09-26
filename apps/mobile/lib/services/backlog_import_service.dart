@@ -7,11 +7,13 @@ import 'package:archiveme_mobile/core/network/api_failure_mapper.dart';
 import 'package:archiveme_mobile/core/network/voice_memory_api_routes.dart';
 import 'package:archiveme_mobile/core/network/http_transport.dart';
 import 'package:archiveme_mobile/core/network/multipart_file_part.dart';
+import 'package:archiveme_mobile/features/export/services/thoughtprint_full_export.dart';
+import 'package:archiveme_mobile/features/import/day_one_json_parser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
-const _supportedExtensions = {'txt', 'csv', 'm4a', 'mp3'};
+const _supportedExtensions = {'txt', 'csv', 'json', 'md', 'm4a', 'mp3', 'zip'};
 const _textBatchSize = 20;
 const _uuid = Uuid();
 
@@ -161,6 +163,28 @@ class BacklogImportService {
       final extension = _extensionFor(file.name);
       if (extension == null) continue;
 
+      if (extension == 'zip') {
+        if (!file.name.startsWith('thoughtprint-export')) continue;
+        final bytes = file.bytes ?? _readBytes(file);
+        if (bytes == null) continue;
+        final restored = ThoughtprintFullExport.readBytes(
+          bytes,
+          Directory.systemTemp.createTempSync('thoughtprint-import-'),
+        );
+        chunks.addAll([
+          for (final entry in restored)
+            BacklogImportChunk(
+              entryId: entry.id.isEmpty ? _uuid.v4() : entry.id,
+              sourceFile: file.name,
+              kind: BacklogImportChunkKind.text,
+              rawText: entry.transcript,
+              audioPath: entry.audioPath,
+              createdAt: entry.createdAt,
+            ),
+        ]);
+        continue;
+      }
+
       if (extension == 'm4a' || extension == 'mp3') {
         final path = file.path;
         if (path == null || path.isEmpty) continue;
@@ -180,6 +204,10 @@ class BacklogImportService {
 
       if (extension == 'csv') {
         chunks.addAll(parseAppleNotesCsv(content, sourceFile: file.name));
+      } else if (extension == 'json') {
+        chunks.addAll(parseDayOneJsonExport(content, sourceFile: file.name));
+      } else if (extension == 'md') {
+        chunks.addAll(parseMarkdownExport(content, sourceFile: file.name));
       } else {
         chunks.addAll(parseRawTextDump(content, sourceFile: file.name));
       }
@@ -191,7 +219,16 @@ class BacklogImportService {
     List<BacklogImportChunk> chunks, {
     void Function(BacklogImportProgress progress)? onProgress,
     String? activeLens,
+    bool cloudSyncEnabled = false,
+    Future<void> Function(BacklogImportChunk chunk)? saveLocally,
   }) async {
+    if (!cloudSyncEnabled) {
+      return _saveLocallyOnly(
+        chunks,
+        onProgress: onProgress,
+        saveLocally: saveLocally,
+      );
+    }
     if (chunks.isEmpty) {
       const progress = BacklogImportProgress(
         phase: BacklogImportPhase.complete,
@@ -348,6 +385,45 @@ class BacklogImportService {
     return complete;
   }
 
+  Future<BacklogImportProgress> _saveLocallyOnly(
+    List<BacklogImportChunk> chunks, {
+    void Function(BacklogImportProgress progress)? onProgress,
+    Future<void> Function(BacklogImportChunk chunk)? saveLocally,
+  }) async {
+    if (chunks.isEmpty) {
+      const progress = BacklogImportProgress(
+        phase: BacklogImportPhase.complete,
+        statusMessage: 'No entries found in the selected files.',
+      );
+      onProgress?.call(progress);
+      return progress;
+    }
+
+    var imported = 0;
+    var failed = 0;
+    final total = chunks.length;
+    for (final chunk in chunks) {
+      try {
+        if (saveLocally != null) {
+          await saveLocally(chunk);
+        }
+        imported += 1;
+      } catch (_) {
+        failed += 1;
+      }
+    }
+    final progress = BacklogImportProgress(
+      phase: BacklogImportPhase.complete,
+      totalChunks: total,
+      processedChunks: total,
+      importedCount: imported,
+      failedCount: failed,
+      statusMessage: 'Saved on this device.',
+    );
+    onProgress?.call(progress);
+    return progress;
+  }
+
   Future<
     ({
       int imported,
@@ -493,6 +569,14 @@ class BacklogImportService {
     return textChunks.first.rawText?.trim();
   }
 
+  List<int>? _readBytes(PlatformFile file) {
+    final path = file.path;
+    if (path == null || path.isEmpty) return null;
+    final source = File(path);
+    if (!source.existsSync()) return null;
+    return source.readAsBytesSync();
+  }
+
   String? _readTextContent(PlatformFile file) {
     if (file.bytes != null) {
       return utf8.decode(file.bytes!);
@@ -508,6 +592,62 @@ class BacklogImportService {
     final extension = filename.substring(dot + 1).toLowerCase();
     return _supportedExtensions.contains(extension) ? extension : null;
   }
+}
+
+/// Parses a Day One JSON export, including the journal file inside a Day One zip.
+List<BacklogImportChunk> parseDayOneJsonExport(
+  String content, {
+  required String sourceFile,
+}) {
+  final records = DayOneJsonParser.parse(content, sourceFile: sourceFile);
+  return [
+    for (final record in records)
+      BacklogImportChunk(
+        entryId: _uuid.v4(),
+        sourceFile: sourceFile,
+        kind: BacklogImportChunkKind.text,
+        rawText: record.text,
+        createdAt: record.createdAt,
+      ),
+  ];
+}
+
+/// Splits a Markdown export on headings, then falls back to paragraph breaks.
+List<BacklogImportChunk> parseMarkdownExport(
+  String content, {
+  required String sourceFile,
+}) {
+  final normalized = content.replaceAll('\r\n', '\n').trim();
+  if (normalized.isEmpty) return const [];
+
+  final sections = normalized.split(RegExp(r'\n(?=#{1,6} )'));
+  final headed = sections.length > 1 || normalized.startsWith('#');
+  if (!headed) {
+    return parseRawTextDump(normalized, sourceFile: sourceFile);
+  }
+
+  final chunks = <BacklogImportChunk>[];
+  for (final section in sections) {
+    final lines = section.trim().split('\n');
+    if (lines.isEmpty) continue;
+    final heading = lines.first.replaceFirst(RegExp(r'^#{1,6}\s*'), '').trim();
+    final body = lines.skip(1).join('\n').trim();
+    final text = [
+      if (heading.isNotEmpty) heading,
+      if (body.isNotEmpty) body,
+    ].join('\n\n');
+    if (text.isEmpty) continue;
+    chunks.add(
+      BacklogImportChunk(
+        entryId: _uuid.v4(),
+        sourceFile: sourceFile,
+        kind: BacklogImportChunkKind.text,
+        rawText: text,
+        createdAt: _parseLeadingTimestamp(body.isEmpty ? heading : body),
+      ),
+    );
+  }
+  return chunks;
 }
 
 /// Parses Apple Notes CSV exports into discrete ledger chunks.

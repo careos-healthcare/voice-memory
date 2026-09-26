@@ -200,7 +200,7 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders title "Why ArchiveMe noticed this"', (tester) async {
+    testWidgets('renders title "Why Thoughtprint noticed this"', (tester) async {
       await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('proof_specificity_card')), findsOneWidget);

@@ -33,11 +33,11 @@ void main() {
     onboardingGate.resetSessionRedirectsForTest();
   });
 
-  testWidgets('ArchiveMeApp smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const ArchiveMeApp());
+  testWidgets('ThoughtprintApp smoke test', (WidgetTester tester) async {
+    await tester.pumpWidget(const ThoughtprintApp());
     await tester.pump();
 
-    expect(find.byType(ArchiveMeApp), findsOneWidget);
+    expect(find.byType(ThoughtprintApp), findsOneWidget);
   });
 
   test('archive home redirect applies once per session', () {

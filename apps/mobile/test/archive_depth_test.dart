@@ -156,14 +156,14 @@ void main() {
   });
 
   group('Archive depth copy', () {
-    test('uses ArchiveMe and avoids banned language', () {
+    test('uses Thoughtprint and avoids banned language', () {
       _expectNoBannedCopy(ArchiveDepthCopy.allVisibleCopy());
       for (final text in ArchiveDepthCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         ArchiveDepthCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 

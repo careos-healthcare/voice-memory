@@ -108,7 +108,9 @@ class _Indicator extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: iconColor),
           const SizedBox(width: 4),
-          Text(label, style: labelStyle),
+          Flexible(
+            child: Text(label, style: labelStyle),
+          ),
         ],
       ),
     );

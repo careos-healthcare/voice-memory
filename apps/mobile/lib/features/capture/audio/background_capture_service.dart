@@ -2,21 +2,21 @@ import 'package:archiveme_mobile/features/capture/audio/archive_me_audio_handler
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:audio_service/audio_service.dart';
 
-/// Initializes and controls the background capture [ArchiveMeAudioHandler].
+/// Initializes and controls the background capture [ThoughtprintAudioHandler].
 class BackgroundCaptureService {
   BackgroundCaptureService({required this.config});
 
   final CaptureModuleRuntimeConfig config;
-  ArchiveMeAudioHandler? _handler;
+  ThoughtprintAudioHandler? _handler;
 
   Future<void> ensureInitialized() async {
     if (_handler != null) return;
     CaptureModuleRuntimeConfig.instance = config;
     _handler = await AudioService.init(
-      builder: ArchiveMeAudioHandler.new,
+      builder: ThoughtprintAudioHandler.new,
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.voicememory.mobile.capture',
-        androidNotificationChannelName: 'ArchiveMe recording',
+        androidNotificationChannelName: 'Thoughtprint recording',
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
       ),

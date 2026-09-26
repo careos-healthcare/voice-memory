@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/billing/core_access.dart';
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
 import 'package:archiveme_mobile/features/activation/paywall_timing_gates.dart';
 import 'package:archiveme_mobile/features/early_archive/private_archive_report_gates.dart';
@@ -19,9 +20,9 @@ abstract final class ProMemoryBoundaryEngine {
   /// Pattern detail evidence moments visible on free tier.
   static const freePatternDetailMomentLimit = 3;
 
-  static bool canRecord() => true;
+  static bool canRecord() => CoreAccess.canRecord;
 
-  static bool canCorrectTranscript() => true;
+  static bool canCorrectTranscript() => CoreAccess.canSaveText;
 
   static bool canSeeFirstProof() => true;
 
@@ -55,23 +56,18 @@ abstract final class ProMemoryBoundaryEngine {
     required List<T> moments,
     required bool isPro,
   }) {
-    if (isPro) return moments;
-    if (moments.length <= freePatternDetailMomentLimit) return moments;
-    return moments.take(freePatternDetailMomentLimit).toList();
+    return moments;
   }
 
   static bool hasGatedOlderMoments({
     required int totalMomentCount,
     required bool isPro,
-  }) => !isPro && totalMomentCount > freePatternDetailMomentLimit;
+  }) => false;
 
   static int gatedOlderMomentCount({
     required int totalMomentCount,
     required bool isPro,
-  }) {
-    if (isPro || totalMomentCount <= freePatternDetailMomentLimit) return 0;
-    return totalMomentCount - freePatternDetailMomentLimit;
-  }
+  }) => 0;
 
   static bool includePrivateReportSection({
     required int sectionIndex,

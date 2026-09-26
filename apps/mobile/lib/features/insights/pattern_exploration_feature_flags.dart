@@ -2,13 +2,14 @@ import 'package:flutter/foundation.dart';
 
 /// Compile-time gate for pattern exploration surfaces.
 ///
-/// Default is off. Enable locally with:
-/// `--dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true`
+/// On for this beta. Turn off with:
+/// `--dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=false`
 abstract final class PatternExplorationFeatureFlags {
   PatternExplorationFeatureFlags._();
 
   static const bool _compileTimeDefault = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_PATTERN_EXPLORATION',
+    defaultValue: true,
   );
 
   /// Test-only override — never set in production code.

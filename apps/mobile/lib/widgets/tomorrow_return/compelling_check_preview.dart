@@ -74,7 +74,7 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
           Text(
             ConsumerUiCopy.chooseTomorrowQuestionLabel,
             style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ).copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -92,12 +92,12 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
                         ? null
                         : (_) => _onSelect(label, options[label]!),
                     backgroundColor: Colors.white,
-                    selectedColor: AppColors.accentPrimary.withValues(
+                    selectedColor: Theme.of(context).colorScheme.primary.withValues(
                       alpha: 0.15,
                     ),
                     side: BorderSide(
                       color: label == selected
-                          ? AppColors.accentPrimary
+                          ? Theme.of(context).colorScheme.primary
                           : _warmBorder,
                     ),
                   ),
@@ -108,13 +108,13 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
         Text(
           check.sharpnessLabel,
           style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.accentPrimary,
+            color: Theme.of(context).colorScheme.primary,
           ).copyWith(fontSize: 11, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
           check.question,
-          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+          style: VoiceMemoryTypography.bodyStyle(color: Theme.of(context).colorScheme.onSurface)
               .copyWith(
                 fontSize: widget.compact ? 14 : 15,
                 fontWeight: FontWeight.w600,
@@ -126,7 +126,7 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
           Text(
             check.whyThisCheck,
             style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ).copyWith(fontSize: 14, height: 1.45),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -144,14 +144,14 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
                 Text(
                   ConsumerUiCopy.resultNextCheckExampleLabel,
                   style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   check.exampleAnswer,
                   style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ).copyWith(fontSize: 14, height: 1.4),
                 ),
               ],

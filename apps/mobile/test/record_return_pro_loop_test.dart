@@ -117,7 +117,7 @@ void main() {
       expect(RecordReturnProCopy.changeTitle, 'Now change can begin to show');
       expect(
         RecordReturnProCopy.changeBody,
-        'With more than one entry, ArchiveMe can start comparing what feels '
+        'With more than one entry, Thoughtprint can start comparing what feels '
         'new, repeated, or quieter.',
       );
     });

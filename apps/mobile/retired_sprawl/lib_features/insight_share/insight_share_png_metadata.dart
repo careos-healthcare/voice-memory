@@ -12,8 +12,8 @@ abstract final class InsightSharePngMetadata {
     required String source,
   }) {
     return embedTextMetadata(pngBytes, {
-      'ArchiveMeReferral': referralUrl,
-      'ArchiveMeSource': source,
+      'ThoughtprintReferral': referralUrl,
+      'ThoughtprintSource': source,
     });
   }
 

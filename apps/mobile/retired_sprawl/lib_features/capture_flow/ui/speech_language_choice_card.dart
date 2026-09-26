@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_language_choice_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -82,9 +83,9 @@ class _SpeechLanguageChoiceCardState extends State<SpeechLanguageChoiceCard> {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.backgroundPrimary,
+        color: context.palette.backgroundPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -95,12 +96,23 @@ class _SpeechLanguageChoiceCardState extends State<SpeechLanguageChoiceCard> {
               SpeechLanguageChoiceCopy.title,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: context.palette.textPrimary,
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           const _Body(SpeechLanguageChoiceCopy.body),
+          const SizedBox(height: AppSpacing.sm),
+          SpeechLanguageSettings(
+            selected: selected?.identifier,
+            onSelected: (identifier) {
+              for (final entry in _offered) {
+                if (entry.identifier != identifier) continue;
+                setState(() => _selected = entry);
+                return;
+              }
+            },
+          ),
           const SizedBox(height: AppSpacing.sm),
           DropdownButtonFormField<OfferedSpeechLocale>(
             key: const Key('speech_language_choice_picker'),
@@ -156,9 +168,9 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 13,
-        color: AppColors.textSecondary,
+        color: context.palette.textSecondary,
         height: 1.4,
       ),
     );

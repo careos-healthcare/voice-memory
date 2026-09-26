@@ -63,8 +63,8 @@ void main() {
       }
     });
 
-    test('positioning and ArchiveMe identity', () {
-      expect(allDocs, contains('ArchiveMe'));
+    test('positioning and Thoughtprint identity', () {
+      expect(allDocs, contains('Thoughtprint'));
       expect(allDocs.toLowerCase(), contains('private evidence archive'));
       expect(
         allDocs.toLowerCase(),

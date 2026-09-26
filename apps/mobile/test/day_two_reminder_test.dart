@@ -243,7 +243,7 @@ void main() {
       expect(find.text('Check this tomorrow?'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe can remind you once to check whether this returned, '
+          'Thoughtprint can remind you once to check whether this returned, '
           'faded, or changed.',
         ),
         findsOneWidget,

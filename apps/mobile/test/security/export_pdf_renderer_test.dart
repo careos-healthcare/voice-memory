@@ -41,7 +41,7 @@ void main() {
     final bytes = await ExportPdfRenderer.render(_payload());
     expect(latin1.decode(bytes.take(5).toList()), '%PDF-');
     final text = _pdfWords(bytes);
-    expect(text, contains('ArchiveMe'));
+    expect(text, contains('Thoughtprint'));
     expect(text, contains('Journal export'));
     expect(text, contains('No reflections in this export.'));
     expect(text, isNot(contains('VoiceMemory')));
@@ -108,6 +108,6 @@ void main() {
   });
 
   test('uses the /export PDF filename', () {
-    expect(ExportPdfRenderer.fileName, 'archiveme_export.pdf');
+    expect(ExportPdfRenderer.fileName, 'thoughtprint_export.pdf');
   });
 }

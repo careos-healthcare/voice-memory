@@ -359,7 +359,7 @@ void main() {
       confidencePercent: 72,
       evidenceSummary: 'Appeared in 3 reflections.',
       whyExplanation:
-          'ArchiveMe noticed this topic repeating across months of reflections.',
+          'Thoughtprint noticed this topic repeating across months of reflections.',
       section: ArchiveBeliefSection.hiddenPattern,
       conclusion: 'This pattern appears consistently in what you record.',
     );
@@ -399,7 +399,7 @@ void main() {
         confidencePercent: 72,
         evidenceSummary: 'Appeared in 3 reflections.',
         whyExplanation:
-            'ArchiveMe noticed this topic repeating across months of reflections.',
+            'Thoughtprint noticed this topic repeating across months of reflections.',
         section: ArchiveBeliefSection.current,
         sourceEntryIds: ['e1', 'e2', 'e3'],
       );
@@ -433,7 +433,7 @@ void main() {
         confidencePercent: 72,
         evidenceSummary: 'Appeared in 3 reflections.',
         whyExplanation:
-            'ArchiveMe noticed this topic repeating across months of reflections.',
+            'Thoughtprint noticed this topic repeating across months of reflections.',
         section: ArchiveBeliefSection.current,
       );
 

@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/capture/vad/onnx_vad_inference.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segment_writer.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/features/capture/vad/webrtc_vad_engine.dart';
 import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
@@ -134,6 +135,7 @@ class VadStreamingService {
 
   Future<void> _handlePcmChunk(Uint8List chunk) async {
     if (_state == VadStreamState.idle) return;
+    LiveDraftTranscript.offerCapturedPcm(chunk);
 
     final frameBytes = _config.frameSampleCount * 2;
     for (var offset = 0; offset + frameBytes <= chunk.length; offset += frameBytes) {

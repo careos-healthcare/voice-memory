@@ -5,7 +5,7 @@ abstract final class FirstProofJourneyCopy {
   static const strip = '1 Save → 2 Compare → 3 First thread';
 
   static const helper =
-      'One moment starts the archive. A few real moments let ArchiveMe compare what returns.';
+      'One moment starts the archive. A few real moments let Thoughtprint compare what returns.';
 
   static Iterable<String> allVisibleStrings() sync* {
     yield strip;

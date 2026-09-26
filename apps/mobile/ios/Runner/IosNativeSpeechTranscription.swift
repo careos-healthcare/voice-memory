@@ -613,6 +613,32 @@ final class IosNativeSpeechTranscriptionHandler {
       // refuses `locale_not_specified` without one. A device capability list
       // is not a statement about the person holding the device.
       result(SFSpeechRecognizer.supportedLocales().map(\.identifier))
+    case "startLiveDraft":
+      let args = call.arguments as? [String: Any]
+      IosLiveDraftSpeech.shared.start(
+        localeIdentifier: args?["localeIdentifier"] as? String,
+        result: result
+      )
+    case "stopLiveDraft":
+      IosLiveDraftSpeech.shared.stop()
+      result(nil)
+    case "pauseLiveDraft":
+      IosLiveDraftSpeech.shared.paused = true
+      result(nil)
+    case "resumeLiveDraft":
+      IosLiveDraftSpeech.shared.paused = false
+      result(nil)
+    case "probeLiveDraft":
+      let args = call.arguments as? [String: Any]
+      let localeId = args?["localeIdentifier"] as? String ?? ""
+      let recognizer = localeId.isEmpty
+        ? nil
+        : SFSpeechRecognizer(locale: Locale(identifier: localeId))
+      result([
+        "sherpa": false,
+        "platform": false,
+        "iosOnDevice": recognizer?.supportsOnDeviceRecognition ?? false,
+      ])
     case "supportsOnDeviceRecognition":
       // A malformed call is answered with an error rather than `false`.
       // `PlatformLocalTranscriptionAvailability` reads a throw as "could not
@@ -639,5 +665,80 @@ final class IosNativeSpeechTranscriptionHandler {
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+}
+
+/// Live partials from the on-device recogniser. Never a saved transcript.
+final class IosLiveDraftSpeech: NSObject, FlutterStreamHandler {
+  static let shared = IosLiveDraftSpeech()
+
+  private var sink: FlutterEventSink?
+  private let engine = AVAudioEngine()
+  private var request: SFSpeechAudioBufferRecognitionRequest?
+  private var task: SFSpeechRecognitionTask?
+  private var recognizer: SFSpeechRecognizer?
+  var paused = false
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+    sink = events
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    sink = nil
+    return nil
+  }
+
+  func start(localeIdentifier: String?, result: @escaping FlutterResult) {
+    let requested = localeIdentifier?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    guard !requested.isEmpty else {
+      result(FlutterError(
+        code: "locale_not_specified",
+        message: "Speech language has not been chosen",
+        details: nil
+      ))
+      return
+    }
+    let locale = Locale(identifier: requested)
+    guard let recognizer = SFSpeechRecognizer(locale: locale),
+          recognizer.supportsOnDeviceRecognition else {
+      result(FlutterError(code: "on_device_unavailable", message: "No on-device recogniser", details: nil))
+      return
+    }
+    self.recognizer = recognizer
+    let request = SFSpeechAudioBufferRecognitionRequest()
+    request.requiresOnDeviceRecognition = true
+    request.shouldReportPartialResults = true
+    self.request = request
+    task = recognizer.recognitionTask(with: request) { [weak self] speechResult, _ in
+      guard let text = speechResult?.bestTranscription.formattedString, !text.isEmpty else { return }
+      self?.sink?(text)
+    }
+    let input = engine.inputNode
+    let format = input.outputFormat(forBus: 0)
+    input.removeTap(onBus: 0)
+    input.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
+      guard let self, !self.paused else { return }
+      self.request?.append(buffer)
+    }
+    engine.prepare()
+    do {
+      try engine.start()
+      result(nil)
+    } catch {
+      stop()
+      result(FlutterError(code: "live_draft_failed", message: error.localizedDescription, details: nil))
+    }
+  }
+
+  func stop() {
+    paused = false
+    engine.stop()
+    engine.inputNode.removeTap(onBus: 0)
+    request?.endAudio()
+    task?.cancel()
+    request = nil
+    task = nil
+    recognizer = nil
   }
 }

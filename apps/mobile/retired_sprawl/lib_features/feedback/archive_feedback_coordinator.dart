@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/feedback/archive_feedback_store.dart';
 import 'package:archiveme_mobile/features/feedback/archive_feedback_summary_engine.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 
-/// Saves quick feedback on ArchiveMe output and loads a gentle summary for
+/// Saves quick feedback on Thoughtprint output and loads a gentle summary for
 /// future checks. Always fails softly — feedback must never block the loop.
 abstract class ArchiveFeedbackCoordinator {
   ArchiveFeedbackCoordinator._();

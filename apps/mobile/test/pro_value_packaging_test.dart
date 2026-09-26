@@ -102,12 +102,12 @@ void main() {
       expect(joined, isNot(contains('pro is active')));
     });
 
-    test('uses ArchiveMe branding only in visible copy', () {
+    test('uses Thoughtprint branding only in visible copy', () {
       for (final text in ProValueCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(ProValueCopy.allVisibleCopy(), anyElement(contains('ArchiveMe')));
+      expect(ProValueCopy.allVisibleCopy(), anyElement(contains('Thoughtprint')));
     });
   });
 

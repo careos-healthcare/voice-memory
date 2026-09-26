@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_mo
 class PatternShareRecapEngine {
   const PatternShareRecapEngine();
 
-  static const String _signature = 'Made with ArchiveMe';
+  static const String _signature = 'Made with Thoughtprint';
   static const String _fallbackQuestion = 'Did this show up again?';
 
   PatternShareRecap build({

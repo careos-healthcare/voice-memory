@@ -397,6 +397,20 @@ paths:
         '200':
           description: Journal export bundle
 
+  /api/export/audio-qr:
+    post:
+      tags: [export]
+      operationId: exportAudioQrCreate
+      responses:
+        '200':
+          description: Signed audio link that expires in 30 days
+    get:
+      tags: [export]
+      operationId: exportAudioQrPlay
+      responses:
+        '200':
+          description: Temporary player or encrypted audio bytes
+
   /api/journal/{id}:
     put:
       tags: [journal]

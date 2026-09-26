@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/features/archive/ui/remote_processing_choice_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_model.dart';
@@ -82,6 +83,69 @@ void main() {
       expect(find.textContaining('confidence'), findsNothing);
     });
 
+    testWidgets('shows a past verbatim quote and a play button', (
+      tester,
+    ) async {
+      final past = DateTime.utc(2024, 3, 2);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: MomentSaveReceiptCard(
+                entry: _entry(),
+                entryCount: 4,
+                similarEntries: [
+                  SimilarEntry(
+                    id: 'past-1',
+                    createdAt: past,
+                    transcript:
+                        'I said the same thing about the river last spring.',
+                    localAudioPath: '/tmp/past.m4a',
+                    cosineSimilarity: 0.9,
+                  ),
+                ],
+                onRecordAnother: () {},
+                onViewArchive: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text("You've talked about this before"), findsOneWidget);
+      expect(
+        find.text('I said the same thing about the river last spring.'),
+        findsOneWidget,
+      );
+      expect(find.text('Play'), findsOneWidget);
+      expect(
+        find.byKey(const Key('moment_save_receipt_similar_play_past-1')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('hides earlier moments when nothing matches', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: MomentSaveReceiptCard(
+              entry: _entry(),
+              entryCount: 4,
+              similarEntries: const [],
+              onRecordAnother: () {},
+              onViewArchive: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text("You've talked about this before"), findsNothing);
+    });
+
     testWidgets('remote failure shows retryable status without blocking save', (
       tester,
     ) async {
@@ -89,13 +153,15 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: MomentSaveReceiptCard(
-              entry: _entry(),
-              entryCount: 1,
-              remoteStatus: MomentSaveRemoteStatus.failedRetryable,
-              onRecordAnother: () {},
-              onViewArchive: () {},
-              onRetryRemote: () {},
+            body: SingleChildScrollView(
+              child: MomentSaveReceiptCard(
+                entry: _entry(),
+                entryCount: 1,
+                remoteStatus: MomentSaveRemoteStatus.failedRetryable,
+                onRecordAnother: () {},
+                onViewArchive: () {},
+                onRetryRemote: () {},
+              ),
             ),
           ),
         ),
@@ -281,7 +347,10 @@ void main() {
         find.text(RemoteProcessingChoiceCopy.skippedNote),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('moment_save_receipt_sync_note')), findsNothing);
+      expect(
+        find.byKey(const Key('moment_save_receipt_sync_note')),
+        findsNothing,
+      );
 
       await tester.tap(find.byKey(RemoteProcessingSkippedCard.ctaKey));
       expect(opened, isTrue);

@@ -87,7 +87,7 @@ void main() {
       expect(FirstUseWordingCopy.title, 'Try starting with one real sentence');
       expect(
         FirstUseWordingCopy.body,
-        'It can be small. ArchiveMe only needs something real to compare later.',
+        'It can be small. Thoughtprint only needs something real to compare later.',
       );
       expect(FirstUseWordingCopy.useOpeningCta, 'Use this opening');
       expect(FirstUseWordingCatalog.prompts, hasLength(5));

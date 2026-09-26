@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/di/network_providers.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/network/insights_conversation_api_client.dart';
@@ -53,6 +54,7 @@ void main() {
   late PatternExplorationConversationNotifier notifier;
 
   setUp(() {
+    UserPreferences.debugCloudSyncOverride = true;
     fakeApi = _FakeInsightsConversationApiClient();
     container = ProviderContainer(
       overrides: [
@@ -63,7 +65,22 @@ void main() {
   });
 
   tearDown(() {
+    UserPreferences.debugCloudSyncOverride = null;
     container.dispose();
+  });
+
+  test('sendMessage does not call the API when cloud sync is off', () async {
+    UserPreferences.debugCloudSyncOverride = false;
+
+    await notifier.sendMessage('first');
+
+    expect(fakeApi.calls, isEmpty);
+    final state = container.read(patternExplorationConversationProvider);
+    expect(state.messages, isEmpty);
+    expect(
+      state.errorMessage,
+      PatternExplorationConversationState.cloudLockedMessage,
+    );
   });
 
   test('reset() clears messages, isSending, and error after a prior turn',

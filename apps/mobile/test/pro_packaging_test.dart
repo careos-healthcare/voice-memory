@@ -120,7 +120,7 @@ void main() {
   tearDown(() => sandbox.dispose());
   group('ProPackagingCopy', () {
     test('defines longer proof trail Pro positioning', () {
-      expect(ProPackagingCopy.title, 'ArchiveMe Pro');
+      expect(ProPackagingCopy.title, 'Thoughtprint Pro');
       expect(ProPackagingCopy.subtitle, PaywallAlignmentCopy.body);
       expect(ProPackagingCopy.freeSectionTitle, 'Free');
       expect(
@@ -185,13 +185,13 @@ void main() {
     });
   });
 
-  group('ArchiveMeProValueSection', () {
+  group('ThoughtprintProValueSection', () {
     testWidgets('renders free and pro sections', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ArchiveMeProValueSection(
+            body: ThoughtprintProValueSection(
               packaging: ProPackagingEngine.build(
                 offeringsAvailable: false,
                 showPlanPrices: false,
@@ -268,7 +268,7 @@ void main() {
   });
 
   group('Account screen packaging', () {
-    testWidgets('shows ArchiveMe Pro value section and tile', (tester) async {
+    testWidgets('shows Thoughtprint Pro value section and tile', (tester) async {
       await tester.pumpWidget(
         MaterialApp(theme: AppTheme.light(), home: const AccountScreen()),
       );

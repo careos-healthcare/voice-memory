@@ -85,7 +85,7 @@ List<JournalEntry> _relatedThree() => [
 void main() {
   group('TesterMissionCopy canonical onboarding', () {
     test('title mission steps and feedback question match brief', () {
-      expect(TesterMissionCopy.title, 'Testing ArchiveMe?');
+      expect(TesterMissionCopy.title, 'Testing Thoughtprint?');
       expect(TesterMissionCopy.mission, 'Reach first proof.');
       expect(TesterMissionCopy.steps, [
         'Record one real moment.',
@@ -446,7 +446,7 @@ void main() {
     });
   });
 
-  group('TestingArchiveMeScreen', () {
+  group('TestingThoughtprintScreen', () {
     tearDown(ArchiveBetaMissionGate.resetForTest);
 
     testWidgets('mission steps render in order with feedback question', (
@@ -455,7 +455,7 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
 
       await tester.pumpWidget(
-        const MaterialApp(home: TestingArchiveMeScreen()),
+        const MaterialApp(home: TestingThoughtprintScreen()),
       );
 
       expect(find.byKey(const Key('testing_archiveme_screen')), findsOneWidget);

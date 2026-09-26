@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.dart';
+import 'package:archiveme_mobile/features/import/views/import_receipt_view.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
@@ -65,6 +69,34 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 /// Root navigator for app-wide prompts (offline vault recovery, etc.).
 GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
 
+/// Opens the import receipt once a shared recording has a transcript.
+Future<void> openImportReceipt({
+  required JournalEntry entry,
+  required Future<void> Function(JournalEntry entry) save,
+  int attempt = 0,
+}) async {
+  final navigator = appRootNavigatorKey.currentState;
+  if (navigator == null) {
+    if (attempt >= 8) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(
+        openImportReceipt(entry: entry, save: save, attempt: attempt + 1),
+      );
+    });
+    return;
+  }
+  await navigator.push<void>(
+    MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (_) => ImportReceiptView(
+        transcript: entry.transcript,
+        recordedAt: entry.createdAt,
+        onSave: () => save(entry),
+      ),
+    ),
+  );
+}
+
 const instantCapturePaths = {'/quick-capture', '/quick-yes-capture'};
 
 /// Converts custom-scheme widget and wearable launches into internal routes.
@@ -85,7 +117,7 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
   final action = uri.host.isNotEmpty
       ? uri.host.toLowerCase()
       : uri.path.replaceFirst(RegExp('^/+'), '').toLowerCase();
-    final path = switch (action) {
+  final path = switch (action) {
     'record' => CaptureDeepLinkUris.recordLaunchRoute,
     'quick-capture' =>
       V1FeatureFlags.enableV1Only ? '/quick-capture' : '/quick-yes-capture',
@@ -128,7 +160,9 @@ final GoRouter appRouter = GoRouter(
 
     // Isolates an active caregiver session from the owner's app. Returns null
     // without touching storage while the capability is compiled out.
-    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(path);
+    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(
+      path,
+    );
     if (caregiverRedirect != null) return caregiverRedirect;
 
     if (path == '/start') {
@@ -373,8 +407,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/entry/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) =>
-          EntryDetailScreen(entryId: state.pathParameters['id'] ?? ''),
+      builder: (context, state) {
+        final ms = int.tryParse(state.uri.queryParameters['ms'] ?? '');
+        final seconds = int.tryParse(state.uri.queryParameters['t'] ?? '');
+        return EntryDetailScreen(
+          entryId: state.pathParameters['id'] ?? '',
+          startAt: ms != null
+              ? Duration(milliseconds: ms)
+              : Duration(seconds: seconds ?? 0),
+        );
+      },
     ),
     GoRoute(
       path: '/theories',

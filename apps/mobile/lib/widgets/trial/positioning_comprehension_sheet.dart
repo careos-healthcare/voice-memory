@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Trial-only survey: did the user understand ArchiveMe as pattern memory?
+/// Trial-only survey: did the user understand Thoughtprint as pattern memory?
 abstract class PositioningComprehensionSheet {
   PositioningComprehensionSheet._();
 

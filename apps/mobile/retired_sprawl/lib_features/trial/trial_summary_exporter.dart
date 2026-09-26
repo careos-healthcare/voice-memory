@@ -28,7 +28,7 @@ class TrialSummaryExporter {
         rate == null ? '—' : '${(rate * 100).toStringAsFixed(0)}%';
 
     return '''
-# ArchiveMe trial summary
+# Thoughtprint trial summary
 
 **Participant:** $participant  
 **Generated:** ${summary.generatedAt.toIso8601String()}  
@@ -291,7 +291,7 @@ ${_retentionDiagnosisSection(summary)}
 - Refresh failed: ${summary.objectiveWidgetRefreshFailedCount}
 - Cleared: ${summary.objectiveWidgetClearedCount}
 
-## What ArchiveMe remembers
+## What Thoughtprint remembers
 
 - Summary shown: ${summary.archiveMemorySummaryShownCount}
 - Open pattern map tapped: ${summary.archiveMemoryOpenPatternMapTappedCount}

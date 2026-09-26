@@ -55,7 +55,7 @@ void main() {
       expect(find.byKey(const Key('experiment_h_chat_panel')), findsOneWidget);
       expect(find.byKey(const Key('experiment_h_evidence_panel')), findsOneWidget);
       expect(find.textContaining('Standard Chatbot'), findsOneWidget);
-      expect(find.textContaining('ArchiveMe Evidence Engine'), findsOneWidget);
+      expect(find.textContaining('Thoughtprint Evidence Engine'), findsOneWidget);
       expect(find.textContaining('exhausted'), findsWidgets);
     });
 

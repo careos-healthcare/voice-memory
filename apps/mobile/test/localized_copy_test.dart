@@ -58,7 +58,7 @@ void main() {
     expect(localized('needHelpNow', 'en'), 'Need help now?');
     expect(
       localized('quickHelpSubtitle', 'en'),
-      'Pick what you need. ArchiveMe will give one next step.',
+      'Pick what you need. Thoughtprint will give one next step.',
     );
     expect(
       localized('quickHelpWhatToRecord', 'en'),

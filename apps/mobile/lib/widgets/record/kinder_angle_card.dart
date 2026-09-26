@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/perspective/kinder_angle_engine.dart';
 import 'package:archiveme_mobile/features/perspective/kinder_angle_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
@@ -146,7 +147,7 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
       Text(
         angle.kinderRead,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
         ).copyWith(fontSize: 16, height: 1.45),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -157,7 +158,7 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
       Text(
         angle.cautionLine,
         style: VoiceMemoryTypography.metadataStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontStyle: FontStyle.italic, height: 1.4),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -170,14 +171,14 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
       Text(
         _t('aKinderAngle'),
         style: VoiceMemoryTypography.metadataStyle(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ).copyWith(fontWeight: FontWeight.w700),
       ),
       const SizedBox(height: AppSpacing.xs),
       Text(
         angle.kinderRead,
         style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textPrimary,
+          color: context.palette.textPrimary,
         ).copyWith(fontSize: 15, height: 1.4),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -235,13 +236,13 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
         Text(
           label,
           style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
           ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
           body,
-          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+          style: VoiceMemoryTypography.bodyStyle(color: context.palette.textPrimary)
               .copyWith(
                 fontSize: emphasizeBody ? 15 : 14,
                 fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
+import 'package:archiveme_mobile/features/capture/reflect_capture_audio.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/ios_audio_session.dart';
 import 'package:record/record.dart';
 
@@ -17,10 +18,12 @@ Future<Stream<Uint8List>> defaultRecordPcmStreamFactory(
 ) async {
   await IosAudioSessionConfigurator.configureForCapture(recorder);
   return recorder.startStream(
-    RecordConfig(
-      encoder: AudioEncoder.pcm16bits,
-      sampleRate: config.sampleRateHz,
-      numChannels: 1,
+    ReflectCaptureAudio.apply(
+      RecordConfig(
+        encoder: AudioEncoder.pcm16bits,
+        sampleRate: config.sampleRateHz,
+        numChannels: 1,
+      ),
     ),
   );
 }

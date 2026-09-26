@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// Files that may mention the legacy application id for store SKU docs only.
 const _legacyIdAllowlist = {
   'docs/REVENUECAT_RELEASE_CHECKLIST.md',
+  'docs/archive/2026-08/REVENUECAT_RELEASE_CHECKLIST.md',
   'IDENTIFIERS.md',
 };
 
@@ -33,8 +34,8 @@ const _legacyBundleId = 'com.voicememory.app';
 
 void main() {
   group('Release identity constants', () {
-    test('AppConfig uses ArchiveMe and com.voicememory.mobile', () {
-      expect(AppConfig.appName, 'ArchiveMe');
+    test('AppConfig uses Thoughtprint and com.voicememory.mobile', () {
+      expect(AppConfig.appName, 'Thoughtprint');
       expect(AppConfig.bundleId, _canonicalBundleId);
     });
   });
@@ -76,15 +77,15 @@ void main() {
 
     test('Info.plist display name and URL schemes', () {
       final plist = File('ios/Runner/Info.plist').readAsStringSync();
-      expect(plist, contains('<string>ArchiveMe</string>'));
+      expect(plist, contains('<string>Thoughtprint</string>'));
       expect(plist, contains('<string>archiveme</string>'));
       expect(plist, contains('<string>voicememory</string>'));
     });
 
-    test('Runner entitlements exclude App Group for beta', () {
+    test('Runner entitlements include the widget App Group', () {
       final text = File('ios/Runner/Runner.entitlements').readAsStringSync();
-      expect(text, isNot(contains('com.apple.security.application-groups')));
-      expect(text, isNot(contains('group.com.voicememory.mobile')));
+      expect(text, contains('com.apple.security.application-groups'));
+      expect(text, contains('group.com.voicememory.mobile'));
     });
 
     test('active tree does not compile widget storage swift', () {
@@ -105,9 +106,9 @@ void main() {
   });
 
   group('Docs and branding', () {
-    test('README states ArchiveMe public name and canonical bundle id', () {
+    test('README states Thoughtprint public name and canonical bundle id', () {
       final readme = File('README.md').readAsStringSync();
-      expect(readme, contains('ArchiveMe'));
+      expect(readme, contains('Thoughtprint'));
       expect(readme, contains(_canonicalBundleId));
       expect(readme, contains('Runner.xcworkspace'));
       expect(readme, contains('IDENTIFIERS.md'));
@@ -115,7 +116,7 @@ void main() {
 
     test('IDENTIFIERS.md documents canonical ids and policy', () {
       final doc = File('IDENTIFIERS.md').readAsStringSync();
-      expect(doc, contains('ArchiveMe'));
+      expect(doc, contains('Thoughtprint'));
       expect(doc, contains(_canonicalBundleId));
       expect(doc, contains('archiveme_mobile'));
       expect(doc, contains('do not change'));

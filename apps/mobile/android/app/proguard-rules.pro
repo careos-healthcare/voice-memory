@@ -36,6 +36,10 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
+# sherpa-onnx streaming recogniser (live draft). JNI methods must keep their names.
+-keep class com.k2fsa.sherpa.onnx.** { *; }
+-dontwarn com.k2fsa.sherpa.onnx.**
+
 # ONNX Runtime — local STT / embedding inference (flutter_onnxruntime)
 -keep class ai.onnxruntime.** { *; }
 -dontwarn ai.onnxruntime.**

@@ -20,7 +20,7 @@ class EvidenceContextTagCard extends StatefulWidget {
 
   static const String title = 'Add context?';
   static const String helperLine =
-      'This helps ArchiveMe connect future evidence.';
+      'This helps Thoughtprint connect future evidence.';
   static const String skipLabel = 'Skip';
   static const String saveLabel = 'Save context';
 

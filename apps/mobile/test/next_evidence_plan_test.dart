@@ -251,14 +251,14 @@ void main() {
   });
 
   group('Next evidence plan copy', () {
-    test('uses ArchiveMe and avoids banned language', () {
+    test('uses Thoughtprint and avoids banned language', () {
       _expectNoBannedCopy(NextEvidencePlanCopy.allVisibleCopy());
       for (final text in NextEvidencePlanCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         NextEvidencePlanCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 

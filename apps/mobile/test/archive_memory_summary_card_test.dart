@@ -48,7 +48,7 @@ void main() {
     tester,
   ) async {
     await _pump(tester, _summary());
-    expect(find.text('What ArchiveMe remembers'), findsOneWidget);
+    expect(find.text('What Thoughtprint remembers'), findsOneWidget);
     expect(find.text('Clear pattern'), findsOneWidget);
     expect(
       find.text('You often take responsibility before asking for help.'),

@@ -556,7 +556,7 @@ abstract final class EarlyArchiveInsightQualityEngine {
     return trimmed;
   }
 
-  /// Short, grounded reasons for the expandable "Why ArchiveMe thinks this" row.
+  /// Short, grounded reasons for the expandable "Why Thoughtprint thinks this" row.
   static List<String> whyReasonsFor({
     required EarlyArchiveInsightType insightType,
     required List<JournalEntry> entries,

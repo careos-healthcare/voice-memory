@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/user_facing_date.dart';
 import 'package:archiveme_mobile/features/evidence_trail/evidence_confidence_band_copy.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
@@ -203,13 +204,7 @@ class _SourceSpanCard extends StatelessWidget {
                   ).copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  quote.verbatimText,
-                  style: VoiceMemoryTypography.bodyStyle().copyWith(
-                    fontSize: 14,
-                    height: 1.45,
-                  ),
-                ),
+                UserWordsQuote(text: quote.verbatimText),
                 const SizedBox(height: 6),
                 Text(
                   'Open journal entry',

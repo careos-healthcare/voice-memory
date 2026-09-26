@@ -123,7 +123,7 @@ void main() {
       );
       expect(
         First60Copy.valueSecondLine,
-        'When patterns appear, ArchiveMe can show what returned, faded, '
+        'When patterns appear, Thoughtprint can show what returned, faded, '
         'or changed.',
       );
       expect(First60Copy.valueCta, 'View my archive');

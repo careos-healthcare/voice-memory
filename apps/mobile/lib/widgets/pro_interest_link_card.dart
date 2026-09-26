@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive_watchlist/archive_watchlist_store.dart';
 import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_engine.dart';
@@ -68,6 +69,9 @@ class _ProInterestLinkCardState extends State<ProInterestLinkCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (!V1CapabilityRegistry.storeBilling) {
+      return const SizedBox.shrink(key: Key('pro_interest_link_card_hidden'));
+    }
     if (_loading) {
       return const SizedBox.shrink(key: Key('pro_interest_link_card_loading'));
     }

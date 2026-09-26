@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archiveme_mobile/services/backlog_import_service.dart';
 import 'package:archiveme_mobile/features/import/apple_notes_json_parser.dart';
 import 'package:archiveme_mobile/features/import/day_one_json_parser.dart';
 import 'package:archiveme_mobile/features/import/import_record.dart';
+import 'package:archiveme_mobile/features/import/import_source.dart';
 import 'package:archiveme_mobile/features/import/journal_entry_importer.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,7 +18,7 @@ class ExternalImportCoordinator {
 
   final JournalStore _store;
 
-  static const supportedExtensions = {'json', 'txt', 'csv'};
+  static const supportedExtensions = {'json', 'txt', 'csv', 'md'};
 
   Future<List<PlatformFile>> pickExportFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -55,6 +57,17 @@ class ExternalImportCoordinator {
     }
     if (extension == 'txt') {
       return parsePlainTextRecords(content, sourceFile: filename);
+    }
+    if (extension == 'md') {
+      return [
+        for (final chunk in parseMarkdownExport(content, sourceFile: filename))
+          ExternalImportRecord(
+            source: ExternalImportSource.plainText,
+            sourceFile: filename,
+            text: chunk.rawText ?? '',
+            createdAt: chunk.createdAt,
+          ),
+      ];
     }
     if (extension == 'json') {
       return _parseJson(content, sourceFile: filename);

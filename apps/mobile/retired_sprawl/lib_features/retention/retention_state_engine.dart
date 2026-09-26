@@ -48,7 +48,7 @@ RetentionState buildRetentionState({
         return RetentionState(
           type: RetentionStateType.nextCheckChosen,
           title: 'Next check ready',
-          body: 'ArchiveMe will keep this ready for tomorrow.',
+          body: 'Thoughtprint will keep this ready for tomorrow.',
           checkQuestion: latestNextCheck ?? activeCheckIn.question,
           patternTitle: latestPatternTitle ?? activeCheckIn.patternTitle,
           targetDate: activeCheckIn.targetDate,
@@ -74,7 +74,7 @@ RetentionState buildRetentionState({
     return RetentionState(
       type: RetentionStateType.nextCheckChosen,
       title: 'Next check ready',
-      body: 'ArchiveMe will keep this ready for tomorrow.',
+      body: 'Thoughtprint will keep this ready for tomorrow.',
       checkQuestion: latestNextCheck,
       patternTitle: latestPatternTitle,
       primaryCtaLabel: 'Done for today',

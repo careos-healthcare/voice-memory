@@ -25,7 +25,7 @@ void main() {
   group('TESTFLIGHT_MANUAL_QA.md', () {
     test('exists with core release identity', () {
       expect(File(_qaDocPath).existsSync(), isTrue);
-      expect(doc, contains('ArchiveMe'));
+      expect(doc, contains('Thoughtprint'));
       expect(doc, contains(_bundleId));
       expect(doc, contains('ios/Runner.xcworkspace'));
       expect(doc, contains(_supportUrl));

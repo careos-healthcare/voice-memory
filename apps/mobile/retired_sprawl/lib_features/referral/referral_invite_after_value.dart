@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/features/memory/memory_scope_policy.dart';
 import 'package:flutter/foundation.dart';
 
 /// Referral Invite After Value — one calm, dismissible invite card shown
-/// only after ArchiveMe has demonstrably shown value this session.
+/// only after Thoughtprint has demonstrably shown value this session.
 ///
 /// Guardrails by construction:
 /// - Never before the first save, never with a single entry, never before
@@ -29,13 +29,13 @@ abstract class ReferralInviteAfterValue {
   // stable source id — no archive content, snippets, counts, or source
   // terms can enter them.
 
-  static const String defaultProofLine = 'ArchiveMe has started showing value.';
+  static const String defaultProofLine = 'Thoughtprint has started showing value.';
   static const String weeklyReviewProofLine =
       'Your weekly review showed what returned, faded, or changed.';
   static const String threadReturnProofLine =
-      'ArchiveMe noticed a thread coming back.';
+      'Thoughtprint noticed a thread coming back.';
   static const String beliefDistanceProofLine =
-      'ArchiveMe noticed a phrase pattern showing up again.';
+      'Thoughtprint noticed a phrase pattern showing up again.';
   static const String proofCounterProofLine =
       'Your archive started connecting recordings.';
   static const String proRetentionProofLine =
@@ -61,7 +61,7 @@ abstract class ReferralInviteAfterValue {
 
   /// The default invite text — fixed copy only, never personalized.
   static const String inviteText =
-      'I\u2019m testing ArchiveMe \u2014 it helps you record one small thing '
+      'I\u2019m testing Thoughtprint \u2014 it helps you record one small thing '
       'and notice what keeps returning, fading, or changing over time. It '
       'does not share your archive. Want to try it?';
 
@@ -69,22 +69,22 @@ abstract class ReferralInviteAfterValue {
   // describing only what the product does — never the user's archive. No
   // numbers, snippets, source terms, or raw user text can enter these.
   static const String weeklyReviewInviteText =
-      'I\u2019m testing ArchiveMe. It helped me notice what returned, faded, '
+      'I\u2019m testing Thoughtprint. It helped me notice what returned, faded, '
       'or changed this week \u2014 without sharing my archive. Want to try '
       'it?';
   static const String threadReturnInviteText =
-      'I\u2019m testing ArchiveMe. It helps you notice when the same thread '
+      'I\u2019m testing Thoughtprint. It helps you notice when the same thread '
       'keeps coming back \u2014 without sharing your archive. Want to try '
       'it?';
   static const String beliefDistanceInviteText =
-      'I\u2019m testing ArchiveMe. It helps you notice belief-like phrases '
+      'I\u2019m testing Thoughtprint. It helps you notice belief-like phrases '
       'that keep showing up \u2014 without sharing your archive. Want to try '
       'it?';
   static const String proofCounterInviteText =
-      'I\u2019m testing ArchiveMe. It helps you see when separate recordings '
+      'I\u2019m testing Thoughtprint. It helps you see when separate recordings '
       'start connecting \u2014 without sharing your archive. Want to try it?';
   static const String proRetentionInviteText =
-      'I\u2019m testing ArchiveMe. It helps keep an archive of what returns, '
+      'I\u2019m testing Thoughtprint. It helps keep an archive of what returns, '
       'fades, and changes over time \u2014 without sharing anything private. '
       'Want to try it?';
 

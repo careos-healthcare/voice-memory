@@ -150,8 +150,8 @@ void main() {
       expect(copy, contains('cloud transcription and analysis'));
       expect(copy, contains('transcribe'));
       expect(copy, contains('processing providers'));
-      expect(copy, contains('openai'));
-      expect(copy, contains('google'));
+      expect(copy, contains('google gemini'));
+      expect(copy, isNot(contains('openai')));
       expect(copy, isNot(contains('chatgpt')));
       // A vendor name belongs in the disclosure, not in a section heading.
       expect(copy, isNot(contains('openai processing')));
@@ -160,8 +160,8 @@ void main() {
       expect(copy, isNot(contains('anthropic')));
     });
 
-    test('central product copy uses ArchiveMe', () {
-      expect(AppConfig.appName, 'ArchiveMe');
+    test('central product copy uses Thoughtprint', () {
+      expect(AppConfig.appName, 'Thoughtprint');
       expect(
         ConsumerUiCopy.paywallHeadline.toLowerCase(),
         isNot(contains('voicememory')),

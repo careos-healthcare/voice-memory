@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/features/archive_memory/archive_memory_summary_
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
-/// Local store for the latest "What ArchiveMe remembers" summary.
+/// Local store for the latest "What Thoughtprint remembers" summary.
 ///
 /// Only the most recent summary is kept, in its own prefs key, so the rest of
 /// the schema is untouched.

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 /// "Keep exact details" — a per-entry flag that protects workflow and
 /// project context from being generalized away.
 ///
-/// ArchiveMe must preserve exact evidence. With this flag:
+/// Thoughtprint must preserve exact evidence. With this flag:
 /// - The entry is stored normally, in full, and stays findable in the
 ///   archive and search. Text is never altered.
 /// - The entry is never compressed into a generic memory summary or
@@ -23,7 +23,7 @@ abstract class KeepExactDetails {
 
   static const String controlLabel = 'Keep exact details';
   static const String helper =
-      'ArchiveMe will keep this as evidence, not fold it into a general '
+      'Thoughtprint will keep this as evidence, not fold it into a general '
       'pattern.';
   static const String savedReceipt = 'Saved as exact evidence';
 

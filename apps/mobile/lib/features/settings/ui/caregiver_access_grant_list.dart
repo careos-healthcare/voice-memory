@@ -300,7 +300,7 @@ class _CaregiverAccessGrantListState extends State<CaregiverAccessGrantList> {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.destructive,
+              backgroundColor: Theme.of(context).colorScheme.error,
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -323,7 +323,7 @@ class _CaregiverAccessGrantListState extends State<CaregiverAccessGrantList> {
         CaregiverAccessCopy.emptyGrantsMessage,
         key: const Key('caregiver_access_grants_empty'),
         style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-          color: AppColors.textMuted,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           height: 1.45,
         ),
       );
@@ -380,9 +380,9 @@ class _GrantRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.backgroundSecondary,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,7 +414,7 @@ class _GrantRow extends StatelessWidget {
                           CaregiverAccessCopy.currentSessionBadge,
                           style: ArchiveMobileTypography.cardLabel(context)
                               .copyWith(
-                            color: AppColors.accentPrimary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 11,
                           ),
                         ),
@@ -446,7 +446,7 @@ class _GrantRow extends StatelessWidget {
               FilledButton(
                 key: Key('caregiver_access_revoke_${grant.grantId}'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.destructive,
+                  backgroundColor: Theme.of(context).colorScheme.error,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -475,7 +475,7 @@ class _GrantRow extends StatelessWidget {
                 OutlinedButton(
                   key: Key('caregiver_access_renew_${grant.grantId}'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.accentPrimary,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
                     side: const BorderSide(color: AppColors.accentPrimary),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,

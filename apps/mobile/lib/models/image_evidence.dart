@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/json/json_converters.dart';
+import 'package:flutter/foundation.dart';
 
 /// Image evidence attached to a journal entry — caption is citeable in the ledger.
 class ImageEvidence {
@@ -14,6 +15,7 @@ class ImageEvidence {
     this.contentHash,
     this.source,
     this.localPath,
+    this.images = const [],
   });
 
   factory ImageEvidence.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class ImageEvidence {
       contentHash: JsonConverters.nullableString(json['contentHash']),
       source: JsonConverters.nullableString(json['source']),
       localPath: JsonConverters.nullableString(json['localPath']),
+      images: JsonConverters.stringList(json['images']),
     );
   }
 
@@ -48,6 +51,9 @@ class ImageEvidence {
 
   /// Device-local blob path — never synced verbatim; metadata only crosses devices.
   final String? localPath;
+
+  /// Local file paths or URLs attached to this moment.
+  final List<String> images;
 
   /// Text cited into fact_ledger — caption when present, otherwise a stable label.
   String get ledgerCitationText {
@@ -68,6 +74,7 @@ class ImageEvidence {
         if (contentHash != null) 'contentHash': contentHash,
         if (source != null) 'source': source,
         if (localPath != null) 'localPath': localPath,
+        if (images.isNotEmpty) 'images': images,
       };
 
   ImageEvidence copyWith({
@@ -82,6 +89,7 @@ class ImageEvidence {
     String? contentHash,
     String? source,
     String? localPath,
+    List<String>? images,
   }) {
     return ImageEvidence(
       evidenceId: evidenceId ?? this.evidenceId,
@@ -95,6 +103,7 @@ class ImageEvidence {
       contentHash: contentHash ?? this.contentHash,
       source: source ?? this.source,
       localPath: localPath ?? this.localPath,
+      images: images ?? this.images,
     );
   }
 
@@ -112,7 +121,8 @@ class ImageEvidence {
           other.height == height &&
           other.contentHash == contentHash &&
           other.source == source &&
-          other.localPath == localPath;
+          other.localPath == localPath &&
+          listEquals(other.images, images);
 
   @override
   int get hashCode => Object.hash(
@@ -127,5 +137,6 @@ class ImageEvidence {
         contentHash,
         source,
         localPath,
+        Object.hashAll(images),
       );
 }

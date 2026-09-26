@@ -1,6 +1,6 @@
 /// Archive Search 2.0 — filters and consumer copy.
 ///
-/// ArchiveMe is a searchable evidence archive, not a flat pile of
+/// Thoughtprint is a searchable evidence archive, not a flat pile of
 /// recordings. Filters are deterministic and local; they read entry
 /// metadata only and never change memory state, scope, or entries.
 library;

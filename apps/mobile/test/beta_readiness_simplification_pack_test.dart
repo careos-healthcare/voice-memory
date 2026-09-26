@@ -373,7 +373,7 @@ void main() {
         PrivacyCopyPolicy.journalEncryptedAtRest,
         PrivacyCopyPolicy.transcriptionAnalysisWhenUsed,
         PrivacyCopyPolicy.exportDeleteAnytime,
-        PrivacyCopyPolicy.lockArchiveMe,
+        PrivacyCopyPolicy.lockThoughtprint,
       ]);
     });
   });

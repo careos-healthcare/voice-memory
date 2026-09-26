@@ -65,7 +65,7 @@ class DaySevenContinuityEngine {
   // --- 2 entries: the thread just connected. ---
   static const String earlyThreadTitle = 'Keep the thread visible';
   static const String earlyThreadBody =
-      'One more recording this week can help ArchiveMe see what is '
+      'One more recording this week can help Thoughtprint see what is '
       'returning, fading, or changing.';
   static const String earlyThreadHelper =
       'Only if it still feels worth checking.';
@@ -73,7 +73,7 @@ class DaySevenContinuityEngine {
   // --- 3–6 entries: the archive can start comparing. ---
   static const String buildingTitle = 'Your archive is starting to compare';
   static const String buildingBody =
-      'ArchiveMe has enough evidence to notice early movement. A few more '
+      'Thoughtprint has enough evidence to notice early movement. A few more '
       'recordings can make the weekly review clearer.';
   static const String buildingHelper = 'No need to record everything.';
 

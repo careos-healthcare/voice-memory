@@ -162,7 +162,7 @@ void main() {
 
   group('FirstProofPayoffCopy', () {
     test('avoids weak milestone headlines as main lead', () {
-      expect(FirstProofPayoffCopy.headline, 'ArchiveMe noticed this came back');
+      expect(FirstProofPayoffCopy.headline, 'Thoughtprint noticed this came back');
       for (final banned in FirstProofPayoffCopy.bannedMainLeads) {
         expect(FirstProofPayoffCopy.headline, isNot(equals(banned)));
       }

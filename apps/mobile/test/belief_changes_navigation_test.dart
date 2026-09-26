@@ -71,7 +71,7 @@ void main() {
       confidencePercent: 72,
       evidenceSummary: 'Appeared in 3 reflections.',
       whyExplanation:
-          'ArchiveMe noticed this topic repeating across months of reflections.',
+          'Thoughtprint noticed this topic repeating across months of reflections.',
       section: ArchiveBeliefSection.hiddenPattern,
     );
 

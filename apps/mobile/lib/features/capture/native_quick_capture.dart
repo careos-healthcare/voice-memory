@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:flutter/services.dart';
 
-/// Dart gate for widget, Siri, Control Center, Live Activity, and Watch capture.
+/// Dart gate for the surfaces that ship with the widget extension:
+/// Home Screen, Lock Screen, Siri, Control Center, Action Button, and Live Activity.
+/// Watch capture stays behind [V1CapabilityRegistry.watchCompanion].
 abstract final class NativeQuickCapture {
   NativeQuickCapture._();
 

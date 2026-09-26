@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-/// Settings "Memory" section: one calm choice for when ArchiveMe connects
+/// Settings "Memory" section: one calm choice for when Thoughtprint connects
 /// entries. Four modes, persisted locally; the app itself never changes
 /// the stored choice, so "Memory off" stays off until the user says
 /// otherwise.
