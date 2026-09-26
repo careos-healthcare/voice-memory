@@ -21,7 +21,6 @@ import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_serv
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import 'package:archiveme_mobile/features/watch/watch_session_coordinator.dart';
-import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/security/private_storage_audit.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -112,12 +111,8 @@ abstract final class V1StartupCoordinator {
   static Future<void> _importPendingVoiceMemo() async {
     if (!V1CapabilityRegistry.voiceMemosImport) return;
     if (!AppServices.isInitialized) return;
-    final entry = await VoiceMemoImportInbox.transcribePending(
+    await VoiceMemoImportInbox.importQueue(
       readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),
-    );
-    if (entry == null) return;
-    await openImportReceipt(
-      entry: entry,
       save: (row) => AppServices.instance.journalStore.save(
         row,
         captureKind: 'voice',

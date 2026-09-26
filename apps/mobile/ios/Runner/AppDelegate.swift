@@ -1,3 +1,4 @@
+import AVFoundation
 import Flutter
 import HealthKit
 import UIKit
@@ -163,7 +164,7 @@ import workmanager_apple
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
     let ext = url.pathExtension.lowercased()
-    if url.isFileURL, ["m4a", "mp3", "wav"].contains(ext) {
+    if url.isFileURL, ["m4a", "mp3", "wav", "ogg"].contains(ext) {
       VoiceMemoInbox.shared.remember(url)
     }
     return super.application(app, open: url, options: options)
@@ -224,6 +225,8 @@ import workmanager_apple
       switch call.method {
       case "takePending":
         result(VoiceMemoInbox.shared.take())
+      case "takeQueue":
+        result(VoiceMemoInbox.shared.takeQueue())
       case "creationDate":
         result(VoiceMemoInbox.creationDate(call.arguments))
       default:
@@ -235,82 +238,119 @@ import workmanager_apple
 
 final class VoiceMemoInbox {
   static let shared = VoiceMemoInbox()
-  private var pending: [String: String]?
+  private var queued: [[String: String]] = []
 
   func remember(_ url: URL) {
     let accessed = url.startAccessingSecurityScopedResource()
     defer {
       if accessed { url.stopAccessingSecurityScopedResource() }
     }
-    guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
-      return
-    }
-    let stored = Self.copyIntoAppSupport(url) ?? url
-    pending = [
-      "path": stored.path,
-      "createdAt": ISO8601DateFormatter().string(from: created),
-    ]
+    guard let row = Self.store(url) else { return }
+    queued.append(row)
   }
 
-  private static func copyIntoAppSupport(_ url: URL) -> URL? {
+  func take() -> [String: String]? {
+    if queued.isEmpty { queued = Self.readQueue() }
+    guard !queued.isEmpty else { return nil }
+    return queued.removeFirst()
+  }
+
+  func takeQueue() -> [[String: String]] {
+    let rows = queued + Self.readQueue()
+    queued = []
+    return rows
+  }
+
+  /// Recording date inside the m4a (AVAsset commonMetadata, then creationDate),
+  /// otherwise the file modification date.
+  static func creationDate(_ arguments: Any?) -> String? {
+    guard let args = arguments as? [String: Any],
+          let path = args["path"] as? String else { return nil }
+    let url = URL(fileURLWithPath: path)
+    guard let date = recordingDate(of: url) else { return nil }
+    return ISO8601DateFormatter().string(from: date)
+  }
+
+  static func recordingDate(of url: URL) -> Date? {
+    let asset = AVURLAsset(url: url)
+    for item in asset.commonMetadata {
+      if item.commonKey == .commonKeyCreationDate {
+        if let date = item.dateValue { return date }
+        if let text = item.stringValue,
+           let date = ISO8601DateFormatter().date(from: text) {
+          return date
+        }
+      }
+    }
+    if let created = asset.creationDate?.dateValue { return created }
+    return (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?
+      .contentModificationDate
+  }
+
+  private static func store(_ url: URL) -> [String: String]? {
     guard let base = FileManager.default.urls(
       for: .applicationSupportDirectory,
       in: .userDomainMask
     ).first else { return nil }
     let folder = base.appendingPathComponent("voice-memos", isDirectory: true)
+    let ext = url.pathExtension.lowercased()
+    guard ["m4a", "mp3", "wav", "ogg"].contains(ext) else { return nil }
     do {
       try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-      let ext = url.pathExtension.lowercased()
-      let suffix = ["m4a", "mp3", "wav"].contains(ext) ? ext : "m4a"
-      let dest = folder.appendingPathComponent("\(UUID().uuidString).\(suffix)")
+      let dest = folder.appendingPathComponent("\(UUID().uuidString).\(ext)")
       if FileManager.default.fileExists(atPath: dest.path) {
         try FileManager.default.removeItem(at: dest)
       }
       try FileManager.default.copyItem(at: url, to: dest)
-      if let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate {
+      let recorded = recordingDate(of: url) ?? recordingDate(of: dest)
+      if let recorded {
         var stamped = dest
         var values = URLResourceValues()
-        values.creationDate = created
+        values.creationDate = recorded
+        values.contentModificationDate = recorded
         try? stamped.setResourceValues(values)
       }
-      return dest
+      var row = ["path": dest.path, "name": url.deletingPathExtension().lastPathComponent]
+      if let recorded {
+        row["createdAt"] = ISO8601DateFormatter().string(from: recorded)
+      }
+      return row
     } catch {
       return nil
     }
   }
 
-  static func creationDate(_ arguments: Any?) -> String? {
-    guard let args = arguments as? [String: Any],
-          let path = args["path"] as? String else { return nil }
-    let url = URL(fileURLWithPath: path)
-    guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
-      return nil
-    }
-    return ISO8601DateFormatter().string(from: created)
-  }
-
-  func take() -> [String: String]? {
-    if let value = pending {
-      pending = nil
-      return value
-    }
-    return Self.takeSharedFile()
-  }
-
-  private static func takeSharedFile() -> [String: String]? {
+  private static func readQueue() -> [[String: String]] {
     guard let root = FileManager.default.containerURL(
       forSecurityApplicationGroupIdentifier: "group.com.voicememory.mobile"
-    ) else { return nil }
-    let marker = root
-      .appendingPathComponent("voice-memo-inbox", isDirectory: true)
-      .appendingPathComponent("pending.json")
-    guard let data = try? Data(contentsOf: marker),
-          let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
-          let path = json["path"],
-          let createdAt = json["createdAt"]
-    else { return nil }
-    try? FileManager.default.removeItem(at: marker)
-    return ["path": path, "createdAt": createdAt]
+    ) else { return [] }
+    let folder = root.appendingPathComponent("voice-memo-inbox", isDirectory: true)
+    let queueFile = folder.appendingPathComponent("queue.json")
+    let pendingFile = folder.appendingPathComponent("pending.json")
+    if let data = try? Data(contentsOf: queueFile),
+       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+       let items = json["items"] as? [[String: Any]] {
+      try? FileManager.default.removeItem(at: queueFile)
+      try? FileManager.default.removeItem(at: pendingFile)
+      return items.compactMap(row(from:))
+    }
+    guard let data = try? Data(contentsOf: pendingFile),
+          let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let row = row(from: json) else { return [] }
+    try? FileManager.default.removeItem(at: pendingFile)
+    return [row]
+  }
+
+  private static func row(from json: [String: Any]) -> [String: String]? {
+    guard let path = json["path"] as? String else { return nil }
+    var row = ["path": path]
+    if let createdAt = json["createdAt"] as? String, !createdAt.isEmpty {
+      row["createdAt"] = createdAt
+    }
+    if let name = json["name"] as? String, !name.isEmpty {
+      row["name"] = name
+    }
+    return row
   }
 }
 

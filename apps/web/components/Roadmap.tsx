@@ -1,5 +1,6 @@
 const liveFeatures = [
   "Pattern exploration with direct verbatim voice citations",
+  "Apple Voice Memos import",
 ];
 
 export function Roadmap() {

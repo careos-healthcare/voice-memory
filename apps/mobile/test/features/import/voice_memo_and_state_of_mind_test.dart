@@ -32,12 +32,18 @@ void main() {
       expect(entry?.transcript, 'el rio estaba alto');
       expect(entry?.createdAt, recorded);
       expect(entry?.captureSource, VoiceMemoImporter.captureSource);
+      expect(entry?.display.title, 'morning');
+      final bare = File('${dir.path}/bare.m4a')..writeAsBytesSync([7]);
+      final modified = DateTime.utc(2019, 3, 12, 10);
+      bare.setLastModifiedSync(modified);
       final undated = await VoiceMemoImporter.importFile(
-        audio: audio,
+        audio: bare,
         locale: ConfirmedSpeechLocale.confirmed('es-ES')!,
-        transcribe: (file, locale) async => 'should not date itself today',
+        readCreationDate: (_) async => null,
+        transcribe: (file, locale) async => 'dated from the file',
       );
-      expect(undated, isNull);
+      expect(undated?.createdAt, modified);
+      expect(undated?.transcript, 'dated from the file');
       expect(entry?.localAudioPath, audio.path);
       expect(VoiceMemoImporter.accepts('note.wav'), isTrue);
       expect(VoiceMemoImporter.accepts('note.mp3'), isTrue);

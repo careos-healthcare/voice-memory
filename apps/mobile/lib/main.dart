@@ -7,7 +7,6 @@ import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/core/notifications/journal_reminder_slots.dart';
-import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/features/export/services/auto_backup_service.dart';
 import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
@@ -121,12 +120,8 @@ class _GentleRemindersLifecycleHostState
   Future<void> _importPendingVoiceMemo() async {
     if (!V1CapabilityRegistry.voiceMemosImport) return;
     if (!AppServices.isInitialized) return;
-    final entry = await VoiceMemoImportInbox.transcribePending(
+    await VoiceMemoImportInbox.importQueue(
       readLocale: () => SpeechLocaleStore(AppServices.instance.prefs).read(),
-    );
-    if (entry == null) return;
-    await openImportReceipt(
-      entry: entry,
       save: (row) => AppServices.instance.journalStore.save(
         row,
         captureKind: 'voice',

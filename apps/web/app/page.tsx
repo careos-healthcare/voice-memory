@@ -36,7 +36,10 @@ const promises = [
   "Free tier stays free",
 ];
 
-const features = ["Add a mood or a place to any moment"];
+const features = [
+  "Add a mood or a place to any moment",
+  "Apple Voice Memos import",
+];
 
 export default function HomePage() {
   return (

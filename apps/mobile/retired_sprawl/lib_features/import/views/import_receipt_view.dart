@@ -1,4 +1,3 @@
-import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:flutter/material.dart';
 
 /// Shown after a Voice Memo has been transcribed, before it is saved.
@@ -12,6 +11,27 @@ class ImportReceiptView extends StatefulWidget {
 
   static const headline = 'Voice Memo Imported';
   static const saveLabel = 'Save to Archive';
+
+  static const _months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  static String provenanceLine(DateTime recordedAt) {
+    final utc = recordedAt.toUtc();
+    return 'Imported from Voice Memos · recorded '
+        '${utc.day} ${_months[utc.month - 1]} ${utc.year}';
+  }
 
   final String transcript;
   final DateTime recordedAt;
@@ -55,7 +75,7 @@ class _ImportReceiptViewState extends State<ImportReceiptView> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Original Recording Date: ${LocaleDateFormat.dateTime(context, widget.recordedAt)}',
+              ImportReceiptView.provenanceLine(widget.recordedAt),
               key: const Key('import_receipt_entry_date'),
               style: theme.textTheme.titleMedium,
             ),

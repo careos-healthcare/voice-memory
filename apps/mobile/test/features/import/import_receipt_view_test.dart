@@ -39,8 +39,10 @@ void main() {
     final date = tester
         .widget<Text>(find.byKey(const Key('import_receipt_entry_date')))
         .data!;
-    expect(date, startsWith('Original Recording Date:'));
-    expect(date, contains('2023'));
+    expect(
+      date,
+      'Imported from Voice Memos · recorded 4 Nov 2023',
+    );
 
     await tester.tap(find.byKey(const Key('import_receipt_save')));
     await tester.pumpAndSettle();
