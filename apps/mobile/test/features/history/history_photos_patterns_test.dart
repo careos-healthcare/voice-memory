@@ -54,34 +54,37 @@ void main() {
     expect(encoded.toJson()['images'], encoded.images);
   });
 
-  test('printable journal keeps the transcript when a photo is attached', () async {
-    final dir = await Directory.systemTemp.createTemp('journal_photo_');
-    final photo = File('${dir.path}/moment.png');
-    await photo.writeAsBytes(
-      base64Decode(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
-      ),
-    );
-    final bytes = await BookExporter.render(
-      entries: [
-        HistoryMoment(
-          id: 'river',
-          createdAt: DateTime.utc(2026, 3, 8),
-          transcript: 'the river was high',
-          imagePaths: [photo.path],
+  test(
+    'printable journal keeps the transcript when a photo is attached',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('journal_photo_');
+      final photo = File('${dir.path}/moment.png');
+      await photo.writeAsBytes(
+        base64Decode(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
         ),
-      ],
-      start: DateTime.utc(2026, 1, 1),
-      end: DateTime.utc(2026, 12, 31),
-    );
-    final raw = _pdfWords(bytes);
-    expect(raw, contains('(river)'));
-    expect(
-      raw.contains('/Subtype /Image') || raw.contains('/Subtype/Image'),
-      isTrue,
-    );
-    await dir.delete(recursive: true);
-  });
+      );
+      final bytes = await BookExporter.render(
+        entries: [
+          HistoryMoment(
+            id: 'river',
+            createdAt: DateTime.utc(2026, 3, 8),
+            transcript: 'the river was high',
+            imagePaths: [photo.path],
+          ),
+        ],
+        start: DateTime.utc(2026, 1, 1),
+        end: DateTime.utc(2026, 12, 31),
+      );
+      final raw = _pdfWords(bytes);
+      expect(raw, contains('river'));
+      expect(
+        raw.contains('/Subtype /Image') || raw.contains('/Subtype/Image'),
+        isTrue,
+      );
+      await dir.delete(recursive: true);
+    },
+  );
 
   testWidgets('map plots a pin for a saved place', (tester) async {
     final pins = EntryMapClusters.cluster([
@@ -108,7 +111,7 @@ void main() {
 }
 
 String _pdfWords(Uint8List bytes) {
-  final raw = latin1.decode(bytes);
+  final raw = latin1.decode(bytes, allowInvalid: true);
   final buffer = StringBuffer(raw);
   final streamPattern = RegExp(r'stream\r?\n([\s\S]*?)\r?\nendstream');
   for (final match in streamPattern.allMatches(raw)) {
@@ -117,6 +120,46 @@ String _pdfWords(Uint8List bytes) {
       buffer.write(latin1.decode(inflated, allowInvalid: true));
     } on FormatException {
       // Non-deflate streams are ignored.
+    }
+  }
+  buffer.write(_decodedPdfText(buffer.toString()));
+  return buffer.toString();
+}
+
+String _decodedPdfText(String pdf) {
+  final maps = <Map<int, String>>[];
+  for (final block in RegExp(
+    r'beginbfchar([\s\S]*?)endbfchar',
+  ).allMatches(pdf)) {
+    final map = <int, String>{};
+    for (final pair in RegExp(
+      r'<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>',
+    ).allMatches(block.group(1)!)) {
+      final code = int.parse(pair.group(2)!, radix: 16);
+      if (code == 0) continue;
+      map[int.parse(pair.group(1)!, radix: 16)] = String.fromCharCode(code);
+    }
+    if (map.isNotEmpty) maps.add(map);
+  }
+  final buffer = StringBuffer();
+  for (final map in maps) {
+    for (final array in RegExp(r'\[(.*?)\]\s*TJ').allMatches(pdf)) {
+      final word = StringBuffer();
+      var any = false;
+      for (final hex in RegExp(
+        r'<([0-9A-Fa-f]+)>',
+      ).allMatches(array.group(1)!)) {
+        final raw = hex.group(1)!;
+        if (raw.length % 4 != 0) continue;
+        for (var index = 0; index < raw.length; index += 4) {
+          final character =
+              map[int.parse(raw.substring(index, index + 4), radix: 16)];
+          if (character == null) continue;
+          any = true;
+          word.write(character);
+        }
+      }
+      if (any) buffer.write('$word ');
     }
   }
   return buffer.toString();

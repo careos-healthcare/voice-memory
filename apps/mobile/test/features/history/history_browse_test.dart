@@ -123,8 +123,18 @@ void main() {
 
   test('identical low-accuracy coordinates share one pin', () {
     final pins = EntryMapClusters.cluster([
-      _moment(id: 'a', at: DateTime(2026, 9, 1), latitude: 51.5, longitude: -0.12),
-      _moment(id: 'b', at: DateTime(2026, 9, 2), latitude: 51.5, longitude: -0.12),
+      _moment(
+        id: 'a',
+        at: DateTime(2026, 9, 1),
+        latitude: 51.5,
+        longitude: -0.12,
+      ),
+      _moment(
+        id: 'b',
+        at: DateTime(2026, 9, 2),
+        latitude: 51.5,
+        longitude: -0.12,
+      ),
     ]);
     expect(pins, hasLength(1));
     expect(pins.single.isCluster, isTrue);
@@ -146,14 +156,16 @@ void main() {
       end: DateTime(2026, 12, 31),
     );
     expect(bytes, isNotEmpty);
-    expect(_pdfWords(bytes), contains('2026-03'));
-    expect(_pdfWords(bytes), contains('(the)'));
-    expect(_pdfWords(bytes), contains('(river)'));
+    final words = _pdfWords(bytes);
+    expect(words, contains('2026-03'));
+    expect(words, contains('March'));
+    expect(words, contains('the'));
+    expect(words, contains('river'));
   });
 }
 
 String _pdfWords(Uint8List bytes) {
-  final raw = latin1.decode(bytes);
+  final raw = latin1.decode(bytes, allowInvalid: true);
   final buffer = StringBuffer(raw);
   final streamPattern = RegExp(r'stream\r?\n([\s\S]*?)\r?\nendstream');
   for (final match in streamPattern.allMatches(raw)) {
@@ -162,6 +174,46 @@ String _pdfWords(Uint8List bytes) {
       buffer.write(latin1.decode(inflated, allowInvalid: true));
     } on FormatException {
       // Non-deflate streams are ignored.
+    }
+  }
+  buffer.write(_decodedPdfText(buffer.toString()));
+  return buffer.toString();
+}
+
+String _decodedPdfText(String pdf) {
+  final maps = <Map<int, String>>[];
+  for (final block in RegExp(
+    r'beginbfchar([\s\S]*?)endbfchar',
+  ).allMatches(pdf)) {
+    final map = <int, String>{};
+    for (final pair in RegExp(
+      r'<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>',
+    ).allMatches(block.group(1)!)) {
+      final code = int.parse(pair.group(2)!, radix: 16);
+      if (code == 0) continue;
+      map[int.parse(pair.group(1)!, radix: 16)] = String.fromCharCode(code);
+    }
+    if (map.isNotEmpty) maps.add(map);
+  }
+  final buffer = StringBuffer();
+  for (final map in maps) {
+    for (final array in RegExp(r'\[(.*?)\]\s*TJ').allMatches(pdf)) {
+      final word = StringBuffer();
+      var any = false;
+      for (final hex in RegExp(
+        r'<([0-9A-Fa-f]+)>',
+      ).allMatches(array.group(1)!)) {
+        final raw = hex.group(1)!;
+        if (raw.length % 4 != 0) continue;
+        for (var index = 0; index < raw.length; index += 4) {
+          final character =
+              map[int.parse(raw.substring(index, index + 4), radix: 16)];
+          if (character == null) continue;
+          any = true;
+          word.write(character);
+        }
+      }
+      if (any) buffer.write('$word ');
     }
   }
   return buffer.toString();
