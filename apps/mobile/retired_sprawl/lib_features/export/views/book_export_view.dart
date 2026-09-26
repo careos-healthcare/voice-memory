@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:archiveme_mobile/features/archive/views/on_this_day_view.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
 import 'package:archiveme_mobile/features/export/services/qr_audio_service.dart';
+import 'package:archiveme_mobile/features/export/views/pod_checkout_view.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -20,6 +21,7 @@ class BookExportView extends StatefulWidget {
     this.now,
     this.onShare,
     this.onPrint,
+    this.onOrderPrinted,
     this.audioQr,
     super.key,
   });
@@ -28,6 +30,7 @@ class BookExportView extends StatefulWidget {
   final DateTime? now;
   final Future<void> Function(DateTime start, DateTime end)? onShare;
   final Future<void> Function(DateTime start, DateTime end)? onPrint;
+  final Future<void> Function(DateTime start, DateTime end)? onOrderPrinted;
   final QrAudioService? audioQr;
 
   @override
@@ -136,6 +139,12 @@ class _BookExportViewState extends State<BookExportView> {
           onPressed: _saving ? null : () => _share(range.$1, range.$2),
           child: const Text('Save PDF / Share'),
         ),
+        const SizedBox(height: 8),
+        TextButton(
+          key: const Key('book_order_printed'),
+          onPressed: _saving ? null : () => _orderPrinted(range.$1, range.$2),
+          child: const Text('Order a printed book'),
+        ),
       ],
     );
   }
@@ -224,6 +233,26 @@ class _BookExportViewState extends State<BookExportView> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _orderPrinted(DateTime start, DateTime end) async {
+    final custom = widget.onOrderPrinted;
+    if (custom != null) {
+      await custom(start, end);
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      final bytes = await _pdfBytes(start, end);
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PodCheckoutView(pdf: bytes),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
