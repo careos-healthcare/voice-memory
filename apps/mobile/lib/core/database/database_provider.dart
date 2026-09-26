@@ -162,6 +162,7 @@ class DatabaseProvider {
       'id': id,
       'deleted_at': when.millisecondsSinceEpoch,
       'sync_status': syncStatus,
+      'sync_dirty': 1,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -197,14 +198,125 @@ class DatabaseProvider {
     );
   }
 
-  Future<void> _ensureDeletedEntries() {
-    return _db.execute('''
+  Future<void> _ensureDeletedEntries() async {
+    await _db.execute('''
       CREATE TABLE IF NOT EXISTS $deletedEntriesTable (
         id TEXT PRIMARY KEY NOT NULL,
         deleted_at INTEGER NOT NULL,
         sync_status TEXT NOT NULL
       )
     ''');
+    await _ensureSyncDirtyColumn(deletedEntriesTable);
+  }
+
+  static const syncDirtyColumn = 'sync_dirty';
+
+  /// Adds [syncDirtyColumn] to journal rows and tombstones when it is missing.
+  Future<void> ensureSyncDirtyColumns() async {
+    await _ensureJournalEntries();
+    await _ensureSyncDirtyColumn('journal_entries');
+    await _ensureDeletedEntries();
+  }
+
+  /// Marks a create, edit, or delete for a later cloud upload.
+  ///
+  /// The flag is stored even when cloud sync is off.
+  Future<void> markEntryDirty({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String transcript,
+    DateTime? deletedAt,
+  }) async {
+    if (id.isEmpty) return;
+    await ensureSyncDirtyColumns();
+    final updated = await _db.rawUpdate(
+      'UPDATE journal_entries SET sync_dirty = 1, updated_at = ? WHERE id = ?',
+      [updatedAt.toUtc().millisecondsSinceEpoch, id],
+    );
+    if (updated > 0) return;
+    await _db.insert('journal_entries', {
+      'id': id,
+      'created_at': createdAt.toUtc().millisecondsSinceEpoch,
+      'updated_at': updatedAt.toUtc().millisecondsSinceEpoch,
+      'deleted_at': deletedAt?.toUtc().millisecondsSinceEpoch,
+      'is_archived': 0,
+      'transcript': transcript,
+      'has_verified_proof': 0,
+      'payload_json': null,
+      'sync_dirty': 1,
+    });
+  }
+
+  Future<List<DirtyJournalRow>> dirtyEntries() async {
+    await ensureSyncDirtyColumns();
+    final rows = await _db.query(
+      'journal_entries',
+      columns: ['id', 'created_at', 'transcript', 'deleted_at'],
+      where: 'sync_dirty = 1',
+      orderBy: 'created_at ASC',
+    );
+    return [for (final row in rows) DirtyJournalRow.fromRow(row)];
+  }
+
+  Future<List<String>> dirtyTombstoneIds() async {
+    await ensureSyncDirtyColumns();
+    final rows = await _db.query(
+      deletedEntriesTable,
+      columns: ['id'],
+      where: 'sync_dirty = 1',
+    );
+    return [
+      for (final row in rows)
+        if (row['id'] is String && (row['id'] as String).isNotEmpty)
+          row['id']! as String,
+    ];
+  }
+
+  Future<void> clearEntryDirty(String id) async {
+    if (id.isEmpty) return;
+    await ensureSyncDirtyColumns();
+    await _db.update(
+      'journal_entries',
+      {'sync_dirty': 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> clearTombstoneDirty(String id) async {
+    if (id.isEmpty) return;
+    await ensureSyncDirtyColumns();
+    await _db.update(
+      deletedEntriesTable,
+      {'sync_dirty': 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> _ensureJournalEntries() {
+    return _db.execute('''
+      CREATE TABLE IF NOT EXISTS journal_entries (
+        id TEXT PRIMARY KEY NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        is_archived INTEGER NOT NULL DEFAULT 0,
+        transcript TEXT NOT NULL DEFAULT '',
+        has_verified_proof INTEGER NOT NULL DEFAULT 0,
+        payload_json TEXT
+      )
+    ''');
+  }
+
+  Future<void> _ensureSyncDirtyColumn(String table) async {
+    final info = await _db.rawQuery('PRAGMA table_info($table)');
+    final exists = info.any((row) => row['name'] == syncDirtyColumn);
+    if (exists) return;
+    await _db.execute(
+      'ALTER TABLE $table ADD COLUMN $syncDirtyColumn INTEGER NOT NULL DEFAULT 0',
+    );
   }
 
   static const onThisDaySilenceColumn = 'is_silenced_from_on_this_day';
@@ -264,6 +376,33 @@ class DatabaseProvider {
     if (normA == 0 || normB == 0) return 0;
     return dot / (math.sqrt(normA) * math.sqrt(normB));
   }
+}
+
+/// One local journal row waiting for a cloud upload.
+class DirtyJournalRow {
+  const DirtyJournalRow({
+    required this.id,
+    required this.createdAt,
+    required this.transcript,
+    required this.deleted,
+  });
+
+  factory DirtyJournalRow.fromRow(Map<String, Object?> row) {
+    return DirtyJournalRow(
+      id: row['id'] as String? ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row['created_at'] as int? ?? 0,
+        isUtc: true,
+      ),
+      transcript: row['transcript'] as String? ?? '',
+      deleted: row['deleted_at'] != null,
+    );
+  }
+
+  final String id;
+  final DateTime createdAt;
+  final String transcript;
+  final bool deleted;
 }
 
 /// One deleted journal entry, kept so the deletion can sync.

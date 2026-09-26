@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/features/memory/what_thoughtprint_remembers_screen.dart';
-import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
@@ -17,6 +16,7 @@ import 'package:archiveme_mobile/features/action_items/archive_action_item.dart'
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
+import 'package:archiveme_mobile/features/settings/services/cloud_data_service.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/settings/views/sync_status_view.dart';
 import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
@@ -318,22 +318,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (mounted) setState(() => _cloudSyncEnabled = enabled);
   }
 
-  Future<bool> _deleteCloudCopy() async {
-    final result = await AppServices.instance.httpTransport.delete(
-      CloudSyncService.clearPath,
-    );
-    return result.when(
-      success: (response) {
-        final decoded = AppServices.instance.httpTransport.decodeEnvelopeOk(
-          response,
-        );
-        return decoded.when(
-          success: (_) => true,
-          onFailure: (_) => false,
-        );
-      },
-      onFailure: (_) => false,
-    );
+  Future<bool> _deleteCloudCopy() {
+    return const CloudDataService().deleteCloudCopy();
   }
 
   void _showCloudDeleteResult(bool deleted) {

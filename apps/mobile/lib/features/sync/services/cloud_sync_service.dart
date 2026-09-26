@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
 import 'package:archiveme_mobile/features/sync/plain_text_ledger_consent.dart';
 import 'package:archiveme_mobile/features/sync/services/account_sync_key.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
+import 'package:archiveme_mobile/features/sync/services/cloud_backfill_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -127,6 +128,7 @@ class CloudSyncService {
     void Function(int done, int total)? onProgress,
   }) async {
     if (!await _ledgerAllowed()) return;
+    await CloudBackfillService().flushDirty();
     final entries = (await _loadEntries())
         .where((entry) => !entry.isDeleted && entry.transcript.trim().isNotEmpty)
         .toList()
@@ -139,7 +141,15 @@ class CloudSyncService {
           ? cursor + chunkSize
           : entries.length;
       try {
-        await _postChunk(entries.sublist(cursor, end));
+        await CloudBackfillService(
+          postChunk: (chunk) async {
+            await _postChunk(chunk);
+            return CloudBackfillService.acceptedResponse();
+          },
+        ).acceptChunk(
+          chunk: entries.sublist(cursor, end),
+          nextCursor: end,
+        );
       } on Object {
         return;
       }
@@ -197,7 +207,7 @@ class CloudSyncService {
   static Future<void> _postBulkChunk(List<JournalEntry> chunk) async {
     if (!AppServices.isInitialized || chunk.isEmpty) return;
     final forgotten = await _readForgottenLabels();
-    await AppServices.instance.httpTransport.post(
+    final result = await AppServices.instance.httpTransport.post(
       bulkImportPath,
       body: {
         'chunks': [
@@ -210,6 +220,7 @@ class CloudSyncService {
         ],
       },
     );
+    CloudBackfillService.rejectFailedUpload(result);
   }
 
   static Future<int> _readBackfillCursor() async {
