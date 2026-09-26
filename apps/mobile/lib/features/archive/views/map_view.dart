@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/archive/widgets/map_popup_card.dart';
 import 'package:archiveme_mobile/features/map/entry_map.dart';
-import 'package:archiveme_mobile/features/map/entry_map_view.dart';
+import 'package:archiveme_mobile/features/archive/views/entry_map_view.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
-const mapEmptyLocationsCopy =
-    'No locations recorded yet. Turn on location tagging while recording to build your map.';
 
 /// Pins for moments that have coordinates, clustered for low-accuracy places.
 class MapView extends StatefulWidget {
@@ -66,34 +63,22 @@ class _MapViewState extends State<MapView> {
       children: [
         EntryMapView(
           pins: showEmpty ? const [] : pins,
-          onPin: (pin) => _openPin(context, pin, byId),
+          onPin: (pin) => _openPins(context, [pin], byId),
+          onCluster: (grouped) => _openPins(context, grouped, byId),
         ),
-        if (showEmpty)
-          ColoredBox(
-            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.94),
-            child: const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  mapEmptyLocationsCopy,
-                  key: Key('map_empty_state'),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }
 
-  void _openPin(
+  void _openPins(
     BuildContext context,
-    MapPin pin,
+    List<MapPin> pins,
     Map<String, JournalEntry> byId,
   ) {
     final entries = [
-      for (final moment in pin.entries)
-        if (byId[moment.id] != null) byId[moment.id]!,
+      for (final pin in pins)
+        for (final moment in pin.entries)
+          if (byId[moment.id] != null) byId[moment.id]!,
     ];
     if (entries.isEmpty) return;
     showModalBottomSheet<void>(
@@ -101,45 +86,31 @@ class _MapViewState extends State<MapView> {
       showDragHandle: true,
       isScrollControlled: true,
       builder: (context) {
-        if (entries.length == 1) {
-          return _sheet(context, entries.single);
-        }
         return SafeArea(
           child: SizedBox(
-            height: 360,
-            child: ListView.builder(
-              key: const Key('map_cluster_cards'),
-              scrollDirection: Axis.horizontal,
-              itemCount: entries.length,
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 280,
-                  child: _sheet(context, entries[index], scroll: false),
-                );
-              },
+            height: entries.length == 1 ? null : 420,
+            child: ListView(
+              key: Key(
+                entries.length > 1 ? 'map_cluster_cards' : 'map_place_card',
+              ),
+              shrinkWrap: entries.length == 1,
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+              children: [
+                for (final entry in entries)
+                  MapPopupCard(
+                    entry: entry,
+                    onViewEntry: widget.onOpenEntry == null
+                        ? null
+                        : () {
+                            Navigator.of(context).pop();
+                            widget.onOpenEntry!(entry.id);
+                          },
+                  ),
+              ],
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _sheet(BuildContext context, JournalEntry entry, {bool scroll = true}) {
-    final card = MapPopupCard(
-      entry: entry,
-      onViewEntry: widget.onOpenEntry == null
-          ? null
-          : () {
-              Navigator.of(context).pop();
-              widget.onOpenEntry!(entry.id);
-            },
-    );
-    if (!scroll) return card;
-    return SafeArea(
-      child: SingleChildScrollView(
-        key: const Key('map_place_card'),
-        child: card,
-      ),
     );
   }
 }

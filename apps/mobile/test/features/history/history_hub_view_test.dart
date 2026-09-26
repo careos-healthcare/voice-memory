@@ -160,8 +160,8 @@ void main() {
         ),
       ),
     );
-    expect(find.byIcon(Icons.place), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.place));
+    expect(find.byKey(const Key('map_area_51.5_-0.12')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('map_area_51.5_-0.12')));
     await tester.pumpAndSettle();
     expect(find.text('the river was high'), findsOneWidget);
     expect(find.text('no place'), findsNothing);
@@ -226,7 +226,7 @@ void main() {
     );
     expect(
       find.text(
-        'No locations recorded yet. Turn on location tagging while recording to build your map.',
+        'Turn on places to see where your moments happened.',
       ),
       findsOneWidget,
     );

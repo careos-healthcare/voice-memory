@@ -81,6 +81,9 @@ dependencies:
   flutter_timezone: ^5.1.0
   geolocator: ^13.0.4
   geocoding: ^3.0.0
+  flutter_map: ^8.3.2
+  flutter_map_marker_cluster: ^8.2.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:

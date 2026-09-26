@@ -103,7 +103,7 @@ void main() {
       ),
     );
     expect(find.byKey(const Key('entry_map_view')), findsOneWidget);
-    expect(find.byIcon(Icons.place), findsOneWidget);
+    expect(find.byKey(const Key('map_area_51.5_-0.12')), findsOneWidget);
   });
 }
 
