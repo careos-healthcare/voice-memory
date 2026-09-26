@@ -24,6 +24,7 @@ export async function ingestTranscriptChunk(
   userId: string,
   entryId: string,
   transcriptText: string,
+  createdAt?: string | null,
 ): Promise<IngestTranscriptChunkResult> {
   assertPostgresAvailable();
 
@@ -37,15 +38,16 @@ export async function ingestTranscriptChunk(
 
   const embedding = await embedText(rawText);
   const embeddingLiteral = toPgVectorLiteral(embedding);
+  const storedAt = createdAt?.trim() || new Date().toISOString();
 
   const result = await dbQuery<{
     id: string | number;
     created_at: Date | string;
   }>(
-    `INSERT INTO fact_ledger (user_id, entry_id, raw_text, embedding)
-     VALUES ($1, $2, $3, $4::vector)
+    `INSERT INTO fact_ledger (user_id, entry_id, raw_text, embedding, created_at)
+     VALUES ($1, $2, $3, $4::vector, $5::timestamptz)
      RETURNING id, created_at`,
-    [normalizedUserId, normalizedEntryId, rawText, embeddingLiteral],
+    [normalizedUserId, normalizedEntryId, rawText, embeddingLiteral, storedAt],
   );
 
   const row = result.rows[0];
@@ -70,6 +72,7 @@ export async function replaceJournalTranscript(
   userId: string,
   entryId: string,
   transcriptText: string,
+  createdAt?: string | null,
 ): Promise<IngestTranscriptChunkResult> {
   assertPostgresAvailable();
   const normalizedUserId = userId.trim();
@@ -82,5 +85,28 @@ export async function replaceJournalTranscript(
     `DELETE FROM fact_ledger WHERE user_id = $1 AND entry_id = $2`,
     [normalizedUserId, normalizedEntryId],
   );
-  return ingestTranscriptChunk(normalizedUserId, normalizedEntryId, transcriptText);
+  return ingestTranscriptChunk(
+    normalizedUserId,
+    normalizedEntryId,
+    transcriptText,
+    createdAt,
+  );
+}
+
+/** Removes one entry from the server ledger. Other entries stay. */
+export async function deleteLedgerEntry(
+  userId: string,
+  entryId: string,
+): Promise<number> {
+  assertPostgresAvailable();
+  const normalizedUserId = userId.trim();
+  const normalizedEntryId = entryId.trim();
+  if (!normalizedUserId || !normalizedEntryId) {
+    throw new Error("userId and entryId are required to delete a ledger entry.");
+  }
+  const result = await dbQuery(
+    `DELETE FROM fact_ledger WHERE user_id = $1 AND entry_id = $2`,
+    [normalizedUserId, normalizedEntryId],
+  );
+  return result.rowCount ?? 0;
 }

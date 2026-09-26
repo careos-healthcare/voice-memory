@@ -113,6 +113,7 @@ import 'package:archiveme_mobile/features/coach/local_rag/local_coach_conversati
 import 'package:archiveme_mobile/features/insights/rag/local_routine_rag_engine.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_report_store.dart';
 import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
+import 'package:archiveme_mobile/features/memory/entry_embedding_store.dart';
 import 'package:archiveme_mobile/features/search/journal_reflection_embedding_interceptor.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
 import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
@@ -1745,6 +1746,7 @@ class AppServices {
     }
     leading.add(const JournalFactLedgerCitationInterceptor());
     leading.add(const JournalCloudLedgerInterceptor());
+    leading.add(const EntryEmbeddingSaveInterceptor());
     final reflectionWorker = services._reflectionEmbeddingIndexWorker;
     if (reflectionWorker != null) {
       leading.add(JournalReflectionEmbeddingInterceptor(reflectionWorker));

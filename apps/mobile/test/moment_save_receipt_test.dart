@@ -126,6 +126,26 @@ void main() {
       );
     });
 
+    testWidgets('hides earlier moments when nothing matches', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: MomentSaveReceiptCard(
+              entry: _entry(),
+              entryCount: 4,
+              similarEntries: const [],
+              onRecordAnother: () {},
+              onViewArchive: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text("You've talked about this before"), findsNothing);
+    });
+
     testWidgets('remote failure shows retryable status without blocking save', (
       tester,
     ) async {

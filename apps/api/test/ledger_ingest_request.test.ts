@@ -9,7 +9,7 @@ test("ledger ingest accepts an entry id and transcript", () => {
       entryId: " entry-1 ",
       transcript: " I mentioned the river. ",
     }),
-    { entryId: "entry-1", transcript: "I mentioned the river." },
+    { entryId: "entry-1", transcript: "I mentioned the river.", createdAt: null },
   );
 });
 

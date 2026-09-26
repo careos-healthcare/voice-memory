@@ -19,6 +19,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcr
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_entry_images.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_on_this_day_silence.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_deleted_entries.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_022_entry_embeddings.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
@@ -50,6 +51,7 @@ class SqliteMigrationRegistry {
     Migration019EntryImages(),
     Migration020OnThisDaySilence(),
     Migration021DeletedEntries(),
+    Migration022EntryEmbeddings(),
   ];
 
   static int get latestVersion =>

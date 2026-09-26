@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
-import 'package:archiveme_mobile/core/user/user_preferences.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
@@ -56,22 +56,12 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   }
 
   Future<void> _optInToCloud() async {
-    if (!AppServices.isInitialized) return;
-    await UserPreferences.setCloudSyncEnabled(
-      AppServices.instance.prefs,
-      true,
-    );
+    await CloudConsent().enable();
     await _loadGate();
   }
 
   Future<void> _loadGate() async {
-    final override = UserPreferences.debugCloudSyncOverride;
-    final enabled =
-        override ??
-        (AppServices.isInitialized &&
-            (await UserPreferences.load(
-              AppServices.instance.prefs,
-            )).isCloudSyncEnabled);
+    final enabled = await CloudConsent().isEnabled();
     if (!mounted) return;
     setState(() => _cloudOn = enabled);
     if (!AppServices.isInitialized) return;

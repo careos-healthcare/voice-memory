@@ -16,12 +16,21 @@ class SimilarEntry {
     required this.transcript,
     required this.cosineSimilarity,
     this.localAudioPath,
+    this.quote,
+    this.startSeconds,
   });
 
   final String id;
   final DateTime createdAt;
   final String transcript;
+
+  /// One sentence from [transcript], chosen because it is closest to the
+  /// new entry. The words are the person's own.
+  final String? quote;
   final String? localAudioPath;
+
+  /// Seconds into the recording where [quote] starts, when word timestamps exist.
+  final int? startSeconds;
   final double cosineSimilarity;
 }
 

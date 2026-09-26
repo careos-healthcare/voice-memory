@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/sync/journal_cloud_ledger_interceptor.dart';
 import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -25,7 +26,7 @@ void main() {
     final uploaded = <String>[];
     final service = CloudSyncService(
       isCloudSyncEnabled: () async => false,
-      upload: (entryId, transcript) async {
+      upload: (entryId, transcript, createdAt) async {
         uploaded.add('$entryId:$transcript');
       },
     );
@@ -39,7 +40,7 @@ void main() {
     final uploaded = <String>[];
     final service = CloudSyncService(
       isCloudSyncEnabled: () async => true,
-      upload: (entryId, transcript) async {
+      upload: (entryId, transcript, createdAt) async {
         uploaded.add('$entryId:$transcript');
       },
     );
@@ -57,7 +58,7 @@ void main() {
         entry('First morning by the river.'),
         entry('Second morning by the river.'),
       ],
-      upload: (entryId, transcript) async {
+      upload: (entryId, transcript, createdAt) async {
         uploaded.add(transcript);
       },
     );
@@ -75,7 +76,7 @@ void main() {
     final service = CloudSyncService(
       isCloudSyncEnabled: () async => true,
       forgottenLabels: () async => {'river'},
-      upload: (entryId, transcript) async {
+      upload: (entryId, transcript, createdAt) async {
         uploaded.add(transcript);
       },
     );
@@ -83,5 +84,40 @@ void main() {
     await service.uploadEntryToLedger(entry('I mentioned the river again.'));
 
     expect(uploaded, ['I mentioned the again.']);
+  });
+
+  test('delete calls the server only when cloud features are on', () async {
+    final removed = <String>[];
+    final enabled = CloudSyncService(
+      isCloudSyncEnabled: () async => true,
+      remove: (entryId) async {
+        removed.add(entryId);
+      },
+    );
+    await enabled.deleteEntryFromLedger('entry-1');
+
+    final disabled = CloudSyncService(
+      isCloudSyncEnabled: () async => false,
+      remove: (entryId) async {
+        removed.add('off-$entryId');
+      },
+    );
+    await disabled.deleteEntryFromLedger('entry-1');
+
+    expect(removed, ['entry-1']);
+  });
+
+  test('a local deletion deletes the server copy when cloud is on', () async {
+    final removed = <String>[];
+    final service = CloudSyncService(
+      isCloudSyncEnabled: () async => true,
+      remove: (entryId) async {
+        removed.add(entryId);
+      },
+    );
+    await JournalCloudLedgerInterceptor(service: service).onEntrySaved(
+      entry('I mentioned the river again.').markDeleted(),
+    );
+    expect(removed, ['entry-1']);
   });
 }

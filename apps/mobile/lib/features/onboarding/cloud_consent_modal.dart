@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/core/user/user_preferences.dart';
-import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
 import 'package:flutter/material.dart';
 
 /// Asks before journal text is uploaded for cloud features.
@@ -14,16 +12,16 @@ class CloudConsentModal {
 
   static const title = 'Upload these notes?';
 
-  static const what = 'The text of your journal entries will be uploaded.';
+  static const what = 'The text of your entries is sent.';
 
   static const why =
-      'To power AI Pattern Exploration so you can ask questions about your journal.';
+      'So pattern exploration can remember across weeks.';
 
   static const where =
-      "Processed securely by Google Gemini on Thoughtprint's servers.";
+      "It is kept on Thoughtprint's servers. Answers are written by Google Gemini.";
 
   static const control =
-      'You can turn this off and delete your cloud copy at any time in Settings.';
+      'You can delete that copy in Settings. The journal on this phone stays.';
 
   static Future<bool> ask(BuildContext context) async {
     final allowed = await showDialog<bool>(
@@ -60,15 +58,55 @@ class CloudConsentModal {
         );
       },
     );
-    if (allowed == true) {
-      if (AppServices.isInitialized) {
-        await UserPreferences.setCloudSyncEnabled(
-          AppServices.instance.prefs,
-          true,
-        );
-      }
-      unawaited(CloudSyncService.backfillLocalEntries());
+    if (allowed == true && context.mounted) {
+      await enableCloudWithProgress(context);
     }
     return allowed ?? false;
+  }
+}
+
+/// Sends existing entries after opt-in and shows how far the copy has got.
+Future<void> enableCloudWithProgress(BuildContext context) async {
+  final progress = ValueNotifier<(int, int)>((0, 0));
+  unawaited(
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return ValueListenableBuilder<(int, int)>(
+          valueListenable: progress,
+          builder: (context, value, _) {
+            final total = value.$2;
+            return AlertDialog(
+              key: const Key('cloud_backfill_progress'),
+              title: const Text('Sending your journal'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LinearProgressIndicator(
+                    value: total == 0 ? null : value.$1 / total,
+                  ),
+                  const SizedBox(height: 12),
+                  Text('${value.$1} of $total'),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ),
+  );
+  try {
+    await CloudConsent().enable(
+      onProgress: (done, total) {
+        progress.value = (done, total);
+      },
+    );
+  } finally {
+    progress.dispose();
+    if (context.mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
   }
 }

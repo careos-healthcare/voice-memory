@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/capture/services/entry_save_pipeline.d
 import 'package:archiveme_mobile/features/capture/views/voice_chat_view.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
+import 'package:archiveme_mobile/features/memory/related_moments_section.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
 import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
@@ -345,6 +346,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                     ],
                   ),
                 ),
+                RelatedMomentsSection(entry: e),
               ],
             ),
     );

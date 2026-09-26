@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:archiveme_mobile/features/journal/domain/interceptors/journal_save_interceptor.dart';
 import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -14,6 +12,21 @@ class JournalCloudLedgerInterceptor implements JournalSaveInterceptor {
   @override
   Future<void> onEntrySaved(JournalEntry entry) async {
     final cloud = service ?? CloudSyncService();
-    unawaited(cloud.uploadEntryToLedger(entry));
+    try {
+      if (entry.isDeleted) {
+        await cloud.deleteEntryFromLedger(entry.id);
+        return;
+      }
+      final edited =
+          entry.revision > 1 ||
+          !entry.updatedAt.toUtc().isAtSameMomentAs(entry.createdAt.toUtc());
+      if (edited) {
+        await cloud.updateEntryOnLedger(entry);
+      } else {
+        await cloud.uploadEntryToLedger(entry);
+      }
+    } on Object {
+      return;
+    }
   }
 }

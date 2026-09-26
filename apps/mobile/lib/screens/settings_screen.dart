@@ -1,12 +1,16 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/core/user/user_preferences.dart';
+import 'package:archiveme_mobile/features/memory/what_thoughtprint_remembers_screen.dart';
+import 'package:archiveme_mobile/features/sync/services/cloud_sync_service.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
+import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/core/notifications/journal_reminder_settings_section.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
@@ -194,16 +198,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _setCloudSync(bool enabled) async {
-    await UserPreferences.setCloudSyncEnabled(
-      AppServices.instance.prefs,
-      enabled,
-    );
+    if (enabled) {
+      await enableCloudWithProgress(context);
+    } else {
+      await CloudConsent().disable();
+    }
     if (mounted) setState(() => _cloudSyncEnabled = enabled);
   }
 
   Future<bool> _deleteCloudCopy() async {
     final result = await AppServices.instance.httpTransport.delete(
-      '/api/ledger/user',
+      CloudSyncService.clearPath,
     );
     return result.when(
       success: (response) {
@@ -241,8 +246,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           key: const Key('settings_delete_cloud_copy_confirm'),
           title: const Text('Delete my cloud copy?'),
           content: const Text(
-            "This removes the journal text stored on Thoughtprint's servers. "
-            'The copy on this device stays.',
+            "This deletes the copy of your journal on Thoughtprint's servers. Your journal on this phone is not affected.",
           ),
           actions: [
             TextButton(
@@ -680,6 +684,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             const PrivacyDataControlsSection(),
+            ListTile(
+              key: const Key('settings_what_thoughtprint_remembers'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                WhatThoughtprintRemembersScreen.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'People, places, and themes remembered on this phone.',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const WhatThoughtprintRemembersScreen(),
+                  ),
+                );
+              },
+            ),
             if (V1CapabilityRegistry.localAiPrivacyControls)
               KeyedSubtree(
                 key: const Key('settings_on_device_processing_toggle'),

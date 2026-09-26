@@ -6,6 +6,8 @@ import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/evidence_contract/evidence_eligibility_policy.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
+import 'package:archiveme_mobile/features/memory/entry_embedding_store.dart';
+import 'package:archiveme_mobile/features/memory/related_entries_service.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_model.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_repeat_copy.dart';
@@ -96,12 +98,14 @@ class _MomentSaveReceiptCardState extends State<MomentSaveReceiptCard> {
   Future<void> _loadSimilarEntries() async {
     if (!AppServices.isInitialized) return;
     try {
-      final database = DatabaseProvider(
+      final store = EntryEmbeddingStore(
         AppServices.instance.sqliteDatabase.database,
       );
-      final vector = await database.readEmbedding(entry.id);
-      if (vector == null || !mounted) return;
-      final matches = await database.findSimilarEntries(vector);
+      final entries = await AppServices.instance.journal.loadAll();
+      final matches = await RelatedEntriesService(store).relatedTo(
+        entry,
+        candidates: entries,
+      );
       if (!mounted) return;
       setState(() => _similar = matches);
     } on Object {
@@ -256,16 +260,34 @@ class _MomentSaveReceiptCardState extends State<MomentSaveReceiptCard> {
                   ),
                   for (final match in _similar) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      LocaleDateFormat.date(context, match.createdAt),
-                      key: Key('moment_save_receipt_similar_date_${match.id}'),
-                      style: secondaryStyle,
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      shortVerbatimQuote(match.transcript),
-                      key: Key('moment_save_receipt_similar_quote_${match.id}'),
-                      style: bodyStyle,
+                    InkWell(
+                      key: Key('moment_save_receipt_similar_open_${match.id}'),
+                      onTap: () {
+                        final seconds = match.startSeconds ?? 0;
+                        final router = GoRouter.maybeOf(context);
+                        if (router == null) return;
+                        router.push('/entry/${match.id}?t=$seconds');
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            LocaleDateFormat.date(context, match.createdAt),
+                            key: Key(
+                              'moment_save_receipt_similar_date_${match.id}',
+                            ),
+                            style: secondaryStyle,
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            match.quote ?? shortVerbatimQuote(match.transcript),
+                            key: Key(
+                              'moment_save_receipt_similar_quote_${match.id}',
+                            ),
+                            style: bodyStyle,
+                          ),
+                        ],
+                      ),
                     ),
                     if (match.localAudioPath != null)
                       Align(
@@ -273,6 +295,7 @@ class _MomentSaveReceiptCardState extends State<MomentSaveReceiptCard> {
                         child: _SimilarEntryPlayButton(
                           entryId: match.id,
                           audioPath: match.localAudioPath!,
+                          startSeconds: match.startSeconds,
                         ),
                       ),
                   ],
@@ -392,10 +415,12 @@ class _SimilarEntryPlayButton extends StatefulWidget {
   const _SimilarEntryPlayButton({
     required this.entryId,
     required this.audioPath,
+    this.startSeconds,
   });
 
   final String entryId;
   final String audioPath;
+  final int? startSeconds;
 
   @override
   State<_SimilarEntryPlayButton> createState() =>
@@ -415,6 +440,10 @@ class _SimilarEntryPlayButtonState extends State<_SimilarEntryPlayButton> {
     final player = _player ??= AudioPlayer();
     await player.stop();
     await player.play(DeviceFileSource(widget.audioPath));
+    final start = widget.startSeconds;
+    if (start != null && start > 0) {
+      await player.seek(Duration(seconds: start));
+    }
   }
 
   @override

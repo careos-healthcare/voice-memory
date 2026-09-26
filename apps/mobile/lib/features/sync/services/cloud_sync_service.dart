@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:archiveme_mobile/api/models/sync_dto.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
-import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/features/insights/knowledge_forget_service.dart';
@@ -18,18 +17,42 @@ import 'package:archiveme_mobile/services/app_services.dart';
 /// Sends journal text to the server fact ledger when cloud features are on.
 class CloudSyncService {
   CloudSyncService({
-    Future<void> Function(String entryId, String transcript)? upload,
+    Future<void> Function(String entryId, String transcript, DateTime createdAt)?
+    upload,
+    Future<void> Function(String entryId, String transcript, DateTime createdAt)?
+    update,
+    Future<void> Function(String entryId)? remove,
+    Future<void> Function(List<JournalEntry> chunk)? postChunk,
+    Future<int> Function()? readCursor,
+    Future<void> Function(int cursor)? writeCursor,
     Future<bool> Function()? isCloudSyncEnabled,
     Future<List<JournalEntry>> Function()? loadEntries,
     Future<Set<String>> Function()? forgottenLabels,
   }) : _upload = upload ?? _postToApi,
+       _update = update ?? _putToApi,
+       _remove = remove ?? _deleteOnApi,
+       _postChunk = postChunk ?? _postBulkChunk,
+       _readCursor = readCursor ?? _readBackfillCursor,
+       _writeCursor = writeCursor ?? _writeBackfillCursor,
        _isCloudSyncEnabled = isCloudSyncEnabled ?? _readCloudPreference,
        _loadEntries = loadEntries ?? _readLocalEntries,
        _forgottenLabels = forgottenLabels ?? _readForgottenLabels;
 
   static const ingestPath = '/api/ledger/ingest';
+  static const bulkImportPath = '/api/ledger/bulk-import';
+  static const entryPath = '/api/ledger/entry';
+  static const clearPath = '/api/ledger';
+  static const backfillCursorKey = 'cloud_ledger_backfill_cursor';
+  static const chunkSize = 20;
 
-  final Future<void> Function(String entryId, String transcript) _upload;
+  final Future<void> Function(String entryId, String transcript, DateTime createdAt)
+  _upload;
+  final Future<void> Function(String entryId, String transcript, DateTime createdAt)
+  _update;
+  final Future<void> Function(String entryId) _remove;
+  final Future<void> Function(List<JournalEntry> chunk) _postChunk;
+  final Future<int> Function() _readCursor;
+  final Future<void> Function(int cursor) _writeCursor;
   final Future<bool> Function() _isCloudSyncEnabled;
   final Future<List<JournalEntry>> Function() _loadEntries;
   final Future<Set<String>> Function() _forgottenLabels;
@@ -37,6 +60,30 @@ class CloudSyncService {
   /// Posts one entry. Does nothing while cloud features are off.
   /// Forgotten labels are left out of the copy sent to the server.
   Future<void> uploadEntryToLedger(JournalEntry entry) async {
+    await _send(entry, _upload);
+  }
+
+  /// Replaces the server copy after a local edit.
+  Future<void> updateEntryOnLedger(JournalEntry entry) async {
+    await _send(entry, _update);
+  }
+
+  /// Removes one entry from the server ledger. The phone copy stays.
+  Future<void> deleteEntryFromLedger(String entryId) async {
+    if (!await _isCloudSyncEnabled()) return;
+    if (entryId.isEmpty) return;
+    try {
+      await _remove(entryId);
+    } on Object {
+      return;
+    }
+  }
+
+  Future<void> _send(
+    JournalEntry entry,
+    Future<void> Function(String entryId, String transcript, DateTime createdAt)
+    send,
+  ) async {
     if (!await _isCloudSyncEnabled()) return;
     if (entry.isDeleted) return;
     final transcript = omitForgottenLabels(
@@ -45,7 +92,7 @@ class CloudSyncService {
     );
     if (transcript.isEmpty) return;
     try {
-      await _upload(entry.id, transcript);
+      await send(entry.id, transcript, entry.createdAt);
     } on Object {
       return;
     }
@@ -64,11 +111,110 @@ class CloudSyncService {
     }
   }
 
-  static Future<void> _postToApi(String entryId, String transcript) async {
+  /// Sends every local entry through `/api/ledger/bulk-import`, 20 at a time.
+  ///
+  /// The cursor is the number of entries already accepted. A failed chunk
+  /// leaves the cursor in place so the next call continues.
+  Future<void> backfillInChunks({
+    void Function(int done, int total)? onProgress,
+  }) async {
+    if (!await _isCloudSyncEnabled()) return;
+    final entries = (await _loadEntries())
+        .where((entry) => !entry.isDeleted && entry.transcript.trim().isNotEmpty)
+        .toList()
+      ..sort((a, b) => a.id.compareTo(b.id));
+    var cursor = await _readCursor();
+    if (cursor < 0 || cursor > entries.length) cursor = 0;
+    onProgress?.call(cursor, entries.length);
+    while (cursor < entries.length) {
+      final end = cursor + chunkSize < entries.length
+          ? cursor + chunkSize
+          : entries.length;
+      try {
+        await _postChunk(entries.sublist(cursor, end));
+      } on Object {
+        return;
+      }
+      cursor = end;
+      await _writeCursor(cursor);
+      onProgress?.call(cursor, entries.length);
+    }
+  }
+
+  static Future<void> _postToApi(
+    String entryId,
+    String transcript,
+    DateTime createdAt,
+  ) async {
+    await _sendJson('POST', ingestPath, entryId, transcript, createdAt);
+  }
+
+  static Future<void> _putToApi(
+    String entryId,
+    String transcript,
+    DateTime createdAt,
+  ) async {
+    await _sendJson('PUT', ingestPath, entryId, transcript, createdAt);
+  }
+
+  static Future<void> _sendJson(
+    String method,
+    String path,
+    String entryId,
+    String transcript,
+    DateTime createdAt,
+  ) async {
     if (!AppServices.isInitialized) return;
+    final body = {
+      'entryId': entryId,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'transcript': transcript,
+    };
+    final transport = AppServices.instance.httpTransport;
+    if (method == 'PUT') {
+      await transport.put(path, body: body);
+    } else {
+      await transport.post(path, body: body);
+    }
+  }
+
+  static Future<void> _deleteOnApi(String entryId) async {
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.httpTransport.delete(
+      entryPath,
+      body: {'entryId': entryId},
+    );
+  }
+
+  static Future<void> _postBulkChunk(List<JournalEntry> chunk) async {
+    if (!AppServices.isInitialized || chunk.isEmpty) return;
+    final forgotten = await _readForgottenLabels();
     await AppServices.instance.httpTransport.post(
-      ingestPath,
-      body: {'entryId': entryId, 'transcript': transcript},
+      bulkImportPath,
+      body: {
+        'chunks': [
+          for (final entry in chunk)
+            {
+              'entryId': entry.id,
+              'rawText': omitForgottenLabels(entry.transcript.trim(), forgotten),
+              'createdAt': entry.createdAt.toUtc().toIso8601String(),
+            },
+        ],
+      },
+    );
+  }
+
+  static Future<int> _readBackfillCursor() async {
+    if (!AppServices.isInitialized) return 0;
+    final raw = await AppServices.instance.prefs.readString(backfillCursorKey);
+    return int.tryParse(raw ?? '') ?? 0;
+  }
+
+  static Future<void> _writeBackfillCursor(int cursor) async {
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeString(
+      backfillCursorKey,
+      '$cursor',
     );
   }
 
