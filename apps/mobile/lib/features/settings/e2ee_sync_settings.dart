@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
+import 'package:archiveme_mobile/features/settings/views/e2ee_setup_view.dart';
 import 'package:archiveme_mobile/sync/e2ee_journal_sync.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /// Settings switch that generates a passphrase and asks the user to keep it.
 class E2eeSyncSettings extends StatefulWidget {
@@ -38,9 +38,11 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
   @override
   void initState() {
     super.initState();
-    unawaited(widget.readEnabled().then((value) {
-      if (mounted) setState(() => _enabled = value);
-    }));
+    unawaited(
+      widget.readEnabled().then((value) {
+        if (mounted) setState(() => _enabled = value);
+      }),
+    );
   }
 
   Future<void> _toggle(bool next) async {
@@ -51,38 +53,15 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
     }
     final passphrase = widget.generatePassphrase();
     if (!mounted) return;
-    final stored = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Store your sync passphrase'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'If you lose this passphrase, your synced data cannot be recovered. We cannot reset it for you.',
-            ),
-            const SizedBox(height: 12),
-            SelectableText(passphrase),
-          ],
+    final stored = await Navigator.of(context).push<String>(
+      MaterialPageRoute<String>(
+        builder: (_) => E2eeSetupView(
+          generatePassphrase: () => passphrase,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              unawaited(Clipboard.setData(ClipboardData(text: passphrase)));
-              Navigator.pop(context, true);
-            },
-            child: const Text("I've stored it"),
-          ),
-        ],
       ),
     );
-    if (stored != true) return;
-    await widget.storePassphrase(passphrase);
+    if (stored == null || stored.trim().isEmpty) return;
+    await widget.storePassphrase(stored);
     await widget.writeEnabled(true);
     if (mounted) setState(() => _enabled = true);
   }
@@ -93,7 +72,9 @@ class _E2eeSyncSettingsState extends State<E2eeSyncSettings> {
       key: const Key('settings_e2ee_sync'),
       contentPadding: EdgeInsets.zero,
       title: const Text('Enable E2EE Sync'),
-      subtitle: const Text('Encrypt journal entries before they leave this phone.'),
+      subtitle: const Text(
+        'Encrypt journal entries before they leave this phone.',
+      ),
       value: _enabled,
       onChanged: _toggle,
     );
