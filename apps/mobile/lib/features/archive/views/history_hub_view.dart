@@ -107,6 +107,7 @@ class HistoryHub extends StatefulWidget {
     this.initialIndex = 0,
     this.onOpenEntry,
     this.now,
+    this.month,
     super.key,
   });
 
@@ -114,6 +115,9 @@ class HistoryHub extends StatefulWidget {
   final int initialIndex;
   final ValueChanged<String>? onOpenEntry;
   final DateTime? now;
+
+  /// Calendar opens on this month. The date strip and the weekly recap pass it.
+  final DateTime? month;
 
   @override
   State<HistoryHub> createState() => _HistoryHubState();
@@ -165,6 +169,7 @@ class _HistoryHubState extends State<HistoryHub> {
         return CalendarView(
           entries: widget.entries,
           now: now,
+          month: widget.month ?? now,
           onOpenEntry: widget.onOpenEntry,
         );
       case 2:
@@ -195,4 +200,42 @@ bool _sameEntries(List<JournalEntry> a, List<JournalEntry> b) {
     if (a[i].id != b[i].id) return false;
   }
   return true;
+}
+
+/// Opens the calendar on [month]. The Archive date strip and the weekly recap use this.
+void openArchiveCalendar(
+  BuildContext context, {
+  required List<JournalEntry> entries,
+  required DateTime month,
+  ValueChanged<String>? onOpenEntry,
+}) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => HistoryHub(
+        entries: entries,
+        initialIndex: 1,
+        month: DateTime(month.year, month.month),
+        now: month,
+        onOpenEntry: onOpenEntry,
+      ),
+    ),
+  );
+}
+
+/// Opens On This Day for [day].
+void openOnThisDay(
+  BuildContext context, {
+  required List<JournalEntry> entries,
+  required DateTime day,
+  ValueChanged<String>? onOpenEntry,
+}) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => HistoryHub(
+        entries: entries,
+        now: day,
+        onOpenEntry: onOpenEntry,
+      ),
+    ),
+  );
 }

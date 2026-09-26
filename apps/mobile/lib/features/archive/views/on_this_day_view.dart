@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/audio/audio_player_service.dart';
-import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/features/archive/controllers/on_this_day_controller.dart';
 import 'package:archiveme_mobile/features/archive/views/on_this_day_section.dart';
 import 'package:archiveme_mobile/features/history/history_browse.dart';
@@ -146,7 +145,7 @@ class _OnThisDayCard extends StatelessWidget {
                   itemBuilder: (context) => [
                     const PopupMenuItem<String>(
                       value: 'hide',
-                      child: Text("Don't show me this again"),
+                      child: Text("Don't show this memory again"),
                     ),
                   ],
                 ),
@@ -159,7 +158,12 @@ class _OnThisDayCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
             ],
-            Text(shortVerbatimQuote(entry.transcript, maxChars: 160)),
+            Text(
+              OnThisDayController.spokenDate(entry.createdAt),
+              key: Key('on_this_day_date_${entry.id}'),
+            ),
+            const SizedBox(height: 4),
+            Text(OnThisDayController.firstSentence(entry.transcript)),
             if (audio != null && audio.isNotEmpty)
               TextButton.icon(
                 key: Key('on_this_day_play_${entry.id}'),

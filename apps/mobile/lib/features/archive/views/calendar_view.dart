@@ -13,12 +13,16 @@ class CalendarView extends StatefulWidget {
   const CalendarView({
     required this.entries,
     this.now,
+    this.month,
     this.onOpenEntry,
     super.key,
   });
 
   final List<JournalEntry> entries;
   final DateTime? now;
+
+  /// Opens this month instead of [now].
+  final DateTime? month;
   final ValueChanged<String>? onOpenEntry;
 
   @override
@@ -32,8 +36,8 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   void initState() {
     super.initState();
-    final now = widget.now ?? DateTime.now();
-    _month = DateTime(now.year, now.month);
+    final seed = widget.month ?? widget.now ?? DateTime.now();
+    _month = DateTime(seed.year, seed.month);
   }
 
   @override

@@ -559,14 +559,11 @@ class _MonthStripState extends State<_MonthStrip> {
                 child: InkWell(
                   key: const Key('archive_calendar_month'),
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => HistoryHub(
-                          entries: widget.entries,
-                          initialIndex: 1,
-                          onOpenEntry: widget.onOpenEntry,
-                        ),
-                      ),
+                    openArchiveCalendar(
+                      context,
+                      entries: widget.entries,
+                      month: DateTime(today.year, today.month),
+                      onOpenEntry: widget.onOpenEntry,
                     );
                   },
                   child: Padding(

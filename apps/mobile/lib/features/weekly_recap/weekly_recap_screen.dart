@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:archiveme_mobile/features/archive/views/history_hub_view.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent.dart';
 import 'package:archiveme_mobile/features/weekly_recap/weekly_recap_builder.dart';
@@ -278,6 +279,24 @@ class _WeeklyRecapScreenState extends State<WeeklyRecapScreen> {
               Text(sentence, key: const Key('weekly_ai_sentence')),
           ],
           const SizedBox(height: 16),
+          TextButton(
+            key: const Key('weekly_recap_calendar'),
+            onPressed: () => openArchiveCalendar(
+              context,
+              entries: widget.entries,
+              month: _recap.rangeEnd,
+            ),
+            child: const Text('See this week in the calendar'),
+          ),
+          TextButton(
+            key: const Key('weekly_recap_on_this_day'),
+            onPressed: () => openOnThisDay(
+              context,
+              entries: widget.entries,
+              day: _recap.rangeEnd,
+            ),
+            child: const Text('On this day'),
+          ),
           OutlinedButton(
             key: const Key('weekly_recap_share_image'),
             onPressed: () => unawaited(_shareImage()),

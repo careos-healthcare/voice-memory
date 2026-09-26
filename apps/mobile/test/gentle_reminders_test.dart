@@ -77,6 +77,12 @@ void main() {
           verbatimQuote: 'I said this last year.',
         ),
         OnThisDayCandidate(
+          entryId: 'hidden',
+          createdAt: DateTime(2024, 3, 15, 18),
+          verbatimQuote: 'Do not remind me.',
+          silenced: true,
+        ),
+        OnThisDayCandidate(
           entryId: 'empty',
           createdAt: DateTime(2026, 3, 8),
           verbatimQuote: '   ',
@@ -93,6 +99,7 @@ void main() {
       'I said this last month.',
       'I said this last year.',
     ]);
+    expect(notices.map((notice) => notice.body), isNot(contains('Do not remind me.')));
     expect(
       notices.every(
         (notice) =>

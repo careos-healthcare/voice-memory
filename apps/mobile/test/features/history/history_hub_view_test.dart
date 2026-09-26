@@ -60,7 +60,7 @@ void main() {
         ),
       ),
     );
-    expect(find.byKey(const Key('calendar_mark_3')), findsOneWidget);
+    expect(find.byKey(const Key('calendar_heat_3')), findsOneWidget);
     await tester.tap(find.byKey(const Key('calendar_day_3')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('calendar_day_entries')), findsOneWidget);
@@ -360,6 +360,44 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('history_open_1')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar_mark_3')), findsOneWidget);
+    expect(find.byKey(const Key('calendar_heat_3')), findsOneWidget);
+  });
+
+  testWidgets('the month label opens the calendar on that month', (
+    tester,
+  ) async {
+    final month = DateTime(2026, 3, 15);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              return TextButton(
+                key: const Key('archive_calendar_month'),
+                onPressed: () => openArchiveCalendar(
+                  context,
+                  entries: [
+                    _entry(id: 'march', at: DateTime(2026, 3, 4)),
+                  ],
+                  month: month,
+                ),
+                child: const Text('March'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const Key('archive_calendar_month')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar_month_view')), findsOneWidget);
+    expect(find.text('March'), findsWidgets);
+    expect(find.byKey(const Key('calendar_month_label')), findsOneWidget);
+    expect(
+      tester.widget<Text>(find.byKey(const Key('calendar_month_label'))).data,
+      'March',
+    );
+    expect(find.byKey(const Key('calendar_day_4')), findsOneWidget);
   });
 }

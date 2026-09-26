@@ -61,6 +61,41 @@ void main() {
     expect(groups['2 years ago']!.single.id, 'two');
   });
 
+  test('a month-ago memory appears only when no earlier year matches', () {
+    final today = DateTime(2026, 9, 26);
+    final groups = OnThisDayController.group(
+      today: today,
+      silencedIds: {'hidden'},
+      entries: [
+        _entry(
+          id: 'month',
+          at: DateTime(2026, 8, 26),
+          transcript: 'The bridge was quiet. Then the rain started.',
+        ),
+        _entry(id: 'hidden', at: DateTime(2026, 8, 26)),
+        _entry(id: 'today', at: today),
+      ],
+    );
+
+    expect(groups.keys.toList(), ['1 month ago']);
+    expect(groups['1 month ago']!.single.id, 'month');
+    expect(
+      OnThisDayController.firstSentence(
+        'The bridge was quiet. Then the rain started.',
+      ),
+      'The bridge was quiet.',
+    );
+
+    final withYear = OnThisDayController.group(
+      today: today,
+      entries: [
+        _entry(id: 'month', at: DateTime(2026, 8, 26)),
+        _entry(id: 'year', at: DateTime(2025, 9, 26)),
+      ],
+    );
+    expect(withYear.keys.toList(), ['1 year ago']);
+  });
+
   testWidgets('an empty day explains that a recording shows up next year', (
     tester,
   ) async {
@@ -119,7 +154,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('on_this_day_menu_then')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text("Don't show me this again"));
+    await tester.tap(find.text("Don't show this memory again"));
     await tester.pumpAndSettle();
     expect(
       find.text('Hide this memory? It will no longer appear in On This Day.'),

@@ -72,24 +72,6 @@ class CalendarMonthView extends StatelessWidget {
                     color: onShade ? Colors.white : null,
                   ),
                 ),
-                if (!compact && day.count > 0)
-                  Container(
-                    key: Key('calendar_mark_${day.day}'),
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: onShade
-                          ? Colors.white
-                          : Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                if (!compact && day.count > 0)
-                  Text(
-                    '${day.count}',
-                    key: Key('calendar_count_${day.day}'),
-                    style: TextStyle(color: onShade ? Colors.white : null),
-                  ),
                 if (!compact && day.moods.isNotEmpty)
                   Text(
                     day.moods.first,

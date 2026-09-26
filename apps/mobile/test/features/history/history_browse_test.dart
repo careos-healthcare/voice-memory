@@ -41,9 +41,18 @@ void main() {
       _moment(id: 'other', at: DateTime(2024, 9, 26)),
     ], now);
     expect(matches.map((entry) => entry.id), ['old']);
+    final hidden = OnThisDayQuery.match(
+      [
+        _moment(id: 'old', at: DateTime(2024, 9, 25)),
+        _moment(id: 'quiet', at: DateTime(2023, 9, 25)),
+      ],
+      now,
+      silencedIds: {'quiet'},
+    );
+    expect(hidden.map((entry) => entry.id), ['old']);
   });
 
-  testWidgets('calendar day shows a count and a mood', (tester) async {
+  testWidgets('calendar day is shaded without a count', (tester) async {
     CalendarDaySummary? opened;
     await tester.pumpWidget(
       MaterialApp(
@@ -52,18 +61,31 @@ void main() {
           body: CalendarMonthView(
             month: DateTime(2026, 9),
             entries: [
-              _moment(id: 'a', at: DateTime(2026, 9, 3), mood: 'calm'),
-              _moment(id: 'b', at: DateTime(2026, 9, 3)),
+              HistoryMoment(
+                id: 'a',
+                createdAt: DateTime(2026, 9, 3),
+                transcript: 'a walk',
+                mood: 'calm',
+                durationSeconds: 60,
+              ),
+              HistoryMoment(
+                id: 'b',
+                createdAt: DateTime(2026, 9, 3),
+                transcript: 'another',
+                durationSeconds: 120,
+              ),
             ],
             onDay: (day) => opened = day,
           ),
         ),
       ),
     );
-    expect(find.byKey(const Key('calendar_count_3')), findsOneWidget);
+    expect(find.byKey(const Key('calendar_count_3')), findsNothing);
     expect(find.byKey(const Key('calendar_mood_3')), findsOneWidget);
+    expect(find.byKey(const Key('calendar_heat_3')), findsOneWidget);
     await tester.tap(find.byKey(const Key('calendar_day_3')));
     expect(opened?.count, 2);
+    expect(opened?.volume, 3);
   });
 
   test('heatmap uses four shades and skips an empty day', () {
@@ -82,23 +104,30 @@ void main() {
     final days = CalendarMonth.days(
       month: DateTime(2026, 9),
       entries: [
-        _moment(id: 'short', at: DateTime(2026, 9, 2), transcript: 'hi'),
+        HistoryMoment(
+          id: 'short',
+          createdAt: DateTime(2026, 9, 2),
+          transcript: 'hi',
+          durationSeconds: 60,
+        ),
         HistoryMoment(
           id: 'long',
           createdAt: DateTime(2026, 9, 4),
           transcript: 'hi',
-          durationSeconds: 90,
+          durationSeconds: 15 * 60,
         ),
       ],
     );
     final light = days.firstWhere((day) => day.day == 2);
     final heavy = days.firstWhere((day) => day.day == 4);
     expect(light.volume, 1);
-    expect(heavy.volume, 90);
+    expect(heavy.volume, 15);
     expect(
-      CalendarHeatmap.tier(heavy.volume, 90),
-      greaterThan(CalendarHeatmap.tier(light.volume, 90)),
+      CalendarHeatmap.tier(heavy.volume, 15),
+      greaterThan(CalendarHeatmap.tier(light.volume, 15)),
     );
+    expect(CalendarHeatmap.tier(0, 15), 0);
+    expect(CalendarHeatmap.tier(15, 15), 4);
   });
 
   test('nearby places share one pin', () {

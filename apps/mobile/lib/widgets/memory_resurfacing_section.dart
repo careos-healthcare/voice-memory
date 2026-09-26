@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/features/archive/controllers/on_this_day_controller.dart';
 import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_models.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -68,10 +69,12 @@ class OnThisDaySection extends StatelessWidget {
     super.key,
     required this.cards,
     required this.onCardTap,
+    this.now,
   });
 
   final List<MemoryResurfacingCardData> cards;
   final ValueChanged<MemoryResurfacingCardData> onCardTap;
+  final DateTime? now;
 
   @override
   Widget build(BuildContext context) {
@@ -95,17 +98,47 @@ class OnThisDaySection extends StatelessWidget {
           style: TextStyle(fontSize: 11, color: AppTheme.muted),
         ),
         const SizedBox(height: 10),
-        ...cards.map(
-          (card) => Padding(
+        ..._groupedCards(),
+      ],
+    );
+  }
+
+  List<Widget> _groupedCards() {
+    final today = now ?? DateTime.now();
+    final groups = OnThisDayController.group(
+      entries: [for (final card in cards) card.entry],
+      today: today,
+    );
+    if (groups.isEmpty) {
+      return [
+        for (final card in cards)
+          Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: _MemoryResurfacingCard(
               data: card,
               onTap: () => onCardTap(card),
             ),
           ),
+      ];
+    }
+    final byId = {for (final card in cards) card.entry.id: card};
+    return [
+      for (final label in groups.keys) ...[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Text(label, key: Key('on_this_day_section_$label')),
         ),
+        for (final entry in groups[label]!)
+          if (byId[entry.id] case final card?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _MemoryResurfacingCard(
+                data: card,
+                onTap: () => onCardTap(card),
+              ),
+            ),
       ],
-    );
+    ];
   }
 }
 

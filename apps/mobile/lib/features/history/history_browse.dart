@@ -25,12 +25,10 @@ class HistoryMoment {
   final String? audioPath;
   final int durationSeconds;
 
-  /// Recording length when it exists, otherwise the number of words.
+  /// Recording length in minutes. An entry without audio does not shade a day.
   int get volume {
-    if (durationSeconds > 0) return durationSeconds;
-    final trimmed = transcript.trim();
-    if (trimmed.isEmpty) return 0;
-    return trimmed.split(RegExp(r'\s+')).length;
+    if (durationSeconds <= 0) return 0;
+    return (durationSeconds + 59) ~/ 60;
   }
 }
 
@@ -44,10 +42,15 @@ abstract final class OnThisDayQuery {
       "WHERE strftime('%m-%d', created_at) = strftime('%m-%d', 'now') "
       'AND is_silenced_from_on_this_day = 0';
 
-  static List<HistoryMoment> match(List<HistoryMoment> entries, DateTime now) {
+  static List<HistoryMoment> match(
+    List<HistoryMoment> entries,
+    DateTime now, {
+    Set<String> silencedIds = const {},
+  }) {
     return [
       for (final entry in entries)
-        if (entry.createdAt.month == now.month &&
+        if (!silencedIds.contains(entry.id) &&
+            entry.createdAt.month == now.month &&
             entry.createdAt.day == now.day &&
             entry.createdAt.year < now.year)
           entry,

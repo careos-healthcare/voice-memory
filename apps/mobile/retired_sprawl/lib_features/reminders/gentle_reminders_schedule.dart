@@ -55,11 +55,15 @@ class OnThisDayCandidate {
     required this.entryId,
     required this.createdAt,
     required this.verbatimQuote,
+    this.silenced = false,
   });
 
   final String entryId;
   final DateTime createdAt;
   final String verbatimQuote;
+
+  /// Hidden locally. Notifications skip it as well as the On This Day list.
+  final bool silenced;
 }
 
 /// Pure scheduling. Callers persist and send the notices.
@@ -160,6 +164,7 @@ abstract final class GentleReminderSchedule {
     );
     final notices = <GentleReminderNotice>[];
     for (final entry in entries) {
+      if (entry.silenced) continue;
       final quote = entry.verbatimQuote.trim();
       if (quote.isEmpty || !_isAnniversary(entry.createdAt, now)) continue;
       notices.add(
