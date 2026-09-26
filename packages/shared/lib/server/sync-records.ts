@@ -40,6 +40,17 @@ export class SyncRecordLedger {
     createdAt: string;
   } | null = null;
   private readonly revokedDevices = new Set<string>();
+  private readonly devices = new Map<
+    string,
+    {
+      id: string;
+      name: string;
+      platform: string;
+      lastActive: string;
+      syncToken: string | null;
+      keyWrap: unknown | null;
+    }
+  >();
   private readonly relays = new Map<
     string,
     {
@@ -157,6 +168,36 @@ export class SyncRecordLedger {
 
   revokeDevice(deviceId: string) {
     this.revokedDevices.add(deviceId);
+  }
+
+  registerDevice(input: { id: string; name: string; platform: string }, now = new Date()) {
+    const id = input.id.trim();
+    if (!id || this.revokedDevices.has(id)) {
+      return null;
+    }
+    const existing = this.devices.get(id);
+    const row = {
+      id,
+      name: input.name.trim() || existing?.name || "Phone",
+      platform: input.platform.trim() || existing?.platform || "unknown",
+      lastActive: now.toISOString(),
+      syncToken: existing?.syncToken ?? `sync_${id}`,
+      keyWrap: existing?.keyWrap ?? { deviceId: id, wrapped: true },
+    };
+    this.devices.set(id, row);
+    return row;
+  }
+
+  listDevices() {
+    return [...this.devices.values()];
+  }
+
+  removeDevice(deviceId: string) {
+    const row = this.devices.get(deviceId);
+    if (!row) return false;
+    this.revokeDevice(deviceId);
+    this.devices.set(deviceId, { ...row, syncToken: null, keyWrap: null });
+    return true;
   }
 
   storedCount(): number {

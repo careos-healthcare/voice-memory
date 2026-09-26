@@ -133,6 +133,69 @@ void main() {
     expect(find.byKey(const Key('revoke_device_ipad')), findsNothing);
   });
 
+  testWidgets('devices load from the server and a failed remove stays listed', (
+    tester,
+  ) async {
+    final now = DateTime.utc(2026, 9, 26, 12);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SyncStatusView(
+          now: now,
+          syncedAt: now,
+          devices: const [],
+          loadDevices: () async => [
+            ConnectedDevice.fromJson({
+              'id': 'ipad',
+              'name': 'Kitchen iPad',
+              'platform': 'ios',
+              'lastActive': now.toIso8601String(),
+              'syncToken': 'sync_ipad',
+            }),
+          ],
+          removeDevice: (_) async {
+            throw StateError('This device could not be removed.');
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Kitchen iPad'), findsOneWidget);
+    expect(find.textContaining('ios'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('revoke_device_ipad')));
+    await tester.pumpAndSettle();
+    expect(find.text('Removed'), findsNothing);
+    expect(find.byKey(const Key('revoke_device_ipad')), findsOneWidget);
+  });
+
+  test('the directory reads name, OS, and last active', () async {
+    final devices = await SyncDeviceDirectory.fetch(
+      get: () async => {
+        'ok': true,
+        'devices': [
+          {
+            'id': 'phone',
+            'name': 'This phone',
+            'platform': 'android',
+            'lastActive': '2026-09-26T12:00:00.000Z',
+            'syncToken': 'sync_phone',
+          },
+        ],
+      },
+    );
+    expect(devices.single.name, 'This phone');
+    expect(devices.single.platform, 'android');
+    expect(devices.single.lastActive, DateTime.utc(2026, 9, 26, 12));
+    var removed = false;
+    await SyncDeviceDirectory.remove(
+      'phone',
+      delete: (id) async {
+        removed = id == 'phone';
+        return removed;
+      },
+    );
+    expect(removed, isTrue);
+  });
+
   testWidgets('the prompt asks which transcript to keep', (tester) async {
     String? kept;
     final split = TranscriptSplit(

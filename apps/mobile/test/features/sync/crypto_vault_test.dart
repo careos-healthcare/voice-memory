@@ -50,6 +50,33 @@ void main() {
     },
   );
 
+  test('a new passphrase rewraps the same account key', () async {
+    final account = AccountSyncKey.generate(Random(4));
+    final bundle = await AccountSyncKey.wrap(
+      accountKey: account,
+      passphrase: 'old phrase',
+      recoveryPhrase: 'river notebook candle',
+    );
+    final next = await AccountSyncKey.changePassphrase(
+      wrapped: bundle.wrappedByPassphrase,
+      currentPassphrase: 'old phrase',
+      nextPassphrase: 'new phrase',
+    );
+    expect(next.salt, isNot(bundle.wrappedByPassphrase.salt));
+    expect(next.ciphertext, isNot(bundle.wrappedByPassphrase.ciphertext));
+    expect(
+      await AccountSyncKey.unwrap(wrapped: next, secret: 'new phrase'),
+      account,
+    );
+    expect(
+      await AccountSyncKey.unwrap(
+        wrapped: bundle.wrappedByRecovery,
+        secret: 'river notebook candle',
+      ),
+      account,
+    );
+  });
+
   test('a second device unwraps with the salt published for the account', () async {
     final phrase = 'correct horse battery staple';
     final account = AccountSyncKey.generate(Random(2));

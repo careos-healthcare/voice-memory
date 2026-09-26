@@ -14,9 +14,10 @@ import 'package:archiveme_mobile/features/objective/current_objective_widget_ref
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_service.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
 import 'package:archiveme_mobile/features/import/voice_memo_importer.dart';
+import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
+import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
-import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/archive_correction_bootstrap.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -96,6 +97,7 @@ abstract final class V1StartupCoordinator {
     unawaited(BetaActivationLoopTracker.trackAppOpened());
     unawaited(_importPendingVoiceMemo());
     unawaited(RecordSyncRuntime.onLaunchOrResume());
+    SyncScheduler.instance.startForeground();
     PrivateStorageAudit.logAuditReport();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

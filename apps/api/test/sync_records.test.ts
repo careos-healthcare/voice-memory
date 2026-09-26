@@ -114,6 +114,23 @@ test("sync params keep the published salt and a pair relay stays sealed", () => 
   assert.equal(ledger.claimRelay("pair-1").ok, false);
 });
 
+test("removing a device clears its sync token and key wrap", () => {
+  const ledger = syncRecordLedger("device-account");
+  const phone = ledger.registerDevice({
+    id: "iphone",
+    name: "This iPhone",
+    platform: "ios",
+  });
+  assert.ok(phone);
+  assert.equal(phone?.syncToken?.startsWith("sync_"), true);
+  assert.equal(ledger.listDevices().length, 1);
+  assert.equal(ledger.removeDevice("iphone"), true);
+  const removed = ledger.listDevices()[0];
+  assert.equal(removed.syncToken, null);
+  assert.equal(removed.keyWrap, null);
+  assert.equal(ledger.registerDevice({ id: "iphone", name: "This iPhone", platform: "ios" }), null);
+});
+
 test("purge drops encrypted records, media chunks, and devices for one account", () => {
   const userId = "purge-account";
   syncRecordLedger(userId).push([record]);

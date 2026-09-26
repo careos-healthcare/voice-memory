@@ -18,6 +18,8 @@ import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
+import 'package:archiveme_mobile/features/settings/views/sync_status_view.dart';
+import 'package:archiveme_mobile/features/sync/services/sync_scheduler.dart';
 import 'package:archiveme_mobile/features/settings/services/sync_management_service.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/settings/services/notification_service.dart';
@@ -60,7 +62,6 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/sync/record_sync.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -125,6 +126,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       }),
     );
+    syncStatusNotifier.addListener(_onSyncStatus);
+  }
+
+  void _onSyncStatus() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    syncStatusNotifier.removeListener(_onSyncStatus);
+    super.dispose();
   }
 
   Future<void> _loadDownloadOnWifi() async {
@@ -680,7 +692,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             if (V1CapabilityRegistry.e2eeSync)
               E2eeSyncStatusPanel(
-                status: RecordSyncRuntime.statusLabel(DateTime.now()),
+                status: syncStatusNotifier.value.label(DateTime.now()),
                 devices: const [],
                 downloadOnWifi: _downloadMediaOnWifi,
                 onDownloadOnWifi: (value) {
@@ -697,6 +709,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChangePassphrase: () {},
                 onShowRecoveryKey: () => unawaited(_showRecoveryKey()),
                 onTurnOff: () => unawaited(_turnOffSync()),
+              ),
+            if (V1CapabilityRegistry.e2eeSync)
+              SyncStatusView(
+                embedded: true,
+                syncedAt: syncStatusNotifier.value.syncedAt,
+                devices: const [],
+                loadDevices: SyncDeviceDirectory.fetch,
+                removeDevice: SyncDeviceDirectory.remove,
+                changePassphrase: SyncPassphraseRotation.rotate,
               ),
             JournalReminderPreferences(
               readEnabled: (key) async {

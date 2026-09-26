@@ -254,6 +254,23 @@ class CloudSyncService {
   }
 }
 
+/// Whether a foreground or debounced sync finished, was skipped, or failed.
+enum E2eeSyncOutcome { skipped, synced, failed }
+
+class E2eeSyncReport {
+  const E2eeSyncReport._(this.outcome, this.reason);
+
+  const E2eeSyncReport.skipped() : this._(E2eeSyncOutcome.skipped, null);
+
+  const E2eeSyncReport.synced() : this._(E2eeSyncOutcome.synced, null);
+
+  const E2eeSyncReport.failed(String reason)
+    : this._(E2eeSyncOutcome.failed, reason);
+
+  final E2eeSyncOutcome outcome;
+  final String? reason;
+}
+
 /// Runs encrypted sync jobs one at a time so a resume cannot overlap a startup.
 class E2eeSyncQueue {
   Future<void> _tail = Future<void>.value();
@@ -271,24 +288,32 @@ abstract final class E2eeSyncLifecycle {
 
   static final queue = E2eeSyncQueue();
 
-  static Future<void> syncIfEnabled() {
+  static Future<E2eeSyncReport> syncIfEnabled() {
     return queue.enqueue(_syncIfEnabled);
   }
 
   static const lastSyncKey = 'last_sync_time';
 
-  static Future<void> _syncIfEnabled() async {
-    if (!V1CapabilityRegistry.e2eeSync) return;
-    if (!AppServices.isInitialized) return;
+  static Future<E2eeSyncReport> _syncIfEnabled() async {
+    if (!V1CapabilityRegistry.e2eeSync) return const E2eeSyncReport.skipped();
+    if (!AppServices.isInitialized) return const E2eeSyncReport.skipped();
     try {
       final preferences = await UserPreferences.load(
         AppServices.instance.prefs,
       );
-      if (!preferences.isCloudSyncEnabled) return;
+      if (!preferences.isCloudSyncEnabled) {
+        return const E2eeSyncReport.skipped();
+      }
       final passphrase = await E2eeSyncSettings.storedPassphrase();
-      if (passphrase == null || passphrase.trim().isEmpty) return;
+      if (passphrase == null || passphrase.trim().isEmpty) {
+        return const E2eeSyncReport.skipped();
+      }
       final accountKey = await _accountKeyFor(passphrase);
-      if (accountKey == null) return;
+      if (accountKey == null) {
+        return const E2eeSyncReport.failed(
+          'The passphrase does not open this archive.',
+        );
+      }
       final deviceId = await AppServices.instance.deviceIds.getOrCreate();
       final lastRaw = await AppServices.instance.prefs.readString(lastSyncKey);
       final last = lastRaw == null ? null : DateTime.tryParse(lastRaw);
@@ -316,8 +341,12 @@ abstract final class E2eeSyncLifecycle {
       for (final entry in local) {
         await attachments.uploadEntryAttachments(entry);
       }
-    } on Object {
-      return;
+      return const E2eeSyncReport.synced();
+    } on Object catch (error) {
+      final reason = error is StateError
+          ? error.message
+          : 'the archive did not accept this sync';
+      return E2eeSyncReport.failed(reason);
     }
   }
 

@@ -43,6 +43,13 @@ abstract final class TranscriptConflictStore {
   static void clear(String entryId) => _open.remove(entryId);
 }
 
+extension JournalEntryConflict on JournalEntry {
+  /// True while two devices still have unmerged transcript edits.
+  bool get hasConflict =>
+      syncStatus == SyncStatus.conflict ||
+      TranscriptConflictStore.read(id) != null;
+}
+
 /// Last-writer-wins for date, title, mood, and tags.
 ///
 /// A transcript edited on both sides is kept as two versions.

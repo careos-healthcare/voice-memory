@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/archive/widgets/transcript_conflict_badge.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture/entry_image_picker.dart';
 import 'package:archiveme_mobile/features/media/services/image_processor_service.dart';
@@ -339,13 +340,16 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                       ? (mood) => unawaited(_saveMood(e, mood))
                       : null,
                 ),
-                if (TranscriptConflictStore.read(e.id) case final split?) ...[
-                  const SizedBox(height: 12),
-                  TranscriptConflictPrompt(
-                    split: split,
-                    onKeep: (text) => unawaited(_keepTranscript(e, text)),
-                  ),
-                ],
+                if (e.hasConflict)
+                  if (TranscriptConflictStore.read(e.id) case final split?) ...[
+                    const SizedBox(height: 12),
+                    TranscriptConflictBadge(
+                      deviceA: split.localText,
+                      deviceB: split.remoteText,
+                      onResolved: (text) =>
+                          unawaited(_keepTranscript(e, text)),
+                    ),
+                  ],
                 const SizedBox(height: 16),
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),
