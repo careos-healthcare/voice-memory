@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/config/creator_demo_mode.dart';
 import 'package:archiveme_mobile/features/activation/capture_context_tags.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/services/cognitive_analyzer.dart';
@@ -393,6 +394,7 @@ class JournalStore {
     final entry = await getByIdIncludingTombstones(id);
     if (entry == null || entry.isDeleted) return;
     await save(entry.markDeleted());
+    await JournalTombstones.remember(id);
   }
 
   Future<JournalEntry?> getById(String id) async {

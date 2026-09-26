@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
+import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -95,6 +96,9 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         setState(() => _entry = loaded);
         _titleController.text = loaded?.display.title ?? '';
       }
+      if (loaded != null) {
+        unawaited(AttachmentSyncService.restoreIfConfigured(loaded));
+      }
       return;
     }
 
@@ -111,6 +115,9 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     if (mounted) {
       setState(() => _entry = e);
       _titleController.text = e?.display.title ?? '';
+    }
+    if (e != null) {
+      unawaited(AttachmentSyncService.restoreIfConfigured(e));
     }
   }
 

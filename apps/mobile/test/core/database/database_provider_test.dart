@@ -77,6 +77,35 @@ void main() {
       );
     },
   );
+
+  test('a deleted entry stays as a tombstone for 90 days', () async {
+    final db = await openDatabase(inMemoryDatabasePath);
+    addTearDown(db.close);
+    final provider = DatabaseProvider(db);
+    final now = DateTime.utc(2026, 9, 26, 8);
+
+    await provider.recordTombstone(
+      'recent',
+      deletedAt: now.subtract(const Duration(days: 30)),
+    );
+    await provider.recordTombstone(
+      'old',
+      deletedAt: now.subtract(const Duration(days: 91)),
+    );
+
+    final recent = await provider.tombstoneFor('recent');
+    expect(recent?.syncStatus, 'pendingUpload');
+    expect(recent?.deletedAt, now.subtract(const Duration(days: 30)));
+
+    final purged = await provider.purgeExpiredTombstones(
+      now: now,
+      retention: const Duration(days: 1),
+    );
+
+    expect(purged, 1);
+    expect(await provider.tombstoneFor('recent'), isNotNull);
+    expect(await provider.tombstoneFor('old'), isNull);
+  });
 }
 
 List<double> _basis(int hot) {

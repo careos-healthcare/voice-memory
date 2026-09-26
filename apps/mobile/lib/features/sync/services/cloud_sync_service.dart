@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:archiveme_mobile/api/models/sync_dto.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
@@ -8,7 +9,9 @@ import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/features/insights/knowledge_forget_service.dart';
 import 'package:archiveme_mobile/features/settings/e2ee_sync_settings.dart';
+import 'package:archiveme_mobile/features/sync/services/attachment_sync_service.dart';
 import 'package:archiveme_mobile/features/sync/services/e2ee_journal_sync.dart';
+import 'package:archiveme_mobile/features/sync/services/entry_encryption_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 
@@ -118,6 +121,10 @@ abstract final class E2eeSyncLifecycle {
       final box = SaltStore.secureStorage();
       final passphrase = await box.read(E2eeSyncSettings.passphraseKey);
       if (passphrase == null || passphrase.trim().isEmpty) return;
+      final vault = await PassphraseVault.open(
+        passphrase: passphrase,
+        store: box,
+      );
       final cipher = await E2eeJournalCipher.open(
         passphrase: passphrase,
         store: box,
@@ -144,6 +151,10 @@ abstract final class E2eeSyncLifecycle {
           E2eeDeltaSync.lastSyncKey,
           syncedAt.toUtc().toIso8601String(),
         );
+        final attachments = _attachmentSync(EntryEncryptionService(vault));
+        for (final entry in local) {
+          await attachments.uploadEntryAttachments(entry);
+        }
       }
     } on Object {
       return;
@@ -195,5 +206,73 @@ abstract final class E2eeSyncLifecycle {
     );
     final failed = result.when(success: (_) => false, onFailure: (_) => true);
     if (failed) throw StateError('Encrypted sync push did not succeed.');
+  }
+
+  static const attachmentSignPath = '/api/sync/attachments/sign';
+
+  static AttachmentSyncService _attachmentSync(
+    EntryEncryptionService encryption,
+  ) {
+    final transport = AppServices.instance.httpTransport;
+    final service = AttachmentSyncService(
+      encryption: encryption,
+      sign:
+          ({
+            required String entryId,
+            required String name,
+            required String method,
+          }) async {
+            final result = await transport.post(
+              attachmentSignPath,
+              body: {'entryId': entryId, 'name': name, 'method': method},
+            );
+            return result.when(
+              success: (response) {
+                final decoded = jsonDecode(response.body);
+                if (decoded is! Map) {
+                  throw const FormatException(
+                    'Signed attachment response was empty.',
+                  );
+                }
+                final headers = <String, String>{};
+                final raw = decoded['headers'];
+                if (raw is Map) {
+                  for (final entry in raw.entries) {
+                    headers['${entry.key}'] = '${entry.value}';
+                  }
+                }
+                return SignedObjectGrant(
+                  url: Uri.parse(decoded['url'] as String),
+                  headers: headers,
+                );
+              },
+              onFailure: (_) => throw StateError(
+                'Signed attachment request did not succeed.',
+              ),
+            );
+          },
+      putBytes: (grant, body) async {
+        final response = await transport.client.put(
+          grant.url,
+          headers: {'Content-Type': 'application/json', ...grant.headers},
+          body: body,
+        );
+        if (response.statusCode >= 400) {
+          throw StateError('Attachment upload did not succeed.');
+        }
+      },
+      getBytes: (grant) async {
+        final response = await transport.client.get(
+          grant.url,
+          headers: grant.headers,
+        );
+        if (response.statusCode >= 400) {
+          throw StateError('Attachment download did not succeed.');
+        }
+        return response.bodyBytes;
+      },
+    );
+    AttachmentSyncService.active = service;
+    return service;
   }
 }

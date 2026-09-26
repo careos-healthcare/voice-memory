@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
+import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_deleted_entries.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// A past journal entry close to a newly saved transcript.
@@ -116,6 +118,68 @@ class DatabaseProvider {
     return scored.take(limit).toList(growable: false);
   }
 
+  static const deletedEntriesTable = Migration021DeletedEntries.table;
+
+  /// A deletion stays until other devices have had time to learn about it.
+  static const tombstoneRetention = Duration(days: 90);
+
+  Future<void> recordTombstone(
+    String id, {
+    DateTime? deletedAt,
+    String syncStatus = 'pendingUpload',
+  }) async {
+    if (id.isEmpty) return;
+    await _ensureDeletedEntries();
+    final when = (deletedAt ?? DateTime.now()).toUtc();
+    await _db.insert(deletedEntriesTable, {
+      'id': id,
+      'deleted_at': when.millisecondsSinceEpoch,
+      'sync_status': syncStatus,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<DeletedEntryTombstone?> tombstoneFor(String id) async {
+    await _ensureDeletedEntries();
+    final rows = await _db.query(
+      deletedEntriesTable,
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return DeletedEntryTombstone.fromRow(rows.first);
+  }
+
+  /// Drops tombstones only after [tombstoneRetention]. A shorter window is raised to 90 days.
+  Future<int> purgeExpiredTombstones({
+    DateTime? now,
+    Duration retention = tombstoneRetention,
+  }) async {
+    await _ensureDeletedEntries();
+    final window = retention < tombstoneRetention
+        ? tombstoneRetention
+        : retention;
+    final cutoff = (now ?? DateTime.now())
+        .toUtc()
+        .subtract(window)
+        .millisecondsSinceEpoch;
+    return _db.delete(
+      deletedEntriesTable,
+      where: 'deleted_at < ?',
+      whereArgs: [cutoff],
+    );
+  }
+
+  Future<void> _ensureDeletedEntries() {
+    return _db.execute('''
+      CREATE TABLE IF NOT EXISTS $deletedEntriesTable (
+        id TEXT PRIMARY KEY NOT NULL,
+        deleted_at INTEGER NOT NULL,
+        sync_status TEXT NOT NULL
+      )
+    ''');
+  }
+
   static const onThisDaySilenceColumn = 'is_silenced_from_on_this_day';
 
   /// Hides one moment from On This Day without deleting it.
@@ -172,6 +236,52 @@ class DatabaseProvider {
     }
     if (normA == 0 || normB == 0) return 0;
     return dot / (math.sqrt(normA) * math.sqrt(normB));
+  }
+}
+
+/// One deleted journal entry, kept so the deletion can sync.
+class DeletedEntryTombstone {
+  const DeletedEntryTombstone({
+    required this.id,
+    required this.deletedAt,
+    required this.syncStatus,
+  });
+
+  final String id;
+  final DateTime deletedAt;
+  final String syncStatus;
+
+  factory DeletedEntryTombstone.fromRow(Map<String, Object?> row) {
+    return DeletedEntryTombstone(
+      id: row['id'] as String? ?? '',
+      deletedAt: DateTime.fromMillisecondsSinceEpoch(
+        row['deleted_at'] as int? ?? 0,
+        isUtc: true,
+      ),
+      syncStatus:
+          row['sync_status'] as String? ?? SyncStatus.pendingUpload.name,
+    );
+  }
+}
+
+/// Writes a tombstone into the open account database when a journal entry is deleted.
+abstract final class JournalTombstones {
+  JournalTombstones._();
+
+  static Database? _database;
+
+  static void bind(Database database) => _database = database;
+
+  static void unbind() => _database = null;
+
+  static Future<void> remember(String id) async {
+    final database = _database;
+    if (database == null || id.isEmpty) return;
+    try {
+      await DatabaseProvider(database).recordTombstone(id);
+    } on Object {
+      return;
+    }
   }
 }
 

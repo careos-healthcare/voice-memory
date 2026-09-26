@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:archiveme_mobile/core/database/database_provider.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
@@ -78,6 +79,7 @@ class AppSqliteDatabase {
       );
 
       _cached = db;
+      JournalTombstones.bind(db);
       _cachedPath = filePath;
       _cachedPassword = resolvedPassword;
       _cachedKeyAlias = keyAlias;
@@ -120,6 +122,7 @@ class AppSqliteDatabase {
     }
     if (_cached == _db) {
       _cached = null;
+      JournalTombstones.unbind();
       _cachedPath = null;
       _cachedPassword = null;
       _cachedKeyAlias = null;
@@ -131,6 +134,7 @@ class AppSqliteDatabase {
     if (_cached != null) {
       await _cached!.close();
       _cached = null;
+      JournalTombstones.unbind();
       _cachedPath = null;
       _cachedPassword = null;
       _cachedKeyAlias = null;

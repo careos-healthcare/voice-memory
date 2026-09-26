@@ -18,12 +18,13 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_017_capture
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcript_provenance.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_entry_images.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_on_this_day_silence.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_deleted_entries.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
 class SqliteMigrationRegistry {
   SqliteMigrationRegistry([List<SqliteMigration>? migrations])
-      : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
+    : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
     _validate();
   }
 
@@ -48,6 +49,7 @@ class SqliteMigrationRegistry {
     Migration018TranscriptProvenance(),
     Migration019EntryImages(),
     Migration020OnThisDaySilence(),
+    Migration021DeletedEntries(),
   ];
 
   static int get latestVersion =>
@@ -72,7 +74,9 @@ class SqliteMigrationRegistry {
 
   void _validate() {
     if (migrations.isEmpty) {
-      throw StateError('SqliteMigrationRegistry requires at least one migration');
+      throw StateError(
+        'SqliteMigrationRegistry requires at least one migration',
+      );
     }
 
     final seenVersions = <int>{};
