@@ -316,25 +316,101 @@ final class VoiceMemoInbox {
 
 final class HealthStateOfMindHandler {
   func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard call.method == "stateOfMind" else {
-      result(FlutterMethodNotImplemented)
-      return
-    }
     guard #available(iOS 18.0, *) else {
       result(nil)
       return
     }
-    Task {
-      do {
-        result(try await Self.label(arguments: call.arguments))
-      } catch {
-        result(FlutterError(
-          code: "health_unavailable",
-          message: "state_of_mind_unavailable",
-          details: nil
-        ))
+    switch call.method {
+    case "requestAuthorization":
+      let args = call.arguments as? [String: Any]
+      let share = args?["share"] as? Bool ?? true
+      let update = args?["update"] as? Bool ?? false
+      Task {
+        do {
+          try await Self.authorize(share: share, update: update)
+          result(true)
+        } catch {
+          result(false)
+        }
       }
+    case "stateOfMind":
+      Task {
+        do {
+          result(try await Self.label(arguments: call.arguments))
+        } catch {
+          result(FlutterError(
+            code: "health_unavailable",
+            message: "state_of_mind_unavailable",
+            details: nil
+          ))
+        }
+      }
+    case "writeStateOfMind":
+      let mood = (call.arguments as? [String: Any])?["mood"] as? String ?? ""
+      Task {
+        do {
+          try await Self.write(mood: mood)
+          result(true)
+        } catch {
+          result(false)
+        }
+      }
+    default:
+      result(FlutterMethodNotImplemented)
     }
+  }
+
+  @available(iOS 18.0, *)
+  private static func authorize(share: Bool, update: Bool) async throws {
+    let store = HKHealthStore()
+    guard HKHealthStore.isHealthDataAvailable() else { return }
+    let type = HKObjectType.stateOfMindType()
+    var reading = Set<HKObjectType>()
+    var writing = Set<HKSampleType>()
+    if share { reading.insert(type) }
+    if update { writing.insert(type) }
+    try await store.requestAuthorization(toShare: writing, read: reading)
+  }
+
+  @available(iOS 18.0, *)
+  private static func write(mood: String) async throws {
+    let store = HKHealthStore()
+    guard HKHealthStore.isHealthDataAvailable() else { return }
+    try await store.save(Self.sample(mood: mood))
+  }
+
+  @available(iOS 18.0, *)
+  private static func sample(mood: String) -> HKStateOfMind {
+    let key = mood.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    let label: HKStateOfMind.Label
+    let valence: Double
+    switch key {
+    case "calm", "grounded":
+      label = .calm
+      valence = 0.4
+    case "anxious":
+      label = .anxious
+      valence = -0.5
+    case "energetic":
+      label = .excited
+      valence = 0.7
+    case "reflective":
+      label = .peaceful
+      valence = 0.3
+    case "low":
+      label = .sad
+      valence = -0.6
+    default:
+      label = .content
+      valence = 0
+    }
+    return HKStateOfMind(
+      date: Date(),
+      kind: .momentaryEmotion,
+      valence: valence,
+      labels: [label],
+      associations: []
+    )
   }
 
   @available(iOS 18.0, *)
@@ -342,7 +418,6 @@ final class HealthStateOfMindHandler {
     let store = HKHealthStore()
     guard HKHealthStore.isHealthDataAvailable() else { return nil }
     let type = HKObjectType.stateOfMindType()
-    try await store.requestAuthorization(toShare: [], read: [type])
     let raw = (arguments as? [String: Any])?["date"] as? String
     let day = ISO8601DateFormatter().date(from: raw ?? "") ?? Date()
     let start = Calendar.current.startOfDay(for: day)

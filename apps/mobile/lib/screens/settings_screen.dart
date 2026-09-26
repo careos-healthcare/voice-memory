@@ -29,6 +29,8 @@ import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/health/apple_health_platform.dart';
+import 'package:archiveme_mobile/features/health/apple_health_prompt.dart';
 import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
 import 'package:archiveme_mobile/features/insights/views/knowledge_manager_view.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
@@ -82,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _onDeviceBusy = false;
   bool _cloudSyncEnabled = false;
   bool _healthMoodSyncEnabled = false;
+  bool _healthMoodWriteEnabled = false;
   List<JournalEntry> _journalEntries = const [];
   final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
@@ -184,6 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _cloudSyncEnabled = preferences.isCloudSyncEnabled;
       _healthMoodSyncEnabled = preferences.isHealthMoodSyncEnabled;
+      _healthMoodWriteEnabled = preferences.isHealthMoodWriteEnabled;
     });
   }
 
@@ -399,7 +403,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
-            if (V1CapabilityRegistry.appleHealth)
+            if (AppleHealthPlatform.isIos &&
+                V1CapabilityRegistry.appleHealth) ...[
               SwitchListTile(
                 key: const Key('settings_health_mood_sync'),
                 contentPadding: EdgeInsets.zero,
@@ -408,25 +413,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: ArchiveMobileTypography.listTitle(context),
                 ),
                 subtitle: Text(
-                  'Reads the State of Mind you logged in Apple Health. '
-                  'Thoughtprint does not change Apple Health.',
+                  'Reads the State of Mind you logged in Apple Health.',
                   style: ArchiveMobileTypography.listSubtitle(context),
                 ),
                 value: _healthMoodSyncEnabled,
                 onChanged: (value) async {
                   if (!AppServices.isInitialized) return;
+                  if (!value) {
+                    await UserPreferences.setHealthMoodSyncEnabled(
+                      AppServices.instance.prefs,
+                      false,
+                    );
+                    if (mounted) {
+                      setState(() => _healthMoodSyncEnabled = false);
+                    }
+                    return;
+                  }
+                  final granted = await confirmThenRequestAppleHealthRead(
+                    context,
+                  );
+                  if (!granted || !mounted) return;
                   await UserPreferences.setHealthMoodSyncEnabled(
                     AppServices.instance.prefs,
-                    value,
+                    true,
                   );
-                  if (value) {
-                    await StateOfMindReader.forDay(DateTime.now());
-                  }
+                  await StateOfMindReader.forDay(DateTime.now());
                   if (mounted) {
-                    setState(() => _healthMoodSyncEnabled = value);
+                    setState(() => _healthMoodSyncEnabled = true);
                   }
                 },
               ),
+              SwitchListTile(
+                key: const Key('settings_health_mood_write'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  'Write journal moods to Apple Health',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Saves the mood you choose on a journal entry.',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                value: _healthMoodWriteEnabled,
+                onChanged: (value) async {
+                  if (!AppServices.isInitialized) return;
+                  if (!value) {
+                    await UserPreferences.setHealthMoodWriteEnabled(
+                      AppServices.instance.prefs,
+                      false,
+                    );
+                    if (mounted) {
+                      setState(() => _healthMoodWriteEnabled = false);
+                    }
+                    return;
+                  }
+                  final granted = await confirmThenRequestAppleHealthWrite(
+                    context,
+                  );
+                  if (!granted || !mounted) return;
+                  await UserPreferences.setHealthMoodWriteEnabled(
+                    AppServices.instance.prefs,
+                    true,
+                  );
+                  if (mounted) {
+                    setState(() => _healthMoodWriteEnabled = true);
+                  }
+                },
+              ),
+            ],
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(

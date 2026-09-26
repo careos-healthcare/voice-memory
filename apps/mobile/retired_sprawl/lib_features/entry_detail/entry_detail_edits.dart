@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/health/state_of_mind_writer.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -44,16 +45,21 @@ Future<void> saveEntryPlace({
 }
 
 /// Writes a state-of-mind label onto the entry reflection.
+///
+/// The person's own mood stays as they chose it. A Health badge, when one
+/// is already stored, is left beside it. On iOS, the write setting can also
+/// save this mood to Apple Health.
 Future<void> saveEntryMood({
   required JournalStore store,
   required JournalEntry entry,
   required String mood,
-}) {
+}) async {
   final current = entry.reflection;
-  return store.saveEdit(
+  final chosen = mood.trim();
+  await store.saveEdit(
     entry.copyWith(
       reflection: Reflection(
-        mood: mood.trim(),
+        mood: chosen,
         emotionalIntensity: current.emotionalIntensity,
         recurringThemes: current.recurringThemes,
         exactLanguagePattern: current.exactLanguagePattern,
@@ -63,9 +69,11 @@ Future<void> saveEntryMood({
         avoidedOrVagueArea: current.avoidedOrVagueArea,
         nextSmallAction: current.nextSmallAction,
         patternObservations: current.patternObservations,
+        healthStateOfMind: current.healthStateOfMind,
       ),
     ),
   );
+  await StateOfMindWriter.writeJournalMood(chosen);
 }
 
 /// Newest first, matching the archive query `created_at DESC, id DESC`.

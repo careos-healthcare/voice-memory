@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/launch_profile.dart';
 import 'package:archiveme_mobile/core/config/v1_launch_product_contract.dart';
 import 'package:archiveme_mobile/core/config/watch_companion_feature_flags.dart';
 import 'package:archiveme_mobile/features/belief_evidence/provenance_recovery_feature_flags.dart';
@@ -12,7 +13,7 @@ abstract final class AppFlags {
 
   static const bool appleHealth = bool.fromEnvironment(
     'VOICEMEMORY_ENABLE_APPLE_HEALTH',
-    defaultValue: true,
+    defaultValue: LaunchProfile.APPLE_HEALTH,
   );
 
   /// A short typed question after a save, with a mic for the answer.

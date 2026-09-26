@@ -11,7 +11,7 @@ abstract final class StateOfMindReader {
   StateOfMindReader._();
 
   static const channelName = 'archive_me/health_state_of_mind';
-  static const MethodChannel _channel = MethodChannel(channelName);
+  static const MethodChannel channel = MethodChannel(channelName);
 
   @visibleForTesting
   static Future<String?> Function(DateTime day)? debugLookup;
@@ -21,7 +21,7 @@ abstract final class StateOfMindReader {
     if (override != null) return override(day);
     if (kIsWeb || !Platform.isIOS) return null;
     try {
-      final label = await _channel.invokeMethod<String>('stateOfMind', {
+      final label = await channel.invokeMethod<String>('stateOfMind', {
         'date': day.toUtc().toIso8601String(),
       });
       final trimmed = label?.trim() ?? '';

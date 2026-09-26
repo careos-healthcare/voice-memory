@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/health/apple_health_platform.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
@@ -28,6 +29,9 @@ Future<void> _pump(WidgetTester tester, Widget child) {
 }
 
 void main() {
+  setUp(() => AppleHealthPlatform.debugIsIos = true);
+  tearDown(() => AppleHealthPlatform.debugIsIos = null);
+
   testWidgets('shows the chosen mood and Apple Health side by side', (
     tester,
   ) async {
@@ -61,14 +65,32 @@ void main() {
       ArchiveEntryCardMeta(entry: _entry(mood: 'Calm')),
     );
     expect(find.text('Calm'), findsOneWidget);
-    expect(find.byKey(const Key('health_state_of_mind_moment-1')), findsNothing);
+    expect(
+      find.byKey(const Key('health_state_of_mind_moment-1')),
+      findsNothing,
+    );
 
     await _pump(
       tester,
-      ArchiveEntryCardMeta(entry: _entry(mood: 'neutral', health: 'calm')),
+      ArchiveEntryCardMeta(
+        entry: _entry(mood: 'neutral', health: 'calm'),
+      ),
     );
     expect(find.byKey(const Key('archive_mood_moment-1')), findsNothing);
     expect(find.text('From Apple Health'), findsOneWidget);
     expect(find.text('calm'), findsOneWidget);
+  });
+
+  testWidgets('hides Apple Health when this is not iOS', (tester) async {
+    AppleHealthPlatform.debugIsIos = false;
+    await _pump(
+      tester,
+      EntryContextPlaceholders(
+        entry: _entry(mood: 'Calm', health: 'peaceful'),
+      ),
+    );
+    expect(find.text('Calm'), findsOneWidget);
+    expect(find.text('From Apple Health'), findsNothing);
+    expect(find.byKey(const Key('entry_mood_moment-1')), findsOneWidget);
   });
 }

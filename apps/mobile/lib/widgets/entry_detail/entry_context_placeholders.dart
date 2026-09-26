@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/health/apple_health_platform.dart';
 import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -61,7 +62,7 @@ class EntryContextPlaceholders extends StatelessWidget {
               label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
               onTap: onMood == null ? null : () => _pickMood(context),
             ),
-            if (health.isNotEmpty)
+            if (AppleHealthPlatform.isIos && health.isNotEmpty)
               HealthStateOfMindChip(label: health, entryId: entry.id),
           ],
         ),
@@ -102,7 +103,8 @@ class EntryContextPlaceholders extends StatelessWidget {
   Future<void> _pickPlace(BuildContext context) async {
     final place = await showModalBottomSheet<String>(
       context: context,
-      builder: (sheetContext) => _PlaceSheet(lookupCurrentPlace: lookupCurrentPlace),
+      builder: (sheetContext) =>
+          _PlaceSheet(lookupCurrentPlace: lookupCurrentPlace),
     );
     if (place != null && place.isNotEmpty) onPlace?.call(place);
   }
